@@ -1,0 +1,36 @@
+{
+  "name": "jocstudio-testing",
+  "version": "1.0.0",
+  "description": "Comprehensive testing suite for JOCstudio platform",
+  "scripts": {
+    "test": "npm run test:api && npm run test:e2e",
+    "test:api": "vitest run --config vitest.config.js",
+    "test:api:watch": "vitest --config vitest.config.js",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "test:e2e:headed": "playwright test --headed",
+    "test:coverage": "vitest run --coverage",
+    "test:load": "artillery run load/api-load.yml --output reports/load-report.json && node load/report.js",
+    "test:security": "vitest run security/",
+    "test:mobile": "playwright test mobile/",
+    "test:hero": "vitest run hero/",
+    "test:data": "node data/generator.js",
+    "test:all": "npm run test:api && npm run test:e2e && npm run test:security",
+    "report": "node reports/generate.js",
+    "report:view": "open reports/viewer.html"
+  },
+  "devDependencies": {
+    "@faker-js/faker": "^8.4.1",
+    "@playwright/test": "^1.41.2",
+    "@types/node": "^20.11.16",
+    "@vitest/coverage-v8": "^1.2.2",
+    "artillery": "^2.0.4",
+    "dotenv": "^16.4.1",
+    "pdf-lib": "^1.17.1",
+    "supertest": "^6.3.4",
+    "vitest": "^1.2.2"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

@@ -1,0 +1,221 @@
+# JOCstudio Load Testing Configuration
+# Uses Artillery.js for load testing
+
+config:
+  target: "{{ $processEnvironment.API_BASE_URL || 'http://localhost:3000' }}"
+  phases:
+    # Warm-up phase
+    - duration: 30
+      arrivalRate: 5
+      name: "Warm-up"
+    
+    # Ramp-up phase
+    - duration: 60
+      arrivalRate: 10
+      rampTo: 50
+      name: "Ramp-up"
+    
+    # Sustained load
+    - duration: 120
+      arrivalRate: 50
+      name: "Sustained load"
+    
+    # Spike test
+    - duration: 30
+      arrivalRate: 100
+      name: "Spike"
+    
+    # Cool-down
+    - duration: 30
+      arrivalRate: 10
+      name: "Cool-down"
+
+  plugins:
+    expect: {}
+    metrics-by-endpoint: {}
+
+  variables:
+    baseEmail: "loadtest"
+    baseDomain: "test.jocstudio.com"
+
+  defaults:
+    headers:
+      Content-Type: "application/json"
+
+  processor: "./load-processor.js"
+
+scenarios:
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # SCENARIO 1: User Registration Flow (10% of traffic)
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  - name: "User Registration"
+    weight: 10
+    flow:
+      - function: "generateUser"
+      - post:
+          url: "/api/auth/register"
+          json:
+            email: "{{ email }}"
+            password: "{{ password }}"
+            firstName: "{{ firstName }}"
+            lastName: "{{ lastName }}"
+            company: "{{ company }}"
+          capture:
+            - json: "$.token"
+              as: "authToken"
+          expect:
+            - statusCode: 201
+            - hasProperty: "token"
+
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # SCENARIO 2: Login + Dashboard (40% of traffic)
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  - name: "Login and View Dashboard"
+    weight: 40
+    flow:
+      - post:
+          url: "/api/auth/login"
+          json:
+            email: "loadtest-user@test.jocstudio.com"
+            password: "LoadTest123!"
+          capture:
+            - json: "$.token"
+              as: "authToken"
+          expect:
+            - statusCode: 200
+      
+      - get:
+          url: "/api/projects"
+          headers:
+            Authorization: "Bearer {{ authToken }}"
+          expect:
+            - statusCode: 200
+            - hasProperty: "projects"
+      
+      - get:
+          url: "/api/auth/me"
+          headers:
+            Authorization: "Bearer {{ authToken }}"
+          expect:
+            - statusCode: 200
+
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # SCENARIO 3: Project CRUD Operations (30% of traffic)
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  - name: "Project Operations"
+    weight: 30
+    flow:
+      # Login first
+      - post:
+          url: "/api/auth/login"
+          json:
+            email: "loadtest-user@test.jocstudio.com"
+            password: "LoadTest123!"
+          capture:
+            - json: "$.token"
+              as: "authToken"
+      
+      # Create project
+      - function: "generateProject"
+      - post:
+          url: "/api/projects"
+          headers:
+            Authorization: "Bearer {{ authToken }}"
+          json:
+            name: "{{ projectName }}"
+            client: "{{ clientName }}"
+            address: "{{ address }}"
+          capture:
+            - json: "$.id"
+              as: "projectId"
+          expect:
+            - statusCode: 201
+      
+      # Get project
+      - get:
+          url: "/api/projects/{{ projectId }}"
+          headers:
+            Authorization: "Bearer {{ authToken }}"
+          expect:
+            - statusCode: 200
+      
+      # Add measurement
+      - post:
+          url: "/api/projects/{{ projectId }}/measurements"
+          headers:
+            Authorization: "Bearer {{ authToken }}"
+          json:
+            name: "Load Test Measurement"
+            type: "area"
+            quantity: 500
+            unit: "SF"
+            unitCost: 10.00
+          capture:
+            - json: "$.id"
+              as: "measurementId"
+          expect:
+            - statusCode: 201
+      
+      # Update project
+      - patch:
+          url: "/api/projects/{{ projectId }}"
+          headers:
+            Authorization: "Bearer {{ authToken }}"
+          json:
+            status: "in_progress"
+          expect:
+            - statusCode: 200
+      
+      # Delete measurement
+      - delete:
+          url: "/api/projects/{{ projectId }}/measurements/{{ measurementId }}"
+          headers:
+            Authorization: "Bearer {{ authToken }}"
+          expect:
+            - statusCode: 200
+
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # SCENARIO 4: Heavy Read Operations (20% of traffic)
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  - name: "Heavy Reads"
+    weight: 20
+    flow:
+      - post:
+          url: "/api/auth/login"
+          json:
+            email: "loadtest-user@test.jocstudio.com"
+            password: "LoadTest123!"
+          capture:
+            - json: "$.token"
+              as: "authToken"
+      
+      # Multiple project list requests
+      - loop:
+          - get:
+              url: "/api/projects?page={{ $loopCount }}&limit=20"
+              headers:
+                Authorization: "Bearer {{ authToken }}"
+              expect:
+                - statusCode: 200
+        count: 5
+      
+      # Search requests
+      - get:
+          url: "/api/projects?search=test"
+          headers:
+            Authorization: "Bearer {{ authToken }}"
+          expect:
+            - statusCode: 200
+      
+      - get:
+          url: "/api/projects?status=in_progress"
+          headers:
+            Authorization: "Bearer {{ authToken }}"
+          expect:
+            - statusCode: 200
+
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# SEPARATE FILE UPLOAD TEST
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# File uploads are tested separately due to their resource-intensive nature
+# Run with: artillery run load/file-upload-load.yml
