@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JOCHero Mission Control</title>
+    <title>JOCstudio Mission Control</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
@@ -186,8 +186,8 @@
                 JOC
             </div>
             <div>
-                <h1 class="text-2xl lg:text-3xl font-bold glow-text">JOCHero Mission Control</h1>
-                <p class="text-gray-400 text-sm">Become a JOC Hero | The only takeoff software built for JOC</p>
+                <h1 class="text-2xl lg:text-3xl font-bold glow-text">JOCstudio Mission Control</h1>
+                <p class="text-gray-400 text-sm">The only takeoff software built for JOC</p>
             </div>
         </div>
         <div class="flex items-center gap-6">
@@ -432,15 +432,15 @@
             <div>
                 <h4 class="text-xs text-gray-500 uppercase mb-2 font-semibold">Business</h4>
                 <div class="grid grid-cols-2 gap-2">
-                    <a href="https://github.com/Doug61287/jochero/blob/main/business/plan-premium.md" target="_blank" class="quick-link">
+                    <a href="https://github.com/Doug61287/jocstudio/blob/main/business/plan-premium.md" target="_blank" class="quick-link">
                         <span class="text-xl">📄</span>
                         <span class="text-xs">Biz Plan</span>
                     </a>
-                    <a href="https://github.com/Doug61287/jochero/blob/main/memory/jochero-gtm-strategy.md" target="_blank" class="quick-link">
+                    <a href="https://github.com/Doug61287/jocstudio/blob/main/memory/jocstudio-gtm-strategy.md" target="_blank" class="quick-link">
                         <span class="text-xl">💰</span>
                         <span class="text-xs">GTM Strategy</span>
                     </a>
-                    <a href="https://github.com/Doug61287/jochero/blob/main/memory/jochero-unit-economics.md" target="_blank" class="quick-link col-span-2">
+                    <a href="https://github.com/Doug61287/jocstudio/blob/main/memory/jocstudio-unit-economics.md" target="_blank" class="quick-link col-span-2">
                         <span class="text-xl">📈</span>
                         <span class="text-xs">Financial Model</span>
                     </a>
@@ -450,15 +450,15 @@
             <div>
                 <h4 class="text-xs text-gray-500 uppercase mb-2 font-semibold">Marketing</h4>
                 <div class="grid grid-cols-2 gap-2">
-                    <a href="https://github.com/Doug61287/jochero/blob/main/notion-import/content-calendar.csv" target="_blank" class="quick-link">
+                    <a href="https://github.com/Doug61287/jocstudio/blob/main/notion-import/content-calendar.csv" target="_blank" class="quick-link">
                         <span class="text-xl">📝</span>
                         <span class="text-xs">Calendar</span>
                     </a>
-                    <a href="https://github.com/Doug61287/jochero/blob/main/marketing/lead-magnets/nyc-hhc-fp-cheat-sheet.html" target="_blank" class="quick-link">
+                    <a href="https://github.com/Doug61287/jocstudio/blob/main/marketing/lead-magnets/nyc-hhc-fp-cheat-sheet.html" target="_blank" class="quick-link">
                         <span class="text-xl">🎁</span>
                         <span class="text-xs">Lead Mag</span>
                     </a>
-                    <a href="https://github.com/Doug61287/jochero/blob/main/docs/first-win-email-sequence.md" target="_blank" class="quick-link col-span-2">
+                    <a href="https://github.com/Doug61287/jocstudio/blob/main/docs/first-win-email-sequence.md" target="_blank" class="quick-link col-span-2">
                         <span class="text-xl">📧</span>
                         <span class="text-xs">Email Templates</span>
                     </a>
@@ -472,11 +472,11 @@
                         <span class="text-xl">📓</span>
                         <span class="text-xs">Notion</span>
                     </a>
-                    <a href="https://github.com/Doug61287/jochero/blob/main/docs/hero-strategy.md" target="_blank" class="quick-link">
+                    <a href="https://github.com/Doug61287/jocstudio/blob/main/docs/hero-strategy.md" target="_blank" class="quick-link">
                         <span class="text-xl">🦸</span>
                         <span class="text-xs">Heroes</span>
                     </a>
-                    <a href="https://github.com/Doug61287/jochero/blob/main/notion-import/tasks.csv" target="_blank" class="quick-link col-span-2">
+                    <a href="https://github.com/Doug61287/jocstudio/blob/main/notion-import/tasks.csv" target="_blank" class="quick-link col-span-2">
                         <span class="text-xl">✅</span>
                         <span class="text-xs">Task List</span>
                     </a>
@@ -795,13 +795,13 @@
         <div class="py-4">
             <i data-lucide="quote" class="w-8 h-8 text-blue-400 mx-auto mb-2 opacity-50"></i>
             <p id="quote" class="text-xl lg:text-2xl font-light italic text-gray-200">"Make them heroes."</p>
-            <div class="text-xs text-gray-500 mt-2">— JOCHero Philosophy</div>
+            <div class="text-xs text-gray-500 mt-2">— JOCstudio Philosophy</div>
         </div>
     </section>
 
     <!-- Footer -->
     <footer class="text-center text-gray-500 text-xs mt-8 pb-4">
-        <p>JOCHero Mission Control v1.0 | Built with 💙 for JOC Heroes</p>
+        <p>JOCstudio Mission Control v1.0 | Built with 💙 for Job Order Contractors</p>
         <p class="mt-1">Last updated: <span id="last-updated"></span></p>
     </footer>
 
@@ -862,7 +862,7 @@
             document.body.style.opacity = 1;
         });
 
-        console.log('🚀 JOCHero Mission Control initialized');
+        console.log('🚀 JOCstudio Mission Control initialized');
         console.log('📊 All systems operational');
     </script>
 </body>

@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JOCHero - Become a JOC Hero | JOC-Native Takeoff Software</title>
-    <meta name="description" content="Become a JOC Hero. Stop translating takeoffs into JOC line items. JOCHero is the only takeoff software built specifically for Job Order Contracts.">
+    <title>JOCstudio - JOC-Native Takeoff Software for Government Contractors</title>
+    <meta name="description" content="Stop translating takeoffs into JOC line items. JOCstudio is the first takeoff software built specifically for Job Order Contracts.">
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
         /* ============================================
@@ -580,7 +580,7 @@
             margin-top: 0.25rem;
         }
 
-        /* JOCHero Way Panel */
+        /* JOCstudio Way Panel */
         .joc-way {
             background: linear-gradient(135deg, #0f172a, #1e293b);
             border-radius: 1rem;
@@ -1999,7 +1999,7 @@
                 <div class="nav-logo-icon">
                     <i data-lucide="ruler" style="width: 20px; height: 20px;"></i>
                 </div>
-                JOCHero
+                JOCstudio
             </a>
             <ul class="nav-links">
                 <li><a href="#demo">Demo</a></li>
@@ -2019,7 +2019,7 @@
         <div class="hero-content">
             <div class="hero-badge">
                 <i data-lucide="badge-check"></i>
-                Become a JOC Hero
+                Trusted by 500+ JOC estimators
             </div>
             <h1>Stop Translating Takeoffs Into <span class="gradient-text">JOC Line Items</span></h1>
             <p class="hero-subtitle">
@@ -2060,7 +2060,7 @@
         <div class="container">
             <div class="demo-header">
                 <h2>See the Difference in Action</h2>
-                <p>Compare the old way of manual estimating versus the JOCHero automated workflow</p>
+                <p>Compare the old way of manual estimating versus the JOCstudio automated workflow</p>
             </div>
 
             <div class="demo-toggle">
@@ -2070,7 +2070,7 @@
                 </button>
                 <button class="demo-toggle-btn active" data-panel="new">
                     <i data-lucide="sparkles" style="width: 16px; height: 16px;"></i>
-                    JOCHero Way
+                    JOCstudio Way
                 </button>
             </div>
 
@@ -2152,7 +2152,7 @@
                     </div>
                 </div>
 
-                <!-- JOCHero Way Panel -->
+                <!-- JOCstudio Way Panel -->
                 <div class="demo-panel active" id="panel-new">
                     <div class="joc-way">
                         <div class="joc-way-header">
@@ -2160,7 +2160,7 @@
                                 <div class="joc-way-logo-icon">
                                     <i data-lucide="ruler" style="width: 20px; height: 20px;"></i>
                                 </div>
-                                <span class="joc-way-logo-text">JOCHero</span>
+                                <span class="joc-way-logo-text">JOCstudio</span>
                             </div>
                             <div class="joc-way-status">Auto-synced</div>
                         </div>
@@ -2419,7 +2419,7 @@
             <div class="solution-header">
                 <span class="solution-label">The Solution</span>
                 <h2>Finally, Takeoff Software That Speaks JOC</h2>
-                <p>JOCHero is purpose-built for Job Order Contracts. No translation, no workarounds, no pain.</p>
+                <p>JOCstudio is purpose-built for Job Order Contracts. No translation, no workarounds, no pain.</p>
             </div>
 
             <div class="features">
@@ -2457,7 +2457,7 @@
                 <div class="comparison-header">
                     <div>Feature</div>
                     <div>Old Way</div>
-                    <div>JOCHero</div>
+                    <div>JOCstudio</div>
                 </div>
                 <div class="comparison-row">
                     <div>Takeoff to line items</div>
@@ -2505,7 +2505,7 @@
                         <i data-lucide="star" style="width: 16px; height: 16px; fill: currentColor;"></i>
                         <i data-lucide="star" style="width: 16px; height: 16px; fill: currentColor;"></i>
                     </div>
-                    <p class="testimonial-text">"I used to spend entire weekends on proposals. Now I knock them out before lunch. JOCHero paid for itself in the first week."</p>
+                    <p class="testimonial-text">"I used to spend entire weekends on proposals. Now I knock them out before lunch. JOCstudio paid for itself in the first week."</p>
                     <div class="testimonial-author">
                         <div class="testimonial-avatar">JT</div>
                         <div>
@@ -2694,7 +2694,7 @@
                         <div style="font-size: 0.75rem; color: var(--gray-400);">but doesn't speak JOC</div>
                     </div>
                     <div class="competitor-price" style="background: var(--blue-50); padding: 1rem; border-radius: 0.5rem; border: 2px solid var(--blue-500);">
-                        <div class="competitor-price-label" style="color: var(--blue-700); font-weight: 600;">JOCHero Pro</div>
+                        <div class="competitor-price-label" style="color: var(--blue-700); font-weight: 600;">JOCstudio Pro</div>
                         <div class="competitor-price-value good" style="font-size: 1.25rem;">$100/mo</div>
                         <div style="font-size: 0.75rem; color: var(--green-600);">JOC-native automation</div>
                     </div>
@@ -2706,7 +2706,7 @@
                 
                 <div class="faq-item">
                     <div class="faq-question">
-                        <span>Why is JOCHero $100/month when Bluebeam is $50?</span>
+                        <span>Why is JOCstudio $100/month when Bluebeam is $50?</span>
                         <i data-lucide="chevron-down" style="width: 20px; height: 20px;"></i>
                     </div>
                     <div class="faq-answer">
@@ -2796,7 +2796,7 @@
                 <div class="nav-logo-icon" style="width: 28px; height: 28px;">
                     <i data-lucide="ruler" style="width: 16px; height: 16px;"></i>
                 </div>
-                JOCHero
+                JOCstudio
             </div>
             <div class="footer-links">
                 <a href="#">Features</a>
@@ -2808,7 +2808,7 @@
                 <a href="#">Terms</a>
             </div>
             <div class="footer-copy">
-                © 2025 JOCHero. All rights reserved.
+                © 2024 JOCstudio. All rights reserved.
             </div>
         </div>
     </footer>

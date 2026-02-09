@@ -1,6 +1,6 @@
-# JOCHero
+# JOCstudio
 
-**Become a JOC Hero. The only takeoff software built for JOC.**
+**The only takeoff software built for JOC.**
 
 ## Product
 - `product/backend/` - Fastify API server (TypeScript, PostgreSQL)
@@ -35,4 +35,4 @@ npm run dev
 API docs at: http://localhost:3000/docs
 
 ---
-Built with ❤️ for JOC Heroes.
+Built with ❤️ for JOC contractors.
