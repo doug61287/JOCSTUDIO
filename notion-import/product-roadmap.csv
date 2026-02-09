@@ -1,0 +1,21 @@
+Feature,Category,Status,Priority,Target Date,Owner,Notes,MVP,Complete
+Landing Page with Premium Pricing,Marketing,Done,High,2026-02-08,Doug,Live with interactive demo,Yes,Yes
+Backend API (Fastify + TypeScript),Backend,Done,High,2026-02-08,Doug,Auth projects measurements files,Yes,Yes
+Database Schema (Prisma),Backend,Done,High,2026-02-08,Doug,PostgreSQL with all tables,Yes,Yes
+Content Strategy + Week 1 Assets,Marketing,Done,High,2026-02-08,Doug,Blog posts video script templates,Yes,Yes
+Business Plan PDF,Business,Done,High,2026-02-08,Doug,45 pages investor-grade,Yes,Yes
+Supabase Integration,Backend,In Progress,High,2026-02-09,Doug,Cloud database connection,Yes,No
+GitHub Repository,DevOps,In Progress,High,2026-02-09,Doug,Code committed and pushed,Yes,No
+Stripe Payment Integration,Backend,Todo,High,2026-02-15,Doug,Subscriptions and billing,Yes,No
+React Frontend Web App,Frontend,Todo,High,2026-02-20,Doug,Connect to backend API,Yes,No
+Team Collaboration (Real-time),Backend,Todo,Medium,2026-03-01,Doug,Socket.io for live editing,No,No
+Organization/Teams Feature,Backend,Todo,Medium,2026-03-15,Doug,Multi-user with permissions,No,No
+Export to Excel/PDF,Product,Todo,Medium,2026-03-01,Doug,Proposal export functionality,Yes,No
+UPB Catalog Search,Product,Todo,Medium,2026-02-25,Doug,Search NYC HHC line items,Yes,No
+Bluebeam Integration,Integrations,Todo,Low,2026-03-30,Doug,Import Bluebeam markups,No,No
+Mobile App (iOS/Android),Mobile,Todo,Low,2026-06-01,Doug,React Native or PWA,No,No
+Advanced Analytics Dashboard,Product,Todo,Low,2026-04-01,Doug,Usage metrics and insights,No,No
+SOC 2 Compliance,Security,Todo,Low,2026-08-01,Doug,Enterprise security certification,No,No
+AI-Powered Line Item Matching,AI,Todo,Low,2026-05-01,Doug,Auto-suggest UPB codes,No,No
+White-Label / Enterprise,Enterprise,Todo,Low,2026-09-01,Doug,Custom branding for large clients,No,No
+On-Premise Deployment,Enterprise,Todo,Low,2026-12-01,Doug,Air-gapped version for government,No,No
