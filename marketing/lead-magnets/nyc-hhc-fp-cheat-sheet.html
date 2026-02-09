@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NYC HHC Fire Protection UPB Quick Reference | JOCstudio</title>
+    <style>
+        @page {
+            size: letter;
+            margin: 0.5in;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            font-size: 11pt;
+            line-height: 1.4;
+            color: #1a1a1a;
+            background: white;
+        }
+        
+        .page {
+            width: 8.5in;
+            min-height: 11in;
+            padding: 0.5in;
+            page-break-after: always;
+            position: relative;
+        }
+        
+        .page:last-child {
+            page-break-after: avoid;
+        }
+        
+        /* Cover Page */
+        .cover {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            background: linear-gradient(135deg, #1E40AF 0%, #3B82F6 100%);
+            color: white;
+        }
+        
+        .cover-badge {
+            background: rgba(255,255,255,0.15);
+            padding: 8px 24px;
+            border-radius: 20px;
+            font-size: 12pt;
+            font-weight: 500;
+            margin-bottom: 40px;
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+        
+        .cover h1 {
+            font-size: 32pt;
+            font-weight: 700;
+            margin-bottom: 16px;
+            line-height: 1.2;
+        }
+        
+        .cover h2 {
+            font-size: 18pt;
+            font-weight: 400;
+            opacity: 0.9;
+            margin-bottom: 40px;
+        }
+        
+        .cover-subtitle {
+            font-size: 14pt;
+            opacity: 0.8;
+            max-width: 500px;
+            margin-bottom: 60px;
+        }
+        
+        .cover-logo {
+            font-size: 24pt;
+            font-weight: 700;
+            letter-spacing: -1px;
+        }
+        
+        .cover-logo span {
+            opacity: 0.7;
+            font-weight: 400;
+        }
+        
+        .cover-footer {
+            position: absolute;
+            bottom: 40px;
+            font-size: 10pt;
+            opacity: 0.7;
+        }
+        
+        /* Content Pages */
+        .content-page {
+            background: white;
+        }
+        
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 12px;
+            border-bottom: 3px solid #1E40AF;
+            margin-bottom: 20px;
+        }
+        
+        .page-header h2 {
+            color: #1E40AF;
+            font-size: 16pt;
+            font-weight: 700;
+        }
+        
+        .page-header .logo {
+            font-size: 12pt;
+            font-weight: 600;
+            color: #1E40AF;
+        }
+        
+        h3 {
+            color: #1E40AF;
+            font-size: 12pt;
+            font-weight: 600;
+            margin: 16px 0 8px 0;
+            padding-bottom: 4px;
+            border-bottom: 1px solid #E5E7EB;
+        }
+        
+        h3:first-of-type {
+            margin-top: 0;
+        }
+        
+        /* Tables */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 12px 0;
+            font-size: 9pt;
+        }
+        
+        th {
+            background: #1E40AF;
+            color: white;
+            padding: 8px 10px;
+            text-align: left;
+            font-weight: 600;
+        }
+        
+        td {
+            padding: 6px 10px;
+            border-bottom: 1px solid #E5E7EB;
+        }
+        
+        tr:nth-child(even) {
+            background: #F8FAFC;
+        }
+        
+        tr:hover {
+            background: #EFF6FF;
+        }
+        
+        .line-item-code {
+            font-family: 'Courier New', monospace;
+            font-weight: 600;
+            color: #1E40AF;
+        }
+        
+        .unit {
+            text-align: center;
+        }
+        
+        .price {
+            text-align: right;
+            font-weight: 600;
+        }
+        
+        /* Coefficient Table */
+        .coef-table {
+            margin: 16px 0;
+        }
+        
+        .coef-table th:last-child,
+        .coef-table td:last-child {
+            text-align: center;
+            font-weight: 700;
+            font-size: 11pt;
+        }
+        
+        .borough-manhattan td:last-child { color: #DC2626; }
+        .borough-bronx td:last-child { color: #EA580C; }
+        .borough-brooklyn td:last-child { color: #1E40AF; }
+        .borough-queens td:last-child { color: #1E40AF; }
+        .borough-staten td:last-child { color: #059669; }
+        
+        /* Info Box */
+        .info-box {
+            background: #EFF6FF;
+            border-left: 4px solid #1E40AF;
+            padding: 12px 16px;
+            margin: 16px 0;
+            font-size: 10pt;
+        }
+        
+        .info-box strong {
+            color: #1E40AF;
+        }
+        
+        .formula-box {
+            background: #FEF3C7;
+            border-left: 4px solid #F59E0B;
+            padding: 12px 16px;
+            margin: 16px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 11pt;
+        }
+        
+        /* Tips Section */
+        .tip {
+            display: flex;
+            gap: 12px;
+            margin: 12px 0;
+            padding: 10px;
+            background: #F8FAFC;
+            border-radius: 6px;
+        }
+        
+        .tip-icon {
+            flex-shrink: 0;
+            width: 24px;
+            height: 24px;
+            background: #1E40AF;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 12pt;
+        }
+        
+        .tip-content {
+            flex: 1;
+        }
+        
+        .tip-title {
+            font-weight: 600;
+            color: #1E40AF;
+            margin-bottom: 4px;
+        }
+        
+        .pitfall {
+            background: #FEF2F2;
+        }
+        
+        .pitfall .tip-icon {
+            background: #DC2626;
+        }
+        
+        .pitfall .tip-title {
+            color: #DC2626;
+        }
+        
+        /* CTA Section */
+        .cta-section {
+            background: linear-gradient(135deg, #1E40AF 0%, #3B82F6 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 24px;
+            text-align: center;
+        }
+        
+        .cta-section h4 {
+            font-size: 14pt;
+            margin-bottom: 8px;
+        }
+        
+        .cta-section p {
+            opacity: 0.9;
+            margin-bottom: 12px;
+            font-size: 10pt;
+        }
+        
+        .cta-url {
+            font-size: 12pt;
+            font-weight: 600;
+            background: rgba(255,255,255,0.2);
+            padding: 8px 20px;
+            border-radius: 4px;
+            display: inline-block;
+        }
+        
+        .qr-placeholder {
+            width: 80px;
+            height: 80px;
+            background: white;
+            margin: 12px auto 0;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 8pt;
+            color: #666;
+        }
+        
+        /* Footer */
+        .page-footer {
+            position: absolute;
+            bottom: 0.5in;
+            left: 0.5in;
+            right: 0.5in;
+            display: flex;
+            justify-content: space-between;
+            font-size: 8pt;
+            color: #6B7280;
+            border-top: 1px solid #E5E7EB;
+            padding-top: 8px;
+        }
+        
+        /* Two Column Layout */
+        .two-col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        
+        @media print {
+            .page {
+                margin: 0;
+                padding: 0.5in;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<!-- COVER PAGE -->
+<div class="page cover">
+    <div class="cover-badge">📥 FREE DOWNLOAD</div>
+    <h1>NYC HHC Fire Protection<br>UPB Quick Reference</h1>
+    <h2>Division 21 Cheat Sheet</h2>
+    <p class="cover-subtitle">
+        The essential reference guide for fire protection contractors bidding NYC Health + Hospitals JOC contracts
+    </p>
+    <div class="cover-logo">JOC<span>studio</span></div>
+    <div class="cover-footer">© 2024 JOCstudio • jocstudio.com</div>
+</div>
+
+<!-- PAGE 1: DIV 21 LINE ITEMS -->
+<div class="page content-page">
+    <div class="page-header">
+        <h2>Division 21: Common Fire Protection Line Items</h2>
+        <div class="logo">JOCstudio</div>
+    </div>
+    
+    <h3>21 05 00 — Common Work Results for Fire Suppression</h3>
+    <table>
+        <thead>
+            <tr>
+                <th style="width: 18%">Line Item</th>
+                <th>Description</th>
+                <th style="width: 12%" class="unit">Unit</th>
+                <th style="width: 15%" class="price">Base Price</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td class="line-item-code">21 05 00.10</td>
+                <td>Mobilization & Demobilization (Fire Protection)</td>
+                <td class="unit">LS</td>
+                <td class="price">$1,850.00</td>
+            </tr>
+            <tr>
+                <td class="line-item-code">21 05 00.20</td>
+                <td>Fire Protection System Drain Down</td>
+                <td class="unit">EA</td>
+                <td class="price">$425.00</td>
+            </tr>
+            <tr>
+                <td class="line-item-code">21 05 00.30</td>
+                <td>Fire Protection System Recharge</td>
+                <td class="unit">EA</td>
+                <td class="price">$375.00</td>
+            </tr>
+            <tr>
+                <td class="line-item-code">21 05 00.40</td>
+                <td>Sleeve & Firestop - 2" to 4" Pipe</td>
+                <td class="unit">EA</td>
+                <td class="price">$185.00</td>
+            </tr>
+            <tr>
+                <td class="line-item-code">21 05 00.50</td>
+                <td>Sleeve & Firestop - 6" to 8" Pipe</td>
+                <td class="unit">EA</td>
+                <td class="price">$275.00</td>
+            </tr>
+        </tbody>
+    </table>
+    
+    <h3>21 10 00 — Water-Based Fire-Suppression Systems</h3>
+    <table>
+        <thead>
+            <tr>
+                <th style="width: 18%">Line Item</th>
+                <th>Description</th>
+                <th style="width: 12%" class="unit">Unit</th>
+                <th style="width: 15%" class="price">Base Price</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td class="line-item-code">21 10 10.10</td>
+                <td>Sprinkler Head, Pendant, Standard Response, 1/2"</td>
+                <td class="unit">EA</td>
+                <td class="price">$85.00</td>
+            </tr>
+            <tr>
+                <td class="line-item-code">21 10 10.20</td>
+                <td>Sprinkler Head, Sidewall, Standard Response, 1/2"</td>
+                <td class="unit">EA</td>
+                <td class="price">$95.00</td>
+            </tr>
+            <tr>
+                <td class="line-item-code">21 10 10.30</td>
+                <td>Sprinkler Head, Concealed, Quick Response, 1/2"</td>
+                <td class="unit">EA</td>
+                <td class="price">$145.00</td>
+            </tr>
+            <tr>
+                <td class="line-item-code">21 10 20.10</td>
+                <td>Black Steel Pipe, Schedule 40, 1" Diameter</td>
+                <td class="unit">LF</td>
+                <td class="price">$18.50</td>
+            </tr>
+            <tr>
+                <td class="line-item-code">21 10 20.20</td>
+                <td>Black Steel Pipe, Schedule 40, 1-1/2" Diameter</td>
+                <td class="unit">LF</td>
+                <td class="price">$24.75</td>
+            </tr>
+            <tr>
+                <td class="line-item-code">21 10 20.30</td>
+                <td>Black Steel Pipe, Schedule 40, 2" Diameter</td>
+                <td class="unit">LF</td>
+                <td class="price">$32.00</td>
+            </tr>
+            <tr>
+                <td class="line-item-code">21 10 20.40</td>
+                <td>Black Steel Pipe, Schedule 40, 4" Diameter</td>
+                <td class="unit">LF</td>
+                <td class="price">$58.50</td>
+            </tr>
+            <tr>
+                <td class="line-item-code">21 10 30.10</td>
+                <td>Sprinkler Valve, Alarm Check, 4"</td>
+                <td class="unit">EA</td>
+                <td class="price">$2,450.00</td>
+            </tr>
+            <tr>
+                <td class="line-item-code">21 10 30.20</td>
+                <td>Sprinkler Valve, OS&Y Gate, 4"</td>
+                <td class="unit">EA</td>
+                <td class="price">$1,875.00</td>
+            </tr>
+            <tr>
+                <td class="line-item-code">21 10 40.10</td>
+                <td>Fire Department Connection, Wall Mount, 2-1/2" x 2-1/2"</td>
+                <td class="unit">EA</td>
+                <td class="price">$1,250.00</td>
+            </tr>
+        </tbody>
+    </table>
+    
+    <h3>21 20 00 — Fire-Extinguishing Systems</h3>
+    <table>
+        <thead>
+            <tr>
+                <th style="width: 18%">Line Item</th>
+                <th>Description</th>
+                <th style="width: 12%" class="unit">Unit</th>
+                <th style="width: 15%" class="price">Base Price</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td class="line-item-code">21 20 10.10</td>
+                <td>Standpipe, Class I, 4" Riser per Floor</td>
+                <td class="unit">EA</td>
+                <td class="price">$3,250.00</td>
+            </tr>
+            <tr>
+                <td class="line-item-code">21 20 10.20</td>
+                <td>Hose Valve, 2-1/2" with Cap & Chain</td>
+                <td class="unit">EA</td>
+                <td class="price">$385.00</td>
+            </tr>
+            <tr>
+                <td class="line-item-code">21 20 20.10</td>
+                <td>Fire Extinguisher Cabinet, Surface Mount</td>
+                <td class="unit">EA</td>
+                <td class="price">$425.00</td>
+            </tr>
+            <tr>
+                <td class="line-item-code">21 20 20.20</td>
+                <td>Fire Extinguisher, ABC Dry Chemical, 10 lb</td>
+                <td class="unit">EA</td>
+                <td class="price">$125.00</td>
+            </tr>
+        </tbody>
+    </table>
+    
+    <div class="info-box">
+        <strong>💡 Pro Tip:</strong> Always verify line items against the current HHC UPB schedule. Prices shown are representative samples — actual contract prices may vary by contract year and schedule version.
+    </div>
+    
+    <div class="page-footer">
+        <span>NYC HHC Fire Protection Quick Reference</span>
+        <span>Page 1 of 3</span>
+        <span>jocstudio.com</span>
+    </div>
+</div>
+
+<!-- PAGE 2: COEFFICIENTS -->
+<div class="page content-page">
+    <div class="page-header">
+        <h2>Borough Coefficients & Application Guide</h2>
+        <div class="logo">JOCstudio</div>
+    </div>
+    
+    <h3>NYC HHC Borough Multipliers</h3>
+    <p style="margin-bottom: 12px; color: #6B7280;">Apply these coefficients to all base UPB prices based on project location:</p>
+    
+    <table class="coef-table">
+        <thead>
+            <tr>
+                <th>Borough</th>
+                <th>Major HHC Facilities</th>
+                <th style="width: 20%">Coefficient</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr class="borough-manhattan">
+                <td><strong>Manhattan</strong></td>
+                <td>Bellevue, Harlem, Metropolitan, Coler</td>
+                <td>1.25</td>
+            </tr>
+            <tr class="borough-bronx">
+                <td><strong>Bronx</strong></td>
+                <td>Jacobi, North Central Bronx, Lincoln</td>
+                <td>1.15</td>
+            </tr>
+            <tr class="borough-brooklyn">
+                <td><strong>Brooklyn</strong></td>
+                <td>Kings County, Woodhull, Coney Island</td>
+                <td>1.10</td>
+            </tr>
+            <tr class="borough-queens">
+                <td><strong>Queens</strong></td>
+                <td>Elmhurst, Queens Hospital Center</td>
+                <td>1.10</td>
+            </tr>
+            <tr class="borough-staten">
+                <td><strong>Staten Island</strong></td>
+                <td>Sea View Hospital</td>
+                <td>1.05</td>
+            </tr>
+        </tbody>
+    </table>
+    
+    <div class="formula-box">
+        <strong>Formula:</strong> Final Price = Base UPB Price × Borough Coefficient × Contract Coefficient
+    </div>
+    
+    <h3>When to Apply Coefficients</h3>
+    
+    <div class="two-col">
+        <div>
+            <div class="tip">
+                <div class="tip-icon">✓</div>
+                <div class="tip-content">
+                    <div class="tip-title">Apply Borough Coefficient When:</div>
+                    <ul style="margin-left: 16px; font-size: 9pt;">
+                        <li>Work is at a specific HHC facility</li>
+                        <li>Location is confirmed in task order</li>
+                        <li>Multiple sites = use primary location</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="tip">
+                <div class="tip-icon">✓</div>
+                <div class="tip-content">
+                    <div class="tip-title">Apply Contract Coefficient When:</div>
+                    <ul style="margin-left: 16px; font-size: 9pt;">
+                        <li>Your JOC contract specifies one</li>
+                        <li>Typically 0.95-1.05 range</li>
+                        <li>Found in contract documents</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <div>
+            <div class="tip pitfall">
+                <div class="tip-icon">✗</div>
+                <div class="tip-content">
+                    <div class="tip-title">Common Mistakes to Avoid:</div>
+                    <ul style="margin-left: 16px; font-size: 9pt;">
+                        <li>Applying coefficient twice</li>
+                        <li>Using wrong borough for facility</li>
+                        <li>Forgetting contract coefficient</li>
+                        <li>Rounding before final calculation</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <h3>Calculation Example</h3>
+    
+    <div class="info-box">
+        <strong>Scenario:</strong> Installing 25 pendant sprinkler heads at Jacobi Medical Center (Bronx)<br><br>
+        <table style="background: white; margin: 8px 0;">
+            <tr>
+                <td style="padding: 4px 8px;">Base Price (21 10 10.10):</td>
+                <td style="padding: 4px 8px; text-align: right;">$85.00 × 25 = $2,125.00</td>
+            </tr>
+            <tr>
+                <td style="padding: 4px 8px;">Borough Coefficient (Bronx):</td>
+                <td style="padding: 4px 8px; text-align: right;">$2,125.00 × 1.15 = $2,443.75</td>
+            </tr>
+            <tr>
+                <td style="padding: 4px 8px;">Contract Coefficient (assume 1.02):</td>
+                <td style="padding: 4px 8px; text-align: right;">$2,443.75 × 1.02 = <strong>$2,492.63</strong></td>
+            </tr>
+        </table>
+    </div>
+    
+    <h3>Understanding Why Coefficients Vary</h3>
+    
+    <table>
+        <thead>
+            <tr>
+                <th>Factor</th>
+                <th>Impact</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><strong>Labor Rates</strong></td>
+                <td>Manhattan has highest prevailing wage requirements; Staten Island lowest</td>
+            </tr>
+            <tr>
+                <td><strong>Access & Logistics</strong></td>
+                <td>Limited parking, loading zones, and tight spaces in Manhattan increase costs</td>
+            </tr>
+            <tr>
+                <td><strong>Material Delivery</strong></td>
+                <td>Bridge/tunnel tolls, delivery windows, and coordination challenges</td>
+            </tr>
+            <tr>
+                <td><strong>Building Complexity</strong></td>
+                <td>Older Manhattan facilities often have more complex existing conditions</td>
+            </tr>
+        </tbody>
+    </table>
+    
+    <div class="page-footer">
+        <span>NYC HHC Fire Protection Quick Reference</span>
+        <span>Page 2 of 3</span>
+        <span>jocstudio.com</span>
+    </div>
+</div>
+
+<!-- PAGE 3: TIPS & CTA -->
+<div class="page content-page">
+    <div class="page-header">
+        <h2>Pro Tips & Common Pitfalls</h2>
+        <div class="logo">JOCstudio</div>
+    </div>
+    
+    <h3>How to Read HHC Schedules Effectively</h3>
+    
+    <div class="tip">
+        <div class="tip-icon">1</div>
+        <div class="tip-content">
+            <div class="tip-title">Start with the Division Summary</div>
+            Before diving into line items, review the Division 21 summary page. It shows all major categories and helps you understand the schedule structure.
+        </div>
+    </div>
+    
+    <div class="tip">
+        <div class="tip-icon">2</div>
+        <div class="tip-content">
+            <div class="tip-title">Match Specifications Exactly</div>
+            HHC line items are specific. "Schedule 40" is different from "Schedule 10." "1/2" NPT" is different from "1/2" grooved." Get the specs right.
+        </div>
+    </div>
+    
+    <div class="tip">
+        <div class="tip-icon">3</div>
+        <div class="tip-content">
+            <div class="tip-title">Check for Bundled vs. Separate Items</div>
+            Some line items include labor + material, others are material-only with separate installation. Read the full description carefully.
+        </div>
+    </div>
+    
+    <div class="tip">
+        <div class="tip-icon">4</div>
+        <div class="tip-content">
+            <div class="tip-title">Use the Index & Search</div>
+            The UPB PDF is searchable. Use Ctrl+F to find items quickly. Search by CSI number (21 10 XX) or keyword.
+        </div>
+    </div>
+    
+    <h3>Common Pitfalls to Avoid</h3>
+    
+    <div class="two-col">
+        <div>
+            <div class="tip pitfall">
+                <div class="tip-icon">!</div>
+                <div class="tip-content">
+                    <div class="tip-title">Wrong Line Item Selection</div>
+                    Using "pipe replacement" when you should use "new installation" — they're priced differently.
+                </div>
+            </div>
+            
+            <div class="tip pitfall">
+                <div class="tip-icon">!</div>
+                <div class="tip-content">
+                    <div class="tip-title">Missing Support Items</div>
+                    Forgot hangers, firestops, or drain/fill valves? They add up fast.
+                </div>
+            </div>
+            
+            <div class="tip pitfall">
+                <div class="tip-icon">!</div>
+                <div class="tip-content">
+                    <div class="tip-title">Underestimating Fittings</div>
+                    Rule of thumb: fittings = 15-25% of pipe cost. Don't forget elbows, tees, and couplings.
+                </div>
+            </div>
+        </div>
+        
+        <div>
+            <div class="tip pitfall">
+                <div class="tip-icon">!</div>
+                <div class="tip-content">
+                    <div class="tip-title">Ignoring Existing Conditions</div>
+                    Working in occupied hospital? Add time for infection control, off-hours work, coordination.
+                </div>
+            </div>
+            
+            <div class="tip pitfall">
+                <div class="tip-icon">!</div>
+                <div class="tip-content">
+                    <div class="tip-title">Skipping System Drain/Recharge</div>
+                    Every modification requires drain down and recharge. Don't forget these line items.
+                </div>
+            </div>
+            
+            <div class="tip pitfall">
+                <div class="tip-icon">!</div>
+                <div class="tip-content">
+                    <div class="tip-title">No Mobilization</div>
+                    Even small jobs need mob/demob. Include it in every proposal.
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <h3>Quick Reference Formulas</h3>
+    
+    <table>
+        <thead>
+            <tr>
+                <th>Estimate</th>
+                <th>Quick Formula</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Fittings Budget</td>
+                <td>Pipe cost × 0.20 (20% of total pipe)</td>
+            </tr>
+            <tr>
+                <td>Hangers (horizontal pipe)</td>
+                <td>1 hanger per 10 LF of pipe</td>
+            </tr>
+            <tr>
+                <td>Firestops</td>
+                <td>Count floor/wall penetrations + 10% contingency</td>
+            </tr>
+            <tr>
+                <td>Sprinkler coverage</td>
+                <td>1 head per 130-200 SF (light hazard)</td>
+            </tr>
+        </tbody>
+    </table>
+    
+    <div class="cta-section">
+        <h4>Tired of Manual JOC Estimating?</h4>
+        <p>JOCstudio automates takeoff, line item mapping, and coefficient calculation.<br>Turn 8-hour estimates into 90-minute proposals.</p>
+        <div class="cta-url">jocstudio.com</div>
+        <div class="qr-placeholder">[QR Code]</div>
+    </div>
+    
+    <div class="page-footer">
+        <span>NYC HHC Fire Protection Quick Reference</span>
+        <span>Page 3 of 3</span>
+        <span>jocstudio.com</span>
+    </div>
+</div>
+
+</body>
+</html>

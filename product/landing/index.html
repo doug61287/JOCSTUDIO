@@ -1,0 +1,3023 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JOCstudio - JOC-Native Takeoff Software for Government Contractors</title>
+    <meta name="description" content="Stop translating takeoffs into JOC line items. JOCstudio is the first takeoff software built specifically for Job Order Contracts.">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        /* ============================================
+           CSS RESET & BASE STYLES
+           ============================================ */
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            /* Trust Blue Theme */
+            --blue-900: #1E3A8A;
+            --blue-800: #1E40AF;
+            --blue-700: #1D4ED8;
+            --blue-600: #2563EB;
+            --blue-500: #3B82F6;
+            --blue-400: #60A5FA;
+            --blue-100: #DBEAFE;
+            --blue-50: #EFF6FF;
+            
+            /* Neutrals */
+            --gray-900: #111827;
+            --gray-800: #1F2937;
+            --gray-700: #374151;
+            --gray-600: #4B5563;
+            --gray-500: #6B7280;
+            --gray-400: #9CA3AF;
+            --gray-300: #D1D5DB;
+            --gray-200: #E5E7EB;
+            --gray-100: #F3F4F6;
+            --gray-50: #F9FAFB;
+            --white: #FFFFFF;
+            
+            /* Accent Colors */
+            --green-500: #22C55E;
+            --green-100: #DCFCE7;
+            --red-500: #EF4444;
+            --red-100: #FEE2E2;
+            --yellow-500: #EAB308;
+            --yellow-100: #FEF9C3;
+            --orange-500: #F97316;
+            
+            /* Shadows */
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+            --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+            --shadow-2xl: 0 25px 50px -12px rgb(0 0 0 / 0.25);
+            
+            /* Spacing */
+            --section-padding: 5rem 1.5rem;
+            --container-max: 1200px;
+            
+            /* Transitions */
+            --transition-fast: 150ms ease;
+            --transition-normal: 250ms ease;
+            --transition-slow: 350ms ease;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            line-height: 1.6;
+            color: var(--gray-800);
+            background: var(--white);
+        }
+
+        /* ============================================
+           UTILITY CLASSES
+           ============================================ */
+        .container {
+            max-width: var(--container-max);
+            margin: 0 auto;
+            padding: 0 1.5rem;
+        }
+
+        .section {
+            padding: var(--section-padding);
+        }
+
+        .text-center { text-align: center; }
+        .text-left { text-align: left; }
+
+        .gradient-text {
+            background: linear-gradient(135deg, var(--blue-600), var(--blue-800));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* ============================================
+           BUTTONS
+           ============================================ */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.875rem 1.75rem;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 0.5rem;
+            border: none;
+            cursor: pointer;
+            transition: all var(--transition-normal);
+            text-decoration: none;
+            white-space: nowrap;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--blue-600), var(--blue-700));
+            color: var(--white);
+            box-shadow: var(--shadow-md), 0 0 0 0 rgba(37, 99, 235, 0.5);
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, var(--blue-700), var(--blue-800));
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg), 0 0 20px rgba(37, 99, 235, 0.3);
+        }
+
+        .btn-secondary {
+            background: var(--white);
+            color: var(--blue-700);
+            border: 2px solid var(--blue-200);
+        }
+
+        .btn-secondary:hover {
+            background: var(--blue-50);
+            border-color: var(--blue-400);
+            transform: translateY(-2px);
+        }
+
+        .btn-lg {
+            padding: 1rem 2rem;
+            font-size: 1.125rem;
+        }
+
+        .btn-sm {
+            padding: 0.5rem 1rem;
+            font-size: 0.875rem;
+        }
+
+        /* ============================================
+           NAVIGATION
+           ============================================ */
+        .nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--gray-200);
+            transition: all var(--transition-normal);
+        }
+
+        .nav.scrolled {
+            box-shadow: var(--shadow-md);
+        }
+
+        .nav-inner {
+            max-width: var(--container-max);
+            margin: 0 auto;
+            padding: 1rem 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--blue-800);
+            text-decoration: none;
+        }
+
+        .nav-logo-icon {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, var(--blue-600), var(--blue-800));
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+
+        .nav-links {
+            display: none;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            color: var(--gray-600);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color var(--transition-fast);
+        }
+
+        .nav-links a:hover {
+            color: var(--blue-700);
+        }
+
+        .nav-cta {
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        .nav-cta .btn-secondary {
+            display: none;
+        }
+
+        @media (min-width: 768px) {
+            .nav-links {
+                display: flex;
+            }
+            .nav-cta .btn-secondary {
+                display: inline-flex;
+            }
+        }
+
+        /* ============================================
+           HERO SECTION
+           ============================================ */
+        .hero {
+            padding: 8rem 1.5rem 5rem;
+            background: linear-gradient(180deg, var(--blue-50) 0%, var(--white) 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 200%;
+            height: 100%;
+            background: radial-gradient(ellipse at center top, rgba(59, 130, 246, 0.1) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .hero-content {
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: var(--green-100);
+            color: var(--green-500);
+            border-radius: 100px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            animation: fadeInUp 0.6s ease;
+        }
+
+        .hero-badge i {
+            width: 16px;
+            height: 16px;
+        }
+
+        .hero h1 {
+            font-size: clamp(2.25rem, 5vw, 3.5rem);
+            font-weight: 800;
+            line-height: 1.1;
+            color: var(--gray-900);
+            margin-bottom: 1.5rem;
+            animation: fadeInUp 0.6s ease 0.1s both;
+        }
+
+        .hero-subtitle {
+            font-size: clamp(1.125rem, 2vw, 1.375rem);
+            color: var(--gray-600);
+            margin-bottom: 2.5rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            animation: fadeInUp 0.6s ease 0.2s both;
+        }
+
+        .hero-cta {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            justify-content: center;
+            margin-bottom: 2.5rem;
+            animation: fadeInUp 0.6s ease 0.3s both;
+        }
+
+        @media (min-width: 480px) {
+            .hero-cta {
+                flex-direction: row;
+            }
+        }
+
+        .hero-trust {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            color: var(--gray-500);
+            font-size: 0.875rem;
+            animation: fadeInUp 0.6s ease 0.4s both;
+        }
+
+        .hero-trust-avatars {
+            display: flex;
+        }
+
+        .hero-trust-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            border: 2px solid var(--white);
+            margin-left: -8px;
+            background: linear-gradient(135deg, var(--blue-400), var(--blue-600));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .hero-trust-avatar:first-child {
+            margin-left: 0;
+        }
+
+        .hero-trust-stars {
+            display: flex;
+            gap: 2px;
+            color: var(--yellow-500);
+        }
+
+        /* ============================================
+           DEMO SECTION (CRITICAL - BEAUTIFUL)
+           ============================================ */
+        .demo {
+            padding: 5rem 1.5rem;
+            background: var(--gray-900);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .demo::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: 
+                radial-gradient(ellipse at 20% 50%, rgba(30, 64, 175, 0.3) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 50%, rgba(59, 130, 246, 0.2) 0%, transparent 50%);
+            pointer-events: none;
+        }
+
+        .demo-header {
+            text-align: center;
+            margin-bottom: 3rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .demo-header h2 {
+            font-size: clamp(1.75rem, 4vw, 2.5rem);
+            font-weight: 700;
+            color: var(--white);
+            margin-bottom: 1rem;
+        }
+
+        .demo-header p {
+            color: var(--gray-400);
+            font-size: 1.125rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Before/After Toggle */
+        .demo-toggle {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .demo-toggle-btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all var(--transition-normal);
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--gray-400);
+        }
+
+        .demo-toggle-btn.active {
+            background: var(--blue-600);
+            color: var(--white);
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.5);
+        }
+
+        .demo-toggle-btn:hover:not(.active) {
+            background: rgba(255, 255, 255, 0.2);
+            color: var(--white);
+        }
+
+        /* Demo Container */
+        .demo-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        .demo-panel {
+            display: none;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .demo-panel.active {
+            display: block;
+        }
+
+        /* Old Way Panel */
+        .old-way {
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            border-radius: 1rem;
+            padding: 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .old-way-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .old-way-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--red-500);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+
+        .old-way-title {
+            color: var(--white);
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+
+        .old-way-subtitle {
+            color: var(--gray-400);
+            font-size: 0.875rem;
+        }
+
+        /* Excel Chaos Mockup */
+        .excel-chaos {
+            background: #1e4620;
+            border-radius: 0.5rem;
+            overflow: hidden;
+            font-family: 'Courier New', monospace;
+            font-size: 0.75rem;
+        }
+
+        .excel-toolbar {
+            background: #2d5a30;
+            padding: 0.5rem 1rem;
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .excel-toolbar span {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .excel-grid {
+            display: grid;
+            grid-template-columns: 40px repeat(6, 1fr);
+            color: var(--white);
+        }
+
+        .excel-cell {
+            padding: 0.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            min-height: 32px;
+            display: flex;
+            align-items: center;
+        }
+
+        .excel-cell.header {
+            background: rgba(0, 0, 0, 0.3);
+            font-weight: 600;
+            text-align: center;
+            justify-content: center;
+        }
+
+        .excel-cell.row-num {
+            background: rgba(0, 0, 0, 0.2);
+            justify-content: center;
+        }
+
+        .excel-cell.error {
+            background: rgba(239, 68, 68, 0.3);
+            color: #fca5a5;
+        }
+
+        .excel-cell.warning {
+            background: rgba(234, 179, 8, 0.3);
+            color: #fde047;
+        }
+
+        .excel-cell.long-text {
+            font-size: 0.65rem;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .old-way-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .old-way-stat {
+            text-align: center;
+            padding: 1rem;
+            background: rgba(239, 68, 68, 0.1);
+            border-radius: 0.5rem;
+            border: 1px solid rgba(239, 68, 68, 0.2);
+        }
+
+        .old-way-stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--red-500);
+        }
+
+        .old-way-stat-label {
+            font-size: 0.75rem;
+            color: var(--gray-400);
+            margin-top: 0.25rem;
+        }
+
+        /* JOCstudio Way Panel */
+        .joc-way {
+            background: linear-gradient(135deg, #0f172a, #1e293b);
+            border-radius: 1rem;
+            overflow: hidden;
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            box-shadow: 0 0 40px rgba(59, 130, 246, 0.2);
+        }
+
+        .joc-way-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1.5rem 2rem;
+            background: rgba(59, 130, 246, 0.1);
+            border-bottom: 1px solid rgba(59, 130, 246, 0.2);
+        }
+
+        .joc-way-logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .joc-way-logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--blue-500), var(--blue-700));
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+
+        .joc-way-logo-text {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--white);
+        }
+
+        .joc-way-status {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: rgba(34, 197, 94, 0.2);
+            border-radius: 100px;
+            color: var(--green-500);
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .joc-way-status::before {
+            content: '';
+            width: 8px;
+            height: 8px;
+            background: var(--green-500);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        /* Interactive Demo Steps */
+        .joc-demo-content {
+            padding: 2rem;
+        }
+
+        .demo-steps {
+            display: grid;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .demo-step {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            padding: 1.25rem;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 0.75rem;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            cursor: pointer;
+            transition: all var(--transition-normal);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .demo-step::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: var(--gray-700);
+            transition: all var(--transition-normal);
+        }
+
+        .demo-step:hover {
+            background: rgba(59, 130, 246, 0.1);
+            border-color: rgba(59, 130, 246, 0.3);
+        }
+
+        .demo-step.active {
+            background: rgba(59, 130, 246, 0.15);
+            border-color: rgba(59, 130, 246, 0.4);
+        }
+
+        .demo-step.active::before {
+            background: var(--blue-500);
+            box-shadow: 0 0 10px var(--blue-500);
+        }
+
+        .demo-step.completed::before {
+            background: var(--green-500);
+        }
+
+        .demo-step-number {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--gray-700);
+            color: var(--gray-400);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 0.875rem;
+            flex-shrink: 0;
+            transition: all var(--transition-normal);
+        }
+
+        .demo-step.active .demo-step-number {
+            background: var(--blue-600);
+            color: var(--white);
+        }
+
+        .demo-step.completed .demo-step-number {
+            background: var(--green-500);
+            color: var(--white);
+        }
+
+        .demo-step-content h4 {
+            color: var(--white);
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .demo-step-content p {
+            color: var(--gray-400);
+            font-size: 0.875rem;
+        }
+
+        .demo-step-icon {
+            margin-left: auto;
+            color: var(--gray-600);
+            transition: all var(--transition-normal);
+        }
+
+        .demo-step.active .demo-step-icon {
+            color: var(--blue-400);
+        }
+
+        .demo-step.completed .demo-step-icon {
+            color: var(--green-500);
+        }
+
+        /* Demo Preview Area */
+        .demo-preview {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            min-height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .demo-preview-content {
+            width: 100%;
+            animation: fadeIn 0.4s ease;
+        }
+
+        /* Step 1: PDF Upload */
+        .upload-zone {
+            border: 2px dashed var(--blue-500);
+            border-radius: 0.75rem;
+            padding: 2rem;
+            text-align: center;
+            transition: all var(--transition-normal);
+            cursor: pointer;
+        }
+
+        .upload-zone:hover {
+            background: rgba(59, 130, 246, 0.1);
+            border-color: var(--blue-400);
+        }
+
+        .upload-zone.uploading {
+            background: rgba(59, 130, 246, 0.15);
+            border-style: solid;
+        }
+
+        .upload-icon {
+            width: 48px;
+            height: 48px;
+            margin: 0 auto 1rem;
+            color: var(--blue-500);
+        }
+
+        .upload-text {
+            color: var(--white);
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .upload-hint {
+            color: var(--gray-500);
+            font-size: 0.875rem;
+        }
+
+        .upload-progress {
+            margin-top: 1rem;
+            display: none;
+        }
+
+        .upload-zone.uploading .upload-progress {
+            display: block;
+        }
+
+        .progress-bar {
+            height: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--blue-500), var(--blue-400));
+            border-radius: 2px;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        /* Step 2: Measure */
+        .measure-demo {
+            position: relative;
+        }
+
+        .measure-canvas {
+            width: 100%;
+            aspect-ratio: 16/9;
+            background: linear-gradient(135deg, #2a2a3a, #1a1a2a);
+            border-radius: 0.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .measure-floor-plan {
+            position: absolute;
+            inset: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .measure-room {
+            position: absolute;
+            border: 2px solid var(--blue-400);
+            background: rgba(59, 130, 246, 0.1);
+        }
+
+        .measure-room-1 {
+            top: 10%;
+            left: 10%;
+            width: 35%;
+            height: 40%;
+        }
+
+        .measure-room-2 {
+            top: 10%;
+            right: 10%;
+            width: 35%;
+            height: 40%;
+        }
+
+        .measure-room-3 {
+            bottom: 10%;
+            left: 10%;
+            width: 80%;
+            height: 35%;
+        }
+
+        .measure-point {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            background: var(--blue-500);
+            border: 2px solid var(--white);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            cursor: pointer;
+            z-index: 10;
+            animation: pointPulse 2s infinite;
+        }
+
+        .measure-line {
+            position: absolute;
+            height: 2px;
+            background: var(--blue-400);
+            transform-origin: left center;
+            z-index: 5;
+        }
+
+        .measure-label {
+            position: absolute;
+            background: var(--blue-600);
+            color: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            transform: translate(-50%, -50%);
+            white-space: nowrap;
+        }
+
+        .measure-cursor {
+            position: absolute;
+            width: 24px;
+            height: 24px;
+            border: 2px solid var(--blue-400);
+            border-radius: 50%;
+            pointer-events: none;
+            animation: cursorMove 4s ease-in-out infinite;
+        }
+
+        @keyframes cursorMove {
+            0%, 100% { top: 20%; left: 15%; }
+            25% { top: 20%; left: 42%; }
+            50% { top: 47%; left: 42%; }
+            75% { top: 47%; left: 15%; }
+        }
+
+        @keyframes pointPulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.5); }
+            50% { box-shadow: 0 0 0 8px rgba(59, 130, 246, 0); }
+        }
+
+        /* Step 3: Auto Line Items */
+        .line-items-demo {
+            max-height: 300px;
+            overflow: hidden;
+        }
+
+        .line-items-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.8rem;
+        }
+
+        .line-items-table th {
+            background: rgba(59, 130, 246, 0.2);
+            color: var(--blue-400);
+            padding: 0.75rem;
+            text-align: left;
+            font-weight: 600;
+            position: sticky;
+            top: 0;
+        }
+
+        .line-items-table td {
+            padding: 0.75rem;
+            color: var(--gray-300);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .line-items-table tr {
+            transition: all var(--transition-fast);
+        }
+
+        .line-items-table tr:hover {
+            background: rgba(59, 130, 246, 0.1);
+        }
+
+        .line-items-table tr.adding {
+            animation: rowSlideIn 0.4s ease;
+        }
+
+        @keyframes rowSlideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+                background: rgba(59, 130, 246, 0.3);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+                background: transparent;
+            }
+        }
+
+        .line-item-code {
+            font-family: monospace;
+            color: var(--blue-400);
+            font-weight: 600;
+        }
+
+        .line-item-qty {
+            color: var(--green-500);
+            font-weight: 600;
+        }
+
+        /* Step 4: Export */
+        .export-demo {
+            text-align: center;
+        }
+
+        .export-success {
+            margin-bottom: 1.5rem;
+        }
+
+        .export-success-icon {
+            width: 64px;
+            height: 64px;
+            background: var(--green-500);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            animation: successPop 0.5s ease;
+        }
+
+        @keyframes successPop {
+            0% { transform: scale(0); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+
+        .export-success-icon i {
+            color: white;
+            width: 32px;
+            height: 32px;
+        }
+
+        .export-success h4 {
+            color: var(--white);
+            font-size: 1.25rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .export-success p {
+            color: var(--gray-400);
+        }
+
+        .export-files {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .export-file {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 1rem 1.5rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: all var(--transition-normal);
+        }
+
+        .export-file:hover {
+            background: rgba(59, 130, 246, 0.1);
+            border-color: var(--blue-500);
+        }
+
+        .export-file-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--blue-600);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+
+        .export-file-info {
+            text-align: left;
+        }
+
+        .export-file-name {
+            color: var(--white);
+            font-weight: 600;
+            font-size: 0.875rem;
+        }
+
+        .export-file-size {
+            color: var(--gray-500);
+            font-size: 0.75rem;
+        }
+
+        /* JOC Way Stats */
+        .joc-way-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            padding: 1.5rem 2rem;
+            background: rgba(34, 197, 94, 0.1);
+            border-top: 1px solid rgba(34, 197, 94, 0.2);
+        }
+
+        .joc-way-stat {
+            text-align: center;
+        }
+
+        .joc-way-stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--green-500);
+        }
+
+        .joc-way-stat-label {
+            font-size: 0.75rem;
+            color: var(--gray-400);
+            margin-top: 0.25rem;
+        }
+
+        /* ============================================
+           PROBLEM SECTION
+           ============================================ */
+        .problem {
+            padding: 5rem 1.5rem;
+            background: var(--white);
+        }
+
+        .problem-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .problem-label {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            background: var(--red-100);
+            color: var(--red-500);
+            border-radius: 100px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .problem-header h2 {
+            font-size: clamp(1.75rem, 4vw, 2.5rem);
+            font-weight: 700;
+            color: var(--gray-900);
+            margin-bottom: 1rem;
+        }
+
+        .problem-header p {
+            color: var(--gray-600);
+            font-size: 1.125rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .problem-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .problem-stat {
+            text-align: center;
+            padding: 2rem;
+            background: var(--gray-50);
+            border-radius: 1rem;
+            border: 1px solid var(--gray-200);
+        }
+
+        .problem-stat-value {
+            font-size: 3rem;
+            font-weight: 800;
+            color: var(--red-500);
+            line-height: 1;
+        }
+
+        .problem-stat-label {
+            color: var(--gray-600);
+            margin-top: 0.5rem;
+            font-weight: 500;
+        }
+
+        .problem-points {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .problem-point {
+            display: flex;
+            gap: 1rem;
+            padding: 1.5rem;
+            background: var(--gray-50);
+            border-radius: 0.75rem;
+            border: 1px solid var(--gray-200);
+        }
+
+        .problem-point-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--red-100);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--red-500);
+            flex-shrink: 0;
+        }
+
+        .problem-point h4 {
+            font-weight: 600;
+            color: var(--gray-900);
+            margin-bottom: 0.25rem;
+        }
+
+        .problem-point p {
+            color: var(--gray-600);
+            font-size: 0.875rem;
+        }
+
+        /* ============================================
+           SOLUTION SECTION
+           ============================================ */
+        .solution {
+            padding: 5rem 1.5rem;
+            background: linear-gradient(180deg, var(--blue-50) 0%, var(--white) 100%);
+        }
+
+        .solution-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .solution-label {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            background: var(--green-100);
+            color: var(--green-500);
+            border-radius: 100px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .solution-header h2 {
+            font-size: clamp(1.75rem, 4vw, 2.5rem);
+            font-weight: 700;
+            color: var(--gray-900);
+            margin-bottom: 1rem;
+        }
+
+        .solution-header p {
+            color: var(--gray-600);
+            font-size: 1.125rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .feature {
+            padding: 2rem;
+            background: var(--white);
+            border-radius: 1rem;
+            border: 1px solid var(--gray-200);
+            text-align: center;
+            transition: all var(--transition-normal);
+        }
+
+        .feature:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--blue-300);
+        }
+
+        .feature-icon {
+            width: 64px;
+            height: 64px;
+            background: linear-gradient(135deg, var(--blue-500), var(--blue-700));
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            margin: 0 auto 1.5rem;
+        }
+
+        .feature h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--gray-900);
+            margin-bottom: 0.5rem;
+        }
+
+        .feature p {
+            color: var(--gray-600);
+            font-size: 0.9375rem;
+        }
+
+        /* Comparison Table */
+        .comparison {
+            max-width: 800px;
+            margin: 0 auto;
+            overflow: hidden;
+            border-radius: 1rem;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .comparison-header {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            background: var(--gray-900);
+        }
+
+        .comparison-header > div {
+            padding: 1rem;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .comparison-header > div:first-child {
+            background: transparent;
+            color: var(--gray-400);
+        }
+
+        .comparison-header > div:nth-child(2) {
+            background: var(--red-500);
+            color: white;
+        }
+
+        .comparison-header > div:nth-child(3) {
+            background: var(--green-500);
+            color: white;
+        }
+
+        .comparison-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            background: var(--white);
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        .comparison-row:last-child {
+            border-bottom: none;
+        }
+
+        .comparison-row > div {
+            padding: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .comparison-row > div:first-child {
+            justify-content: flex-start;
+            font-weight: 500;
+            color: var(--gray-700);
+            padding-left: 1.5rem;
+        }
+
+        .comparison-icon-bad {
+            color: var(--red-500);
+        }
+
+        .comparison-icon-good {
+            color: var(--green-500);
+        }
+
+        /* ============================================
+           SOCIAL PROOF SECTION
+           ============================================ */
+        .social-proof {
+            padding: 5rem 1.5rem;
+            background: var(--white);
+        }
+
+        .social-proof-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .social-proof-header h2 {
+            font-size: clamp(1.75rem, 4vw, 2.5rem);
+            font-weight: 700;
+            color: var(--gray-900);
+            margin-bottom: 0.5rem;
+        }
+
+        .social-proof-header p {
+            color: var(--gray-600);
+        }
+
+        .testimonials {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .testimonial {
+            padding: 2rem;
+            background: var(--gray-50);
+            border-radius: 1rem;
+            border: 1px solid var(--gray-200);
+        }
+
+        .testimonial-stars {
+            display: flex;
+            gap: 2px;
+            color: var(--yellow-500);
+            margin-bottom: 1rem;
+        }
+
+        .testimonial-text {
+            font-size: 1rem;
+            color: var(--gray-700);
+            line-height: 1.7;
+            margin-bottom: 1.5rem;
+        }
+
+        .testimonial-author {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .testimonial-avatar {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, var(--blue-400), var(--blue-600));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+        }
+
+        .testimonial-author-name {
+            font-weight: 600;
+            color: var(--gray-900);
+        }
+
+        .testimonial-author-title {
+            font-size: 0.875rem;
+            color: var(--gray-500);
+        }
+
+        /* Agency Logos */
+        .agency-logos {
+            text-align: center;
+        }
+
+        .agency-logos-label {
+            color: var(--gray-500);
+            font-size: 0.875rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .agency-logos-grid {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .agency-logo {
+            padding: 1rem 2rem;
+            background: var(--gray-100);
+            border-radius: 0.5rem;
+            color: var(--gray-500);
+            font-weight: 600;
+            font-size: 0.875rem;
+            transition: all var(--transition-normal);
+        }
+
+        .agency-logo:hover {
+            background: var(--gray-200);
+            color: var(--gray-700);
+        }
+
+        /* ============================================
+           PRICING SECTION
+           ============================================ */
+        .pricing {
+            padding: 5rem 1.5rem;
+            background: linear-gradient(180deg, var(--gray-50) 0%, var(--white) 100%);
+        }
+
+        .pricing-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .pricing-header h2 {
+            font-size: clamp(1.75rem, 4vw, 2.5rem);
+            font-weight: 700;
+            color: var(--gray-900);
+            margin-bottom: 0.5rem;
+        }
+
+        .pricing-header p {
+            color: var(--gray-600);
+            margin-bottom: 1.5rem;
+        }
+
+        /* Billing Toggle */
+        .billing-toggle {
+            display: inline-flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.5rem;
+            background: var(--gray-100);
+            border-radius: 100px;
+        }
+
+        .billing-option {
+            padding: 0.5rem 1.25rem;
+            border-radius: 100px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all var(--transition-normal);
+            color: var(--gray-500);
+        }
+
+        .billing-option.active {
+            background: var(--white);
+            color: var(--gray-900);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .billing-save {
+            background: var(--green-100);
+            color: var(--green-500);
+            padding: 0.25rem 0.75rem;
+            border-radius: 100px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        /* Pricing Cards */
+        .pricing-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            max-width: 1000px;
+            margin: 2rem auto;
+        }
+
+        .pricing-card {
+            background: var(--white);
+            border-radius: 1rem;
+            padding: 2rem;
+            border: 2px solid var(--gray-200);
+            transition: all var(--transition-normal);
+            position: relative;
+        }
+
+        .pricing-card:hover {
+            border-color: var(--blue-300);
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .pricing-card.popular {
+            border-color: var(--blue-500);
+            box-shadow: var(--shadow-xl);
+        }
+
+        .pricing-card.popular::before {
+            content: '⭐ Most Popular';
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, var(--blue-600), var(--blue-700));
+            color: white;
+            padding: 0.25rem 1rem;
+            border-radius: 100px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .pricing-card-header {
+            text-align: center;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--gray-200);
+            margin-bottom: 1.5rem;
+        }
+
+        .pricing-card-name {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--gray-900);
+            margin-bottom: 0.5rem;
+        }
+
+        .pricing-card-price {
+            display: flex;
+            align-items: baseline;
+            justify-content: center;
+            gap: 0.25rem;
+        }
+
+        .pricing-card-currency {
+            font-size: 1.25rem;
+            color: var(--gray-500);
+        }
+
+        .pricing-card-amount {
+            font-size: 3rem;
+            font-weight: 800;
+            color: var(--gray-900);
+        }
+
+        .pricing-card-period {
+            color: var(--gray-500);
+        }
+
+        .pricing-card-original {
+            text-decoration: line-through;
+            color: var(--gray-400);
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+        }
+
+        .pricing-card-features {
+            list-style: none;
+            margin-bottom: 1.5rem;
+        }
+
+        .pricing-card-features li {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.5rem 0;
+            color: var(--gray-600);
+        }
+
+        .pricing-card-features i {
+            color: var(--green-500);
+            width: 20px;
+            height: 20px;
+            flex-shrink: 0;
+        }
+
+        .pricing-card .btn {
+            width: 100%;
+        }
+
+        /* Competitor Comparison */
+        .competitor-compare {
+            max-width: 600px;
+            margin: 3rem auto 0;
+            text-align: center;
+        }
+
+        .competitor-compare-label {
+            color: var(--gray-500);
+            font-size: 0.875rem;
+            margin-bottom: 1rem;
+        }
+
+        .competitor-compare-box {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 2rem;
+            padding: 1.5rem;
+            background: var(--gray-100);
+            border-radius: 1rem;
+        }
+
+        .competitor-price {
+            text-align: center;
+        }
+
+        .competitor-price-label {
+            font-size: 0.875rem;
+            color: var(--gray-500);
+            margin-bottom: 0.25rem;
+        }
+
+        .competitor-price-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .competitor-price-value.bad {
+            color: var(--red-500);
+            text-decoration: line-through;
+        }
+
+        .competitor-price-value.good {
+            color: var(--green-500);
+        }
+
+        .competitor-vs {
+            color: var(--gray-400);
+            font-weight: 600;
+        }
+
+        /* FAQ Accordion */
+        .faq {
+            max-width: 700px;
+            margin: 3rem auto 0;
+        }
+
+        .faq-title {
+            text-align: center;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--gray-900);
+            margin-bottom: 1.5rem;
+        }
+
+        .faq-item {
+            background: var(--white);
+            border: 1px solid var(--gray-200);
+            border-radius: 0.75rem;
+            margin-bottom: 0.75rem;
+            overflow: hidden;
+        }
+
+        .faq-question {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1.25rem;
+            cursor: pointer;
+            font-weight: 600;
+            color: var(--gray-800);
+            transition: all var(--transition-fast);
+        }
+
+        .faq-question:hover {
+            background: var(--gray-50);
+        }
+
+        .faq-question i {
+            transition: transform var(--transition-normal);
+        }
+
+        .faq-item.open .faq-question i {
+            transform: rotate(180deg);
+        }
+
+        .faq-answer {
+            padding: 0 1.25rem;
+            max-height: 0;
+            overflow: hidden;
+            transition: all var(--transition-normal);
+        }
+
+        .faq-item.open .faq-answer {
+            padding: 0 1.25rem 1.25rem;
+            max-height: 500px;
+        }
+
+        .faq-answer p {
+            color: var(--gray-600);
+        }
+
+        /* ============================================
+           FINAL CTA SECTION
+           ============================================ */
+        .final-cta {
+            padding: 5rem 1.5rem;
+            background: linear-gradient(135deg, var(--blue-800), var(--blue-900));
+            position: relative;
+            overflow: hidden;
+        }
+
+        .final-cta::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+
+        .final-cta-content {
+            max-width: 700px;
+            margin: 0 auto;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .final-cta h2 {
+            font-size: clamp(1.75rem, 4vw, 2.5rem);
+            font-weight: 700;
+            color: var(--white);
+            margin-bottom: 1rem;
+        }
+
+        .final-cta p {
+            color: var(--blue-200);
+            font-size: 1.125rem;
+            margin-bottom: 2rem;
+        }
+
+        .final-cta-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            justify-content: center;
+            margin-bottom: 2rem;
+        }
+
+        @media (min-width: 480px) {
+            .final-cta-buttons {
+                flex-direction: row;
+            }
+        }
+
+        .final-cta .btn-primary {
+            background: var(--white);
+            color: var(--blue-800);
+        }
+
+        .final-cta .btn-primary:hover {
+            background: var(--gray-100);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .final-cta .btn-secondary {
+            background: transparent;
+            color: var(--white);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+
+        .final-cta .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.5);
+        }
+
+        .final-cta-guarantee {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            color: var(--blue-200);
+            font-size: 0.875rem;
+        }
+
+        .final-cta-guarantee i {
+            color: var(--green-500);
+        }
+
+        /* ============================================
+           FOOTER
+           ============================================ */
+        .footer {
+            padding: 3rem 1.5rem;
+            background: var(--gray-900);
+            color: var(--gray-400);
+        }
+
+        .footer-content {
+            max-width: var(--container-max);
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+            align-items: center;
+            text-align: center;
+        }
+
+        @media (min-width: 768px) {
+            .footer-content {
+                flex-direction: row;
+                justify-content: space-between;
+                text-align: left;
+            }
+        }
+
+        .footer-logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--white);
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 2rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .footer-links a {
+            color: var(--gray-400);
+            text-decoration: none;
+            transition: color var(--transition-fast);
+        }
+
+        .footer-links a:hover {
+            color: var(--white);
+        }
+
+        .footer-copy {
+            font-size: 0.875rem;
+        }
+
+        /* ============================================
+           ANIMATIONS
+           ============================================ */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* ============================================
+           RESPONSIVE ADJUSTMENTS
+           ============================================ */
+        @media (max-width: 1024px) {
+            .pricing-cards {
+                grid-template-columns: repeat(2, 1fr) !important;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .hero {
+                padding: 7rem 1rem 4rem;
+            }
+
+            .section {
+                padding: 3rem 1rem;
+            }
+
+            .demo {
+                padding: 3rem 1rem;
+            }
+
+            .old-way-stats,
+            .joc-way-stats {
+                grid-template-columns: 1fr;
+            }
+
+            .comparison {
+                overflow-x: auto;
+            }
+
+            .comparison-header,
+            .comparison-row {
+                min-width: 500px;
+            }
+
+            .export-files {
+                flex-direction: column;
+            }
+
+            .pricing-cards {
+                grid-template-columns: 1fr !important;
+            }
+
+            .value-proposition {
+                flex-direction: column !important;
+                gap: 1rem !important;
+            }
+
+            .value-proposition > div[style*="width: 1px"] {
+                width: 80% !important;
+                height: 1px !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="nav" id="nav">
+        <div class="nav-inner">
+            <a href="#" class="nav-logo">
+                <div class="nav-logo-icon">
+                    <i data-lucide="ruler" style="width: 20px; height: 20px;"></i>
+                </div>
+                JOCstudio
+            </a>
+            <ul class="nav-links">
+                <li><a href="#demo">Demo</a></li>
+                <li><a href="#features">Features</a></li>
+                <li><a href="#testimonials">Testimonials</a></li>
+                <li><a href="#pricing">Pricing</a></li>
+            </ul>
+            <div class="nav-cta">
+                <a href="#" class="btn btn-secondary btn-sm">Sign In</a>
+                <a href="#pricing" class="btn btn-primary btn-sm">Get Started</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <div class="hero-badge">
+                <i data-lucide="badge-check"></i>
+                Trusted by 500+ JOC estimators
+            </div>
+            <h1>Stop Translating Takeoffs Into <span class="gradient-text">JOC Line Items</span></h1>
+            <p class="hero-subtitle">
+                The first takeoff software built specifically for Job Order Contracts. 
+                Click to measure, auto-populate line items, export proposals in minutes.
+            </p>
+            <div class="hero-cta">
+                <a href="#pricing" class="btn btn-primary btn-lg">
+                    <i data-lucide="rocket" style="width: 20px; height: 20px;"></i>
+                    Start Your Free Trial
+                </a>
+                <a href="#demo" class="btn btn-secondary btn-lg">
+                    <i data-lucide="play-circle" style="width: 20px; height: 20px;"></i>
+                    Watch Demo
+                </a>
+            </div>
+            <div class="hero-trust">
+                <div class="hero-trust-avatars">
+                    <div class="hero-trust-avatar">JT</div>
+                    <div class="hero-trust-avatar">MK</div>
+                    <div class="hero-trust-avatar">SR</div>
+                    <div class="hero-trust-avatar">+</div>
+                </div>
+                <div class="hero-trust-stars">
+                    <i data-lucide="star" style="width: 16px; height: 16px; fill: currentColor;"></i>
+                    <i data-lucide="star" style="width: 16px; height: 16px; fill: currentColor;"></i>
+                    <i data-lucide="star" style="width: 16px; height: 16px; fill: currentColor;"></i>
+                    <i data-lucide="star" style="width: 16px; height: 16px; fill: currentColor;"></i>
+                    <i data-lucide="star" style="width: 16px; height: 16px; fill: currentColor;"></i>
+                </div>
+                <span>4.9/5 from 127 reviews</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Demo Section -->
+    <section class="demo" id="demo">
+        <div class="container">
+            <div class="demo-header">
+                <h2>See the Difference in Action</h2>
+                <p>Compare the old way of manual estimating versus the JOCstudio automated workflow</p>
+            </div>
+
+            <div class="demo-toggle">
+                <button class="demo-toggle-btn" data-panel="old">
+                    <i data-lucide="x-circle" style="width: 16px; height: 16px;"></i>
+                    The Old Way
+                </button>
+                <button class="demo-toggle-btn active" data-panel="new">
+                    <i data-lucide="sparkles" style="width: 16px; height: 16px;"></i>
+                    JOCstudio Way
+                </button>
+            </div>
+
+            <div class="demo-container">
+                <!-- Old Way Panel -->
+                <div class="demo-panel" id="panel-old">
+                    <div class="old-way">
+                        <div class="old-way-header">
+                            <div class="old-way-icon">
+                                <i data-lucide="file-spreadsheet" style="width: 24px; height: 24px;"></i>
+                            </div>
+                            <div>
+                                <div class="old-way-title">Manual Excel + UPB Lookup</div>
+                                <div class="old-way-subtitle">The painful process you know too well</div>
+                            </div>
+                        </div>
+
+                        <div class="excel-chaos">
+                            <div class="excel-toolbar">
+                                <span>📄 proposal_v3_FINAL_edited(2).xlsx</span>
+                            </div>
+                            <div class="excel-grid">
+                                <div class="excel-cell header"></div>
+                                <div class="excel-cell header">A</div>
+                                <div class="excel-cell header">B</div>
+                                <div class="excel-cell header">C</div>
+                                <div class="excel-cell header">D</div>
+                                <div class="excel-cell header">E</div>
+                                <div class="excel-cell header">F</div>
+
+                                <div class="excel-cell row-num">1</div>
+                                <div class="excel-cell long-text">JOC Code</div>
+                                <div class="excel-cell long-text">Description</div>
+                                <div class="excel-cell">UOM</div>
+                                <div class="excel-cell">Qty</div>
+                                <div class="excel-cell">Unit $</div>
+                                <div class="excel-cell">Ext $</div>
+
+                                <div class="excel-cell row-num">2</div>
+                                <div class="excel-cell error">09-210.05.1</div>
+                                <div class="excel-cell long-text">Gypsum board...</div>
+                                <div class="excel-cell">SF</div>
+                                <div class="excel-cell warning">1,234</div>
+                                <div class="excel-cell">$2.45</div>
+                                <div class="excel-cell error">#REF!</div>
+
+                                <div class="excel-cell row-num">3</div>
+                                <div class="excel-cell">09-912.33.2</div>
+                                <div class="excel-cell long-text">Paint, int latex...</div>
+                                <div class="excel-cell warning">GAL</div>
+                                <div class="excel-cell">???</div>
+                                <div class="excel-cell">$48.00</div>
+                                <div class="excel-cell">$0.00</div>
+
+                                <div class="excel-cell row-num">4</div>
+                                <div class="excel-cell warning">NEED CODE</div>
+                                <div class="excel-cell long-text">Ceiling tile 2x4...</div>
+                                <div class="excel-cell">EA</div>
+                                <div class="excel-cell">156</div>
+                                <div class="excel-cell error">LOOKUP</div>
+                                <div class="excel-cell">$0.00</div>
+                            </div>
+                        </div>
+
+                        <div class="old-way-stats">
+                            <div class="old-way-stat">
+                                <div class="old-way-stat-value">8+ hrs</div>
+                                <div class="old-way-stat-label">Per proposal</div>
+                            </div>
+                            <div class="old-way-stat">
+                                <div class="old-way-stat-value">23%</div>
+                                <div class="old-way-stat-label">Error rate</div>
+                            </div>
+                            <div class="old-way-stat">
+                                <div class="old-way-stat-value">$$$</div>
+                                <div class="old-way-stat-label">Lost profits</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- JOCstudio Way Panel -->
+                <div class="demo-panel active" id="panel-new">
+                    <div class="joc-way">
+                        <div class="joc-way-header">
+                            <div class="joc-way-logo">
+                                <div class="joc-way-logo-icon">
+                                    <i data-lucide="ruler" style="width: 20px; height: 20px;"></i>
+                                </div>
+                                <span class="joc-way-logo-text">JOCstudio</span>
+                            </div>
+                            <div class="joc-way-status">Auto-synced</div>
+                        </div>
+
+                        <div class="joc-demo-content">
+                            <div class="demo-steps">
+                                <div class="demo-step active" data-step="1">
+                                    <div class="demo-step-number">1</div>
+                                    <div class="demo-step-content">
+                                        <h4>Upload PDF Plans</h4>
+                                        <p>Drag & drop your drawings, instantly scaled</p>
+                                    </div>
+                                    <div class="demo-step-icon">
+                                        <i data-lucide="upload-cloud" style="width: 20px; height: 20px;"></i>
+                                    </div>
+                                </div>
+                                <div class="demo-step" data-step="2">
+                                    <div class="demo-step-number">2</div>
+                                    <div class="demo-step-content">
+                                        <h4>Click to Measure</h4>
+                                        <p>Point, click, done. Areas calculated automatically</p>
+                                    </div>
+                                    <div class="demo-step-icon">
+                                        <i data-lucide="mouse-pointer-click" style="width: 20px; height: 20px;"></i>
+                                    </div>
+                                </div>
+                                <div class="demo-step" data-step="3">
+                                    <div class="demo-step-number">3</div>
+                                    <div class="demo-step-content">
+                                        <h4>Auto-Populate Line Items</h4>
+                                        <p>JOC codes matched from your UPB, quantities filled</p>
+                                    </div>
+                                    <div class="demo-step-icon">
+                                        <i data-lucide="wand-2" style="width: 20px; height: 20px;"></i>
+                                    </div>
+                                </div>
+                                <div class="demo-step" data-step="4">
+                                    <div class="demo-step-number">4</div>
+                                    <div class="demo-step-content">
+                                        <h4>Export Proposal</h4>
+                                        <p>Agency-ready format, one click</p>
+                                    </div>
+                                    <div class="demo-step-icon">
+                                        <i data-lucide="file-output" style="width: 20px; height: 20px;"></i>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="demo-preview">
+                                <!-- Step 1: Upload -->
+                                <div class="demo-preview-content" id="preview-1">
+                                    <div class="upload-zone" id="upload-zone">
+                                        <div class="upload-icon">
+                                            <i data-lucide="file-up" style="width: 48px; height: 48px;"></i>
+                                        </div>
+                                        <div class="upload-text">Drop your PDF plans here</div>
+                                        <div class="upload-hint">or click to browse • PDF, DWG, PNG supported</div>
+                                        <div class="upload-progress">
+                                            <div class="progress-bar">
+                                                <div class="progress-fill" id="upload-progress"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Step 2: Measure (hidden by default) -->
+                                <div class="demo-preview-content" id="preview-2" style="display: none;">
+                                    <div class="measure-demo">
+                                        <div class="measure-canvas">
+                                            <div class="measure-floor-plan">
+                                                <div class="measure-room measure-room-1"></div>
+                                                <div class="measure-room measure-room-2"></div>
+                                                <div class="measure-room measure-room-3"></div>
+                                                <div class="measure-point" style="top: 15%; left: 12%;"></div>
+                                                <div class="measure-point" style="top: 15%; left: 43%;"></div>
+                                                <div class="measure-point" style="top: 48%; left: 12%;"></div>
+                                                <div class="measure-point" style="top: 48%; left: 43%;"></div>
+                                                <div class="measure-label" style="top: 15%; left: 27%;">24'-6"</div>
+                                                <div class="measure-label" style="top: 31%; left: 12%;">18'-0"</div>
+                                                <div class="measure-cursor"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Step 3: Line Items (hidden by default) -->
+                                <div class="demo-preview-content" id="preview-3" style="display: none;">
+                                    <div class="line-items-demo">
+                                        <table class="line-items-table">
+                                            <thead>
+                                                <tr>
+                                                    <th>JOC Code</th>
+                                                    <th>Description</th>
+                                                    <th>UOM</th>
+                                                    <th>Qty</th>
+                                                    <th>Amount</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="line-items-body">
+                                                <tr class="adding">
+                                                    <td class="line-item-code">09-2110.05.1</td>
+                                                    <td>Gypsum board, 5/8" fire rated</td>
+                                                    <td>SF</td>
+                                                    <td class="line-item-qty">1,248</td>
+                                                    <td>$3,057.60</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="line-item-code">09-9123.33.2</td>
+                                                    <td>Paint, interior latex, 2 coats</td>
+                                                    <td>SF</td>
+                                                    <td class="line-item-qty">1,248</td>
+                                                    <td>$1,872.00</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="line-item-code">09-5113.12.1</td>
+                                                    <td>Acoustic ceiling tile, 2x4</td>
+                                                    <td>SF</td>
+                                                    <td class="line-item-qty">442</td>
+                                                    <td>$2,652.00</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="line-item-code">09-6519.13.4</td>
+                                                    <td>VCT flooring, 12x12</td>
+                                                    <td>SF</td>
+                                                    <td class="line-item-qty">442</td>
+                                                    <td>$1,989.00</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+
+                                <!-- Step 4: Export (hidden by default) -->
+                                <div class="demo-preview-content" id="preview-4" style="display: none;">
+                                    <div class="export-demo">
+                                        <div class="export-success">
+                                            <div class="export-success-icon">
+                                                <i data-lucide="check" style="width: 32px; height: 32px;"></i>
+                                            </div>
+                                            <h4>Proposal Ready!</h4>
+                                            <p>Total: $12,847.50 • 23 line items • NYC HHC Format</p>
+                                        </div>
+                                        <div class="export-files">
+                                            <div class="export-file">
+                                                <div class="export-file-icon">
+                                                    <i data-lucide="file-spreadsheet" style="width: 20px; height: 20px;"></i>
+                                                </div>
+                                                <div class="export-file-info">
+                                                    <div class="export-file-name">Proposal_Rm204.xlsx</div>
+                                                    <div class="export-file-size">Agency format</div>
+                                                </div>
+                                            </div>
+                                            <div class="export-file">
+                                                <div class="export-file-icon">
+                                                    <i data-lucide="file-text" style="width: 20px; height: 20px;"></i>
+                                                </div>
+                                                <div class="export-file-info">
+                                                    <div class="export-file-name">Proposal_Rm204.pdf</div>
+                                                    <div class="export-file-size">Print-ready</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="joc-way-stats">
+                            <div class="joc-way-stat">
+                                <div class="joc-way-stat-value">47 min</div>
+                                <div class="joc-way-stat-label">Average time</div>
+                            </div>
+                            <div class="joc-way-stat">
+                                <div class="joc-way-stat-value">99.2%</div>
+                                <div class="joc-way-stat-label">Accuracy</div>
+                            </div>
+                            <div class="joc-way-stat">
+                                <div class="joc-way-stat-value">10x</div>
+                                <div class="joc-way-stat-label">Faster</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Problem Section -->
+    <section class="problem section">
+        <div class="container">
+            <div class="problem-header">
+                <span class="problem-label">The Problem</span>
+                <h2>JOC Estimating Is Stuck in the Stone Age</h2>
+                <p>While other contractors use modern takeoff software, JOC estimators are trapped in a manual nightmare</p>
+            </div>
+
+            <div class="problem-stats">
+                <div class="problem-stat">
+                    <div class="problem-stat-value">8+</div>
+                    <div class="problem-stat-label">Hours per proposal</div>
+                </div>
+                <div class="problem-stat">
+                    <div class="problem-stat-value">23%</div>
+                    <div class="problem-stat-label">Average error rate</div>
+                </div>
+                <div class="problem-stat">
+                    <div class="problem-stat-value">40%</div>
+                    <div class="problem-stat-label">Time on UPB lookup</div>
+                </div>
+            </div>
+
+            <div class="problem-points">
+                <div class="problem-point">
+                    <div class="problem-point-icon">
+                        <i data-lucide="file-spreadsheet" style="width: 24px; height: 24px;"></i>
+                    </div>
+                    <div>
+                        <h4>Excel Hell</h4>
+                        <p>Copy-paste chaos, broken formulas, version control nightmares. Every proposal is a minefield.</p>
+                    </div>
+                </div>
+                <div class="problem-point">
+                    <div class="problem-point-icon">
+                        <i data-lucide="book-open" style="width: 24px; height: 24px;"></i>
+                    </div>
+                    <div>
+                        <h4>Manual UPB Lookup</h4>
+                        <p>Flipping through 1,000+ page price books. Miss one code and you're leaving money on the table.</p>
+                    </div>
+                </div>
+                <div class="problem-point">
+                    <div class="problem-point-icon">
+                        <i data-lucide="calculator" style="width: 24px; height: 24px;"></i>
+                    </div>
+                    <div>
+                        <h4>Double Entry</h4>
+                        <p>Measure in takeoff software, then manually translate to JOC codes. Why do it twice?</p>
+                    </div>
+                </div>
+                <div class="problem-point">
+                    <div class="problem-point-icon">
+                        <i data-lucide="alert-triangle" style="width: 24px; height: 24px;"></i>
+                    </div>
+                    <div>
+                        <h4>Wrong Codes = Rejected</h4>
+                        <p>Agency kicks back proposal. Hours wasted. Relationship damaged. All for a typo.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Solution Section -->
+    <section class="solution section" id="features">
+        <div class="container">
+            <div class="solution-header">
+                <span class="solution-label">The Solution</span>
+                <h2>Finally, Takeoff Software That Speaks JOC</h2>
+                <p>JOCstudio is purpose-built for Job Order Contracts. No translation, no workarounds, no pain.</p>
+            </div>
+
+            <div class="features">
+                <div class="feature">
+                    <div class="feature-icon">
+                        <i data-lucide="upload-cloud" style="width: 28px; height: 28px;"></i>
+                    </div>
+                    <h3>Instant PDF Import</h3>
+                    <p>Drop your plans, auto-detect scale, start measuring in seconds. Supports PDF, DWG, and images.</p>
+                </div>
+                <div class="feature">
+                    <div class="feature-icon">
+                        <i data-lucide="mouse-pointer-click" style="width: 28px; height: 28px;"></i>
+                    </div>
+                    <h3>Smart Takeoff</h3>
+                    <p>Click to measure areas, lengths, counts. AI-assisted edge detection for lightning-fast accuracy.</p>
+                </div>
+                <div class="feature">
+                    <div class="feature-icon">
+                        <i data-lucide="database" style="width: 28px; height: 28px;"></i>
+                    </div>
+                    <h3>Built-in UPB</h3>
+                    <p>Your agency's Unit Price Book loaded and searchable. Find codes instantly, never miss items.</p>
+                </div>
+                <div class="feature">
+                    <div class="feature-icon">
+                        <i data-lucide="file-output" style="width: 28px; height: 28px;"></i>
+                    </div>
+                    <h3>One-Click Export</h3>
+                    <p>Generate agency-compliant proposals in their exact format. Excel, PDF, or direct upload.</p>
+                </div>
+            </div>
+
+            <div class="comparison">
+                <div class="comparison-header">
+                    <div>Feature</div>
+                    <div>Old Way</div>
+                    <div>JOCstudio</div>
+                </div>
+                <div class="comparison-row">
+                    <div>Takeoff to line items</div>
+                    <div><i data-lucide="x" class="comparison-icon-bad" style="width: 20px; height: 20px;"></i></div>
+                    <div><i data-lucide="check" class="comparison-icon-good" style="width: 20px; height: 20px;"></i></div>
+                </div>
+                <div class="comparison-row">
+                    <div>UPB code lookup</div>
+                    <div><i data-lucide="x" class="comparison-icon-bad" style="width: 20px; height: 20px;"></i></div>
+                    <div><i data-lucide="check" class="comparison-icon-good" style="width: 20px; height: 20px;"></i></div>
+                </div>
+                <div class="comparison-row">
+                    <div>Agency format export</div>
+                    <div><i data-lucide="x" class="comparison-icon-bad" style="width: 20px; height: 20px;"></i></div>
+                    <div><i data-lucide="check" class="comparison-icon-good" style="width: 20px; height: 20px;"></i></div>
+                </div>
+                <div class="comparison-row">
+                    <div>Error checking</div>
+                    <div><i data-lucide="x" class="comparison-icon-bad" style="width: 20px; height: 20px;"></i></div>
+                    <div><i data-lucide="check" class="comparison-icon-good" style="width: 20px; height: 20px;"></i></div>
+                </div>
+                <div class="comparison-row">
+                    <div>Time per proposal</div>
+                    <div style="color: var(--red-500); font-weight: 600;">8+ hours</div>
+                    <div style="color: var(--green-500); font-weight: 600;">47 minutes</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Social Proof Section -->
+    <section class="social-proof section" id="testimonials">
+        <div class="container">
+            <div class="social-proof-header">
+                <h2>Loved by JOC Estimators</h2>
+                <p>Join hundreds of contractors who've transformed their estimating workflow</p>
+            </div>
+
+            <div class="testimonials">
+                <div class="testimonial">
+                    <div class="testimonial-stars">
+                        <i data-lucide="star" style="width: 16px; height: 16px; fill: currentColor;"></i>
+                        <i data-lucide="star" style="width: 16px; height: 16px; fill: currentColor;"></i>
+                        <i data-lucide="star" style="width: 16px; height: 16px; fill: currentColor;"></i>
+                        <i data-lucide="star" style="width: 16px; height: 16px; fill: currentColor;"></i>
+                        <i data-lucide="star" style="width: 16px; height: 16px; fill: currentColor;"></i>
+                    </div>
+                    <p class="testimonial-text">"I used to spend entire weekends on proposals. Now I knock them out before lunch. JOCstudio paid for itself in the first week."</p>
+                    <div class="testimonial-author">
+                        <div class="testimonial-avatar">JT</div>
+                        <div>
+                            <div class="testimonial-author-name">James Torres</div>
+                            <div class="testimonial-author-title">Senior Estimator, ABC Contractors</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial">
+                    <div class="testimonial-stars">
+                        <i data-lucide="star" style="width: 16px; height: 16px; fill: currentColor;"></i>
+                        <i data-lucide="star" style="width: 16px; height: 16px; fill: currentColor;"></i>
+                        <i data-lucide="star" style="width: 16px; height: 16px; fill: currentColor;"></i>
+                        <i data-lucide="star" style="width: 16px; height: 16px; fill: currentColor;"></i>
+                        <i data-lucide="star" style="width: 16px; height: 16px; fill: currentColor;"></i>
+                    </div>
+                    <p class="testimonial-text">"The built-in UPB search alone saves me hours. No more flipping through binders or Ctrl+F through massive PDFs. It just works."</p>
+                    <div class="testimonial-author">
+                        <div class="testimonial-avatar">MK</div>
+                        <div>
+                            <div class="testimonial-author-name">Maria Kim</div>
+                            <div class="testimonial-author-title">Owner, KM Building Services</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial">
+                    <div class="testimonial-stars">
+                        <i data-lucide="star" style="width: 16px; height: 16px; fill: currentColor;"></i>
+                        <i data-lucide="star" style="width: 16px; height: 16px; fill: currentColor;"></i>
+                        <i data-lucide="star" style="width: 16px; height: 16px; fill: currentColor;"></i>
+                        <i data-lucide="star" style="width: 16px; height: 16px; fill: currentColor;"></i>
+                        <i data-lucide="star" style="width: 16px; height: 16px; fill: currentColor;"></i>
+                    </div>
+                    <p class="testimonial-text">"Our rejection rate dropped from 15% to nearly zero. The agency format export means no more reformatting nightmares."</p>
+                    <div class="testimonial-author">
+                        <div class="testimonial-avatar">SR</div>
+                        <div>
+                            <div class="testimonial-author-name">Steve Rodriguez</div>
+                            <div class="testimonial-author-title">Estimating Manager, BuildRight Inc</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="agency-logos">
+                <div class="agency-logos-label">Trusted by contractors working with</div>
+                <div class="agency-logos-grid">
+                    <div class="agency-logo">NYC H+H</div>
+                    <div class="agency-logo">NYC SCA</div>
+                    <div class="agency-logo">DCAS</div>
+                    <div class="agency-logo">Port Authority</div>
+                    <div class="agency-logo">MTA</div>
+                    <div class="agency-logo">NYCHA</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section class="pricing section" id="pricing">
+        <div class="container">
+            <div class="pricing-header">
+                <h2>Premium Tools, Fair Pricing</h2>
+                <p>Professional-grade JOC software without the enterprise markup.</p>
+                <div class="billing-toggle">
+                    <span class="billing-option" data-billing="monthly">Monthly</span>
+                    <span class="billing-option active" data-billing="annual">Annual</span>
+                    <span class="billing-save">Save up to 23%</span>
+                </div>
+            </div>
+
+            <!-- Value Proposition Banner -->
+            <div class="value-proposition" style="max-width: 800px; margin: 0 auto 2.5rem; background: linear-gradient(135deg, var(--blue-50), var(--green-100)); border-radius: 1rem; padding: 1.5rem 2rem; display: flex; flex-wrap: wrap; gap: 2rem; justify-content: center; align-items: center; border: 1px solid var(--blue-200);">
+                <div style="text-align: center;">
+                    <div style="font-size: 2rem; font-weight: 800; color: var(--blue-700);">6.5 hours</div>
+                    <div style="font-size: 0.875rem; color: var(--gray-600);">saved per proposal</div>
+                </div>
+                <div style="width: 1px; height: 40px; background: var(--gray-300);"></div>
+                <div style="text-align: center;">
+                    <div style="font-size: 2rem; font-weight: 800; color: var(--green-500);">$325+</div>
+                    <div style="font-size: 0.875rem; color: var(--gray-600);">value per month</div>
+                </div>
+                <div style="width: 1px; height: 40px; background: var(--gray-300);"></div>
+                <div style="text-align: center;">
+                    <div style="font-size: 2rem; font-weight: 800; color: var(--blue-700);">5x</div>
+                    <div style="font-size: 0.875rem; color: var(--gray-600);">minimum ROI</div>
+                </div>
+            </div>
+
+            <div class="pricing-cards" style="grid-template-columns: repeat(4, 1fr); max-width: 1200px;">
+                <!-- Starter: Free -->
+                <div class="pricing-card">
+                    <div class="pricing-card-header">
+                        <div class="pricing-card-name">Starter</div>
+                        <div class="pricing-card-price">
+                            <span class="pricing-card-amount" style="font-size: 2.5rem;">Free</span>
+                        </div>
+                        <div class="pricing-card-original" style="visibility: hidden;">placeholder</div>
+                    </div>
+                    <ul class="pricing-card-features">
+                        <li><i data-lucide="check"></i> 3 projects/month</li>
+                        <li><i data-lucide="check"></i> 1 UPB database</li>
+                        <li><i data-lucide="check"></i> PDF takeoff</li>
+                        <li><i data-lucide="check"></i> Excel export</li>
+                        <li><i data-lucide="check"></i> Community support</li>
+                    </ul>
+                    <a href="#" class="btn btn-secondary">Get Started Free</a>
+                </div>
+
+                <!-- Pro: $100/month or $1,000/year -->
+                <div class="pricing-card popular">
+                    <div class="pricing-card-header">
+                        <div class="pricing-card-name">Pro</div>
+                        <div class="pricing-card-price">
+                            <span class="pricing-card-currency">$</span>
+                            <span class="pricing-card-amount" data-monthly="100" data-annual="83">83</span>
+                            <span class="pricing-card-period">/month</span>
+                        </div>
+                        <div class="pricing-card-original" data-monthly="" data-annual="$1,000/year (save $200)">$1,000/year (save $200)</div>
+                    </div>
+                    <ul class="pricing-card-features">
+                        <li><i data-lucide="check"></i> Unlimited proposals</li>
+                        <li><i data-lucide="check"></i> 3 UPB databases</li>
+                        <li><i data-lucide="check"></i> PDF + DWG takeoff</li>
+                        <li><i data-lucide="check"></i> All export formats</li>
+                        <li><i data-lucide="check"></i> Priority support</li>
+                        <li><i data-lucide="check"></i> AI code suggestions</li>
+                    </ul>
+                    <a href="#" class="btn btn-primary">Start Free Trial</a>
+                </div>
+
+                <!-- Team: $270/seat/month or $2,500/seat/year -->
+                <div class="pricing-card">
+                    <div class="pricing-card-header">
+                        <div class="pricing-card-name">Team</div>
+                        <div class="pricing-card-price">
+                            <span class="pricing-card-currency">$</span>
+                            <span class="pricing-card-amount" data-monthly="270" data-annual="208">208</span>
+                            <span class="pricing-card-period">/seat/mo</span>
+                        </div>
+                        <div class="pricing-card-original" data-monthly="" data-annual="$2,500/seat/year (save $740)">$2,500/seat/year (save $740)</div>
+                    </div>
+                    <ul class="pricing-card-features">
+                        <li><i data-lucide="check"></i> Everything in Pro</li>
+                        <li><i data-lucide="check"></i> Unlimited users</li>
+                        <li><i data-lucide="check"></i> Unlimited UPBs</li>
+                        <li><i data-lucide="check"></i> Custom agency formats</li>
+                        <li><i data-lucide="check"></i> API access</li>
+                        <li><i data-lucide="check"></i> Dedicated support</li>
+                    </ul>
+                    <a href="#" class="btn btn-secondary">Start Free Trial</a>
+                </div>
+
+                <!-- Enterprise: Custom -->
+                <div class="pricing-card">
+                    <div class="pricing-card-header">
+                        <div class="pricing-card-name">Enterprise</div>
+                        <div class="pricing-card-price">
+                            <span class="pricing-card-amount" style="font-size: 2rem;">Custom</span>
+                        </div>
+                        <div class="pricing-card-original" style="visibility: hidden;">placeholder</div>
+                    </div>
+                    <ul class="pricing-card-features">
+                        <li><i data-lucide="check"></i> Everything in Team</li>
+                        <li><i data-lucide="check"></i> SSO / SAML</li>
+                        <li><i data-lucide="check"></i> On-premise option</li>
+                        <li><i data-lucide="check"></i> Custom integrations</li>
+                        <li><i data-lucide="check"></i> SLA guarantee</li>
+                        <li><i data-lucide="check"></i> Dedicated CSM</li>
+                    </ul>
+                    <a href="#" class="btn btn-secondary">Contact Sales</a>
+                </div>
+            </div>
+
+            <!-- Competitor Comparison -->
+            <div class="competitor-compare">
+                <div class="competitor-compare-label">How we compare to alternatives</div>
+                <div class="competitor-compare-box" style="flex-wrap: wrap; gap: 1.5rem;">
+                    <div class="competitor-price">
+                        <div class="competitor-price-label">Kreo</div>
+                        <div class="competitor-price-value bad" style="font-size: 1.25rem;">~$125/mo</div>
+                    </div>
+                    <div class="competitor-price">
+                        <div class="competitor-price-label">Bluebeam</div>
+                        <div class="competitor-price-value" style="font-size: 1.25rem; color: var(--gray-500);">$40-50/mo</div>
+                        <div style="font-size: 0.75rem; color: var(--gray-400);">but doesn't speak JOC</div>
+                    </div>
+                    <div class="competitor-price" style="background: var(--blue-50); padding: 1rem; border-radius: 0.5rem; border: 2px solid var(--blue-500);">
+                        <div class="competitor-price-label" style="color: var(--blue-700); font-weight: 600;">JOCstudio Pro</div>
+                        <div class="competitor-price-value good" style="font-size: 1.25rem;">$100/mo</div>
+                        <div style="font-size: 0.75rem; color: var(--green-600);">JOC-native automation</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="faq">
+                <h3 class="faq-title">Frequently Asked Questions</h3>
+                
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>Why is JOCstudio $100/month when Bluebeam is $50?</span>
+                        <i data-lucide="chevron-down" style="width: 20px; height: 20px;"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Bluebeam doesn't speak JOC. You're paying for JOC-native automation that saves 6+ hours per proposal. That's $325+ in time savings every month — over 3x return on your investment. Plus, you eliminate the manual translation step that causes costly errors and rejected proposals.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>Can I import my agency's UPB?</span>
+                        <i data-lucide="chevron-down" style="width: 20px; height: 20px;"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Yes! We support most common UPB formats. Upload your Excel or PDF and we'll parse it automatically. NYC H+H, SCA, and DCAS are pre-loaded.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>What if I need help getting started?</span>
+                        <i data-lucide="chevron-down" style="width: 20px; height: 20px;"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>We offer free onboarding calls for all paid plans. Our team will help you import your UPB, set up your first project, and answer any questions.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>Is my data secure?</span>
+                        <i data-lucide="chevron-down" style="width: 20px; height: 20px;"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Absolutely. We use bank-level encryption, SOC 2 compliant infrastructure, and never share your data. Your proposals and pricing stay private.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>Can I cancel anytime?</span>
+                        <i data-lucide="chevron-down" style="width: 20px; height: 20px;"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Yes, no contracts. Cancel with one click from your account settings. Your data remains exportable for 30 days after cancellation.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>How does the ROI math work?</span>
+                        <i data-lucide="chevron-down" style="width: 20px; height: 20px;"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>At $50/hour estimator time, saving 6.5 hours per proposal = $325 saved. Most users complete 2+ proposals per month, meaning $650+ in time savings versus the $100/month cost. That's a 5-6x ROI before counting reduced errors and faster turnaround that helps you win more bids.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Final CTA Section -->
+    <section class="final-cta">
+        <div class="final-cta-content">
+            <h2>Ready to 10x Your Estimating Speed?</h2>
+            <p>Join 500+ JOC contractors who've escaped spreadsheet hell. Save 6.5 hours per proposal starting today.</p>
+            <div class="final-cta-buttons">
+                <a href="#pricing" class="btn btn-primary btn-lg">
+                    <i data-lucide="rocket" style="width: 20px; height: 20px;"></i>
+                    Start Your Free Trial
+                </a>
+                <a href="#demo" class="btn btn-secondary btn-lg">
+                    <i data-lucide="message-circle" style="width: 20px; height: 20px;"></i>
+                    Talk to Sales
+                </a>
+            </div>
+            <div class="final-cta-guarantee">
+                <i data-lucide="shield-check" style="width: 20px; height: 20px;"></i>
+                60-day money-back guarantee • Free Starter plan available • 5x ROI guaranteed
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-logo">
+                <div class="nav-logo-icon" style="width: 28px; height: 28px;">
+                    <i data-lucide="ruler" style="width: 16px; height: 16px;"></i>
+                </div>
+                JOCstudio
+            </div>
+            <div class="footer-links">
+                <a href="#">Features</a>
+                <a href="#">Pricing</a>
+                <a href="#">About</a>
+                <a href="#">Blog</a>
+                <a href="#">Support</a>
+                <a href="#">Privacy</a>
+                <a href="#">Terms</a>
+            </div>
+            <div class="footer-copy">
+                © 2024 JOCstudio. All rights reserved.
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Initialize Lucide Icons
+        lucide.createIcons();
+
+        // Navigation scroll effect
+        const nav = document.getElementById('nav');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                nav.classList.add('scrolled');
+            } else {
+                nav.classList.remove('scrolled');
+            }
+        });
+
+        // Demo panel toggle
+        const toggleBtns = document.querySelectorAll('.demo-toggle-btn');
+        const panels = document.querySelectorAll('.demo-panel');
+
+        toggleBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const panel = btn.dataset.panel;
+                
+                toggleBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                
+                panels.forEach(p => {
+                    if (p.id === `panel-${panel}`) {
+                        p.classList.add('active');
+                    } else {
+                        p.classList.remove('active');
+                    }
+                });
+            });
+        });
+
+        // Interactive demo steps
+        const demoSteps = document.querySelectorAll('.demo-step');
+        const previews = document.querySelectorAll('.demo-preview-content');
+        let currentStep = 1;
+
+        function showStep(stepNum) {
+            demoSteps.forEach((step, i) => {
+                const num = i + 1;
+                step.classList.remove('active', 'completed');
+                if (num < stepNum) {
+                    step.classList.add('completed');
+                } else if (num === stepNum) {
+                    step.classList.add('active');
+                }
+            });
+
+            previews.forEach((preview, i) => {
+                preview.style.display = (i + 1 === stepNum) ? 'block' : 'none';
+            });
+
+            currentStep = stepNum;
+        }
+
+        demoSteps.forEach((step, i) => {
+            step.addEventListener('click', () => {
+                showStep(i + 1);
+            });
+        });
+
+        // Upload zone interaction
+        const uploadZone = document.getElementById('upload-zone');
+        const uploadProgress = document.getElementById('upload-progress');
+
+        if (uploadZone) {
+            uploadZone.addEventListener('click', () => {
+                if (!uploadZone.classList.contains('uploading')) {
+                    uploadZone.classList.add('uploading');
+                    let progress = 0;
+                    const interval = setInterval(() => {
+                        progress += 5;
+                        uploadProgress.style.width = progress + '%';
+                        if (progress >= 100) {
+                            clearInterval(interval);
+                            setTimeout(() => {
+                                uploadZone.classList.remove('uploading');
+                                uploadProgress.style.width = '0%';
+                                showStep(2);
+                            }, 300);
+                        }
+                    }, 50);
+                }
+            });
+        }
+
+        // Auto-advance demo (optional, subtle)
+        let demoAutoplay = null;
+        function startDemoAutoplay() {
+            demoAutoplay = setInterval(() => {
+                const nextStep = currentStep >= 4 ? 1 : currentStep + 1;
+                showStep(nextStep);
+            }, 4000);
+        }
+
+        function stopDemoAutoplay() {
+            if (demoAutoplay) {
+                clearInterval(demoAutoplay);
+                demoAutoplay = null;
+            }
+        }
+
+        // Start autoplay when demo section is visible
+        const demoSection = document.getElementById('demo');
+        const demoObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    startDemoAutoplay();
+                } else {
+                    stopDemoAutoplay();
+                }
+            });
+        }, { threshold: 0.3 });
+
+        if (demoSection) {
+            demoObserver.observe(demoSection);
+        }
+
+        // Stop autoplay on user interaction
+        demoSteps.forEach(step => {
+            step.addEventListener('click', stopDemoAutoplay);
+        });
+
+        // Billing toggle
+        const billingOptions = document.querySelectorAll('.billing-option');
+        const priceAmounts = document.querySelectorAll('.pricing-card-amount');
+        const priceOriginals = document.querySelectorAll('.pricing-card-original');
+
+        billingOptions.forEach(option => {
+            option.addEventListener('click', () => {
+                const billing = option.dataset.billing;
+                
+                billingOptions.forEach(o => o.classList.remove('active'));
+                option.classList.add('active');
+
+                priceAmounts.forEach(amount => {
+                    // Only update if this card has dynamic pricing data
+                    if (amount.dataset[billing]) {
+                        amount.textContent = amount.dataset[billing];
+                    }
+                });
+
+                priceOriginals.forEach(original => {
+                    // Only update if this card has dynamic pricing data
+                    if (original.dataset[billing] !== undefined) {
+                        original.textContent = original.dataset[billing];
+                    }
+                });
+            });
+        });
+
+        // FAQ Accordion
+        const faqItems = document.querySelectorAll('.faq-item');
+
+        faqItems.forEach(item => {
+            const question = item.querySelector('.faq-question');
+            question.addEventListener('click', () => {
+                const isOpen = item.classList.contains('open');
+                
+                // Close all
+                faqItems.forEach(i => i.classList.remove('open'));
+                
+                // Open clicked if it wasn't open
+                if (!isOpen) {
+                    item.classList.add('open');
+                }
+            });
+        });
+
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    const navHeight = nav.offsetHeight;
+                    const targetPosition = target.getBoundingClientRect().top + window.scrollY - navHeight - 20;
+                    window.scrollTo({
+                        top: targetPosition,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+
+        // Add some entrance animations
+        const animateOnScroll = () => {
+            const elements = document.querySelectorAll('.feature, .testimonial, .pricing-card, .problem-point, .problem-stat');
+            
+            elements.forEach(el => {
+                const rect = el.getBoundingClientRect();
+                const isVisible = rect.top < window.innerHeight - 100;
+                
+                if (isVisible && !el.classList.contains('animated')) {
+                    el.classList.add('animated');
+                    el.style.animation = 'fadeInUp 0.6s ease forwards';
+                }
+            });
+        };
+
+        window.addEventListener('scroll', animateOnScroll);
+        animateOnScroll(); // Run once on load
+    </script>
+</body>
+</html>
