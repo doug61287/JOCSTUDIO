@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jacobi Medical Center - JOCHero Demo</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #1E3A8A 0%, #111827 100%);
+            min-height: 100vh;
+            color: white;
+            padding: 2rem;
+        }
+        .container { max-width: 1000px; margin: 0 auto; }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .back-btn {
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 0.875rem;
+        }
+        .back-btn:hover { background: rgba(255,255,255,0.2); }
+        .project-card {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+        .project-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        .project-title { font-size: 1.5rem; font-weight: 700; color: #60A5FA; }
+        .project-meta { font-size: 0.875rem; opacity: 0.7; margin-top: 0.25rem; }
+        .badge {
+            background: #FFD700;
+            color: #1E3A8A;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        .stat-card {
+            background: rgba(255,255,255,0.05);
+            border-radius: 12px;
+            padding: 1.25rem;
+            text-align: center;
+        }
+        .stat-value { font-size: 2rem; font-weight: 700; color: #10B981; }
+        .stat-label { font-size: 0.75rem; opacity: 0.7; margin-top: 0.25rem; }
+        .section-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .line-items {
+            background: rgba(0,0,0,0.2);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        .line-item {
+            display: grid;
+            grid-template-columns: 1fr auto auto;
+            gap: 1rem;
+            padding: 1rem;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            align-items: center;
+        }
+        .line-item:last-child { border-bottom: none; }
+        .line-item:hover { background: rgba(255,255,255,0.03); }
+        .item-desc { font-size: 0.875rem; }
+        .item-qty { font-size: 0.875rem; opacity: 0.7; text-align: right; }
+        .item-price { font-size: 0.875rem; font-weight: 600; color: #10B981; text-align: right; }
+        .total-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 1.5rem;
+            background: rgba(16, 185, 129, 0.1);
+            border-radius: 12px;
+            margin-top: 1rem;
+        }
+        .total-label { font-weight: 600; }
+        .total-value { font-size: 1.5rem; font-weight: 700; color: #10B981; }
+        .coef-note { font-size: 0.75rem; opacity: 0.6; margin-top: 0.5rem; }
+        .cta-section {
+            text-align: center;
+            margin-top: 2rem;
+            padding: 2rem;
+            background: rgba(255,255,255,0.05);
+            border-radius: 16px;
+        }
+        .cta-btn {
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            color: #1E3A8A;
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 1rem;
+        }
+        .cta-btn:hover { transform: scale(1.05); }
+        .demo-badge {
+            background: rgba(255,215,0,0.2);
+            border: 1px solid #FFD700;
+            color: #FFD700;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-size: 0.875rem;
+            display: inline-block;
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">📐 JOCHero</div>
+            <a href="/sandbox" class="back-btn">← Back to Sandbox</a>
+        </div>
+
+        <div class="demo-badge">🧪 Sample Project Demo</div>
+
+        <div class="project-card">
+            <div class="project-header">
+                <div>
+                    <div class="project-title">🏥 Jacobi Medical Center</div>
+                    <div class="project-meta">Fire Protection • 15th Floor • NYC HHC • Division 21</div>
+                </div>
+                <span class="badge">SAMPLE DATA</span>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value">47</div>
+                    <div class="stat-label">Sprinkler Heads</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">690</div>
+                    <div class="stat-label">Linear Feet Pipe</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">$17,964</div>
+                    <div class="stat-label">Total Estimate</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">1.20×</div>
+                    <div class="stat-label">Bronx Coefficient</div>
+                </div>
+            </div>
+
+            <div class="section-title">📋 Line Items (JOC Format)</div>
+            <div class="line-items">
+                <div class="line-item">
+                    <div class="item-desc">21 31 13.13 0020 - Sprinkler Head, Pendant, 1/2"</div>
+                    <div class="item-qty">32 EA</div>
+                    <div class="item-price">$4,416</div>
+                </div>
+                <div class="line-item">
+                    <div class="item-desc">21 31 13.13 0030 - Sprinkler Head, Upright, 1/2"</div>
+                    <div class="item-qty">15 EA</div>
+                    <div class="item-price">$2,070</div>
+                </div>
+                <div class="line-item">
+                    <div class="item-desc">21 13 13.10 0100 - Steel Pipe, Schedule 40, 1"</div>
+                    <div class="item-qty">340 LF</div>
+                    <div class="item-price">$3,740</div>
+                </div>
+                <div class="line-item">
+                    <div class="item-desc">21 13 13.10 0120 - Steel Pipe, Schedule 40, 1-1/4"</div>
+                    <div class="item-qty">220 LF</div>
+                    <div class="item-price">$2,860</div>
+                </div>
+                <div class="line-item">
+                    <div class="item-desc">21 13 13.10 0140 - Steel Pipe, Schedule 40, 1-1/2"</div>
+                    <div class="item-qty">130 LF</div>
+                    <div class="item-price">$1,950</div>
+                </div>
+                <div class="line-item">
+                    <div class="item-desc">21 13 16.10 0200 - Pipe Fittings, Elbows & Tees</div>
+                    <div class="item-qty">1 LS</div>
+                    <div class="item-price">$1,428</div>
+                </div>
+                <div class="line-item">
+                    <div class="item-desc">21 13 19.10 0100 - Pipe Hangers & Supports</div>
+                    <div class="item-qty">47 EA</div>
+                    <div class="item-price">$1,500</div>
+                </div>
+            </div>
+
+            <div class="total-row">
+                <div>
+                    <div class="total-label">Project Total (with 1.20× Bronx Coef.)</div>
+                    <div class="coef-note">Base: $14,970 × 1.20 Location Adjustment</div>
+                </div>
+                <div class="total-value">$17,964</div>
+            </div>
+        </div>
+
+        <div class="cta-section">
+            <h3>🚀 This is what JOCHero does</h3>
+            <p style="margin-top: 0.5rem; opacity: 0.8;">
+                Upload drawings → AI extracts measurements → Auto-generates JOC proposals
+            </p>
+            <a href="/register" class="cta-btn">Start Your First Project →</a>
+        </div>
+    </div>
+</body>
+</html>
