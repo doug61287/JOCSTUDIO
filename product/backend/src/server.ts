@@ -19,6 +19,7 @@ import { projectsRoutes } from './modules/projects/projects.routes.js';
 import { filesRoutes } from './modules/files/files.routes.js';
 import { measurementsRoutes } from './modules/measurements/measurements.routes.js';
 import { layersRoutes } from './modules/layers/layers.routes.js';
+import { invitesRoutes } from './modules/invites/invites.routes.js';
 
 // Create Fastify instance
 const fastify = Fastify({
@@ -128,6 +129,7 @@ async function registerRoutes() {
   await fastify.register(usersRoutes, { prefix: '/users' });
   await fastify.register(projectsRoutes, { prefix: '/projects' });
   await fastify.register(filesRoutes, { prefix: '/files' });
+  await fastify.register(invitesRoutes, { prefix: '/invites' });
 
   // Nested routes under projects
   fastify.register(async (projectScope) => {

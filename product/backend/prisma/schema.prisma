@@ -28,6 +28,10 @@ model User {
   avatarUrl        String?
   preferences      Json     @default("{}")
   
+  // Beta access
+  isBetaUser       Boolean  @default(false)
+  inviteCodeUsed   String?  @db.VarChar(20)
+  
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   lastLoginAt DateTime?
@@ -39,6 +43,8 @@ model User {
   measurements         Measurement[]
   jocLineItems         JOCLineItem[]
   refreshTokens        RefreshToken[]
+  createdInviteCodes   InviteCode[]
+  inviteRedemptions    InviteRedemption[]
 
   @@index([email])
   @@index([stripeCustomerId])
@@ -399,4 +405,40 @@ model FileUpload {
   createdAt DateTime @default(now())
 
   @@index([uploadedById])
+}
+
+// ============================================
+// INVITE CODES (Beta Access)
+// ============================================
+
+model InviteCode {
+  id          String    @id @default(uuid())
+  code        String    @unique @db.VarChar(20)
+  createdAt   DateTime  @default(now())
+  expiresAt   DateTime?
+  maxUses     Int       @default(1)
+  currentUses Int       @default(0)
+  metadata    Json      @default("{}")
+
+  createdById String?
+  createdBy   User?     @relation(fields: [createdById], references: [id], onDelete: SetNull)
+
+  // Relations
+  redemptions InviteRedemption[]
+
+  @@index([code])
+  @@index([createdById])
+}
+
+model InviteRedemption {
+  id           String   @id @default(uuid())
+  inviteCodeId String
+  inviteCode   InviteCode @relation(fields: [inviteCodeId], references: [id], onDelete: Cascade)
+  userId       String
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  redeemedAt   DateTime @default(now())
+
+  @@unique([inviteCodeId, userId])
+  @@index([inviteCodeId])
+  @@index([userId])
 }
