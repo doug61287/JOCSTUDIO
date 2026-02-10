@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JOCHero - The Translation Demo</title>
+    <link rel="stylesheet" href="demo-translation.css">
+</head>
+<body>
+    <div id="demo-container" class="demo-container">
+        <!-- Background Grid -->
+        <div class="bg-grid"></div>
+        
+        <!-- Scene 1: PDF Drawing -->
+        <div id="pdf-drawing" class="pdf-drawing">
+            <div class="pdf-header">
+                <span class="pdf-title">JACOBI MEDICAL CENTER</span>
+                <span class="pdf-subtitle">FIRE PROTECTION</span>
+            </div>
+            <div class="pdf-content">
+                <div class="pdf-floor">15TH FLOOR</div>
+                <svg class="pdf-plan" viewBox="0 0 400 250">
+                    <!-- Floor outline -->
+                    <rect x="20" y="20" width="360" height="210" fill="none" stroke="#3B82F6" stroke-width="1.5"/>
+                    
+                    <!-- Rooms -->
+                    <rect x="20" y="20" width="120" height="100" fill="none" stroke="#3B82F6" stroke-width="0.8"/>
+                    <rect x="140" y="20" width="100" height="100" fill="none" stroke="#3B82F6" stroke-width="0.8"/>
+                    <rect x="240" y="20" width="140" height="100" fill="none" stroke="#3B82F6" stroke-width="0.8"/>
+                    <rect x="20" y="120" width="180" height="110" fill="none" stroke="#3B82F6" stroke-width="0.8"/>
+                    <rect x="200" y="120" width="180" height="110" fill="none" stroke="#3B82F6" stroke-width="0.8"/>
+                    
+                    <!-- Pipe runs (will be animated) -->
+                    <path id="main-pipe" class="pipe-path" d="M40,60 L160,60 L160,170 L340,170" fill="none" stroke="#10B981" stroke-width="2" stroke-dasharray="500" stroke-dashoffset="500"/>
+                    
+                    <!-- Sprinkler heads -->
+                    <g id="sprinkler-heads">
+                        <circle class="sprinkler" cx="60" cy="50" r="4" fill="#3B82F6"/>
+                        <circle class="sprinkler" cx="100" cy="50" r="4" fill="#3B82F6"/>
+                        <circle class="sprinkler" cx="60" cy="90" r="4" fill="#3B82F6"/>
+                        <circle class="sprinkler" cx="100" cy="90" r="4" fill="#3B82F6"/>
+                        <circle class="sprinkler" cx="170" cy="50" r="4" fill="#3B82F6"/>
+                        <circle class="sprinkler" cx="210" cy="50" r="4" fill="#3B82F6"/>
+                        <circle class="sprinkler" cx="170" cy="90" r="4" fill="#3B82F6"/>
+                        <circle class="sprinkler" cx="210" cy="90" r="4" fill="#3B82F6"/>
+                        <circle class="sprinkler" cx="280" cy="50" r="4" fill="#3B82F6"/>
+                        <circle class="sprinkler" cx="320" cy="50" r="4" fill="#3B82F6"/>
+                        <circle class="sprinkler" cx="360" cy="50" r="4" fill="#3B82F6"/>
+                        <circle class="sprinkler" cx="280" cy="90" r="4" fill="#3B82F6"/>
+                        <circle class="sprinkler" cx="320" cy="90" r="4" fill="#3B82F6"/>
+                        <circle class="sprinkler" cx="360" cy="90" r="4" fill="#3B82F6"/>
+                        <circle class="sprinkler" cx="60" cy="150" r="4" fill="#3B82F6"/>
+                        <circle class="sprinkler" cx="100" cy="150" r="4" fill="#3B82F6"/>
+                        <circle class="sprinkler" cx="140" cy="150" r="4" fill="#3B82F6"/>
+                        <circle class="sprinkler" cx="180" cy="150" r="4" fill="#3B82F6"/>
+                        <circle class="sprinkler" cx="60" cy="200" r="4" fill="#3B82F6"/>
+                        <circle class="sprinkler" cx="100" cy="200" r="4" fill="#3B82F6"/>
+                        <circle class="sprinkler" cx="140" cy="200" r="4" fill="#3B82F6"/>
+                        <circle class="sprinkler" cx="180" cy="200" r="4" fill="#3B82F6"/>
+                        <circle class="sprinkler" cx="240" cy="150" r="4" fill="#3B82F6"/>
+                        <circle class="sprinkler" cx="280" cy="150" r="4" fill="#3B82F6"/>
+                        <circle class="sprinkler" cx="320" cy="150" r="4" fill="#3B82F6"/>
+                        <circle class="sprinkler" cx="360" cy="150" r="4" fill="#3B82F6"/>
+                        <circle class="sprinkler" cx="240" cy="200" r="4" fill="#3B82F6"/>
+                        <circle class="sprinkler" cx="280" cy="200" r="4" fill="#3B82F6"/>
+                        <circle class="sprinkler" cx="320" cy="200" r="4" fill="#3B82F6"/>
+                        <circle class="sprinkler" cx="360" cy="200" r="4" fill="#3B82F6"/>
+                    </g>
+                    
+                    <!-- Click ripples container -->
+                    <g id="ripples"></g>
+                    
+                    <!-- Count markers container -->
+                    <g id="count-markers"></g>
+                </svg>
+            </div>
+        </div>
+        
+        <!-- Scene 2: Toolbar -->
+        <div id="toolbar" class="toolbar">
+            <div class="toolbar-item" data-tool="count">
+                <span class="toolbar-icon">🎯</span>
+                <span class="toolbar-label">Count</span>
+            </div>
+            <div class="toolbar-item" data-tool="length">
+                <span class="toolbar-icon">📏</span>
+                <span class="toolbar-label">Length</span>
+            </div>
+            <div class="toolbar-item" data-tool="area">
+                <span class="toolbar-icon">⬜</span>
+                <span class="toolbar-label">Area</span>
+            </div>
+            <div class="toolbar-item" data-tool="space">
+                <span class="toolbar-icon">🏠</span>
+                <span class="toolbar-label">Space</span>
+            </div>
+        </div>
+        
+        <!-- Counter Display -->
+        <div id="counter-display" class="counter-display">
+            <span id="counter-value">0</span>
+            <span id="counter-label">Sprinkler Heads</span>
+        </div>
+        
+        <!-- Length Counter -->
+        <div id="length-display" class="length-display">
+            <span id="length-value">0</span>
+            <span id="length-label">Linear Feet</span>
+        </div>
+        
+        <!-- Side Panel -->
+        <div id="side-panel" class="side-panel">
+            <div class="panel-header">MEASUREMENTS</div>
+            <div class="panel-divider"></div>
+            <div id="panel-items" class="panel-items">
+                <!-- Items will be added dynamically -->
+            </div>
+        </div>
+        
+        <!-- Scene 4: Processing Overlay -->
+        <div id="processing-overlay" class="processing-overlay">
+            <div class="logo-container">
+                <div class="logo-text">JOCHero</div>
+                <div class="logo-glow"></div>
+            </div>
+            <div class="progress-container">
+                <div class="progress-bar">
+                    <div id="progress-fill" class="progress-fill"></div>
+                </div>
+                <div id="progress-text" class="progress-text">Analyzing...</div>
+            </div>
+            <div id="particles" class="particles"></div>
+        </div>
+        
+        <!-- Scene 5: Proposal Table -->
+        <div id="proposal-table" class="proposal-table">
+            <div class="proposal-header">
+                <span class="proposal-title">COST PROPOSAL</span>
+                <span class="proposal-badge">Ready to Submit</span>
+            </div>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Line Item</th>
+                        <th>QTY</th>
+                        <th>Unit</th>
+                        <th>Price</th>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+                <tbody id="table-body">
+                    <!-- Rows will be added dynamically -->
+                </tbody>
+                <tfoot id="table-foot">
+                    <tr class="subtotal-row">
+                        <td colspan="4">Subtotal</td>
+                        <td id="subtotal">$0</td>
+                    </tr>
+                    <tr class="tax-row">
+                        <td colspan="4">Tax (9%)</td>
+                        <td id="tax">$0</td>
+                    </tr>
+                    <tr class="total-row">
+                        <td colspan="4">TOTAL</td>
+                        <td id="total">$0</td>
+                    </tr>
+                </tfoot>
+            </table>
+            <div class="export-buttons">
+                <button class="export-btn">📊 Excel</button>
+                <button class="export-btn">📄 PDF</button>
+                <button class="export-btn">🖨️ Print</button>
+            </div>
+        </div>
+        
+        <!-- Cursor -->
+        <div id="cursor" class="cursor">
+            <div class="cursor-dot"></div>
+            <div class="cursor-ring"></div>
+        </div>
+    </div>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="demo-translation.js"></script>
+</body>
+</html>
