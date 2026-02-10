@@ -50,11 +50,6 @@
             "priceCurrency": "USD",
             "offerCount": "4"
         },
-        "aggregateRating": {
-            "@type": "AggregateRating",
-            "ratingValue": "4.9",
-            "reviewCount": "127"
-        },
         "publisher": {
             "@type": "Organization",
             "name": "JOCHero",
@@ -1013,6 +1008,53 @@
             color: var(--gray-500);
         }
 
+        /* Beta Benefits Grid */
+        .beta-benefits {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .benefit-card {
+            padding: 2rem;
+            background: var(--gray-50);
+            border-radius: 1rem;
+            border: 1px solid var(--gray-200);
+            text-align: center;
+            transition: all var(--transition-normal);
+        }
+
+        .benefit-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--blue-300);
+        }
+
+        .benefit-icon {
+            width: 64px;
+            height: 64px;
+            background: linear-gradient(135deg, var(--blue-500), var(--blue-700));
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            margin: 0 auto 1.25rem;
+        }
+
+        .benefit-card h3 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--gray-900);
+            margin-bottom: 0.5rem;
+        }
+
+        .benefit-card p {
+            color: var(--gray-600);
+            font-size: 0.9375rem;
+            line-height: 1.6;
+        }
+
         /* ============================================
            PRICING SECTION
            ============================================ */
@@ -1537,7 +1579,7 @@
             <ul class="nav-links">
                 <li><a href="#demo">Demo</a></li>
                 <li><a href="#features">Features</a></li>
-                <li><a href="#testimonials">Testimonials</a></li>
+                <li><a href="#beta">Beta</a></li>
                 <li><a href="#pricing">Pricing</a></li>
                 <li><a href="#faq">FAQ</a></li>
             </ul>
@@ -1570,9 +1612,9 @@
             </div>
             
             <div class="hero-trust-signal">
-                <span><span class="check">✓</span> 500+ contractors</span>
                 <span><span class="check">✓</span> Works with any UPB</span>
                 <span><span class="check">✓</span> No credit card required</span>
+                <span><span class="check">✓</span> 60-day money-back guarantee</span>
             </div>
         </div>
     </section>
@@ -1581,7 +1623,7 @@
     <section class="logos-section">
         <div class="container">
             <div class="logos-header">
-                <p>Trusted by <span>500+</span> contractors working with</p>
+                <p>Built for contractors working with these agencies</p>
             </div>
             <div class="logos-grid">
                 <div class="logo-item">NYC H+H</div>
@@ -1789,123 +1831,35 @@
     </section>
 
     <!-- Social Proof Section -->
-    <section class="social-proof" id="testimonials">
+    <section class="social-proof" id="beta">
         <div class="container">
             <div class="social-proof-header">
-                <h2>Loved by JOC Estimators</h2>
-                <p>Join hundreds of contractors who've transformed their estimating workflow</p>
+                <h2>🚀 Now in Beta — Be an Early Adopter</h2>
+                <p>Join the first contractors testing JOCHero before public launch</p>
             </div>
 
             <div class="social-proof-stats">
                 <div class="social-stat">
-                    <div class="social-stat-value">500+</div>
-                    <div class="social-stat-label">Contractors</div>
+                    <div class="social-stat-value">90 min</div>
+                    <div class="social-stat-label">Avg. Proposal Time</div>
                 </div>
                 <div class="social-stat">
-                    <div class="social-stat-value">12,000+</div>
-                    <div class="social-stat-label">Proposals Created</div>
+                    <div class="social-stat-value">6+ hrs</div>
+                    <div class="social-stat-label">Saved Per Proposal</div>
                 </div>
                 <div class="social-stat">
-                    <div class="social-stat-value">$47M+</div>
-                    <div class="social-stat-label">Proposals Submitted</div>
+                    <div class="social-stat-value">10</div>
+                    <div class="social-stat-label">Beta Spots Left</div>
                 </div>
                 <div class="social-stat">
-                    <div class="social-stat-value">4.9★</div>
-                    <div class="social-stat-label">Average Rating</div>
+                    <div class="social-stat-value">Free</div>
+                    <div class="social-stat-label">During Beta</div>
                 </div>
             </div>
 
-            <div class="testimonials">
-                <div class="testimonial">
-                    <div class="testimonial-stars">
-                        <i data-lucide="star" style="width: 16px; height: 16px; fill: currentColor;"></i>
-                        <i data-lucide="star" style="width: 16px; height: 16px; fill: currentColor;"></i>
-                        <i data-lucide="star" style="width: 16px; height: 16px; fill: currentColor;"></i>
-                        <i data-lucide="star" style="width: 16px; height: 16px; fill: currentColor;"></i>
-                        <i data-lucide="star" style="width: 16px; height: 16px; fill: currentColor;"></i>
-                    </div>
-                    <p class="testimonial-text">"I used to spend entire weekends on proposals. Now I knock them out before lunch. JOCHero paid for itself in the first week."</p>
-                    <div class="testimonial-author">
-                        <div class="testimonial-avatar">JT</div>
-                        <div>
-                            <div class="testimonial-author-name">James Torres</div>
-                            <div class="testimonial-author-title">Senior Estimator, ABC Contractors</div>
-                        </div>
-                    </div>
-                </div>
-                <div class="testimonial">
-                    <div class="testimonial-stars">
-                        <i data-lucide="star" style="width: 16px; height: 16px; fill: currentColor;"></i>
-                        <i data-lucide="star" style="width: 16px; height: 16px; fill: currentColor;"></i>
-                        <i data-lucide="star" style="width: 16px; height: 16px; fill: currentColor;"></i>
-                        <i data-lucide="star" style="width: 16px; height: 16px; fill: currentColor;"></i>
-                        <i data-lucide="star" style="width: 16px; height: 16px; fill: currentColor;"></i>
-                    </div>
-                    <p class="testimonial-text">"The built-in UPB search alone saves me hours. No more flipping through binders or Ctrl+F through massive PDFs. It just works."</p>
-                    <div class="testimonial-author">
-                        <div class="testimonial-avatar">MK</div>
-                        <div>
-                            <div class="testimonial-author-name">Maria Kim</div>
-                            <div class="testimonial-author-title">Owner, KM Building Services</div>
-                        </div>
-                    </div>
-                </div>
-                <div class="testimonial">
-                    <div class="testimonial-stars">
-                        <i data-lucide="star" style="width: 16px; height: 16px; fill: currentColor;"></i>
-                        <i data-lucide="star" style="width: 16px; height: 16px; fill: currentColor;"></i>
-                        <i data-lucide="star" style="width: 16px; height: 16px; fill: currentColor;"></i>
-                        <i data-lucide="star" style="width: 16px; height: 16px; fill: currentColor;"></i>
-                        <i data-lucide="star" style="width: 16px; height: 16px; fill: currentColor;"></i>
-                    </div>
-                    <p class="testimonial-text">"Our rejection rate dropped from 15% to nearly zero. The agency format export means no more reformatting nightmares."</p>
-                    <div class="testimonial-author">
-                        <div class="testimonial-avatar">SR</div>
-                        <div>
-                            <div class="testimonial-author-name">Steve Rodriguez</div>
-                            <div class="testimonial-author-title">Estimating Manager, BuildRight Inc</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Pricing Section -->
-    <section class="pricing" id="pricing">
-        <div class="container">
-            <div class="pricing-header">
-                <h2>Premium Tools, Fair Pricing</h2>
-                <p>Professional-grade JOC software without the enterprise markup.</p>
-                
-                <div class="billing-toggle">
-                    <span class="billing-option" data-billing="monthly">Monthly</span>
-                    <span class="billing-option active" data-billing="annual">Annual</span>
-                    <span class="billing-save">Save up to 23%</span>
-                </div>
-            </div>
-
-            <div class="pricing-cards">
-                <!-- Starter: Free -->
-                <div class="pricing-card">
-                    <div class="pricing-card-header">
-                        <div class="pricing-card-name">Starter</div>
-                        <div class="pricing-card-price">
-                            <span class="pricing-card-amount" style="font-size: 2.5rem;">Free</span>
-                        </div>
-                        <div class="pricing-card-original" style="visibility: hidden;">placeholder</div>
-                    </div>
-                    <ul class="pricing-card-features">
-                        <li><i data-lucide="check"></i> 3 projects/month</li>
-                        <li><i data-lucide="check"></i> 1 UPB database</li>
-                        <li><i data-lucide="check"></i> PDF takeoff</li>
-                        <li><i data-lucide="check"></i> Excel export</li>
-                        <li><i data-lucide="check"></i> Community support</li>
-                    </ul>
-                    <a href="#" class="btn btn-secondary">Start Free Trial</a>
-                </div>
-
-                <!-- Pro: $100/month or $1,000/year -->
+            <div class="beta-benefits">
+                <div class="benefit-card">
+<!-- Testimonials replaced with beta benefits -->
                 <div class="pricing-card popular">
                     <div class="pricing-card-header">
                         <div class="pricing-card-name">Pro</div>
@@ -2074,7 +2028,7 @@
     <section class="final-cta">
         <div class="final-cta-content">
             <h2>Ready to Save 6+ Hours Per Proposal?</h2>
-            <p>Join 500+ JOC contractors who've escaped spreadsheet hell. Start your free trial today.</p>
+            <p>Be one of the first contractors to escape spreadsheet hell. Limited beta spots available.</p>
             <div class="final-cta-buttons">
                 <a href="#pricing" class="btn btn-primary btn-lg">
                     <i data-lucide="rocket" style="width: 20px; height: 20px;"></i>
