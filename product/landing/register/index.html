@@ -881,6 +881,27 @@
             createBtn.disabled = true;
 
             try {
+                // For beta: simulate success, accounts created manually in Supabase
+                const simulateBeta = true;
+                
+                if (simulateBeta) {
+                    // Store registration for manual account creation
+                    const registrations = JSON.parse(localStorage.getItem('jochero_registrations') || '[]');
+                    registrations.push({
+                        firstName,
+                        lastName,
+                        email,
+                        inviteCode,
+                        timestamp: new Date().toISOString()
+                    });
+                    localStorage.setItem('jochero_registrations', JSON.stringify(registrations));
+                    
+                    // Show success
+                    showStep(3);
+                    document.getElementById('welcome-name').textContent = firstName;
+                    return;
+                }
+                
                 const response = await fetch('/api/auth/register', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
