@@ -910,8 +910,7 @@
                     body: JSON.stringify({
                         email,
                         password,
-                        firstName,
-                        lastName,
+                        name: `${firstName} ${lastName}`.trim(),
                         inviteCode: validatedCode
                     })
                 });
@@ -930,9 +929,7 @@
                 }
             } catch (error) {
                 console.error('Registration error:', error);
-                // For demo: show success anyway
-                document.getElementById('user-name').textContent = firstName;
-                goToStep(3);
+                showEmailError('Unable to connect. Please try again.');
             } finally {
                 createBtn.classList.remove('btn-loading');
                 createBtn.disabled = false;
