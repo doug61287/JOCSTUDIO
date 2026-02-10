@@ -8,6 +8,38 @@ export interface JOCItem {
   unitCost: number;
 }
 
+/**
+ * Search JOC catalogue by task code or description keywords
+ * Uses local curated subset (417 items) for instant search
+ */
+export function searchJOCItems(query: string): JOCItem[] {
+  if (!query.trim()) return [];
+  
+  const q = query.toLowerCase();
+  
+  // If looks like a task code, search by code prefix
+  if (/^\d{2}/.test(query)) {
+    return jocCatalogue.filter(item => 
+      item.taskCode.toLowerCase().startsWith(q.replace(/\s/g, ''))
+    );
+  }
+  
+  // Search by description keywords
+  const words = q.split(/\s+/).filter(w => w.length >= 2);
+  
+  return jocCatalogue.filter(item => {
+    const desc = item.description.toLowerCase();
+    return words.every(word => desc.includes(word));
+  }).sort((a, b) => {
+    // Exact match first
+    const aExact = a.description.toLowerCase().includes(q) ? 0 : 1;
+    const bExact = b.description.toLowerCase().includes(q) ? 0 : 1;
+    if (aExact !== bExact) return aExact - bExact;
+    // Then by cost (higher first)
+    return b.unitCost - a.unitCost;
+  });
+}
+
 export const jocCatalogue: JOCItem[] = [
   {
     "taskCode": "08011161-0004",
