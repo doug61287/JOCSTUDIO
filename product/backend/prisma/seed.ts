@@ -83,6 +83,117 @@ async function main() {
   });
   console.log('✅ Created sample project:', project.name);
 
+  // ============================================
+  // Jacobi Medical Center - Fire Protection (Sample)
+  // ============================================
+  
+  // Create NYC HHC organization
+  const nycHhc = await prisma.organization.upsert({
+    where: { slug: 'nyc-hhc' },
+    update: {},
+    create: {
+      name: 'NYC Health + Hospitals',
+      slug: 'nyc-hhc',
+      plan: 'ENTERPRISE',
+      seats: 100,
+      ownerId: admin.id,
+    },
+  });
+  console.log('✅ Created NYC HHC organization:', nycHhc.name);
+
+  // Create Jacobi FP project
+  const jacobiFp = await prisma.project.upsert({
+    where: { id: 'jacobi-fp-sample-001' },
+    update: {},
+    create: {
+      id: 'jacobi-fp-sample-001',
+      name: 'Jacobi Medical Center - Fire Protection',
+      description: 'NYC HHC Fire Protection takeoff - 15th Floor renovation (SAMPLE DATA)',
+      status: 'IN_PROGRESS',
+      ownerId: demo.id,
+      organizationId: nycHhc.id,
+      settings: {
+        units: 'imperial',
+        scale: { value: 96, unit: 'inch' },
+        agency: 'NYC HHC',
+        division: '21 - Fire Protection',
+        location: 'Bronx, NY',
+        floor: '15th Floor',
+        is_demo: true,
+        coefficient: { location: 'Bronx (NYC HHC)', value: 1.20 },
+      },
+      layers: {
+        create: [
+          { id: 'jacobi-layer-sprinkler', name: 'Sprinkler Systems', color: '#DC2626', order: 0 },
+          { id: 'jacobi-layer-piping', name: 'Piping', color: '#2563EB', order: 1 },
+          { id: 'jacobi-layer-valves', name: 'Valves & Connections', color: '#7C3AED', order: 2 },
+          { id: 'jacobi-layer-alarm', name: 'Fire Alarm', color: '#F97316', order: 3 },
+        ],
+      },
+    },
+  });
+  console.log('✅ Created Jacobi FP project:', jacobiFp.name);
+
+  // Create Jacobi measurements
+  const jacobiMeasurements = [
+    { id: 'jacobi-meas-001', type: 'COUNT', label: 'Sprinkler Heads (Pendant)', quantity: 47, unit: 'EA', color: '#DC2626', layerId: 'jacobi-layer-sprinkler' },
+    { id: 'jacobi-meas-002', type: 'COUNT', label: 'Sprinkler Heads (Upright)', quantity: 12, unit: 'EA', color: '#DC2626', layerId: 'jacobi-layer-sprinkler' },
+    { id: 'jacobi-meas-003', type: 'LENGTH', label: 'Main Run Pipe 3/4" BI', quantity: 234, unit: 'LF', color: '#2563EB', layerId: 'jacobi-layer-piping' },
+    { id: 'jacobi-meas-004', type: 'LENGTH', label: 'Branch Line 1/2" BI', quantity: 456, unit: 'LF', color: '#3B82F6', layerId: 'jacobi-layer-piping' },
+    { id: 'jacobi-meas-005', type: 'COUNT', label: 'OS&Y Valve 6"', quantity: 2, unit: 'EA', color: '#7C3AED', layerId: 'jacobi-layer-valves' },
+    { id: 'jacobi-meas-006', type: 'COUNT', label: 'Butterfly Valve 4"', quantity: 4, unit: 'EA', color: '#7C3AED', layerId: 'jacobi-layer-valves' },
+    { id: 'jacobi-meas-007', type: 'COUNT', label: "Inspector's Test Connection", quantity: 4, unit: 'EA', color: '#7C3AED', layerId: 'jacobi-layer-valves' },
+    { id: 'jacobi-meas-008', type: 'COUNT', label: 'Fire Alarm Pull Station', quantity: 8, unit: 'EA', color: '#EF4444', layerId: 'jacobi-layer-alarm' },
+    { id: 'jacobi-meas-009', type: 'COUNT', label: 'Smoke Detector', quantity: 24, unit: 'EA', color: '#F97316', layerId: 'jacobi-layer-alarm' },
+    { id: 'jacobi-meas-010', type: 'COUNT', label: 'Horn/Strobe Combo', quantity: 16, unit: 'EA', color: '#F59E0B', layerId: 'jacobi-layer-alarm' },
+  ];
+
+  for (const m of jacobiMeasurements) {
+    await prisma.measurement.upsert({
+      where: { id: m.id },
+      update: {},
+      create: {
+        id: m.id,
+        type: m.type as any,
+        label: m.label,
+        color: m.color,
+        geometry: { points: [], pageIndex: 0 },
+        quantity: m.quantity,
+        unit: m.unit,
+        projectId: jacobiFp.id,
+        layerId: m.layerId,
+        createdById: demo.id,
+      },
+    });
+  }
+  console.log('✅ Created', jacobiMeasurements.length, 'Jacobi measurements');
+
+  // Create JOC Line Items with pricing (coefficient: 1.20)
+  const jacobiLineItems = [
+    { measurementId: 'jacobi-meas-001', upbCode: '21 10 00.10 0100', description: 'Sprinkler Head, Pendant, 1/2" NPT, Quick Response', quantity: 47, unit: 'EA', unitPrice: 45.00, totalPrice: 2538.00 },
+    { measurementId: 'jacobi-meas-002', upbCode: '21 10 00.10 0200', description: 'Sprinkler Head, Upright, 1/2" NPT, Standard Response', quantity: 12, unit: 'EA', unitPrice: 48.00, totalPrice: 691.20 },
+    { measurementId: 'jacobi-meas-003', upbCode: '21 10 00.20 0300', description: 'Pipe, Black Iron, 3/4", Schedule 40, Threaded', quantity: 234, unit: 'LF', unitPrice: 8.50, totalPrice: 2386.80 },
+    { measurementId: 'jacobi-meas-004', upbCode: '21 10 00.20 0200', description: 'Pipe, Black Iron, 1/2", Schedule 40, Threaded', quantity: 456, unit: 'LF', unitPrice: 6.25, totalPrice: 3420.00 },
+    { measurementId: 'jacobi-meas-005', upbCode: '21 20 00.10 0600', description: 'Valve, OS&Y, 6", Flanged, 175 PSI', quantity: 2, unit: 'EA', unitPrice: 750.00, totalPrice: 1800.00 },
+    { measurementId: 'jacobi-meas-006', upbCode: '21 20 00.10 0400', description: 'Valve, Butterfly, 4", Grooved, Supervised', quantity: 4, unit: 'EA', unitPrice: 425.00, totalPrice: 2040.00 },
+    { measurementId: 'jacobi-meas-007', upbCode: '21 20 00.20 0100', description: "Inspector Test Connection, 1\", w/Sight Glass", quantity: 4, unit: 'EA', unitPrice: 120.00, totalPrice: 576.00 },
+    { measurementId: 'jacobi-meas-008', upbCode: '21 30 00.10 0100', description: 'Pull Station, Manual, Single Action, Red', quantity: 8, unit: 'EA', unitPrice: 85.00, totalPrice: 816.00 },
+    { measurementId: 'jacobi-meas-009', upbCode: '21 30 00.20 0100', description: 'Smoke Detector, Photoelectric, Ceiling Mount', quantity: 24, unit: 'EA', unitPrice: 65.00, totalPrice: 1872.00 },
+    { measurementId: 'jacobi-meas-010', upbCode: '21 30 00.30 0100', description: 'Horn/Strobe, Wall Mount, 24VDC, Red', quantity: 16, unit: 'EA', unitPrice: 95.00, totalPrice: 1824.00 },
+  ];
+
+  for (const item of jacobiLineItems) {
+    await prisma.jOCLineItem.create({
+      data: {
+        ...item,
+        coefficients: { location: 1.20 },
+        createdById: demo.id,
+      },
+    });
+  }
+  console.log('✅ Created', jacobiLineItems.length, 'Jacobi JOC line items');
+  console.log('   📊 Total (with 1.20 coefficient): $17,964.00');
+
   // Seed UPB Catalog with sample items
   const upbItems = [
     {
@@ -170,6 +281,117 @@ async function main() {
       description: 'Receptacle, duplex, 20A, 125V, with plate',
       unit: 'EA',
       basePrice: 85.00,
+      version: '2024',
+      effectiveDate: new Date('2024-01-01'),
+    },
+    // Division 21 - Fire Protection
+    {
+      contractType: 'NYC_HHC',
+      division: '21',
+      category: 'Fire Suppression',
+      lineNumber: '21 10 00.10 0100',
+      description: 'Sprinkler Head, Pendant, 1/2" NPT, Quick Response',
+      unit: 'EA',
+      basePrice: 45.00,
+      version: '2024',
+      effectiveDate: new Date('2024-01-01'),
+    },
+    {
+      contractType: 'NYC_HHC',
+      division: '21',
+      category: 'Fire Suppression',
+      lineNumber: '21 10 00.10 0200',
+      description: 'Sprinkler Head, Upright, 1/2" NPT, Standard Response',
+      unit: 'EA',
+      basePrice: 48.00,
+      version: '2024',
+      effectiveDate: new Date('2024-01-01'),
+    },
+    {
+      contractType: 'NYC_HHC',
+      division: '21',
+      category: 'Fire Suppression',
+      lineNumber: '21 10 00.20 0200',
+      description: 'Pipe, Black Iron, 1/2", Schedule 40, Threaded',
+      unit: 'LF',
+      basePrice: 6.25,
+      version: '2024',
+      effectiveDate: new Date('2024-01-01'),
+    },
+    {
+      contractType: 'NYC_HHC',
+      division: '21',
+      category: 'Fire Suppression',
+      lineNumber: '21 10 00.20 0300',
+      description: 'Pipe, Black Iron, 3/4", Schedule 40, Threaded',
+      unit: 'LF',
+      basePrice: 8.50,
+      version: '2024',
+      effectiveDate: new Date('2024-01-01'),
+    },
+    {
+      contractType: 'NYC_HHC',
+      division: '21',
+      category: 'Fire Suppression',
+      lineNumber: '21 20 00.10 0400',
+      description: 'Valve, Butterfly, 4", Grooved, Supervised',
+      unit: 'EA',
+      basePrice: 425.00,
+      version: '2024',
+      effectiveDate: new Date('2024-01-01'),
+    },
+    {
+      contractType: 'NYC_HHC',
+      division: '21',
+      category: 'Fire Suppression',
+      lineNumber: '21 20 00.10 0600',
+      description: 'Valve, OS&Y, 6", Flanged, 175 PSI',
+      unit: 'EA',
+      basePrice: 750.00,
+      version: '2024',
+      effectiveDate: new Date('2024-01-01'),
+    },
+    {
+      contractType: 'NYC_HHC',
+      division: '21',
+      category: 'Fire Suppression',
+      lineNumber: '21 20 00.20 0100',
+      description: 'Inspector Test Connection, 1", w/Sight Glass',
+      unit: 'EA',
+      basePrice: 120.00,
+      version: '2024',
+      effectiveDate: new Date('2024-01-01'),
+    },
+    {
+      contractType: 'NYC_HHC',
+      division: '21',
+      category: 'Fire Alarm',
+      lineNumber: '21 30 00.10 0100',
+      description: 'Pull Station, Manual, Single Action, Red',
+      unit: 'EA',
+      basePrice: 85.00,
+      version: '2024',
+      effectiveDate: new Date('2024-01-01'),
+    },
+    {
+      contractType: 'NYC_HHC',
+      division: '21',
+      category: 'Fire Alarm',
+      lineNumber: '21 30 00.20 0100',
+      description: 'Smoke Detector, Photoelectric, Ceiling Mount',
+      unit: 'EA',
+      basePrice: 65.00,
+      version: '2024',
+      effectiveDate: new Date('2024-01-01'),
+    },
+    {
+      contractType: 'NYC_HHC',
+      division: '21',
+      category: 'Fire Alarm',
+      lineNumber: '21 30 00.30 0100',
+      description: 'Horn/Strobe, Wall Mount, 24VDC, Red',
+      unit: 'EA',
+      basePrice: 95.00,
       version: '2024',
       effectiveDate: new Date('2024-01-01'),
     },

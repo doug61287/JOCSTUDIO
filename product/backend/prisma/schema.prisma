@@ -45,6 +45,7 @@ model User {
   refreshTokens        RefreshToken[]
   createdInviteCodes   InviteCode[]
   inviteRedemptions    InviteRedemption[]
+  feedback             Feedback[]
 
   @@index([email])
   @@index([stripeCustomerId])
@@ -405,6 +406,49 @@ model FileUpload {
   createdAt DateTime @default(now())
 
   @@index([uploadedById])
+}
+
+// ============================================
+// FEEDBACK (Beta Tester Feedback)
+// ============================================
+
+model Feedback {
+  id            String         @id @default(uuid())
+  type          FeedbackType
+  description   String
+  screenshotUrl String?
+  pageUrl       String?
+  userAgent     String?
+  email         String?
+  status        FeedbackStatus @default(NEW)
+  adminNotes    String?
+  resolvedAt    DateTime?
+
+  // Optional user association
+  userId String?
+  user   User?   @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@index([type])
+  @@index([status])
+  @@index([createdAt(sort: Desc)])
+}
+
+enum FeedbackType {
+  BUG
+  FEATURE_REQUEST
+  GENERAL
+}
+
+enum FeedbackStatus {
+  NEW
+  REVIEWED
+  IN_PROGRESS
+  RESOLVED
+  DISMISSED
 }
 
 // ============================================

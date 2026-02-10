@@ -1,0 +1,160 @@
+{
+  "project": {
+    "id": "jacobi-fp-sample-001",
+    "name": "Jacobi Medical Center - Fire Protection",
+    "description": "NYC HHC Fire Protection takeoff - 15th Floor renovation (SAMPLE DATA)",
+    "agency": "NYC HHC",
+    "division": "21 - Fire Protection",
+    "location": "Bronx, NY",
+    "floor": "15th Floor",
+    "status": "IN_PROGRESS",
+    "is_demo": true,
+    "settings": {
+      "units": "imperial",
+      "scale": { "value": 96, "unit": "inch" },
+      "coefficient": {
+        "location": "Bronx (NYC HHC)",
+        "value": 1.20,
+        "description": "NYC HHC location adjustment factor"
+      }
+    }
+  },
+  "measurements": [
+    {
+      "type": "COUNT",
+      "name": "Sprinkler Heads (Pendant)",
+      "quantity": 47,
+      "unit": "EA",
+      "upb_code": "21 10 00",
+      "unit_price": 45.00,
+      "extended_price": 2115.00,
+      "adjusted_price": 2538.00,
+      "color": "#DC2626"
+    },
+    {
+      "type": "COUNT",
+      "name": "Sprinkler Heads (Upright)",
+      "quantity": 12,
+      "unit": "EA",
+      "upb_code": "21 10 00",
+      "unit_price": 48.00,
+      "extended_price": 576.00,
+      "adjusted_price": 691.20,
+      "color": "#DC2626"
+    },
+    {
+      "type": "LENGTH",
+      "name": "Main Run Pipe 3/4\" BI",
+      "quantity": 234,
+      "unit": "LF",
+      "upb_code": "21 10 00",
+      "unit_price": 8.50,
+      "extended_price": 1989.00,
+      "adjusted_price": 2386.80,
+      "color": "#2563EB"
+    },
+    {
+      "type": "LENGTH",
+      "name": "Branch Line 1/2\" BI",
+      "quantity": 456,
+      "unit": "LF",
+      "upb_code": "21 10 00",
+      "unit_price": 6.25,
+      "extended_price": 2850.00,
+      "adjusted_price": 3420.00,
+      "color": "#3B82F6"
+    },
+    {
+      "type": "COUNT",
+      "name": "OS&Y Valve 6\"",
+      "quantity": 2,
+      "unit": "EA",
+      "upb_code": "21 20 00",
+      "unit_price": 750.00,
+      "extended_price": 1500.00,
+      "adjusted_price": 1800.00,
+      "color": "#7C3AED"
+    },
+    {
+      "type": "COUNT",
+      "name": "Butterfly Valve 4\"",
+      "quantity": 4,
+      "unit": "EA",
+      "upb_code": "21 20 00",
+      "unit_price": 425.00,
+      "extended_price": 1700.00,
+      "adjusted_price": 2040.00,
+      "color": "#7C3AED"
+    },
+    {
+      "type": "COUNT",
+      "name": "Inspector's Test Connection",
+      "quantity": 4,
+      "unit": "EA",
+      "upb_code": "21 20 00",
+      "unit_price": 120.00,
+      "extended_price": 480.00,
+      "adjusted_price": 576.00,
+      "color": "#7C3AED"
+    },
+    {
+      "type": "COUNT",
+      "name": "Fire Alarm Pull Station",
+      "quantity": 8,
+      "unit": "EA",
+      "upb_code": "21 30 00",
+      "unit_price": 85.00,
+      "extended_price": 680.00,
+      "adjusted_price": 816.00,
+      "color": "#EF4444"
+    },
+    {
+      "type": "COUNT",
+      "name": "Smoke Detector",
+      "quantity": 24,
+      "unit": "EA",
+      "upb_code": "21 30 00",
+      "unit_price": 65.00,
+      "extended_price": 1560.00,
+      "adjusted_price": 1872.00,
+      "color": "#F97316"
+    },
+    {
+      "type": "COUNT",
+      "name": "Horn/Strobe Combo",
+      "quantity": 16,
+      "unit": "EA",
+      "upb_code": "21 30 00",
+      "unit_price": 95.00,
+      "extended_price": 1520.00,
+      "adjusted_price": 1824.00,
+      "color": "#F59E0B"
+    }
+  ],
+  "summary": {
+    "total_items": 10,
+    "subtotal": 14970.00,
+    "coefficient": 1.20,
+    "adjusted_total": 17964.00,
+    "divisions": {
+      "21 10 00 - Fire Suppression Sprinkler Systems": {
+        "subtotal": 7530.00,
+        "adjusted": 9036.00
+      },
+      "21 20 00 - Fire Suppression Standpipe Systems": {
+        "subtotal": 3680.00,
+        "adjusted": 4416.00
+      },
+      "21 30 00 - Fire Detection and Alarm": {
+        "subtotal": 3760.00,
+        "adjusted": 4512.00
+      }
+    }
+  },
+  "metadata": {
+    "created_at": "2026-02-10T00:00:00.000Z",
+    "version": "1.0",
+    "source": "JOCHero Sample Data",
+    "notes": "Sample fire protection takeoff for beta testing and demonstration"
+  }
+}
