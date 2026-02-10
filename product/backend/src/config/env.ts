@@ -1,9 +1,16 @@
 import { z } from 'zod';
-import dotenv from 'dotenv';
 
-// Only load .env file in development (Railway sets env vars directly)
+// Debug: Log what we receive BEFORE any processing
+console.log('🔍 DEBUG ENV CHECK:');
+console.log('  NODE_ENV:', process.env.NODE_ENV);
+console.log('  JWT_REFRESH_SECRET length:', process.env.JWT_REFRESH_SECRET?.length || 'undefined');
+console.log('  JWT_REFRESH_SECRET value:', process.env.JWT_REFRESH_SECRET?.substring(0, 10) + '...');
+
+// Skip dotenv entirely in production - Railway sets env vars directly
 if (process.env.NODE_ENV !== 'production') {
+  const dotenv = require('dotenv');
   dotenv.config();
+  console.log('  (loaded .env file for development)');
 }
 
 const envSchema = z.object({
