@@ -44,9 +44,10 @@ async function registerPlugins() {
     contentSecurityPolicy: false, // Disable for API
   });
 
-  // CORS
+  // CORS - Allow all origins in production (beta), or use specific origins
+  const corsOrigin = env.CORS_ORIGIN === '*' ? true : env.CORS_ORIGIN.split(',').map(o => o.trim());
   await fastify.register(cors, {
-    origin: env.CORS_ORIGIN.split(','),
+    origin: corsOrigin,
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
   });
