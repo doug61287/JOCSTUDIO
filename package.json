@@ -3,9 +3,9 @@
   "version": "1.0.0",
   "description": "JOCHero Monorepo - API Backend",
   "scripts": {
-    "postinstall": "cd product/backend && npm install",
-    "build": "cd product/backend && npx prisma generate",
-    "start": "cd product/backend && npm start"
+    "postinstall": "npm install --prefix product/backend",
+    "build": "npm run db:generate --prefix product/backend",
+    "start": "npm start --prefix product/backend"
   },
   "engines": {
     "node": ">=18.0.0"
