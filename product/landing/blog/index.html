@@ -1,0 +1,1005 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JOC Blog - Job Order Contracting Tips & Resources | JOCHero</title>
+    <meta name="description" content="Expert insights on Job Order Contracting, JOC estimating, government contracting, and construction productivity. Learn from the JOCHero team.">
+    <meta name="keywords" content="JOC blog, job order contracting, construction estimating, government contracting, UPB, unit price book">
+    <meta name="author" content="JOCHero">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://jochero.com/blog/">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://jochero.com/blog/">
+    <meta property="og:title" content="JOC Blog - Job Order Contracting Tips & Resources">
+    <meta property="og:description" content="Expert insights on Job Order Contracting, JOC estimating, and government contracting.">
+    <meta property="og:image" content="https://jochero.com/og-image.png">
+    <meta property="og:site_name" content="JOCHero">
+    
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="https://jochero.com/blog/">
+    <meta name="twitter:title" content="JOC Blog - Job Order Contracting Tips & Resources">
+    <meta name="twitter:description" content="Expert insights on Job Order Contracting, JOC estimating, and government contracting.">
+    <meta name="twitter:image" content="https://jochero.com/og-image.png">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect fill='%231E40AF' rx='15' width='100' height='100'/><text y='70' x='50' text-anchor='middle' font-size='50' fill='white'>📐</text></svg>">
+    
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <style>
+        /* ============================================
+           CSS RESET & BASE STYLES
+           ============================================ */
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            /* Trust Blue Theme */
+            --blue-900: #1E3A8A;
+            --blue-800: #1E40AF;
+            --blue-700: #1D4ED8;
+            --blue-600: #2563EB;
+            --blue-500: #3B82F6;
+            --blue-400: #60A5FA;
+            --blue-100: #DBEAFE;
+            --blue-50: #EFF6FF;
+            
+            /* Neutrals */
+            --gray-900: #111827;
+            --gray-800: #1F2937;
+            --gray-700: #374151;
+            --gray-600: #4B5563;
+            --gray-500: #6B7280;
+            --gray-400: #9CA3AF;
+            --gray-300: #D1D5DB;
+            --gray-200: #E5E7EB;
+            --gray-100: #F3F4F6;
+            --gray-50: #F9FAFB;
+            --white: #FFFFFF;
+            
+            /* Accent Colors */
+            --green-500: #22C55E;
+            --green-100: #DCFCE7;
+            
+            /* Shadows */
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+            
+            /* Transitions */
+            --transition-fast: 150ms ease;
+            --transition-normal: 250ms ease;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            line-height: 1.6;
+            color: var(--gray-800);
+            background: var(--white);
+        }
+
+        /* ============================================
+           NAVIGATION
+           ============================================ */
+        .nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--gray-200);
+            transition: all var(--transition-normal);
+        }
+
+        .nav.scrolled {
+            box-shadow: var(--shadow-md);
+        }
+
+        .nav-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0.75rem 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--blue-800);
+            text-decoration: none;
+        }
+
+        .nav-logo-icon {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, var(--blue-600), var(--blue-800));
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+
+        .nav-links {
+            display: none;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            color: var(--gray-600);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color var(--transition-fast);
+        }
+
+        .nav-links a:hover,
+        .nav-links a.active {
+            color: var(--blue-700);
+        }
+
+        .nav-cta {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        @media (min-width: 768px) {
+            .nav-links {
+                display: flex;
+            }
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.875rem 1.75rem;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 0.5rem;
+            border: none;
+            cursor: pointer;
+            transition: all var(--transition-normal);
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--blue-600), var(--blue-700));
+            color: var(--white);
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, var(--blue-700), var(--blue-800));
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .btn-secondary {
+            background: var(--white);
+            color: var(--blue-700);
+            border: 2px solid var(--blue-200);
+        }
+
+        .btn-secondary:hover {
+            background: var(--blue-50);
+            border-color: var(--blue-400);
+        }
+
+        .btn-sm {
+            padding: 0.5rem 1rem;
+            font-size: 0.875rem;
+        }
+
+        /* ============================================
+           BLOG HERO
+           ============================================ */
+        .blog-hero {
+            padding: 7rem 1.5rem 4rem;
+            background: linear-gradient(180deg, var(--blue-50) 0%, var(--white) 100%);
+            text-align: center;
+        }
+
+        .blog-hero-inner {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .blog-hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: var(--blue-100);
+            color: var(--blue-700);
+            border-radius: 100px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+        }
+
+        .blog-hero h1 {
+            font-size: clamp(2.25rem, 5vw, 3.5rem);
+            font-weight: 800;
+            line-height: 1.1;
+            color: var(--gray-900);
+            margin-bottom: 1rem;
+        }
+
+        .blog-hero p {
+            font-size: 1.25rem;
+            color: var(--gray-600);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* ============================================
+           BLOG CONTENT
+           ============================================ */
+        .blog-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 3rem 1.5rem 5rem;
+        }
+
+        /* Featured Post */
+        .featured-post {
+            margin-bottom: 4rem;
+        }
+
+        .featured-post-label {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.375rem 0.75rem;
+            background: var(--green-100);
+            color: var(--green-500);
+            border-radius: 100px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 1rem;
+        }
+
+        .featured-post-card {
+            display: grid;
+            gap: 2rem;
+            background: var(--white);
+            border-radius: 1rem;
+            overflow: hidden;
+            border: 1px solid var(--gray-200);
+            box-shadow: var(--shadow-lg);
+            transition: all var(--transition-normal);
+        }
+
+        @media (min-width: 768px) {
+            .featured-post-card {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        .featured-post-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.12);
+        }
+
+        .featured-post-image {
+            background: linear-gradient(135deg, var(--blue-600), var(--blue-800));
+            min-height: 300px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .featured-post-image::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+
+        .featured-post-image-content {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .featured-post-image-icon {
+            width: 64px;
+            height: 64px;
+            margin: 0 auto 1rem;
+            background: rgba(255,255,255,0.2);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+
+        .featured-post-image-icon i {
+            width: 32px;
+            height: 32px;
+        }
+
+        .featured-post-image-title {
+            color: white;
+            font-size: 1.25rem;
+            font-weight: 700;
+        }
+
+        .featured-post-body {
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .featured-post-category {
+            display: inline-block;
+            padding: 0.375rem 0.75rem;
+            background: var(--blue-100);
+            color: var(--blue-700);
+            border-radius: 100px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 1rem;
+            width: fit-content;
+        }
+
+        .featured-post-body h2 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--gray-900);
+            margin-bottom: 1rem;
+            line-height: 1.3;
+        }
+
+        .featured-post-body h2 a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        .featured-post-body h2 a:hover {
+            color: var(--blue-600);
+        }
+
+        .featured-post-excerpt {
+            color: var(--gray-600);
+            margin-bottom: 1.5rem;
+            line-height: 1.7;
+        }
+
+        .featured-post-meta {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            color: var(--gray-500);
+            font-size: 0.875rem;
+        }
+
+        .featured-post-meta span {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .featured-post-meta i {
+            width: 16px;
+            height: 16px;
+        }
+
+        .featured-post-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--blue-600);
+            font-weight: 600;
+            text-decoration: none;
+            margin-top: 1rem;
+            transition: gap var(--transition-fast);
+        }
+
+        .featured-post-link:hover {
+            gap: 0.75rem;
+        }
+
+        .featured-post-link i {
+            width: 18px;
+            height: 18px;
+        }
+
+        /* Blog Grid */
+        .blog-section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 2rem;
+        }
+
+        .blog-section-header h2 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--gray-900);
+        }
+
+        .blog-grid {
+            display: grid;
+            gap: 2rem;
+        }
+
+        @media (min-width: 640px) {
+            .blog-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (min-width: 900px) {
+            .blog-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        /* Blog Card */
+        .blog-card {
+            background: var(--white);
+            border-radius: 0.75rem;
+            overflow: hidden;
+            border: 1px solid var(--gray-200);
+            transition: all var(--transition-normal);
+        }
+
+        .blog-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--blue-300);
+        }
+
+        .blog-card-image {
+            height: 160px;
+            background: linear-gradient(135deg, var(--blue-500), var(--blue-700));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .blog-card-image::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.1'%3E%3Cpath d='M20 20v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+
+        .blog-card-icon {
+            width: 48px;
+            height: 48px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            position: relative;
+            z-index: 1;
+        }
+
+        .blog-card-icon i {
+            width: 24px;
+            height: 24px;
+        }
+
+        .blog-card-body {
+            padding: 1.5rem;
+        }
+
+        .blog-card-category {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            background: var(--blue-100);
+            color: var(--blue-700);
+            border-radius: 4px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.75rem;
+        }
+
+        .blog-card-body h3 {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: var(--gray-900);
+            margin-bottom: 0.5rem;
+            line-height: 1.4;
+        }
+
+        .blog-card-body h3 a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        .blog-card-body h3 a:hover {
+            color: var(--blue-600);
+        }
+
+        .blog-card-excerpt {
+            color: var(--gray-600);
+            font-size: 0.9375rem;
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+
+        .blog-card-meta {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            color: var(--gray-500);
+            font-size: 0.8125rem;
+        }
+
+        .blog-card-meta span {
+            display: flex;
+            align-items: center;
+            gap: 0.375rem;
+        }
+
+        .blog-card-meta i {
+            width: 14px;
+            height: 14px;
+        }
+
+        /* Empty State */
+        .coming-soon-card {
+            background: var(--gray-50);
+            border: 2px dashed var(--gray-300);
+            border-radius: 0.75rem;
+            padding: 2rem;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 280px;
+        }
+
+        .coming-soon-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--gray-200);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--gray-400);
+            margin-bottom: 1rem;
+        }
+
+        .coming-soon-icon i {
+            width: 24px;
+            height: 24px;
+        }
+
+        .coming-soon-card h4 {
+            color: var(--gray-600);
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .coming-soon-card p {
+            color: var(--gray-500);
+            font-size: 0.875rem;
+        }
+
+        /* Newsletter CTA */
+        .newsletter-cta {
+            background: linear-gradient(135deg, var(--blue-600), var(--blue-800));
+            border-radius: 1rem;
+            padding: 3rem 2rem;
+            text-align: center;
+            margin-top: 4rem;
+        }
+
+        .newsletter-cta h3 {
+            color: white;
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+        }
+
+        .newsletter-cta p {
+            color: var(--blue-100);
+            font-size: 1.125rem;
+            margin-bottom: 1.5rem;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .newsletter-form {
+            display: flex;
+            gap: 0.75rem;
+            max-width: 400px;
+            margin: 0 auto;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .newsletter-form input {
+            flex: 1;
+            min-width: 200px;
+            padding: 0.875rem 1rem;
+            border: none;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+        }
+
+        .newsletter-form input:focus {
+            outline: 2px solid var(--blue-400);
+            outline-offset: 2px;
+        }
+
+        .newsletter-form button {
+            background: white;
+            color: var(--blue-700);
+            border: none;
+            padding: 0.875rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all var(--transition-normal);
+        }
+
+        .newsletter-form button:hover {
+            background: var(--blue-50);
+            transform: translateY(-2px);
+        }
+
+        /* ============================================
+           FOOTER
+           ============================================ */
+        .footer {
+            background: var(--gray-900);
+            color: var(--gray-400);
+            padding: 4rem 1.5rem 2rem;
+        }
+
+        .footer-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        @media (min-width: 640px) {
+            .footer-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (min-width: 900px) {
+            .footer-grid {
+                grid-template-columns: 2fr 1fr 1fr 1fr;
+            }
+        }
+
+        .footer-brand {
+            max-width: 300px;
+        }
+
+        .footer-logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--white);
+            margin-bottom: 1rem;
+        }
+
+        .footer-logo-icon {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, var(--blue-500), var(--blue-700));
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .footer-tagline {
+            color: var(--gray-400);
+            line-height: 1.6;
+        }
+
+        .footer-section h4 {
+            color: var(--white);
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 0.5rem;
+        }
+
+        .footer-links a {
+            color: var(--gray-400);
+            text-decoration: none;
+            transition: color var(--transition-fast);
+        }
+
+        .footer-links a:hover {
+            color: var(--white);
+        }
+
+        .footer-bottom {
+            padding-top: 2rem;
+            border-top: 1px solid var(--gray-800);
+            text-align: center;
+            font-size: 0.875rem;
+        }
+
+        /* ============================================
+           ANIMATIONS
+           ============================================ */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-in {
+            animation: fadeInUp 0.6s ease forwards;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="nav" id="nav">
+        <div class="nav-inner">
+            <a href="/" class="nav-logo">
+                <div class="nav-logo-icon">
+                    <i data-lucide="ruler" style="width: 20px; height: 20px;"></i>
+                </div>
+                JOCHero
+            </a>
+            
+            <ul class="nav-links">
+                <li><a href="/#features">Features</a></li>
+                <li><a href="/#pricing">Pricing</a></li>
+                <li><a href="/blog" class="active">Blog</a></li>
+                <li><a href="/#faq">FAQ</a></li>
+            </ul>
+            
+            <div class="nav-cta">
+                <a href="/#demo" class="btn btn-secondary btn-sm">Watch Demo</a>
+                <a href="/#pricing" class="btn btn-primary btn-sm">Get Started</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Blog Hero -->
+    <header class="blog-hero">
+        <div class="blog-hero-inner">
+            <div class="blog-hero-badge">
+                <i data-lucide="book-open" style="width: 16px; height: 16px;"></i>
+                JOCHero Blog
+            </div>
+            <h1>JOC Insights & Resources</h1>
+            <p>Expert tips on Job Order Contracting, estimating best practices, and winning more government construction work.</p>
+        </div>
+    </header>
+
+    <!-- Blog Content -->
+    <main class="blog-content">
+        <!-- Featured Post -->
+        <section class="featured-post">
+            <div class="featured-post-label">
+                <i data-lucide="star" style="width: 14px; height: 14px;"></i>
+                Featured Article
+            </div>
+            
+            <article class="featured-post-card">
+                <div class="featured-post-image">
+                    <div class="featured-post-image-content">
+                        <div class="featured-post-image-icon">
+                            <i data-lucide="file-text"></i>
+                        </div>
+                        <div class="featured-post-image-title">Complete JOC Guide</div>
+                    </div>
+                </div>
+                <div class="featured-post-body">
+                    <span class="featured-post-category">JOC Fundamentals</span>
+                    <h2><a href="/blog/what-is-job-order-contracting/">What is Job Order Contracting? A Complete Guide for Contractors</a></h2>
+                    <p class="featured-post-excerpt">Learn what Job Order Contracting (JOC) is, how it differs from traditional bidding, and why it's becoming the preferred method for government agencies and smart contractors alike.</p>
+                    <div class="featured-post-meta">
+                        <span><i data-lucide="user"></i> Doug</span>
+                        <span><i data-lucide="calendar"></i> Feb 9, 2026</span>
+                        <span><i data-lucide="clock"></i> 12 min read</span>
+                    </div>
+                    <a href="/blog/what-is-job-order-contracting/" class="featured-post-link">
+                        Read Full Article <i data-lucide="arrow-right"></i>
+                    </a>
+                </div>
+            </article>
+        </section>
+
+        <!-- All Posts -->
+        <section>
+            <div class="blog-section-header">
+                <h2>All Articles</h2>
+            </div>
+            
+            <div class="blog-grid">
+                <!-- Post 1 -->
+                <article class="blog-card">
+                    <div class="blog-card-image">
+                        <div class="blog-card-icon">
+                            <i data-lucide="file-text"></i>
+                        </div>
+                    </div>
+                    <div class="blog-card-body">
+                        <span class="blog-card-category">JOC Fundamentals</span>
+                        <h3><a href="/blog/what-is-job-order-contracting/">What is Job Order Contracting?</a></h3>
+                        <p class="blog-card-excerpt">A complete guide to JOC—how it works, benefits for contractors, and how to get started.</p>
+                        <div class="blog-card-meta">
+                            <span><i data-lucide="calendar"></i> Feb 9, 2026</span>
+                            <span><i data-lucide="clock"></i> 12 min</span>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Coming Soon Placeholder -->
+                <div class="coming-soon-card">
+                    <div class="coming-soon-icon">
+                        <i data-lucide="edit-3"></i>
+                    </div>
+                    <h4>More Articles Coming Soon</h4>
+                    <p>We're working on more JOC guides</p>
+                </div>
+
+                <!-- Coming Soon Placeholder -->
+                <div class="coming-soon-card">
+                    <div class="coming-soon-icon">
+                        <i data-lucide="lightbulb"></i>
+                    </div>
+                    <h4>Have a Topic Idea?</h4>
+                    <p>Let us know what you want to learn</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Newsletter CTA -->
+        <section class="newsletter-cta">
+            <h3>Get JOC Tips in Your Inbox</h3>
+            <p>Join contractors who get our weekly insights on winning more JOC work.</p>
+            <form class="newsletter-form" action="#" method="POST">
+                <input type="email" placeholder="Enter your email" required>
+                <button type="submit">Subscribe</button>
+            </form>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-inner">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <div class="footer-logo">
+                        <div class="footer-logo-icon">
+                            <i data-lucide="ruler" style="width: 20px; height: 20px; color: white;"></i>
+                        </div>
+                        JOCHero
+                    </div>
+                    <p class="footer-tagline">The only takeoff software built specifically for Job Order Contracts. Stop translating—start winning.</p>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>Product</h4>
+                    <ul class="footer-links">
+                        <li><a href="/#features">Features</a></li>
+                        <li><a href="/#pricing">Pricing</a></li>
+                        <li><a href="/#demo">Demo</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>Resources</h4>
+                    <ul class="footer-links">
+                        <li><a href="/blog">Blog</a></li>
+                        <li><a href="/#faq">FAQ</a></li>
+                        <li><a href="mailto:support@jochero.com">Support</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>Company</h4>
+                    <ul class="footer-links">
+                        <li><a href="/about">About</a></li>
+                        <li><a href="/privacy">Privacy</a></li>
+                        <li><a href="/terms">Terms</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2026 JOCHero. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+
+        // Sticky nav with shadow
+        const nav = document.getElementById('nav');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                nav.classList.add('scrolled');
+            } else {
+                nav.classList.remove('scrolled');
+            }
+        });
+
+        // Animate cards on scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('animate-in');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.blog-card, .featured-post-card, .coming-soon-card').forEach(el => {
+            observer.observe(el);
+        });
+    </script>
+</body>
+</html>
