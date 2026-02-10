@@ -2275,6 +2275,185 @@
         }
 
         /* ============================================
+           BLOG PREVIEW SECTION
+           ============================================ */
+        .blog-preview-section {
+            padding: 5rem 1.5rem;
+            background: var(--gray-50);
+        }
+
+        .blog-preview-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .blog-preview-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: var(--blue-100);
+            color: var(--blue-700);
+            border-radius: 100px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .blog-preview-header h2 {
+            font-size: clamp(1.75rem, 4vw, 2.5rem);
+            font-weight: 700;
+            color: var(--gray-900);
+            margin-bottom: 0.5rem;
+        }
+
+        .blog-preview-header p {
+            color: var(--gray-600);
+            font-size: 1.125rem;
+        }
+
+        .blog-preview-grid {
+            display: grid;
+            gap: 1.5rem;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        @media (min-width: 768px) {
+            .blog-preview-grid {
+                grid-template-columns: 2fr 1fr;
+            }
+        }
+
+        .blog-preview-card {
+            background: var(--white);
+            border-radius: 1rem;
+            overflow: hidden;
+            border: 1px solid var(--gray-200);
+            text-decoration: none;
+            transition: all var(--transition-normal);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .blog-preview-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--blue-300);
+        }
+
+        .blog-preview-card-image {
+            height: 160px;
+            background: linear-gradient(135deg, var(--blue-600), var(--blue-800));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .blog-preview-card-image::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.1'%3E%3Cpath d='M20 20v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+
+        .blog-preview-card-icon {
+            width: 64px;
+            height: 64px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            position: relative;
+            z-index: 1;
+        }
+
+        .blog-preview-card-content {
+            padding: 1.5rem;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .blog-preview-card-category {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            background: var(--blue-100);
+            color: var(--blue-700);
+            border-radius: 4px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.75rem;
+            width: fit-content;
+        }
+
+        .blog-preview-card-content h3 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--gray-900);
+            margin-bottom: 0.75rem;
+            line-height: 1.3;
+        }
+
+        .blog-preview-card-content p {
+            color: var(--gray-600);
+            font-size: 0.9375rem;
+            line-height: 1.6;
+            margin-bottom: 1rem;
+            flex: 1;
+        }
+
+        .blog-preview-card-meta {
+            display: flex;
+            gap: 1rem;
+            color: var(--gray-500);
+            font-size: 0.8125rem;
+        }
+
+        .blog-preview-card-meta span {
+            display: flex;
+            align-items: center;
+            gap: 0.375rem;
+        }
+
+        .blog-preview-cta {
+            background: var(--white);
+            border-radius: 1rem;
+            border: 2px dashed var(--gray-300);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 200px;
+        }
+
+        .blog-preview-cta-content {
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .blog-preview-cta-content i {
+            color: var(--blue-500);
+            margin-bottom: 1rem;
+        }
+
+        .blog-preview-cta-content h4 {
+            font-weight: 600;
+            color: var(--gray-700);
+            margin-bottom: 0.5rem;
+        }
+
+        .blog-preview-cta-content p {
+            color: var(--gray-500);
+            font-size: 0.875rem;
+            margin-bottom: 1rem;
+        }
+
+        /* ============================================
            FAQ SECTION
            ============================================ */
         .faq-section {
@@ -2642,6 +2821,7 @@
                 <li><a href="#features">Features</a></li>
                 <li><a href="#testimonials">Testimonials</a></li>
                 <li><a href="#pricing">Pricing</a></li>
+                <li><a href="/blog">Blog</a></li>
             </ul>
             <div class="nav-cta">
                 <span class="nav-urgency">🔥 Early pricing ends soon</span>
@@ -2751,14 +2931,14 @@
                         <div class="video-play-btn">
                             <i data-lucide="play"></i>
                         </div>
-                        <div class="video-duration">3:24</div>
+                        <div class="video-duration">0:15</div>
                     </div>
                     <!-- YouTube iframe will be inserted here on click -->
                 </div>
             </div>
             <p class="video-cta">
                 <i data-lucide="clock" style="width: 14px; height: 14px; vertical-align: middle;"></i>
-                Just 3 minutes to see the magic
+                Just 15 seconds to see the magic
             </p>
         </div>
     </section>
@@ -3508,6 +3688,48 @@
         </div>
     </section>
 
+    <!-- Blog Section -->
+    <section class="blog-preview-section" id="blog">
+        <div class="container">
+            <div class="blog-preview-header">
+                <div class="blog-preview-badge">
+                    <i data-lucide="book-open" style="width: 16px; height: 16px;"></i>
+                    From the Blog
+                </div>
+                <h2>Learn JOC Best Practices</h2>
+                <p>Expert insights on Job Order Contracting, estimating, and winning more government work.</p>
+            </div>
+            
+            <div class="blog-preview-grid">
+                <a href="/blog/what-is-job-order-contracting/" class="blog-preview-card featured">
+                    <div class="blog-preview-card-image">
+                        <div class="blog-preview-card-icon">
+                            <i data-lucide="file-text" style="width: 32px; height: 32px;"></i>
+                        </div>
+                    </div>
+                    <div class="blog-preview-card-content">
+                        <span class="blog-preview-card-category">JOC Fundamentals</span>
+                        <h3>What is Job Order Contracting? A Complete Guide for Contractors</h3>
+                        <p>Learn what JOC is, how it differs from traditional bidding, and why it's becoming the preferred method for smart contractors.</p>
+                        <div class="blog-preview-card-meta">
+                            <span><i data-lucide="user" style="width: 14px; height: 14px;"></i> Doug</span>
+                            <span><i data-lucide="clock" style="width: 14px; height: 14px;"></i> 12 min read</span>
+                        </div>
+                    </div>
+                </a>
+                
+                <div class="blog-preview-cta">
+                    <div class="blog-preview-cta-content">
+                        <i data-lucide="arrow-right" style="width: 24px; height: 24px;"></i>
+                        <h4>More articles coming soon</h4>
+                        <p>Subscribe to get notified when we publish new JOC guides.</p>
+                        <a href="/blog" class="btn btn-secondary btn-sm">View All Articles</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- FAQ Section -->
     <section class="faq-section" id="faq">
         <div class="container">
@@ -3641,16 +3863,16 @@
                 JOCHero
             </div>
             <div class="footer-links">
-                <a href="#">Features</a>
-                <a href="#">Pricing</a>
+                <a href="#features">Features</a>
+                <a href="#pricing">Pricing</a>
                 <a href="#">About</a>
-                <a href="#">Blog</a>
+                <a href="/blog">Blog</a>
                 <a href="#">Support</a>
                 <a href="#">Privacy</a>
                 <a href="#">Terms</a>
             </div>
             <div class="footer-copy">
-                © 2025 JOCHero. All rights reserved.
+                © 2026 JOCHero. All rights reserved.
             </div>
         </div>
     </footer>
@@ -3675,13 +3897,14 @@
         
         if (videoWrapper && videoThumbnail) {
             videoThumbnail.addEventListener('click', () => {
-                // Replace with actual YouTube video ID
-                const youtubeId = 'dQw4w9WgXcQ'; // Placeholder - replace with actual demo video
+                // Load JOCHero demo animation
                 videoThumbnail.style.display = 'none';
                 const iframe = document.createElement('iframe');
-                iframe.src = `https://www.youtube.com/embed/${youtubeId}?autoplay=1&rel=0`;
-                iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
-                iframe.allowFullscreen = true;
+                iframe.src = 'demo/demo-translation.html';
+                iframe.style.width = '100%';
+                iframe.style.height = '100%';
+                iframe.style.border = 'none';
+                iframe.style.borderRadius = '12px';
                 videoWrapper.appendChild(iframe);
             });
         }
