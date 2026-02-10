@@ -5,12 +5,36 @@ import { PDFViewer } from './components/PDFViewer';
 import { MeasurementPanel } from './components/MeasurementPanel';
 import { DropZone } from './components/DropZone';
 import { CalibrationDialog } from './components/CalibrationDialog';
+import { TranslationMachine } from './components/TranslationMachine';
 
 function App() {
-  const { project, setPdfUrl, setProject } = useProjectStore();
+  const { project, setPdfUrl, setProject, addMeasurement } = useProjectStore();
   const [showCalibration, setShowCalibration] = useState(false);
+  const [showTranslator, setShowTranslator] = useState(false);
   const [darkMode, setDarkMode] = useState(true);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Handle selecting a JOC item from the translator
+  const handleJocItemSelect = useCallback((item: { taskCode: string; description: string; unit: string; unitCost: number }) => {
+    // Create a new measurement with the JOC item
+    const newMeasurement = {
+      id: `m-${Date.now()}`,
+      type: 'count' as const,
+      points: [{ x: 0, y: 0 }],
+      value: 1,
+      unit: item.unit,
+      label: item.description,
+      color: '#22c55e',
+      jocItem: {
+        taskCode: item.taskCode,
+        description: item.description,
+        unit: item.unit,
+        unitCost: item.unitCost,
+      },
+    };
+    addMeasurement(newMeasurement);
+    setShowTranslator(false);
+  }, [addMeasurement]);
 
   const handleFileSelect = useCallback((file: File) => {
     if (file.type === 'application/pdf') {
@@ -60,6 +84,19 @@ function App() {
               {project?.name}
             </div>
           )}
+          
+          {/* Translation Machine Button */}
+          <button
+            onClick={() => setShowTranslator(!showTranslator)}
+            className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm transition-all ${
+              showTranslator 
+                ? 'bg-amber-500 text-black' 
+                : 'bg-gradient-to-r from-amber-500 to-orange-500 text-black hover:from-amber-400 hover:to-orange-400'
+            }`}
+          >
+            <span>🔮</span>
+            <span className="hidden sm:inline">Translate</span>
+          </button>
           
           {/* Upload Button */}
           <button
@@ -133,6 +170,25 @@ function App() {
       {/* Calibration Dialog */}
       {showCalibration && (
         <CalibrationDialog onClose={() => setShowCalibration(false)} />
+      )}
+
+      {/* Translation Machine Panel */}
+      {showTranslator && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+          <div className="relative w-full max-w-2xl mx-4">
+            <button
+              onClick={() => setShowTranslator(false)}
+              className="absolute -top-12 right-0 px-3 py-1 text-white/60 hover:text-white text-sm flex items-center gap-1"
+            >
+              <span>ESC to close</span>
+              <span className="text-lg">✕</span>
+            </button>
+            <TranslationMachine 
+              onSelectItem={handleJocItemSelect}
+              className="shadow-2xl"
+            />
+          </div>
+        </div>
       )}
     </div>
   );
