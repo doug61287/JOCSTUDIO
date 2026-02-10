@@ -725,7 +725,7 @@
 
             try {
                 // Call API to validate code
-                const response = await fetch('/api/invites/validate', {
+                const response = await fetch('https://web-production-309c2.up.railway.app/invites/validate', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ code })
@@ -902,7 +902,7 @@
                     return;
                 }
                 
-                const response = await fetch('/api/auth/register', {
+                const response = await fetch('https://web-production-309c2.up.railway.app/auth/register', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
