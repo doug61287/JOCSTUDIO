@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JOCHero - JOC Proposals in 90 Minutes | JOC-Native Takeoff Software</title>
-    <meta name="description" content="The only takeoff software built for Job Order Contracts. Upload drawings, click to measure, export agency-ready proposals. Save 6+ hours per proposal.">
+    <title>JOCHero - Win More JOC Proposals Without Manual Hell | JOC-Native Takeoff</title>
+    <meta name="description" content="Upload a plan, click to measure, auto-suggest JOC line items — 8-hour jobs done in under an hour. The only takeoff software built for Job Order Contracts.">
     <meta name="keywords" content="JOC, Job Order Contract, takeoff software, construction estimating, UPB, unit price book, government contracting">
     <meta name="author" content="JOCHero">
     <meta name="robots" content="index, follow">
@@ -316,45 +316,78 @@
            HERO SECTION
            ============================================ */
         .hero {
-            padding: 8rem 1.5rem 6rem;
+            padding: 8rem 1.5rem 5rem;
             background: linear-gradient(180deg, var(--blue-50) 0%, var(--white) 100%);
             position: relative;
             overflow: hidden;
         }
 
-        .hero-content {
-            max-width: 800px;
+        .hero-grid {
+            max-width: 1200px;
             margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 3rem;
+            align-items: center;
+        }
+
+        @media (min-width: 1024px) {
+            .hero-grid {
+                grid-template-columns: 1.1fr 1fr;
+                gap: 4rem;
+            }
+        }
+
+        .hero-content {
             text-align: center;
             position: relative;
             z-index: 1;
         }
 
+        @media (min-width: 1024px) {
+            .hero-content {
+                text-align: left;
+            }
+        }
+
         .hero h1 {
-            font-size: clamp(2.5rem, 5vw, 3.75rem);
+            font-size: clamp(2.25rem, 5vw, 3.25rem);
             font-weight: 800;
-            line-height: 1.1;
+            line-height: 1.15;
             color: var(--gray-900);
-            margin-bottom: 1.5rem;
+            margin-bottom: 1.25rem;
             animation: fadeInUp 0.6s ease 0.1s both;
         }
 
+        .hero h1 .highlight-red {
+            color: var(--red-500);
+            text-decoration: line-through;
+            text-decoration-thickness: 3px;
+            opacity: 0.7;
+        }
+
         .hero-subtitle {
-            font-size: clamp(1.125rem, 2vw, 1.375rem);
+            font-size: clamp(1.0625rem, 2vw, 1.25rem);
             color: var(--gray-600);
-            margin-bottom: 2.5rem;
-            max-width: 640px;
-            margin-left: auto;
-            margin-right: auto;
+            margin-bottom: 2rem;
+            max-width: 560px;
+            line-height: 1.6;
             animation: fadeInUp 0.6s ease 0.2s both;
+        }
+
+        @media (min-width: 1024px) {
+            .hero-subtitle {
+                margin-left: 0;
+                margin-right: 0;
+            }
         }
 
         .hero-cta {
             display: flex;
             flex-direction: column;
-            gap: 1rem;
+            gap: 0.875rem;
             justify-content: center;
-            margin-bottom: 1.5rem;
+            margin-bottom: 1.25rem;
             animation: fadeInUp 0.6s ease 0.3s both;
         }
 
@@ -364,26 +397,332 @@
             }
         }
 
-        /* Trust Signal Row */
-        .hero-trust-signal {
+        @media (min-width: 1024px) {
+            .hero-cta {
+                justify-content: flex-start;
+            }
+        }
+
+        /* Gold CTA Button */
+        .btn-gold {
+            background: linear-gradient(135deg, #FFC107, #FF9800);
+            color: var(--gray-900);
+            font-weight: 700;
+            box-shadow: var(--shadow-md), 0 0 0 0 rgba(255, 193, 7, 0.4);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .btn-gold:hover {
+            background: linear-gradient(135deg, #FFD54F, #FFA726);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg), 0 0 25px rgba(255, 193, 7, 0.4);
+        }
+
+        /* Hero Micro-copy */
+        .hero-microcopy {
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
-            gap: 1.5rem;
-            color: var(--gray-600);
-            font-size: 0.9375rem;
-            font-weight: 500;
+            gap: 1.25rem;
+            color: var(--gray-500);
+            font-size: 0.8125rem;
+            margin-bottom: 1.5rem;
+            animation: fadeInUp 0.6s ease 0.35s both;
+        }
+
+        @media (min-width: 1024px) {
+            .hero-microcopy {
+                justify-content: flex-start;
+            }
+        }
+
+        .hero-microcopy span {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .hero-microcopy .check-icon {
+            color: var(--green-500);
+        }
+
+        /* Trust Signal Row - Beta Version */
+        .hero-trust-signal {
+            display: inline-flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 0.5rem;
+            background: linear-gradient(135deg, var(--blue-100), var(--green-100));
+            padding: 0.875rem 1.5rem;
+            border-radius: 100px;
+            color: var(--gray-700);
+            font-size: 0.875rem;
+            font-weight: 600;
+            border: 1px solid var(--blue-200);
             animation: fadeInUp 0.6s ease 0.4s both;
         }
 
-        .hero-trust-signal span {
+        @media (min-width: 1024px) {
+            .hero-trust-signal {
+                justify-content: flex-start;
+            }
+        }
+
+        .hero-trust-signal .divider {
+            color: var(--gray-400);
+        }
+
+        /* ============================================
+           CLOCK SHRINKING ANIMATION
+           ============================================ */
+        .clock-animation {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: var(--white);
+            padding: 0.5rem 1rem;
+            border-radius: 100px;
+            box-shadow: var(--shadow-md);
+            margin-bottom: 1rem;
+            animation: fadeInUp 0.6s ease 0.05s both;
+        }
+
+        .clock-icon {
+            width: 28px;
+            height: 28px;
+            color: var(--blue-600);
+            animation: clockPulse 2s ease-in-out infinite;
+        }
+
+        .clock-time {
+            font-size: 1.25rem;
+            font-weight: 800;
+            min-width: 100px;
+        }
+
+        .clock-time .time-old {
+            color: var(--red-500);
+            text-decoration: line-through;
+            text-decoration-thickness: 2px;
+            opacity: 0;
+            animation: timeOldShow 6s ease-in-out infinite;
+        }
+
+        .clock-time .time-new {
+            color: var(--green-500);
+            opacity: 0;
+            animation: timeNewShow 6s ease-in-out infinite;
+        }
+
+        .clock-time .time-arrow {
+            color: var(--gray-400);
+            font-size: 1rem;
+            opacity: 0;
+            animation: arrowShow 6s ease-in-out infinite;
+        }
+
+        @keyframes clockPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        @keyframes timeOldShow {
+            0%, 10% { opacity: 0; }
+            15%, 45% { opacity: 1; }
+            55%, 100% { opacity: 0.4; }
+        }
+
+        @keyframes arrowShow {
+            0%, 35% { opacity: 0; }
+            45%, 100% { opacity: 1; }
+        }
+
+        @keyframes timeNewShow {
+            0%, 45% { opacity: 0; transform: scale(0.8); }
+            55%, 90% { opacity: 1; transform: scale(1); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+
+        /* ============================================
+           HERO VISUAL / FLOATING MOCKUP
+           ============================================ */
+        .hero-visual {
+            position: relative;
+            animation: fadeInUp 0.8s ease 0.5s both;
+        }
+
+        .hero-mockup {
+            position: relative;
+            background: var(--white);
+            border-radius: 16px;
+            box-shadow: var(--shadow-2xl);
+            border: 1px solid var(--gray-200);
+            overflow: hidden;
+            animation: floatMockup 6s ease-in-out infinite;
+        }
+
+        @keyframes floatMockup {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .mockup-header {
+            background: linear-gradient(135deg, var(--gray-800), var(--gray-900));
+            padding: 0.75rem 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .mockup-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+
+        .mockup-dot.red { background: #FF5F57; }
+        .mockup-dot.yellow { background: #FFBD2E; }
+        .mockup-dot.green { background: #28CA41; }
+
+        .mockup-title {
+            color: var(--gray-400);
+            font-size: 0.75rem;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .mockup-content {
+            padding: 1.25rem;
+            min-height: 280px;
+            position: relative;
+            background: var(--gray-50);
+        }
+
+        /* Step indicators */
+        .mockup-steps {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .mockup-step {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            background: var(--white);
+            padding: 0.875rem 1rem;
+            border-radius: 10px;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--gray-200);
+            opacity: 0;
+            transform: translateX(-20px);
+        }
+
+        .mockup-step:nth-child(1) { animation: stepSlideIn 6s ease-in-out infinite 0.5s; }
+        .mockup-step:nth-child(2) { animation: stepSlideIn 6s ease-in-out infinite 1.5s; }
+        .mockup-step:nth-child(3) { animation: stepSlideIn 6s ease-in-out infinite 2.5s; }
+
+        @keyframes stepSlideIn {
+            0%, 5% { opacity: 0; transform: translateX(-20px); }
+            15%, 85% { opacity: 1; transform: translateX(0); }
+            95%, 100% { opacity: 0; transform: translateX(20px); }
+        }
+
+        .mockup-step-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .mockup-step-icon.upload { background: linear-gradient(135deg, var(--blue-500), var(--blue-600)); color: white; }
+        .mockup-step-icon.measure { background: linear-gradient(135deg, var(--green-500), #059669); color: white; }
+        .mockup-step-icon.generate { background: linear-gradient(135deg, var(--gold), var(--orange-500)); color: white; }
+
+        .mockup-step-text {
+            flex: 1;
+        }
+
+        .mockup-step-text strong {
+            display: block;
+            font-size: 0.875rem;
+            color: var(--gray-900);
+            margin-bottom: 0.125rem;
+        }
+
+        .mockup-step-text span {
+            font-size: 0.75rem;
+            color: var(--gray-500);
+        }
+
+        .mockup-step-status {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--green-500);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+        }
+
+        /* Floating badges around mockup */
+        .floating-badge {
+            position: absolute;
+            background: var(--white);
+            padding: 0.5rem 0.875rem;
+            border-radius: 100px;
+            box-shadow: var(--shadow-lg);
+            font-size: 0.75rem;
+            font-weight: 600;
             display: flex;
             align-items: center;
             gap: 0.375rem;
+            white-space: nowrap;
+            z-index: 10;
         }
 
-        .hero-trust-signal .check {
+        .floating-badge.time-saved {
+            top: 10%;
+            right: -10px;
+            background: var(--green-100);
             color: var(--green-500);
+            animation: floatBadge1 4s ease-in-out infinite;
+        }
+
+        .floating-badge.codes-matched {
+            bottom: 20%;
+            left: -15px;
+            background: var(--blue-100);
+            color: var(--blue-600);
+            animation: floatBadge2 4.5s ease-in-out infinite 0.5s;
+        }
+
+        @keyframes floatBadge1 {
+            0%, 100% { transform: translateY(0) rotate(-2deg); }
+            50% { transform: translateY(-8px) rotate(2deg); }
+        }
+
+        @keyframes floatBadge2 {
+            0%, 100% { transform: translateY(0) rotate(2deg); }
+            50% { transform: translateY(-6px) rotate(-2deg); }
+        }
+
+        @media (max-width: 1023px) {
+            .hero-visual {
+                max-width: 500px;
+                margin: 0 auto;
+            }
+            .floating-badge.time-saved { right: 5px; top: 5%; }
+            .floating-badge.codes-matched { left: 5px; }
+        }
+
+        @media (max-width: 480px) {
+            .floating-badge { display: none; }
         }
 
         /* ============================================
@@ -438,6 +777,391 @@
             border-color: var(--blue-300);
             box-shadow: var(--shadow-md);
             color: var(--blue-700);
+        }
+
+        /* ============================================
+           PAIN CHECKLIST SECTION
+           ============================================ */
+        .pain-checklist {
+            padding: 6rem 1.5rem;
+            background: linear-gradient(180deg, #0F172A 0%, #1E293B 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .pain-checklist::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: 
+                linear-gradient(rgba(59, 130, 246, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(59, 130, 246, 0.03) 1px, transparent 1px);
+            background-size: 40px 40px;
+            pointer-events: none;
+        }
+
+        .pain-checklist-container {
+            max-width: var(--container-max);
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 320px;
+            gap: 3rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        @media (max-width: 1024px) {
+            .pain-checklist-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .pain-checklist-header {
+            grid-column: 1 / -1;
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+
+        .pain-checklist-header h2 {
+            font-size: clamp(1.75rem, 4vw, 2.5rem);
+            font-weight: 700;
+            color: var(--white);
+            margin-bottom: 0.75rem;
+            line-height: 1.2;
+        }
+
+        .pain-checklist-header p {
+            color: var(--gray-400);
+            font-size: 1.125rem;
+        }
+
+        /* Pain Cards Grid */
+        .pain-cards-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .pain-cards-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+        }
+
+        @media (max-width: 768px) {
+            .pain-cards-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Individual Pain Card */
+        .pain-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .pain-card:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(59, 130, 246, 0.4);
+            transform: translateY(-2px) scale(1.01);
+            box-shadow: 0 8px 30px rgba(59, 130, 246, 0.15);
+        }
+
+        .pain-card.checked {
+            background: rgba(34, 197, 94, 0.1);
+            border-color: rgba(34, 197, 94, 0.4);
+        }
+
+        .pain-card.checked:hover {
+            background: rgba(34, 197, 94, 0.15);
+        }
+
+        .pain-card-header {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+        }
+
+        .pain-card-checkbox {
+            width: 24px;
+            height: 24px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            transition: all 0.3s ease;
+            background: transparent;
+        }
+
+        .pain-card.checked .pain-card-checkbox {
+            background: var(--green-500);
+            border-color: var(--green-500);
+        }
+
+        .pain-card-checkbox i {
+            opacity: 0;
+            transform: scale(0);
+            transition: all 0.2s ease;
+            color: white;
+        }
+
+        .pain-card.checked .pain-card-checkbox i {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .pain-card-content {
+            flex: 1;
+        }
+
+        .pain-card-pain {
+            color: var(--gray-300);
+            font-size: 1rem;
+            font-weight: 500;
+            line-height: 1.4;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .pain-card-pain-icon {
+            font-size: 1.25rem;
+        }
+
+        .pain-card.checked .pain-card-pain {
+            color: var(--gray-500);
+            text-decoration: line-through;
+        }
+
+        .pain-card-solution {
+            color: var(--green-400);
+            font-size: 0.9375rem;
+            margin-top: 0.75rem;
+            opacity: 0;
+            max-height: 0;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .pain-card.checked .pain-card-solution {
+            opacity: 1;
+            max-height: 50px;
+            margin-top: 0.75rem;
+        }
+
+        .pain-card-time {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: rgba(239, 68, 68, 0.2);
+            color: var(--red-500);
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 0.25rem 0.75rem;
+            border-radius: 100px;
+            transition: all 0.3s ease;
+        }
+
+        .pain-card.checked .pain-card-time {
+            background: rgba(34, 197, 94, 0.2);
+            color: var(--green-500);
+        }
+
+        .pain-card.checked .pain-card-time::before {
+            content: '-';
+        }
+
+        /* Sidebar / Progress Panel */
+        .pain-sidebar {
+            position: sticky;
+            top: 100px;
+            height: fit-content;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 1rem;
+            padding: 2rem;
+            transition: all 0.3s ease;
+        }
+
+        @media (max-width: 1024px) {
+            .pain-sidebar {
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                top: auto;
+                border-radius: 1.5rem 1.5rem 0 0;
+                z-index: 998;
+                background: rgba(15, 23, 42, 0.98);
+                backdrop-filter: blur(10px);
+                transform: translateY(calc(100% - 80px));
+                transition: transform 0.4s ease;
+            }
+
+            .pain-sidebar.expanded {
+                transform: translateY(0);
+            }
+
+            .pain-sidebar-toggle {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 0.5rem;
+                width: 100%;
+                padding: 0.75rem;
+                margin-bottom: 1rem;
+                background: transparent;
+                border: none;
+                color: var(--gray-400);
+                cursor: pointer;
+            }
+
+            .pain-sidebar-toggle i {
+                transition: transform 0.3s ease;
+            }
+
+            .pain-sidebar.expanded .pain-sidebar-toggle i {
+                transform: rotate(180deg);
+            }
+        }
+
+        @media (min-width: 1025px) {
+            .pain-sidebar-toggle {
+                display: none;
+            }
+        }
+
+        .pain-sidebar-header {
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .pain-sidebar-header h3 {
+            color: var(--white);
+            font-size: 1.125rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .pain-time-wasted {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--red-500);
+            line-height: 1;
+            transition: all 0.5s ease;
+        }
+
+        .pain-time-wasted.saving {
+            color: var(--green-500);
+        }
+
+        .pain-time-label {
+            color: var(--gray-400);
+            font-size: 0.9375rem;
+            margin-top: 0.25rem;
+        }
+
+        /* Progress Bar */
+        .pain-progress {
+            margin: 1.5rem 0;
+        }
+
+        .pain-progress-bar {
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 100px;
+            overflow: hidden;
+        }
+
+        .pain-progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--blue-500), var(--green-500));
+            border-radius: 100px;
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+
+        .pain-progress-text {
+            color: var(--gray-400);
+            font-size: 0.875rem;
+            text-align: center;
+            margin-top: 0.75rem;
+        }
+
+        /* Completion Message */
+        .pain-completion {
+            text-align: center;
+            opacity: 0;
+            max-height: 0;
+            overflow: hidden;
+            transition: all 0.4s ease;
+        }
+
+        .pain-completion.visible {
+            opacity: 1;
+            max-height: 300px;
+            margin-top: 1.5rem;
+        }
+
+        .pain-completion-message {
+            color: var(--green-400);
+            font-size: 0.9375rem;
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+            padding: 1rem;
+            background: rgba(34, 197, 94, 0.1);
+            border-radius: 0.75rem;
+            border: 1px solid rgba(34, 197, 94, 0.3);
+        }
+
+        .pain-cta-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            width: 100%;
+            padding: 1rem 1.5rem;
+            background: linear-gradient(135deg, var(--green-500), #16a34a);
+            color: white;
+            font-weight: 600;
+            font-size: 1rem;
+            border: none;
+            border-radius: 0.75rem;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(34, 197, 94, 0.3);
+        }
+
+        .pain-cta-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(34, 197, 94, 0.4);
+        }
+
+        /* Animate number changes */
+        @keyframes numberPop {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        .pain-time-wasted.pop {
+            animation: numberPop 0.3s ease;
         }
 
         /* ============================================
@@ -636,9 +1360,349 @@
         }
 
         /* ============================================
-           COMPARISON SECTION (ACCORDION)
+           CHOOSE YOUR REALITY SECTION
+           ============================================ */
+        .reality-section {
+            padding: 6rem 1.5rem;
+            background: linear-gradient(180deg, #0a0a0f 0%, #111827 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .reality-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(ellipse at 20% 50%, rgba(239, 68, 68, 0.05) 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 50%, rgba(59, 130, 246, 0.1) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 50%, rgba(255, 215, 0, 0.08) 0%, transparent 50%);
+            pointer-events: none;
+        }
+
+        .reality-header {
+            text-align: center;
+            margin-bottom: 3rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .reality-header h2 {
+            font-size: clamp(2rem, 5vw, 3rem);
+            font-weight: 800;
+            color: var(--white);
+            margin-bottom: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .reality-header p {
+            color: var(--gray-400);
+            font-size: 1.25rem;
+            font-style: italic;
+        }
+
+        .reality-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        @media (max-width: 968px) {
+            .reality-grid {
+                grid-template-columns: 1fr;
+                max-width: 500px;
+            }
+        }
+
+        .reality-column {
+            border-radius: 1rem;
+            overflow: hidden;
+            transition: all 0.4s ease;
+            opacity: 0;
+            transform: translateY(40px);
+        }
+
+        .reality-column.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .reality-column:nth-child(1).visible {
+            transition-delay: 0s;
+        }
+
+        .reality-column:nth-child(2).visible {
+            transition-delay: 0.15s;
+        }
+
+        .reality-column:nth-child(3).visible {
+            transition-delay: 0.3s;
+        }
+
+        /* Excel Reality - Desaturated, dim */
+        .reality-column.excel {
+            background: linear-gradient(180deg, #1a1a1f 0%, #12121a 100%);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            filter: saturate(0.7);
+        }
+
+        .reality-column.excel:hover {
+            filter: saturate(1);
+            border-color: rgba(239, 68, 68, 0.3);
+        }
+
+        .reality-column.excel .reality-column-header {
+            background: linear-gradient(135deg, #4a3535 0%, #2d1f1f 100%);
+            border-bottom: 2px solid rgba(239, 68, 68, 0.3);
+        }
+
+        .reality-column.excel .reality-column-icon {
+            background: linear-gradient(135deg, #6b4444 0%, #4a2828 100%);
+            color: #ef4444;
+        }
+
+        .reality-column.excel .reality-row-value {
+            color: #f87171;
+        }
+
+        /* JOCHero Reality - Vibrant blue, highlighted */
+        .reality-column.jochero {
+            background: linear-gradient(180deg, #1a2744 0%, #0f1a2e 100%);
+            border: 2px solid rgba(59, 130, 246, 0.4);
+            box-shadow: 
+                0 0 60px rgba(59, 130, 246, 0.15),
+                inset 0 1px 0 rgba(255, 255, 255, 0.05);
+            transform: scale(1.02);
+        }
+
+        .reality-column.jochero.visible {
+            transform: scale(1.02) translateY(0);
+        }
+
+        .reality-column.jochero:hover {
+            border-color: rgba(59, 130, 246, 0.6);
+            box-shadow: 
+                0 0 80px rgba(59, 130, 246, 0.25),
+                inset 0 1px 0 rgba(255, 255, 255, 0.05);
+        }
+
+        .reality-column.jochero .reality-column-header {
+            background: linear-gradient(135deg, #1e40af 0%, #1e3a8a 100%);
+            border-bottom: 2px solid var(--gold);
+        }
+
+        .reality-column.jochero .reality-column-icon {
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            color: var(--gold);
+        }
+
+        .reality-column.jochero .reality-row-value {
+            color: #60a5fa;
+        }
+
+        .reality-column.jochero .reality-column-badge {
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, var(--gold), #f59e0b);
+            color: #1a1a1f;
+            padding: 0.35rem 1rem;
+            border-radius: 100px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            white-space: nowrap;
+        }
+
+        /* Future Reality - Glowing gold/green */
+        .reality-column.future {
+            background: linear-gradient(180deg, #1a2a1a 0%, #0f1a12 100%);
+            border: 1px solid rgba(255, 215, 0, 0.2);
+            box-shadow: 0 0 40px rgba(255, 215, 0, 0.05);
+        }
+
+        .reality-column.future:hover {
+            border-color: rgba(255, 215, 0, 0.4);
+            box-shadow: 0 0 60px rgba(255, 215, 0, 0.1);
+        }
+
+        .reality-column.future .reality-column-header {
+            background: linear-gradient(135deg, #3d4a1a 0%, #2a3312 100%);
+            border-bottom: 2px solid rgba(255, 215, 0, 0.4);
+        }
+
+        .reality-column.future .reality-column-icon {
+            background: linear-gradient(135deg, #4ade80 0%, #22c55e 100%);
+            color: #ffd700;
+        }
+
+        .reality-column.future .reality-row-value {
+            color: #fbbf24;
+        }
+
+        /* Column Header */
+        .reality-column-header {
+            padding: 1.75rem 1.5rem;
+            text-align: center;
+            position: relative;
+        }
+
+        .reality-column-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+        }
+
+        .reality-column-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--white);
+            margin-bottom: 0.25rem;
+        }
+
+        .reality-column-subtitle {
+            font-size: 0.875rem;
+            color: var(--gray-400);
+            font-style: italic;
+        }
+
+        /* Rows */
+        .reality-rows {
+            padding: 1rem 1.5rem 1.5rem;
+        }
+
+        .reality-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.875rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            opacity: 0;
+            transform: translateX(-10px);
+            transition: all 0.3s ease, background 0.2s ease;
+        }
+
+        .reality-row.visible {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .reality-row:last-child {
+            border-bottom: none;
+        }
+
+        .reality-row.highlighted {
+            background: rgba(255, 255, 255, 0.05);
+            margin: 0 -1.5rem;
+            padding: 0.875rem 1.5rem;
+            border-radius: 0.5rem;
+        }
+
+        .reality-row-label {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            color: var(--gray-400);
+            font-size: 0.9375rem;
+        }
+
+        .reality-row-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.05);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .reality-row-icon i {
+            width: 16px;
+            height: 16px;
+        }
+
+        .reality-row-value {
+            font-weight: 600;
+            font-size: 0.9375rem;
+            text-align: right;
+        }
+
+        /* Reality CTA */
+        .reality-cta {
+            text-align: center;
+            margin-top: 3.5rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .reality-cta-text {
+            font-size: 1.375rem;
+            font-weight: 600;
+            color: var(--white);
+            margin-bottom: 1.25rem;
+        }
+
+        .reality-cta .btn-primary {
+            background: linear-gradient(135deg, var(--gold), #f59e0b);
+            color: #1a1a1f;
+            font-weight: 700;
+            padding: 1.125rem 2.5rem;
+            font-size: 1.0625rem;
+        }
+
+        .reality-cta .btn-primary:hover {
+            background: linear-gradient(135deg, #fcd34d, var(--gold));
+            transform: translateY(-2px);
+            box-shadow: 0 10px 40px rgba(255, 215, 0, 0.3);
+        }
+
+        /* Mobile horizontal scroll option */
+        @media (max-width: 968px) {
+            .reality-grid.horizontal-scroll {
+                display: flex;
+                overflow-x: auto;
+                scroll-snap-type: x mandatory;
+                -webkit-overflow-scrolling: touch;
+                gap: 1rem;
+                padding-bottom: 1rem;
+                max-width: 100%;
+            }
+
+            .reality-grid.horizontal-scroll .reality-column {
+                flex: 0 0 85%;
+                scroll-snap-align: center;
+            }
+
+            .reality-column.jochero {
+                transform: none;
+            }
+
+            .reality-column.jochero.visible {
+                transform: translateY(0);
+            }
+        }
+
+        /* ============================================
+           COMPARISON SECTION (ACCORDION) - LEGACY
+           Hidden - replaced by Choose Your Reality
            ============================================ */
         .comparison-section {
+            display: none;
             padding: 6rem 1.5rem;
             background: var(--gray-50);
         }
@@ -1595,26 +2659,106 @@
 
     <!-- Hero Section -->
     <section class="hero">
-        <div class="hero-content">
-            <h1>JOC Proposals in <span class="gradient-text">90 Minutes</span> — Not 8 Hours</h1>
-            <p class="hero-subtitle">
-                The only takeoff software built for Job Order Contracts. Upload drawings, click to measure, export agency-ready proposals.
-            </p>
-            <div class="hero-cta">
-                <a href="#pricing" class="btn btn-primary btn-lg">
-                    <i data-lucide="rocket" style="width: 20px; height: 20px;"></i>
-                    Start Free Trial
-                </a>
-                <a href="#demo" class="btn btn-secondary btn-lg">
-                    <i data-lucide="play-circle" style="width: 20px; height: 20px;"></i>
-                    Watch Demo
-                </a>
+        <div class="hero-grid">
+            <!-- Left: Content -->
+            <div class="hero-content">
+                <!-- Clock Animation -->
+                <div class="clock-animation">
+                    <i data-lucide="clock" class="clock-icon"></i>
+                    <span class="clock-time">
+                        <span class="time-old">8 hrs</span>
+                        <span class="time-arrow"> → </span>
+                        <span class="time-new">47 min</span>
+                    </span>
+                </div>
+                
+                <h1>Win More JOC Proposals<br>Without the <span class="highlight-red">Manual Hell</span></h1>
+                
+                <p class="hero-subtitle">
+                    Upload a plan, click to measure, auto-suggest JOC line items — 8-hour jobs done in under an hour.
+                </p>
+                
+                <div class="hero-cta">
+                    <a href="#pricing" class="btn btn-gold btn-lg">
+                        <i data-lucide="zap" style="width: 20px; height: 20px;"></i>
+                        See Your First Proposal in &lt;1 Hour
+                    </a>
+                    <a href="#demo" class="btn btn-secondary btn-lg">
+                        <i data-lucide="play-circle" style="width: 20px; height: 20px;"></i>
+                        Watch 30-Second Demo
+                    </a>
+                </div>
+                
+                <!-- Micro-copy hooks -->
+                <div class="hero-microcopy">
+                    <span><span class="check-icon">✓</span> No credit card required</span>
+                    <span><span class="check-icon">✓</span> Works with NYC, GSA, and 50+ agencies</span>
+                    <span><span class="check-icon">✓</span> Built by estimators, for estimators</span>
+                </div>
+                
+                <!-- Beta Trust Bar -->
+                <div class="hero-trust-signal">
+                    🚀 Now in Beta <span class="divider">•</span> 
+                    10 Early Adopter Spots <span class="divider">•</span> 
+                    Free During Testing <span class="divider">•</span> 
+                    Shape the Product
+                </div>
             </div>
             
-            <div class="hero-trust-signal">
-                <span><span class="check">✓</span> Works with any UPB</span>
-                <span><span class="check">✓</span> No credit card required</span>
-                <span><span class="check">✓</span> 60-day money-back guarantee</span>
+            <!-- Right: Floating Visual -->
+            <div class="hero-visual">
+                <div class="hero-mockup">
+                    <div class="mockup-header">
+                        <span class="mockup-dot red"></span>
+                        <span class="mockup-dot yellow"></span>
+                        <span class="mockup-dot green"></span>
+                        <span class="mockup-title">JOCHero — New Proposal</span>
+                    </div>
+                    <div class="mockup-content">
+                        <div class="mockup-steps">
+                            <div class="mockup-step">
+                                <div class="mockup-step-icon upload">
+                                    <i data-lucide="upload" style="width: 18px; height: 18px;"></i>
+                                </div>
+                                <div class="mockup-step-text">
+                                    <strong>PDF Uploaded</strong>
+                                    <span>Floor-Plan-Rev3.pdf • 2.4 MB</span>
+                                </div>
+                                <div class="mockup-step-status">✓</div>
+                            </div>
+                            <div class="mockup-step">
+                                <div class="mockup-step-icon measure">
+                                    <i data-lucide="ruler" style="width: 18px; height: 18px;"></i>
+                                </div>
+                                <div class="mockup-step-text">
+                                    <strong>Measurements Complete</strong>
+                                    <span>23 areas • 156 line items detected</span>
+                                </div>
+                                <div class="mockup-step-status">✓</div>
+                            </div>
+                            <div class="mockup-step">
+                                <div class="mockup-step-icon generate">
+                                    <i data-lucide="sparkles" style="width: 18px; height: 18px;"></i>
+                                </div>
+                                <div class="mockup-step-text">
+                                    <strong>Proposal Generated</strong>
+                                    <span>NYC H+H format • Ready to export</span>
+                                </div>
+                                <div class="mockup-step-status">✓</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Floating Badges -->
+                <div class="floating-badge time-saved">
+                    <i data-lucide="timer" style="width: 14px; height: 14px;"></i>
+                    6+ hours saved
+                </div>
+                <div class="floating-badge codes-matched">
+                    <i data-lucide="check-circle" style="width: 14px; height: 14px;"></i>
+                    156 codes matched
+                </div>
             </div>
         </div>
     </section>
@@ -1634,6 +2778,165 @@
                 <div class="logo-item">MTA</div>
                 <div class="logo-item">NYCHA</div>
                 <div class="logo-item">Army Corps</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pain Checklist Section -->
+    <section class="pain-checklist" id="pain-checklist">
+        <div class="pain-checklist-container">
+            <div class="pain-checklist-header">
+                <h2>Where Estimates Get Hard — And Where JOCHero Changes the Game</h2>
+                <p>Check the pains you recognize. See how much time you're losing.</p>
+            </div>
+
+            <div class="pain-cards-wrapper">
+                <div class="pain-cards-grid">
+                    <div class="pain-card" data-time="45">
+                        <div class="pain-card-header">
+                            <div class="pain-card-checkbox">
+                                <i data-lucide="check" style="width: 14px; height: 14px;"></i>
+                            </div>
+                            <div class="pain-card-content">
+                                <div class="pain-card-pain">
+                                    <span class="pain-card-pain-icon">📐</span>
+                                    Matching drawings to UPB specs manually
+                                </div>
+                                <div class="pain-card-solution">
+                                    <i data-lucide="sparkles" style="width: 16px; height: 16px;"></i>
+                                    JOCHero auto-matches with 97% accuracy
+                                </div>
+                            </div>
+                        </div>
+                        <span class="pain-card-time">45 min</span>
+                    </div>
+
+                    <div class="pain-card" data-time="30">
+                        <div class="pain-card-header">
+                            <div class="pain-card-checkbox">
+                                <i data-lucide="check" style="width: 14px; height: 14px;"></i>
+                            </div>
+                            <div class="pain-card-content">
+                                <div class="pain-card-pain">
+                                    <span class="pain-card-pain-icon">🔍</span>
+                                    Ctrl+F through massive PDF catalogs
+                                </div>
+                                <div class="pain-card-solution">
+                                    <i data-lucide="sparkles" style="width: 16px; height: 16px;"></i>
+                                    Smart search finds codes instantly
+                                </div>
+                            </div>
+                        </div>
+                        <span class="pain-card-time">30 min</span>
+                    </div>
+
+                    <div class="pain-card" data-time="60">
+                        <div class="pain-card-header">
+                            <div class="pain-card-checkbox">
+                                <i data-lucide="check" style="width: 14px; height: 14px;"></i>
+                            </div>
+                            <div class="pain-card-content">
+                                <div class="pain-card-pain">
+                                    <span class="pain-card-pain-icon">📊</span>
+                                    Re-entering measurements into Excel
+                                </div>
+                                <div class="pain-card-solution">
+                                    <i data-lucide="sparkles" style="width: 16px; height: 16px;"></i>
+                                    Direct export to agency format
+                                </div>
+                            </div>
+                        </div>
+                        <span class="pain-card-time">60 min</span>
+                    </div>
+
+                    <div class="pain-card" data-time="180">
+                        <div class="pain-card-header">
+                            <div class="pain-card-checkbox">
+                                <i data-lucide="check" style="width: 14px; height: 14px;"></i>
+                            </div>
+                            <div class="pain-card-content">
+                                <div class="pain-card-pain">
+                                    <span class="pain-card-pain-icon">🌙</span>
+                                    Friday night proposal crunches
+                                </div>
+                                <div class="pain-card-solution">
+                                    <i data-lucide="sparkles" style="width: 16px; height: 16px;"></i>
+                                    Finish by lunch, not midnight
+                                </div>
+                            </div>
+                        </div>
+                        <span class="pain-card-time">180 min</span>
+                    </div>
+
+                    <div class="pain-card" data-time="20">
+                        <div class="pain-card-header">
+                            <div class="pain-card-checkbox">
+                                <i data-lucide="check" style="width: 14px; height: 14px;"></i>
+                            </div>
+                            <div class="pain-card-content">
+                                <div class="pain-card-pain">
+                                    <span class="pain-card-pain-icon">🗺️</span>
+                                    Coefficient lookup for different boroughs
+                                </div>
+                                <div class="pain-card-solution">
+                                    <i data-lucide="sparkles" style="width: 16px; height: 16px;"></i>
+                                    Auto-applied based on location
+                                </div>
+                            </div>
+                        </div>
+                        <span class="pain-card-time">20 min</span>
+                    </div>
+
+                    <div class="pain-card" data-time="45">
+                        <div class="pain-card-header">
+                            <div class="pain-card-checkbox">
+                                <i data-lucide="check" style="width: 14px; height: 14px;"></i>
+                            </div>
+                            <div class="pain-card-content">
+                                <div class="pain-card-pain">
+                                    <span class="pain-card-pain-icon">📝</span>
+                                    Reformatting for agency requirements
+                                </div>
+                                <div class="pain-card-solution">
+                                    <i data-lucide="sparkles" style="width: 16px; height: 16px;"></i>
+                                    Pre-formatted templates included
+                                </div>
+                            </div>
+                        </div>
+                        <span class="pain-card-time">45 min</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pain-sidebar" id="pain-sidebar">
+                <button class="pain-sidebar-toggle" id="pain-sidebar-toggle">
+                    <span>See your time savings</span>
+                    <i data-lucide="chevron-up" style="width: 20px; height: 20px;"></i>
+                </button>
+                
+                <div class="pain-sidebar-header">
+                    <h3>Per Proposal, You're Losing:</h3>
+                    <div class="pain-time-wasted" id="pain-time-wasted">0 hrs</div>
+                    <div class="pain-time-label" id="pain-time-label">Select your pain points above</div>
+                </div>
+
+                <div class="pain-progress">
+                    <div class="pain-progress-bar">
+                        <div class="pain-progress-fill" id="pain-progress-fill"></div>
+                    </div>
+                    <div class="pain-progress-text" id="pain-progress-text">0 of 6 pain points checked</div>
+                </div>
+
+                <div class="pain-completion" id="pain-completion">
+                    <p class="pain-completion-message">
+                        <strong>With JOCHero, all of this is automatic.</strong><br>
+                        No lookup. No manual entry. No errors.
+                    </p>
+                    <a href="#pricing" class="pain-cta-btn">
+                        Reclaim Your Time
+                        <i data-lucide="arrow-right" style="width: 18px; height: 18px;"></i>
+                    </a>
+                </div>
             </div>
         </div>
     </section>
@@ -1672,6 +2975,212 @@
                 <a href="#pricing" class="btn btn-primary btn-lg">
                     <i data-lucide="rocket" style="width: 20px; height: 20px;"></i>
                     Start Free Trial
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Choose Your Reality Section -->
+    <section class="reality-section" id="reality">
+        <div class="container">
+            <div class="reality-header">
+                <h2>Choose Your Reality</h2>
+                <p>The future isn't faster Excel — it's smarter estimating.</p>
+            </div>
+
+            <div class="reality-grid">
+                <!-- Column 1: Excel Reality -->
+                <div class="reality-column excel" data-column="excel">
+                    <div class="reality-column-header">
+                        <div class="reality-column-icon">
+                            <i data-lucide="file-spreadsheet" style="width: 28px; height: 28px;"></i>
+                        </div>
+                        <div class="reality-column-title">Excel Reality</div>
+                        <div class="reality-column-subtitle">The painful present</div>
+                    </div>
+                    <div class="reality-rows">
+                        <div class="reality-row" data-row="data-entry">
+                            <div class="reality-row-label">
+                                <div class="reality-row-icon"><i data-lucide="keyboard"></i></div>
+                                Data Entry
+                            </div>
+                            <div class="reality-row-value">Manual, error-prone</div>
+                        </div>
+                        <div class="reality-row" data-row="time">
+                            <div class="reality-row-label">
+                                <div class="reality-row-icon"><i data-lucide="clock"></i></div>
+                                Time per Proposal
+                            </div>
+                            <div class="reality-row-value">8+ hours</div>
+                        </div>
+                        <div class="reality-row" data-row="upb">
+                            <div class="reality-row-label">
+                                <div class="reality-row-icon"><i data-lucide="search"></i></div>
+                                UPB Lookup
+                            </div>
+                            <div class="reality-row-value">Ctrl+F through PDFs</div>
+                        </div>
+                        <div class="reality-row" data-row="coefficients">
+                            <div class="reality-row-label">
+                                <div class="reality-row-icon"><i data-lucide="calculator"></i></div>
+                                Coefficients
+                            </div>
+                            <div class="reality-row-value">Manual calculation</div>
+                        </div>
+                        <div class="reality-row" data-row="compliance">
+                            <div class="reality-row-label">
+                                <div class="reality-row-icon"><i data-lucide="file-check"></i></div>
+                                Format Compliance
+                            </div>
+                            <div class="reality-row-value">Hope and pray</div>
+                        </div>
+                        <div class="reality-row" data-row="friday">
+                            <div class="reality-row-label">
+                                <div class="reality-row-icon"><i data-lucide="calendar"></i></div>
+                                Friday Nights
+                            </div>
+                            <div class="reality-row-value">Working late</div>
+                        </div>
+                        <div class="reality-row" data-row="errors">
+                            <div class="reality-row-label">
+                                <div class="reality-row-icon"><i data-lucide="alert-triangle"></i></div>
+                                Error Rate
+                            </div>
+                            <div class="reality-row-value">~15% rejection</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Column 2: JOCHero Reality -->
+                <div class="reality-column jochero" data-column="jochero">
+                    <div class="reality-column-badge">⚡ Available Now</div>
+                    <div class="reality-column-header">
+                        <div class="reality-column-icon">
+                            <i data-lucide="rocket" style="width: 28px; height: 28px;"></i>
+                        </div>
+                        <div class="reality-column-title">JOCHero Reality</div>
+                        <div class="reality-column-subtitle">The better now</div>
+                    </div>
+                    <div class="reality-rows">
+                        <div class="reality-row" data-row="data-entry">
+                            <div class="reality-row-label">
+                                <div class="reality-row-icon"><i data-lucide="mouse-pointer-click"></i></div>
+                                Data Entry
+                            </div>
+                            <div class="reality-row-value">Click-to-measure</div>
+                        </div>
+                        <div class="reality-row" data-row="time">
+                            <div class="reality-row-label">
+                                <div class="reality-row-icon"><i data-lucide="zap"></i></div>
+                                Time per Proposal
+                            </div>
+                            <div class="reality-row-value">47 minutes</div>
+                        </div>
+                        <div class="reality-row" data-row="upb">
+                            <div class="reality-row-label">
+                                <div class="reality-row-icon"><i data-lucide="sparkles"></i></div>
+                                UPB Lookup
+                            </div>
+                            <div class="reality-row-value">AI-powered search</div>
+                        </div>
+                        <div class="reality-row" data-row="coefficients">
+                            <div class="reality-row-label">
+                                <div class="reality-row-icon"><i data-lucide="cpu"></i></div>
+                                Coefficients
+                            </div>
+                            <div class="reality-row-value">Auto-applied</div>
+                        </div>
+                        <div class="reality-row" data-row="compliance">
+                            <div class="reality-row-label">
+                                <div class="reality-row-icon"><i data-lucide="badge-check"></i></div>
+                                Format Compliance
+                            </div>
+                            <div class="reality-row-value">Agency-ready</div>
+                        </div>
+                        <div class="reality-row" data-row="friday">
+                            <div class="reality-row-label">
+                                <div class="reality-row-icon"><i data-lucide="sun"></i></div>
+                                Friday Nights
+                            </div>
+                            <div class="reality-row-value">Done by lunch</div>
+                        </div>
+                        <div class="reality-row" data-row="errors">
+                            <div class="reality-row-label">
+                                <div class="reality-row-icon"><i data-lucide="shield-check"></i></div>
+                                Error Rate
+                            </div>
+                            <div class="reality-row-value">&lt;2% rejection</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Column 3: Your Future -->
+                <div class="reality-column future" data-column="future">
+                    <div class="reality-column-header">
+                        <div class="reality-column-icon">
+                            <i data-lucide="crown" style="width: 28px; height: 28px;"></i>
+                        </div>
+                        <div class="reality-column-title">Your Future</div>
+                        <div class="reality-column-subtitle">The transformation</div>
+                    </div>
+                    <div class="reality-rows">
+                        <div class="reality-row" data-row="data-entry">
+                            <div class="reality-row-label">
+                                <div class="reality-row-icon"><i data-lucide="brain"></i></div>
+                                Data Entry
+                            </div>
+                            <div class="reality-row-value">Predictive AI</div>
+                        </div>
+                        <div class="reality-row" data-row="time">
+                            <div class="reality-row-label">
+                                <div class="reality-row-icon"><i data-lucide="timer"></i></div>
+                                Time per Proposal
+                            </div>
+                            <div class="reality-row-value">Under 30 min</div>
+                        </div>
+                        <div class="reality-row" data-row="upb">
+                            <div class="reality-row-label">
+                                <div class="reality-row-icon"><i data-lucide="mic"></i></div>
+                                UPB Lookup
+                            </div>
+                            <div class="reality-row-value">Voice commands</div>
+                        </div>
+                        <div class="reality-row" data-row="coefficients">
+                            <div class="reality-row-label">
+                                <div class="reality-row-icon"><i data-lucide="activity"></i></div>
+                                Coefficients
+                            </div>
+                            <div class="reality-row-value">Real-time market</div>
+                        </div>
+                        <div class="reality-row" data-row="compliance">
+                            <div class="reality-row-label">
+                                <div class="reality-row-icon"><i data-lucide="check-circle-2"></i></div>
+                                Format Compliance
+                            </div>
+                            <div class="reality-row-value">100% automated</div>
+                        </div>
+                        <div class="reality-row" data-row="friday">
+                            <div class="reality-row-label">
+                                <div class="reality-row-icon"><i data-lucide="palmtree"></i></div>
+                                Friday Nights
+                            </div>
+                            <div class="reality-row-value">Long weekends</div>
+                        </div>
+                        <div class="reality-row" data-row="errors">
+                            <div class="reality-row-label">
+                                <div class="reality-row-icon"><i data-lucide="target"></i></div>
+                                Error Rate
+                            </div>
+                            <div class="reality-row-value">Near zero</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="reality-cta">
+                <p class="reality-cta-text">Ready to upgrade your reality?</p>
+                <a href="#pricing" class="btn btn-primary btn-lg">
+                    Start Your Transformation →
                 </a>
             </div>
         </div>
@@ -2247,6 +3756,218 @@
 
         window.addEventListener('scroll', animateOnScroll);
         animateOnScroll();
+
+        // ============================================
+        // CHOOSE YOUR REALITY - Scroll Animations
+        // ============================================
+        
+        // Intersection Observer for columns
+        const realityColumns = document.querySelectorAll('.reality-column');
+        const realityRows = document.querySelectorAll('.reality-row');
+        
+        const columnObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    
+                    // Animate rows within this column with stagger
+                    const rows = entry.target.querySelectorAll('.reality-row');
+                    rows.forEach((row, index) => {
+                        setTimeout(() => {
+                            row.classList.add('visible');
+                        }, 100 + (index * 80));
+                    });
+                    
+                    columnObserver.unobserve(entry.target);
+                }
+            });
+        }, {
+            threshold: 0.2,
+            rootMargin: '0px 0px -50px 0px'
+        });
+
+        realityColumns.forEach(col => {
+            columnObserver.observe(col);
+        });
+
+        // Row hover highlighting across all columns
+        realityRows.forEach(row => {
+            row.addEventListener('mouseenter', () => {
+                const rowId = row.dataset.row;
+                if (rowId) {
+                    document.querySelectorAll(`.reality-row[data-row="${rowId}"]`).forEach(r => {
+                        r.classList.add('highlighted');
+                    });
+                }
+            });
+            
+            row.addEventListener('mouseleave', () => {
+                const rowId = row.dataset.row;
+                if (rowId) {
+                    document.querySelectorAll(`.reality-row[data-row="${rowId}"]`).forEach(r => {
+                        r.classList.remove('highlighted');
+                    });
+                }
+            });
+        });
+
+        // Reinitialize Lucide icons for dynamically added content
+        if (typeof lucide !== 'undefined') {
+            lucide.createIcons();
+        }
+
+        // Pain Checklist Interactivity
+        (function() {
+            const painCards = document.querySelectorAll('.pain-card');
+            const painTimeWasted = document.getElementById('pain-time-wasted');
+            const painTimeLabel = document.getElementById('pain-time-label');
+            const painProgressFill = document.getElementById('pain-progress-fill');
+            const painProgressText = document.getElementById('pain-progress-text');
+            const painCompletion = document.getElementById('pain-completion');
+            const painSidebar = document.getElementById('pain-sidebar');
+            const painSidebarToggle = document.getElementById('pain-sidebar-toggle');
+
+            let totalMinutesSaved = 0;
+            let checkedCount = 0;
+            const totalCards = painCards.length;
+            const maxMinutes = 380; // 45+30+60+180+20+45
+
+            // Load state from localStorage
+            function loadState() {
+                const savedState = localStorage.getItem('jochero-pain-checklist');
+                if (savedState) {
+                    try {
+                        const state = JSON.parse(savedState);
+                        painCards.forEach((card, index) => {
+                            if (state.checked && state.checked[index]) {
+                                card.classList.add('checked');
+                                checkedCount++;
+                                totalMinutesSaved += parseInt(card.dataset.time);
+                            }
+                        });
+                        updateDisplay(false);
+                    } catch (e) {
+                        console.log('Could not load pain checklist state');
+                    }
+                }
+            }
+
+            // Save state to localStorage
+            function saveState() {
+                const state = {
+                    checked: []
+                };
+                painCards.forEach(card => {
+                    state.checked.push(card.classList.contains('checked'));
+                });
+                localStorage.setItem('jochero-pain-checklist', JSON.stringify(state));
+            }
+
+            // Format minutes to hours/minutes display
+            function formatTime(minutes) {
+                if (minutes === 0) return '0 hrs';
+                const hours = Math.floor(minutes / 60);
+                const mins = minutes % 60;
+                if (hours === 0) return `${mins} min`;
+                if (mins === 0) return `${hours} hr${hours > 1 ? 's' : ''}`;
+                return `${hours}h ${mins}m`;
+            }
+
+            // Animate number change
+            function animateNumber(element, targetValue, duration = 500) {
+                const startValue = parseFloat(element.textContent) || 0;
+                const startTime = performance.now();
+                
+                element.classList.add('pop');
+                setTimeout(() => element.classList.remove('pop'), 300);
+
+                function update(currentTime) {
+                    const elapsed = currentTime - startTime;
+                    const progress = Math.min(elapsed / duration, 1);
+                    
+                    // Ease out cubic
+                    const eased = 1 - Math.pow(1 - progress, 3);
+                    const current = Math.round(startValue + (targetValue - startValue) * eased);
+                    
+                    element.textContent = formatTime(current);
+                    
+                    if (progress < 1) {
+                        requestAnimationFrame(update);
+                    }
+                }
+                
+                requestAnimationFrame(update);
+            }
+
+            // Update display based on current state
+            function updateDisplay(animate = true) {
+                // Update time display
+                if (animate) {
+                    animateNumber(painTimeWasted, totalMinutesSaved);
+                } else {
+                    painTimeWasted.textContent = formatTime(totalMinutesSaved);
+                }
+
+                // Update color based on whether any are checked
+                if (checkedCount > 0) {
+                    painTimeWasted.classList.add('saving');
+                    painTimeLabel.textContent = 'of wasted time per proposal';
+                } else {
+                    painTimeWasted.classList.remove('saving');
+                    painTimeLabel.textContent = 'Select your pain points above';
+                }
+
+                // Update progress bar
+                const progressPercent = (checkedCount / totalCards) * 100;
+                painProgressFill.style.width = `${progressPercent}%`;
+                painProgressText.textContent = `${checkedCount} of ${totalCards} pain points checked`;
+
+                // Show completion message if all checked
+                if (checkedCount === totalCards) {
+                    painCompletion.classList.add('visible');
+                } else {
+                    painCompletion.classList.remove('visible');
+                }
+
+                // Save to localStorage
+                saveState();
+            }
+
+            // Handle card click
+            painCards.forEach(card => {
+                card.addEventListener('click', () => {
+                    const time = parseInt(card.dataset.time);
+                    
+                    if (card.classList.contains('checked')) {
+                        card.classList.remove('checked');
+                        totalMinutesSaved -= time;
+                        checkedCount--;
+                    } else {
+                        card.classList.add('checked');
+                        totalMinutesSaved += time;
+                        checkedCount++;
+                    }
+
+                    updateDisplay();
+                    
+                    // Reinitialize Lucide icons for any newly revealed elements
+                    lucide.createIcons();
+                });
+            });
+
+            // Mobile sidebar toggle
+            if (painSidebarToggle) {
+                painSidebarToggle.addEventListener('click', () => {
+                    painSidebar.classList.toggle('expanded');
+                });
+            }
+
+            // Load saved state on page load
+            loadState();
+            
+            // Initialize icons after state load
+            lucide.createIcons();
+        })();
     </script>
     
     <!-- Feedback Widget for Beta Testers -->
