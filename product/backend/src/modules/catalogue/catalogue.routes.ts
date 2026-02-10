@@ -199,8 +199,8 @@ export async function catalogueRoutes(fastify: FastifyInstance) {
         required: ['description'],
         properties: {
           description: { type: 'string', description: 'Plain English work description' },
-          limit: { type: 'number', minimum: 1, maximum: 50, default: 10 },
-          minScore: { type: 'number', minimum: 0, maximum: 1, default: 0.3 },
+          limit: { type: 'number', minimum: 1, maximum: 50, default: 20 },
+          minScore: { type: 'number', minimum: 0, maximum: 1, default: 0.2 },
         },
       },
     },
@@ -211,14 +211,25 @@ export async function catalogueRoutes(fastify: FastifyInstance) {
     
     logger.info({ 
       description, 
-      keywords: result.keywords, 
+      keywords: result.context.keywords,
+      expandedKeywords: result.context.expandedKeywords,
+      quantity: result.context.quantity,
+      suggestedDivisions: result.context.suggestedDivisions,
       results: result.items.length,
       took: result.took,
     }, 'Catalogue translation');
     
     return reply.send({
       success: true,
-      data: result,
+      data: {
+        items: result.items,
+        keywords: result.context.keywords,
+        expandedKeywords: result.context.expandedKeywords,
+        quantity: result.context.quantity,
+        unit: result.context.unit,
+        suggestedDivisions: result.context.suggestedDivisions,
+        took: result.took,
+      },
     });
   });
 

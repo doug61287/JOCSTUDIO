@@ -6,6 +6,7 @@
 import { readFileSync } from 'fs';
 import { join } from 'path';
 import { logger } from '../../lib/logger.js';
+import { translateDescription, analyzeInput, TranslationContext, ScoredItem } from './translator.js';
 
 export interface JOCItem {
   taskCode: string;
@@ -232,81 +233,20 @@ class CatalogueService {
 
   /**
    * Translate plain English description to JOC line items
-   * Uses keyword extraction and fuzzy matching
+   * Uses smart keyword extraction, synonyms, and division hints
    */
   translate(description: string, options: { limit?: number; minScore?: number } = {}): {
-    items: Array<JOCItem & { score: number; matchedKeywords: string[] }>;
-    keywords: string[];
+    items: ScoredItem[];
+    context: TranslationContext;
     took: number;
   } {
-    const start = Date.now();
-    const { limit = 10, minScore = 0.3 } = options;
-
-    // Extract keywords from description
-    const keywords = this.extractKeywords(description);
+    const result = translateDescription(description, this.items, options);
     
-    if (keywords.length === 0) {
-      return { items: [], keywords: [], took: Date.now() - start };
-    }
-
-    // Score each item based on keyword matches
-    const scored: Array<{ item: JOCItem; score: number; matched: string[] }> = [];
-
-    for (const item of this.items) {
-      const itemWords = new Set(this.tokenize(item.description));
-      const matched: string[] = [];
-      
-      for (const keyword of keywords) {
-        for (const itemWord of itemWords) {
-          if (itemWord.includes(keyword) || keyword.includes(itemWord)) {
-            matched.push(keyword);
-            break;
-          }
-        }
-      }
-
-      if (matched.length > 0) {
-        const score = matched.length / keywords.length;
-        if (score >= minScore) {
-          scored.push({ item, score, matched });
-        }
-      }
-    }
-
-    // Sort by score (descending) then by cost (descending)
-    scored.sort((a, b) => {
-      if (b.score !== a.score) return b.score - a.score;
-      return b.item.unitCost - a.item.unitCost;
-    });
-
     return {
-      items: scored.slice(0, limit).map(s => ({
-        ...s.item,
-        score: s.score,
-        matchedKeywords: s.matched,
-      })),
-      keywords,
-      took: Date.now() - start,
+      items: result.items,
+      context: result.context,
+      took: result.took,
     };
-  }
-
-  /**
-   * Extract meaningful keywords from natural language
-   */
-  private extractKeywords(text: string): string[] {
-    // Stopwords to filter out
-    const stopwords = new Set([
-      'a', 'an', 'the', 'and', 'or', 'but', 'in', 'on', 'at', 'to', 'for',
-      'of', 'with', 'by', 'from', 'as', 'is', 'was', 'are', 'were', 'been',
-      'be', 'have', 'has', 'had', 'do', 'does', 'did', 'will', 'would',
-      'could', 'should', 'may', 'might', 'must', 'shall', 'can', 'need',
-      'i', 'we', 'you', 'they', 'it', 'this', 'that', 'these', 'those',
-      'install', 'installing', 'provide', 'providing', 'replace', 'replacing',
-      'new', 'existing', 'per', 'each', 'all', 'some', 'any',
-    ]);
-
-    const words = this.tokenize(text);
-    return words.filter(w => !stopwords.has(w) && w.length >= 3);
   }
 
   /**
