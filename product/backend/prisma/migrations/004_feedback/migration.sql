@@ -11,7 +11,7 @@ CREATE TYPE "FeedbackType" AS ENUM ('BUG', 'FEATURE_REQUEST', 'GENERAL');
 -- Create Feedback table
 CREATE TABLE "Feedback" (
   "id" UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  "userId" UUID REFERENCES "User"("id") ON DELETE SET NULL,
+  "userId" TEXT REFERENCES "User"("id") ON DELETE SET NULL,
   "type" "FeedbackType" NOT NULL,
   "description" TEXT NOT NULL,
   "screenshotUrl" TEXT,

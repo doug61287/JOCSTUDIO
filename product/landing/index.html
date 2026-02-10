@@ -4254,6 +4254,21 @@
         window.addEventListener('scroll', animateOnScroll);
         animateOnScroll(); // Run once on load
     </script>
+    
+    <!-- Feedback Widget for Beta Testers -->
+    <link rel="stylesheet" href="components/FeedbackWidget.css">
+    <script src="components/FeedbackWidget.js"></script>
+    <script>
+        // Initialize feedback widget
+        document.addEventListener('DOMContentLoaded', function() {
+            if (typeof FeedbackWidget !== 'undefined') {
+                FeedbackWidget.init({
+                    apiUrl: 'https://api.jochero.com', // Will update when backend deployed
+                    position: 'bottom-right'
+                });
+            }
+        });
+    </script>
 </body>
 </html>
 <!-- Redeploy Mon Feb  9 14:21:58 EST 2026 -->

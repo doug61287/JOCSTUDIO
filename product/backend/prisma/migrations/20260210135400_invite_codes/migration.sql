@@ -1,6 +1,6 @@
 -- CreateTable: invite_codes
 CREATE TABLE "InviteCode" (
-    "id" TEXT NOT NULL PRIMARY KEY DEFAULT gen_random_uuid(),
+    "id" TEXT NOT NULL DEFAULT gen_random_uuid(),
     "code" VARCHAR(20) NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "expiresAt" TIMESTAMP(3),
