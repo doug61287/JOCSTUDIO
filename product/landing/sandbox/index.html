@@ -535,17 +535,21 @@
         // Check if user is logged in (has JWT token)
         const isLoggedIn = localStorage.getItem('jochero_token') || sessionStorage.getItem('jochero_token');
         if (isLoggedIn) {
-            // Hide invite section for logged-in users
-            const inviteSection = document.querySelector('.invite-section');
-            if (inviteSection) inviteSection.style.display = 'none';
-            // Show welcome message instead
-            const header = document.querySelector('.container');
-            if (header) {
-                const welcomeMsg = document.createElement('div');
-                welcomeMsg.style.cssText = 'background: rgba(16, 185, 129, 0.2); border: 1px solid #10B981; border-radius: 10px; padding: 1rem; margin-bottom: 2rem; text-align: center;';
-                welcomeMsg.innerHTML = '✅ <strong>You\'re logged in!</strong> Explore the sample project below.';
-                header.insertBefore(welcomeMsg, header.firstChild.nextSibling);
+            // Hide invite form and show logged-in message
+            const inviteForm = document.getElementById('invite-form');
+            const loginBtn = document.getElementById('login-btn');
+            const divider = document.querySelector('.divider');
+            if (inviteForm) {
+                inviteForm.innerHTML = `
+                    <div style="background: rgba(16, 185, 129, 0.2); border: 1px solid #10B981; border-radius: 10px; padding: 1.5rem; text-align: center;">
+                        <div style="font-size: 2rem; margin-bottom: 0.5rem;">✅</div>
+                        <p style="font-weight: 600; color: #10B981; margin-bottom: 0.5rem;">You're logged in!</p>
+                        <p style="font-size: 0.875rem; opacity: 0.8;">Scroll down to explore the sample project.</p>
+                    </div>
+                `;
             }
+            if (loginBtn) loginBtn.style.display = 'none';
+            if (divider) divider.style.display = 'none';
         }
 
         // Invite code form handling
