@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JOCHero - The Translation Engine Demo</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="demo-translation-engine.css">
+</head>
+<body>
+    <div id="demo-container" class="demo-container">
+        <!-- Background Grid -->
+        <div class="bg-grid"></div>
+        
+        <!-- Scene 1: The Upload -->
+        <div id="scene-upload" class="scene scene-upload">
+            <div class="upload-card">
+                <div class="upload-header">
+                    <span class="upload-icon">📊</span>
+                    <span class="upload-title">Upload Quantity Takeoff</span>
+                </div>
+                <div class="upload-dropzone">
+                    <div class="dropzone-content">
+                        <div class="dropzone-icon">
+                            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/>
+                                <polyline points="17 8 12 3 7 8"/>
+                                <line x1="12" y1="3" x2="12" y2="15"/>
+                            </svg>
+                        </div>
+                        <div class="dropzone-text">Drag and drop your takeoff file</div>
+                        <div class="dropzone-formats">Excel, CSV, PDF supported</div>
+                    </div>
+                    <div class="dropzone-border"></div>
+                </div>
+                
+                <!-- File being dragged -->
+                <div id="drag-file" class="drag-file">
+                    <div class="file-icon">📗</div>
+                    <div class="file-name">Jacobi_FP_Takeoff_v3.xlsx</div>
+                </div>
+                
+                <!-- Upload Progress -->
+                <div id="upload-progress" class="upload-progress">
+                    <div class="progress-bar">
+                        <div id="progress-fill" class="progress-fill"></div>
+                    </div>
+                    <div id="progress-text" class="progress-text">Uploading...</div>
+                </div>
+                
+                <!-- File Metadata -->
+                <div id="file-metadata" class="file-metadata">
+                    <div class="metadata-item">
+                        <span class="metadata-value" id="meta-lines">247</span>
+                        <span class="metadata-label">line items</span>
+                    </div>
+                    <div class="metadata-item">
+                        <span class="metadata-value" id="meta-categories">18</span>
+                        <span class="metadata-label">categories</span>
+                    </div>
+                    <div class="metadata-badge" id="format-badge">Non-JOC format detected</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Scene 2: The Analysis -->
+        <div id="scene-analysis" class="scene scene-analysis">
+            <!-- Left: Original Takeoff -->
+            <div class="analysis-left">
+                <div class="panel-header">
+                    <span class="panel-icon">📋</span>
+                    <span class="panel-title">ORIGINAL TAKEOFF</span>
+                </div>
+                <div class="takeoff-table">
+                    <div class="table-header-row">
+                        <div class="table-cell cell-line">Line</div>
+                        <div class="table-cell cell-desc">Description</div>
+                        <div class="table-cell cell-qty">Qty</div>
+                    </div>
+                    <div class="table-row" data-row="1">
+                        <div class="table-cell cell-line">001</div>
+                        <div class="table-cell cell-desc">Fire sprinkler hd</div>
+                        <div class="table-cell cell-qty error">???</div>
+                    </div>
+                    <div class="table-row" data-row="2">
+                        <div class="table-cell cell-line">002</div>
+                        <div class="table-cell cell-desc">3/4 main run pipe</div>
+                        <div class="table-cell cell-qty">234</div>
+                    </div>
+                    <div class="table-row" data-row="3">
+                        <div class="table-cell cell-line">003</div>
+                        <div class="table-cell cell-desc">OS&Y valve 6"</div>
+                        <div class="table-cell cell-qty">2</div>
+                    </div>
+                    <div class="table-row" data-row="4">
+                        <div class="table-cell cell-line">004</div>
+                        <div class="table-cell cell-desc">Inspector test</div>
+                        <div class="table-cell cell-qty warn">see nts</div>
+                    </div>
+                    <div class="table-row" data-row="5">
+                        <div class="table-cell cell-line">005</div>
+                        <div class="table-cell cell-desc">Alarm devices</div>
+                        <div class="table-cell cell-qty">12</div>
+                    </div>
+                    <div class="table-row" data-row="6">
+                        <div class="table-cell cell-line">...</div>
+                        <div class="table-cell cell-desc">...</div>
+                        <div class="table-cell cell-qty">...</div>
+                    </div>
+                    <div class="table-row" data-row="7">
+                        <div class="table-cell cell-line">247</div>
+                        <div class="table-cell cell-desc">Misc fittings</div>
+                        <div class="table-cell cell-qty error">?</div>
+                    </div>
+                </div>
+                <!-- Scanning Line -->
+                <div id="scan-line" class="scan-line"></div>
+            </div>
+            
+            <!-- Right: AI Analysis -->
+            <div class="analysis-right">
+                <div class="panel-header">
+                    <span class="panel-icon">🤖</span>
+                    <span class="panel-title">AI ANALYSIS ENGINE</span>
+                </div>
+                <div class="analysis-bubbles">
+                    <div id="bubble-1" class="analysis-bubble">
+                        <div class="bubble-search">
+                            <span class="bubble-icon">🔍</span>
+                            <span class="bubble-term">"Fire sprinkler hd"</span>
+                        </div>
+                        <div class="bubble-arrow">↓</div>
+                        <div class="bubble-matches">
+                            <div class="match-option">• Sprinkler Head (Upright)</div>
+                            <div class="match-option">• Sprinkler Head (Pendant)</div>
+                            <div class="match-option best">• Sprinkler Head (Sidewall)</div>
+                        </div>
+                        <div class="bubble-confidence">
+                            <span class="confidence-label">Confidence:</span>
+                            <span class="confidence-value">94%</span>
+                            <div class="confidence-bar"><div class="confidence-fill" style="width: 94%"></div></div>
+                        </div>
+                    </div>
+                    
+                    <div id="bubble-2" class="analysis-bubble">
+                        <div class="bubble-search">
+                            <span class="bubble-icon">⚠️</span>
+                            <span class="bubble-term">"3/4 main run pipe"</span>
+                        </div>
+                        <div class="bubble-arrow">↓</div>
+                        <div class="bubble-detect">
+                            <span class="detect-label">Missing: Material spec</span>
+                            <span class="detect-result">Auto-detected: Black Iron</span>
+                        </div>
+                        <div class="bubble-confidence">
+                            <span class="confidence-label">Confidence:</span>
+                            <span class="confidence-value warn">87%</span>
+                            <div class="confidence-bar warn"><div class="confidence-fill" style="width: 87%"></div></div>
+                        </div>
+                    </div>
+                    
+                    <div id="bubble-3" class="analysis-bubble">
+                        <div class="bubble-search">
+                            <span class="bubble-icon">✅</span>
+                            <span class="bubble-term">"OS&Y valve 6""</span>
+                        </div>
+                        <div class="bubble-arrow">↓</div>
+                        <div class="bubble-exact">
+                            <span class="exact-badge">EXACT MATCH</span>
+                            <span class="exact-code">Catalog: 21 20 00</span>
+                        </div>
+                        <div class="bubble-confidence">
+                            <span class="confidence-label">Confidence:</span>
+                            <span class="confidence-value success">99%</span>
+                            <div class="confidence-bar success"><div class="confidence-fill" style="width: 99%"></div></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Statistics Panel -->
+                <div id="stats-panel" class="stats-panel">
+                    <div class="stats-header">ANALYSIS COMPLETE</div>
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <span class="stat-value" id="stat-lines">247</span>
+                            <span class="stat-label">lines analyzed</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-value" id="stat-cats">18</span>
+                            <span class="stat-label">categories</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-value warn" id="stat-ambig">12</span>
+                            <span class="stat-label">ambiguities</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-value success" id="stat-conf">94.7%</span>
+                            <span class="stat-label">confidence</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Scene 3: The Catalog Match -->
+        <div id="scene-catalog" class="scene scene-catalog">
+            <div class="catalog-columns">
+                <!-- Original Column -->
+                <div class="catalog-col col-original">
+                    <div class="col-header">ORIGINAL</div>
+                    <div id="match-items" class="match-items">
+                        <div class="match-item" id="match-1">
+                            <div class="item-desc">"Fire sprinkler hd"</div>
+                            <div class="item-qty">Qty: ??? (est. 47)</div>
+                        </div>
+                        <div class="match-item" id="match-2">
+                            <div class="item-desc">"3/4 main run pipe"</div>
+                            <div class="item-qty">Qty: 234 LF</div>
+                        </div>
+                        <div class="match-item" id="match-3">
+                            <div class="item-desc">"OS&Y valve 6""</div>
+                            <div class="item-qty">Qty: 2</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Matching Column -->
+                <div class="catalog-col col-matching">
+                    <div class="col-header">MATCHING...</div>
+                    <div id="matching-display" class="matching-display">
+                        <div class="matching-animation">
+                            <div class="match-spinner"></div>
+                            <div class="match-status">Analyzing context...</div>
+                        </div>
+                    </div>
+                    <!-- Connection Lines -->
+                    <svg class="connection-lines" id="connection-svg">
+                        <defs>
+                            <linearGradient id="lineGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                                <stop offset="0%" style="stop-color:#FFD700;stop-opacity:0.3" />
+                                <stop offset="50%" style="stop-color:#FFD700;stop-opacity:1" />
+                                <stop offset="100%" style="stop-color:#FFD700;stop-opacity:0.3" />
+                            </linearGradient>
+                        </defs>
+                        <path id="conn-line-1" class="conn-line" d="" fill="none" stroke="url(#lineGradient)" stroke-width="2"/>
+                        <path id="conn-line-2" class="conn-line" d="" fill="none" stroke="url(#lineGradient)" stroke-width="2"/>
+                        <path id="conn-line-3" class="conn-line" d="" fill="none" stroke="url(#lineGradient)" stroke-width="2"/>
+                    </svg>
+                </div>
+                
+                <!-- Catalog Result Column -->
+                <div class="catalog-col col-catalog">
+                    <div class="col-header">CATALOG RESULT</div>
+                    <div id="catalog-results" class="catalog-results">
+                        <div class="catalog-card" id="catalog-1">
+                            <div class="catalog-code">21 10 00</div>
+                            <div class="catalog-name">Sprinkler Head (Pendant)</div>
+                            <div class="catalog-price">$45.00 <span class="price-unit">EA</span></div>
+                            <div class="catalog-check">✓</div>
+                        </div>
+                        <div class="catalog-card" id="catalog-2">
+                            <div class="catalog-code">21 10 00</div>
+                            <div class="catalog-name">3/4" Black Iron Pipe</div>
+                            <div class="catalog-price">$8.50 <span class="price-unit">/LF</span></div>
+                            <div class="catalog-check">✓</div>
+                        </div>
+                        <div class="catalog-card" id="catalog-3">
+                            <div class="catalog-code">21 20 00</div>
+                            <div class="catalog-name">OS&Y Valve 6"</div>
+                            <div class="catalog-price">
+                                <span class="price-base">$1,500</span>
+                                <span class="price-coef">× 1.25</span>
+                                <span class="price-final">$1,875</span>
+                            </div>
+                            <div class="catalog-badge">Manhattan</div>
+                            <div class="catalog-check">✓</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Match Counter -->
+            <div id="match-counter" class="match-counter">
+                <span class="counter-current" id="counter-current">0</span>
+                <span class="counter-of">of</span>
+                <span class="counter-total">247</span>
+                <span class="counter-label">matched</span>
+            </div>
+        </div>
+        
+        <!-- Scene 4: The Cross-Check -->
+        <div id="scene-crosscheck" class="scene scene-crosscheck">
+            <div class="validation-panel">
+                <div class="validation-header">
+                    <span class="validation-icon">🔍</span>
+                    <span class="validation-title">CROSS-CHECK VALIDATION</span>
+                </div>
+                
+                <div class="validation-items">
+                    <div class="validation-item" id="val-qty">
+                        <span class="val-icon success">✅</span>
+                        <span class="val-label">Quantity checks</span>
+                        <span class="val-value" id="val-qty-value">0/247</span>
+                    </div>
+                    <div class="validation-item" id="val-units">
+                        <span class="val-icon success">✅</span>
+                        <span class="val-label">Unit conversions</span>
+                        <span class="val-value" id="val-units-value">0/18</span>
+                    </div>
+                    <div class="validation-item" id="val-ambig">
+                        <span class="val-icon warn">⚠️</span>
+                        <span class="val-label">Ambiguities</span>
+                        <span class="val-value warn" id="val-ambig-value">12 flagged</span>
+                    </div>
+                    <div class="validation-item" id="val-catalog">
+                        <span class="val-icon success">✅</span>
+                        <span class="val-label">Catalog matches</span>
+                        <span class="val-value" id="val-catalog-value">0/247</span>
+                    </div>
+                </div>
+                
+                <div class="confidence-meter">
+                    <div class="confidence-header">OVERALL CONFIDENCE</div>
+                    <div class="confidence-display">
+                        <div class="confidence-ring">
+                            <svg viewBox="0 0 100 100">
+                                <circle class="ring-bg" cx="50" cy="50" r="45" fill="none" stroke="#1E293B" stroke-width="8"/>
+                                <circle id="ring-fill" class="ring-fill" cx="50" cy="50" r="45" fill="none" stroke="#10B981" stroke-width="8" stroke-dasharray="283" stroke-dashoffset="283" transform="rotate(-90 50 50)"/>
+                            </svg>
+                            <div class="confidence-percent" id="confidence-percent">0%</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="auto-resolve" class="auto-resolve">
+                    <div class="resolve-text">Auto-resolve suggestions applied</div>
+                    <div class="resolve-arrow">→</div>
+                    <div class="resolve-new" id="resolve-percent">97.2%</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Scene 5: The Output -->
+        <div id="scene-output" class="scene scene-output">
+            <div class="output-split">
+                <!-- Left: Original (faded) -->
+                <div class="output-left" id="output-original">
+                    <div class="output-header">ORIGINAL</div>
+                    <div class="output-original-content">
+                        <div class="original-table faded">
+                            <div class="orig-row">Fire sprinkler hd | ???</div>
+                            <div class="orig-row">3/4 main run pipe | 234</div>
+                            <div class="orig-row">OS&Y valve | 2</div>
+                            <div class="orig-row">Inspector test | see nts</div>
+                            <div class="orig-row">...</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Divider -->
+                <div class="output-divider">
+                    <div class="divider-line"></div>
+                    <div class="divider-icon">→</div>
+                </div>
+                
+                <!-- Right: Transformed -->
+                <div class="output-right" id="output-transformed">
+                    <div class="output-header transformed">AGENCY-READY JOC PROPOSAL</div>
+                    <div class="proposal-table">
+                        <div class="proposal-header-row">
+                            <div class="proposal-cell code">CODE</div>
+                            <div class="proposal-cell desc">DESCRIPTION</div>
+                            <div class="proposal-cell qty">QTY</div>
+                            <div class="proposal-cell total">TOTAL</div>
+                        </div>
+                        <div id="proposal-rows" class="proposal-rows">
+                            <div class="proposal-row" id="proposal-row-1">
+                                <div class="proposal-cell code">21 10 00</div>
+                                <div class="proposal-cell desc">Sprinkler Heads (Pendant)</div>
+                                <div class="proposal-cell qty">47</div>
+                                <div class="proposal-cell total">$2,115</div>
+                            </div>
+                            <div class="proposal-row" id="proposal-row-2">
+                                <div class="proposal-cell code">21 10 00</div>
+                                <div class="proposal-cell desc">3/4" Pipe (Black Iron)</div>
+                                <div class="proposal-cell qty">234 LF</div>
+                                <div class="proposal-cell total">$1,989</div>
+                            </div>
+                            <div class="proposal-row" id="proposal-row-3">
+                                <div class="proposal-cell code">21 20 00</div>
+                                <div class="proposal-cell desc">OS&Y Valve 6"</div>
+                                <div class="proposal-cell qty">2</div>
+                                <div class="proposal-cell total">$3,750</div>
+                            </div>
+                            <div class="proposal-row" id="proposal-row-4">
+                                <div class="proposal-cell code">21 20 00</div>
+                                <div class="proposal-cell desc">Inspector's Test Connection</div>
+                                <div class="proposal-cell qty">4</div>
+                                <div class="proposal-cell total">$480</div>
+                            </div>
+                            <div class="proposal-row ellipsis">
+                                <div class="proposal-cell code">...</div>
+                                <div class="proposal-cell desc">...</div>
+                                <div class="proposal-cell qty">...</div>
+                                <div class="proposal-cell total">...</div>
+                            </div>
+                        </div>
+                        <div class="proposal-totals">
+                            <div class="total-row subtotal">
+                                <span class="total-label">Subtotal:</span>
+                                <span class="total-value" id="subtotal-value">$0</span>
+                            </div>
+                            <div class="total-row tax">
+                                <span class="total-label">Tax (9%):</span>
+                                <span class="total-value" id="tax-value">$0</span>
+                            </div>
+                            <div class="total-row grand">
+                                <span class="total-label">TOTAL:</span>
+                                <span class="total-value" id="grand-total">$0</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Validation Badges -->
+                    <div id="validation-badges" class="validation-badges">
+                        <div class="badge" id="badge-1">
+                            <span class="badge-icon">✓</span>
+                            <span class="badge-text">NYC HHC Coefficients Applied</span>
+                        </div>
+                        <div class="badge" id="badge-2">
+                            <span class="badge-icon">🛡️</span>
+                            <span class="badge-text">UPB Catalog Validated</span>
+                        </div>
+                        <div class="badge" id="badge-3">
+                            <span class="badge-icon">📋</span>
+                            <span class="badge-text">Agency Format Compliant</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Export Buttons -->
+                    <div id="export-buttons" class="export-buttons">
+                        <button class="export-btn">📊 Excel</button>
+                        <button class="export-btn">📄 PDF</button>
+                        <button class="export-btn primary">🚀 Submit to Agency</button>
+                    </div>
+                    
+                    <!-- CTA -->
+                    <div id="cta-text" class="cta-text">
+                        From messy takeoff to agency-ready in <span class="highlight">4 minutes</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Gold Cursor -->
+        <div id="cursor" class="cursor">
+            <div class="cursor-dot"></div>
+            <div class="cursor-glow"></div>
+        </div>
+        
+        <!-- Ripple Effects Container -->
+        <div id="ripples-container" class="ripples-container"></div>
+    </div>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="demo-translation-engine.js"></script>
+</body>
+</html>
