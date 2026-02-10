@@ -1,0 +1,179 @@
+# JOCHero Backend API Test Report
+
+**Date:** 2026-02-09 13:42 EST  
+**Backend:** http://localhost:3001  
+**Tester:** Automated Subagent
+
+---
+
+## Summary
+
+| Category | Passed | Failed | Total |
+|----------|--------|--------|-------|
+| Auth Tests | 6 | 17 | 23 |
+| Projects Tests | 0 | Suite Error | N/A |
+| Measurements Tests | 0 | 27 | 27 |
+| Files Tests | 4 | 23 | 27 |
+| Security Tests | 12 | 16 | 28 |
+| Hero Strategy | 0 | Suite Error | N/A |
+| **TOTAL** | **21** | **82** | **154** |
+
+**Pass Rate:** 13.6%
+
+---
+
+## Critical Issues Found
+
+### 1. Registration API Schema Mismatch ❌
+**Severity:** CRITICAL  
+**Location:** `POST /auth/register`
+
+The tests send `firstName`, `lastName` fields but the backend expects different schema. Registration returns 400 Bad Request.
+
+**Impact:** Cascading failures across all authenticated tests.
+
+**Fix Required:** Align test user factory with backend schema:
+```javascript
+// Check backend expects: name vs firstName/lastName
+// Check backend expects: company requirement
+```
+
+### 2. Files API Routes Missing ❌
+**Severity:** HIGH  
+**Location:** `/projects/:projectId/files/*`
+
+The backend has:
+- `POST /files/upload`
+- `GET /files/:id`
+- `DELETE /files/:id`
+
+But tests expect:
+- `POST /projects/:projectId/files`
+- `GET /projects/:projectId/files`
+- And nested routes
+
+**Fix Required:** Either update tests to match backend routes, or implement project-scoped file routes in backend.
+
+### 3. Password Reset Not Implemented ❌
+**Severity:** MEDIUM  
+**Location:** `/auth/forgot-password`, `/auth/reset-password`
+
+These endpoints return 404 - not implemented in backend.
+
+### 4. CSRF Token Endpoint Missing ❌
+**Severity:** MEDIUM  
+**Location:** `/auth/csrf-token`
+
+Not implemented in backend.
+
+### 5. Rate Limiting Not Triggering ⚠️
+**Severity:** MEDIUM  
+**Location:** All endpoints
+
+15 rapid requests to `/auth/login` did not trigger 429 response. Rate limiting may be configured too leniently or not working.
+
+### 6. Authorization Returns 500 Instead of 403 ⚠️
+**Severity:** HIGH  
+**Location:** Project access control
+
+When accessing other users' projects with valid token, backend returns 500 Internal Server Error instead of 403 Forbidden.
+
+---
+
+## Passing Tests ✅
+
+### Security Headers
+- ✅ X-Content-Type-Options header present
+- ✅ X-Frame-Options header present  
+- ✅ Strict-Transport-Security header present
+- ✅ X-Powered-By header not exposed
+
+### Auth Edge Cases
+- ✅ Reject registration with missing required fields
+- ✅ Reject login with non-existent email
+- ✅ Reject login with empty credentials
+- ✅ Reject refresh with invalid token
+- ✅ Reject refresh with expired token
+- ✅ Reject protected route with invalid token
+- ✅ Reject subsequent requests with logged out token
+- ✅ Reject JWT with "none" algorithm
+
+### XSS Prevention
+- ✅ Sanitize XSS in user registration
+- ✅ Sanitize XSS in project creation
+- ✅ Sanitize XSS in measurement names
+
+### Other
+- ✅ Return 404 for non-existent file
+- ✅ Return 404 for deleted file
+- ✅ Clean up file storage on delete
+- ✅ Reject path traversal in filename
+- ✅ Not reveal rate limit bypass methods
+- ✅ Prevent IDOR in user profile access
+- ✅ CSRF validation on state-changing requests
+
+---
+
+## API Contract Differences
+
+### Expected vs Actual Routes
+
+| Expected Route | Actual Route | Status |
+|----------------|--------------|--------|
+| POST /auth/register | POST /auth/register | ✅ (schema mismatch) |
+| POST /auth/login | POST /auth/login | ✅ |
+| POST /auth/refresh | POST /auth/refresh | ✅ |
+| POST /auth/logout | POST /auth/logout | ✅ |
+| GET /auth/me | GET /auth/me | ✅ |
+| POST /auth/forgot-password | - | ❌ Missing |
+| POST /auth/reset-password | - | ❌ Missing |
+| GET /auth/csrf-token | - | ❌ Missing |
+| POST /projects/:id/files | POST /files/upload | ⚠️ Different |
+| GET /projects/:id/files | - | ❌ Missing |
+| GET /projects/:id/files/:id/download | - | ❌ Missing |
+| GET /projects/:id/files/:id/thumbnail | - | ❌ Missing |
+
+---
+
+## Performance Observations
+
+- **Response Time:** All endpoints respond < 100ms
+- **Database Connection:** Stable (no timeout errors)
+- **Memory:** No out-of-memory errors during test run
+
+---
+
+## Recommendations
+
+### Priority 1 (Blocker)
+1. Fix registration schema in either backend or tests
+2. Implement proper 403 response for unauthorized project access
+
+### Priority 2 (High)
+1. Implement project-scoped file routes OR update tests
+2. Review and test rate limiting configuration
+3. Fix 500 errors on authorization checks
+
+### Priority 3 (Medium)
+1. Implement password reset flow
+2. Consider CSRF token endpoint if needed
+3. Add more comprehensive error messages
+
+---
+
+## Load Testing
+
+**Status:** Skipped due to auth failures
+
+Artillery load tests require working authentication. Defer until auth issues resolved.
+
+---
+
+## Files Generated
+
+- `reports/api-results.json` - Raw Vitest JSON output
+- `results/test-report-2026-02-09.md` - This report
+
+---
+
+*Report generated by JOCHero Backend Testing Subagent*

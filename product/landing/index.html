@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JOCHero - Become a JOC Hero | JOC-Native Takeoff Software</title>
-    <meta name="description" content="Become a JOC Hero. Stop translating takeoffs into JOC line items. JOCHero is the only takeoff software built specifically for Job Order Contracts. Save 6+ hours per proposal.">
+    <title>JOCHero - JOC Proposals in 90 Minutes | JOC-Native Takeoff Software</title>
+    <meta name="description" content="The only takeoff software built for Job Order Contracts. Upload drawings, click to measure, export agency-ready proposals. Save 6+ hours per proposal.">
     <meta name="keywords" content="JOC, Job Order Contract, takeoff software, construction estimating, UPB, unit price book, government contracting">
     <meta name="author" content="JOCHero">
     <meta name="robots" content="index, follow">
@@ -13,16 +13,16 @@
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://jochero.com/">
-    <meta property="og:title" content="JOCHero - The Only JOC-Native Takeoff Software">
-    <meta property="og:description" content="Stop translating takeoffs into JOC line items. Save 6+ hours per proposal with automated JOC code matching and agency-ready exports.">
+    <meta property="og:title" content="JOCHero - JOC Proposals in 90 Minutes">
+    <meta property="og:description" content="The only takeoff software built for Job Order Contracts. Upload drawings, click to measure, export agency-ready proposals.">
     <meta property="og:image" content="https://jochero.com/og-image.png">
     <meta property="og:site_name" content="JOCHero">
     
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:url" content="https://jochero.com/">
-    <meta name="twitter:title" content="JOCHero - The Only JOC-Native Takeoff Software">
-    <meta name="twitter:description" content="Stop translating takeoffs into JOC line items. Save 6+ hours per proposal with automated JOC code matching.">
+    <meta name="twitter:title" content="JOCHero - JOC Proposals in 90 Minutes">
+    <meta name="twitter:description" content="The only takeoff software built for Job Order Contracts. Upload drawings, click to measure, export agency-ready proposals.">
     <meta name="twitter:image" content="https://jochero.com/og-image.png">
     
     <!-- Favicon -->
@@ -106,6 +106,7 @@
             --yellow-100: #FEF9C3;
             --orange-500: #F97316;
             --orange-100: #FFEDD5;
+            --gold: #FFD700;
             
             /* Shadows */
             --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
@@ -116,7 +117,7 @@
             --shadow-2xl: 0 25px 50px -12px rgb(0 0 0 / 0.25);
             
             /* Spacing */
-            --section-padding: 5rem 1.5rem;
+            --section-padding: 6rem 1.5rem;
             --container-max: 1200px;
             
             /* Transitions */
@@ -152,7 +153,6 @@
         }
 
         .text-center { text-align: center; }
-        .text-left { text-align: left; }
 
         .gradient-text {
             background: linear-gradient(135deg, var(--blue-600), var(--blue-800));
@@ -169,8 +169,8 @@
             align-items: center;
             justify-content: center;
             gap: 0.5rem;
-            padding: 0.875rem 1.75rem;
-            font-size: 1rem;
+            padding: 1rem 2rem;
+            font-size: 1.0625rem;
             font-weight: 600;
             border-radius: 0.5rem;
             border: none;
@@ -205,7 +205,7 @@
         }
 
         .btn-lg {
-            padding: 1rem 2rem;
+            padding: 1.125rem 2.25rem;
             font-size: 1.125rem;
         }
 
@@ -214,19 +214,8 @@
             font-size: 0.875rem;
         }
 
-        .btn-urgent {
-            background: linear-gradient(135deg, var(--orange-500), var(--red-500));
-            color: var(--white);
-            animation: pulse-glow 2s infinite;
-        }
-
-        @keyframes pulse-glow {
-            0%, 100% { box-shadow: 0 0 0 0 rgba(249, 115, 22, 0.4); }
-            50% { box-shadow: 0 0 20px 5px rgba(249, 115, 22, 0.2); }
-        }
-
         /* ============================================
-           NAVIGATION (STICKY WITH CTA)
+           NAVIGATION
            ============================================ */
         .nav {
             position: fixed;
@@ -301,19 +290,6 @@
             display: none;
         }
 
-        .nav-urgency {
-            display: none;
-            font-size: 0.75rem;
-            color: var(--orange-500);
-            font-weight: 600;
-            animation: blink 2s infinite;
-        }
-
-        @keyframes blink {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
-        }
-
         @media (min-width: 768px) {
             .nav-links {
                 display: flex;
@@ -321,12 +297,8 @@
             .nav-cta .btn-secondary {
                 display: inline-flex;
             }
-            .nav-urgency {
-                display: block;
-            }
         }
 
-        /* Mobile menu button */
         .nav-mobile-btn {
             display: flex;
             align-items: center;
@@ -349,22 +321,10 @@
            HERO SECTION
            ============================================ */
         .hero {
-            padding: 7rem 1.5rem 5rem;
+            padding: 8rem 1.5rem 6rem;
             background: linear-gradient(180deg, var(--blue-50) 0%, var(--white) 100%);
             position: relative;
             overflow: hidden;
-        }
-
-        .hero::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 200%;
-            height: 100%;
-            background: radial-gradient(ellipse at center top, rgba(59, 130, 246, 0.1) 0%, transparent 70%);
-            pointer-events: none;
         }
 
         .hero-content {
@@ -375,41 +335,8 @@
             z-index: 1;
         }
 
-        .hero-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.5rem 1rem;
-            background: var(--green-100);
-            color: var(--green-500);
-            border-radius: 100px;
-            font-size: 0.875rem;
-            font-weight: 600;
-            margin-bottom: 1.5rem;
-            animation: fadeInUp 0.6s ease;
-        }
-
-        .hero-badge i {
-            width: 16px;
-            height: 16px;
-        }
-
-        .hero-urgency-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.5rem 1rem;
-            background: var(--orange-100);
-            color: var(--orange-500);
-            border-radius: 100px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            margin-left: 0.5rem;
-            animation: fadeInUp 0.6s ease;
-        }
-
         .hero h1 {
-            font-size: clamp(2.25rem, 5vw, 3.5rem);
+            font-size: clamp(2.5rem, 5vw, 3.75rem);
             font-weight: 800;
             line-height: 1.1;
             color: var(--gray-900);
@@ -420,8 +347,8 @@
         .hero-subtitle {
             font-size: clamp(1.125rem, 2vw, 1.375rem);
             color: var(--gray-600);
-            margin-bottom: 2rem;
-            max-width: 600px;
+            margin-bottom: 2.5rem;
+            max-width: 640px;
             margin-left: auto;
             margin-right: auto;
             animation: fadeInUp 0.6s ease 0.2s both;
@@ -442,86 +369,26 @@
             }
         }
 
-        /* Trust Badges Row */
-        .hero-trust-badges {
+        /* Trust Signal Row */
+        .hero-trust-signal {
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
-            gap: 1rem;
-            margin-bottom: 2rem;
-            animation: fadeInUp 0.6s ease 0.35s both;
-        }
-
-        .trust-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.5rem 0.75rem;
-            background: var(--white);
-            border: 1px solid var(--gray-200);
-            border-radius: 0.5rem;
-            font-size: 0.75rem;
+            gap: 1.5rem;
             color: var(--gray-600);
+            font-size: 0.9375rem;
             font-weight: 500;
-        }
-
-        .trust-badge i {
-            width: 14px;
-            height: 14px;
-        }
-
-        .trust-badge.green i {
-            color: var(--green-500);
-        }
-
-        .trust-badge.blue i {
-            color: var(--blue-500);
-        }
-
-        .hero-trust {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 1rem;
-            color: var(--gray-500);
-            font-size: 0.875rem;
             animation: fadeInUp 0.6s ease 0.4s both;
         }
 
-        .hero-trust-avatars {
-            display: flex;
-        }
-
-        .hero-trust-avatar {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            border: 2px solid var(--white);
-            margin-left: -8px;
-            background: linear-gradient(135deg, var(--blue-400), var(--blue-600));
+        .hero-trust-signal span {
             display: flex;
             align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 0.75rem;
-            font-weight: 600;
-            overflow: hidden;
+            gap: 0.375rem;
         }
 
-        .hero-trust-avatar:first-child {
-            margin-left: 0;
-        }
-
-        .hero-trust-avatar img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .hero-trust-stars {
-            display: flex;
-            gap: 2px;
-            color: var(--yellow-500);
+        .hero-trust-signal .check {
+            color: var(--green-500);
         }
 
         /* ============================================
@@ -579,1133 +446,180 @@
         }
 
         /* ============================================
-           VIDEO DEMO SECTION
+           DEMO SHOWCASE SECTION (TABBED)
            ============================================ */
-        .video-section {
-            padding: 5rem 1.5rem;
-            background: var(--white);
+        .demo-showcase {
+            padding: 6rem 1.5rem;
+            background: linear-gradient(180deg, #0F172A 0%, #1E293B 100%);
+            position: relative;
         }
 
-        .video-header {
+        .demo-showcase-header {
             text-align: center;
-            margin-bottom: 3rem;
+            margin-bottom: 2.5rem;
         }
 
-        .video-header h2 {
-            font-size: clamp(1.75rem, 4vw, 2.5rem);
-            font-weight: 700;
-            color: var(--gray-900);
-            margin-bottom: 0.5rem;
-        }
-
-        .video-header p {
-            color: var(--gray-600);
-            font-size: 1.125rem;
-        }
-
-        .video-container {
-            max-width: 900px;
-            margin: 0 auto;
-            position: relative;
-        }
-
-        .video-wrapper {
-            position: relative;
-            padding-bottom: 56.25%; /* 16:9 */
-            background: linear-gradient(135deg, var(--gray-800), var(--gray-900));
-            border-radius: 1rem;
-            overflow: hidden;
-            box-shadow: var(--shadow-2xl);
-            cursor: pointer;
-        }
-
-        .video-wrapper iframe {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            border: none;
-        }
-
-        .video-thumbnail {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: linear-gradient(135deg, var(--blue-900), var(--gray-900));
-        }
-
-        .video-thumbnail::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
-        }
-
-        .video-play-btn {
-            width: 80px;
-            height: 80px;
-            background: var(--white);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--blue-600);
-            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
-            transition: all var(--transition-normal);
-            z-index: 1;
-        }
-
-        .video-play-btn:hover {
-            transform: scale(1.1);
-            box-shadow: 0 15px 50px rgba(0,0,0,0.4);
-        }
-
-        .video-play-btn i {
-            width: 32px;
-            height: 32px;
-            margin-left: 4px;
-        }
-
-        .video-duration {
-            position: absolute;
-            bottom: 1rem;
-            right: 1rem;
-            background: rgba(0,0,0,0.7);
-            color: white;
-            padding: 0.25rem 0.75rem;
-            border-radius: 0.25rem;
-            font-size: 0.875rem;
-            font-weight: 500;
-        }
-
-        .video-cta {
-            text-align: center;
-            margin-top: 1.5rem;
-            color: var(--gray-500);
-            font-size: 0.875rem;
-        }
-
-        /* ============================================
-           DEMO SECTION (CRITICAL - BEAUTIFUL)
-           ============================================ */
-        .demo {
-            padding: 5rem 1.5rem;
-            background: var(--gray-900);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .demo::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: 
-                radial-gradient(ellipse at 20% 50%, rgba(30, 64, 175, 0.3) 0%, transparent 50%),
-                radial-gradient(ellipse at 80% 50%, rgba(59, 130, 246, 0.2) 0%, transparent 50%);
-            pointer-events: none;
-        }
-
-        .demo-header {
-            text-align: center;
-            margin-bottom: 3rem;
-            position: relative;
-            z-index: 1;
-        }
-
-        .demo-header h2 {
+        .demo-showcase-header h2 {
             font-size: clamp(1.75rem, 4vw, 2.5rem);
             font-weight: 700;
             color: var(--white);
-            margin-bottom: 1rem;
+            margin-bottom: 0.75rem;
         }
 
-        .demo-header p {
+        .demo-showcase-header p {
             color: var(--gray-400);
             font-size: 1.125rem;
-            max-width: 600px;
-            margin: 0 auto;
         }
 
-        /* Before/After Toggle */
-        .demo-toggle {
+        /* Demo Tabs */
+        .demo-tabs {
             display: flex;
             justify-content: center;
             gap: 0.5rem;
             margin-bottom: 2rem;
-            position: relative;
-            z-index: 1;
         }
 
-        .demo-toggle-btn {
-            padding: 0.75rem 1.5rem;
+        .demo-tab {
+            padding: 0.875rem 1.5rem;
+            background: rgba(255, 255, 255, 0.1);
             border: none;
             border-radius: 0.5rem;
+            color: var(--gray-400);
             font-weight: 600;
+            font-size: 0.9375rem;
             cursor: pointer;
             transition: all var(--transition-normal);
-            background: rgba(255, 255, 255, 0.1);
-            color: var(--gray-400);
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
+            position: relative;
         }
 
-        .demo-toggle-btn.active {
+        .demo-tab:hover {
+            background: rgba(255, 255, 255, 0.15);
+            color: var(--white);
+        }
+
+        .demo-tab.active {
             background: var(--blue-600);
             color: var(--white);
-            box-shadow: 0 0 20px rgba(59, 130, 246, 0.5);
         }
 
-        .demo-toggle-btn:hover:not(.active) {
-            background: rgba(255, 255, 255, 0.2);
-            color: var(--white);
+        .demo-tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60%;
+            height: 3px;
+            background: var(--gold);
+            border-radius: 2px;
         }
 
-        /* Demo Container */
-        .demo-container {
+        /* Demo Content */
+        .demo-content {
             max-width: 1000px;
             margin: 0 auto;
-            position: relative;
-            z-index: 1;
         }
 
         .demo-panel {
             display: none;
-            animation: fadeIn 0.4s ease;
-        }
-
-        .demo-panel.active {
-            display: block;
-        }
-
-        /* Old Way Panel */
-        .old-way {
-            background: linear-gradient(135deg, #1a1a2e, #16213e);
-            border-radius: 1rem;
-            padding: 2rem;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .old-way-header {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            margin-bottom: 1.5rem;
-            padding-bottom: 1rem;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .old-way-icon {
-            width: 48px;
-            height: 48px;
-            background: var(--red-500);
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-        }
-
-        .old-way-title {
-            color: var(--white);
-            font-size: 1.25rem;
-            font-weight: 600;
-        }
-
-        .old-way-subtitle {
-            color: var(--gray-400);
-            font-size: 0.875rem;
-        }
-
-        /* Excel Chaos Mockup */
-        .excel-chaos {
-            background: #1e4620;
-            border-radius: 0.5rem;
-            overflow: hidden;
-            font-family: 'Courier New', monospace;
-            font-size: 0.75rem;
-        }
-
-        .excel-toolbar {
-            background: #2d5a30;
-            padding: 0.5rem 1rem;
-            display: flex;
-            gap: 0.5rem;
-        }
-
-        .excel-toolbar span {
-            color: rgba(255, 255, 255, 0.7);
-        }
-
-        .excel-grid {
-            display: grid;
-            grid-template-columns: 40px repeat(6, 1fr);
-            color: var(--white);
-        }
-
-        .excel-cell {
-            padding: 0.5rem;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            min-height: 32px;
-            display: flex;
-            align-items: center;
-        }
-
-        .excel-cell.header {
-            background: rgba(0, 0, 0, 0.3);
-            font-weight: 600;
-            text-align: center;
-            justify-content: center;
-        }
-
-        .excel-cell.row-num {
-            background: rgba(0, 0, 0, 0.2);
-            justify-content: center;
-        }
-
-        .excel-cell.error {
-            background: rgba(239, 68, 68, 0.3);
-            color: #fca5a5;
-        }
-
-        .excel-cell.warning {
-            background: rgba(234, 179, 8, 0.3);
-            color: #fde047;
-        }
-
-        .excel-cell.long-text {
-            font-size: 0.65rem;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .old-way-stats {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 1rem;
-            margin-top: 1.5rem;
-        }
-
-        .old-way-stat {
-            text-align: center;
-            padding: 1rem;
-            background: rgba(239, 68, 68, 0.1);
-            border-radius: 0.5rem;
-            border: 1px solid rgba(239, 68, 68, 0.2);
-        }
-
-        .old-way-stat-value {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--red-500);
-        }
-
-        .old-way-stat-label {
-            font-size: 0.75rem;
-            color: var(--gray-400);
-            margin-top: 0.25rem;
-        }
-
-        /* JOCHero Way Panel */
-        .joc-way {
-            background: linear-gradient(135deg, #0f172a, #1e293b);
-            border-radius: 1rem;
-            overflow: hidden;
-            border: 1px solid rgba(59, 130, 246, 0.3);
-            box-shadow: 0 0 40px rgba(59, 130, 246, 0.2);
-        }
-
-        .joc-way-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 1.5rem 2rem;
-            background: rgba(59, 130, 246, 0.1);
-            border-bottom: 1px solid rgba(59, 130, 246, 0.2);
-        }
-
-        .joc-way-logo {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-        }
-
-        .joc-way-logo-icon {
-            width: 40px;
-            height: 40px;
-            background: linear-gradient(135deg, var(--blue-500), var(--blue-700));
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-        }
-
-        .joc-way-logo-text {
-            font-size: 1.25rem;
-            font-weight: 700;
-            color: var(--white);
-        }
-
-        .joc-way-status {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.5rem 1rem;
-            background: rgba(34, 197, 94, 0.2);
-            border-radius: 100px;
-            color: var(--green-500);
-            font-size: 0.875rem;
-            font-weight: 500;
-        }
-
-        .joc-way-status::before {
-            content: '';
-            width: 8px;
-            height: 8px;
-            background: var(--green-500);
-            border-radius: 50%;
-            animation: pulse 2s infinite;
-        }
-
-        /* Interactive Demo Steps */
-        .joc-demo-content {
-            padding: 2rem;
-        }
-
-        .demo-steps {
-            display: grid;
-            gap: 1rem;
-            margin-bottom: 2rem;
-        }
-
-        .demo-step {
-            display: flex;
-            align-items: flex-start;
-            gap: 1rem;
-            padding: 1.25rem;
-            background: rgba(255, 255, 255, 0.03);
-            border-radius: 0.75rem;
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            cursor: pointer;
-            transition: all var(--transition-normal);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .demo-step::before {
-            content: '';
-            position: absolute;
-            left: 0;
-            top: 0;
-            bottom: 0;
-            width: 3px;
-            background: var(--gray-700);
-            transition: all var(--transition-normal);
-        }
-
-        .demo-step:hover {
-            background: rgba(59, 130, 246, 0.1);
-            border-color: rgba(59, 130, 246, 0.3);
-        }
-
-        .demo-step.active {
-            background: rgba(59, 130, 246, 0.15);
-            border-color: rgba(59, 130, 246, 0.4);
-        }
-
-        .demo-step.active::before {
-            background: var(--blue-500);
-            box-shadow: 0 0 10px var(--blue-500);
-        }
-
-        .demo-step.completed::before {
-            background: var(--green-500);
-        }
-
-        .demo-step-number {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            background: var(--gray-700);
-            color: var(--gray-400);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 600;
-            font-size: 0.875rem;
-            flex-shrink: 0;
-            transition: all var(--transition-normal);
-        }
-
-        .demo-step.active .demo-step-number {
-            background: var(--blue-600);
-            color: var(--white);
-        }
-
-        .demo-step.completed .demo-step-number {
-            background: var(--green-500);
-            color: var(--white);
-        }
-
-        .demo-step-content h4 {
-            color: var(--white);
-            font-size: 1rem;
-            font-weight: 600;
-            margin-bottom: 0.25rem;
-        }
-
-        .demo-step-content p {
-            color: var(--gray-400);
-            font-size: 0.875rem;
-        }
-
-        .demo-step-icon {
-            margin-left: auto;
-            color: var(--gray-600);
-            transition: all var(--transition-normal);
-        }
-
-        .demo-step.active .demo-step-icon {
-            color: var(--blue-400);
-        }
-
-        .demo-step.completed .demo-step-icon {
-            color: var(--green-500);
-        }
-
-        /* Demo Preview Area */
-        .demo-preview {
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: 0.75rem;
-            padding: 1.5rem;
-            min-height: 200px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .demo-preview-content {
-            width: 100%;
-            animation: fadeIn 0.4s ease;
-        }
-
-        /* Step 1: PDF Upload */
-        .upload-zone {
-            border: 2px dashed var(--blue-500);
-            border-radius: 0.75rem;
-            padding: 2rem;
-            text-align: center;
-            transition: all var(--transition-normal);
-            cursor: pointer;
-        }
-
-        .upload-zone:hover {
-            background: rgba(59, 130, 246, 0.1);
-            border-color: var(--blue-400);
-        }
-
-        .upload-zone.uploading {
-            background: rgba(59, 130, 246, 0.15);
-            border-style: solid;
-        }
-
-        .upload-icon {
-            width: 48px;
-            height: 48px;
-            margin: 0 auto 1rem;
-            color: var(--blue-500);
-        }
-
-        .upload-text {
-            color: var(--white);
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-        }
-
-        .upload-hint {
-            color: var(--gray-500);
-            font-size: 0.875rem;
-        }
-
-        .upload-progress {
-            margin-top: 1rem;
-            display: none;
-        }
-
-        .upload-zone.uploading .upload-progress {
-            display: block;
-        }
-
-        .progress-bar {
-            height: 4px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 2px;
-            overflow: hidden;
-        }
-
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, var(--blue-500), var(--blue-400));
-            border-radius: 2px;
-            width: 0%;
-            transition: width 0.3s ease;
-        }
-
-        /* Step 2: Measure */
-        .measure-demo {
-            position: relative;
-        }
-
-        .measure-canvas {
-            width: 100%;
-            aspect-ratio: 16/9;
-            background: linear-gradient(135deg, #2a2a3a, #1a1a2a);
-            border-radius: 0.5rem;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .measure-floor-plan {
-            position: absolute;
-            inset: 20px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-
-        .measure-room {
-            position: absolute;
-            border: 2px solid var(--blue-400);
-            background: rgba(59, 130, 246, 0.1);
-        }
-
-        .measure-room-1 {
-            top: 10%;
-            left: 10%;
-            width: 35%;
-            height: 40%;
-        }
-
-        .measure-room-2 {
-            top: 10%;
-            right: 10%;
-            width: 35%;
-            height: 40%;
-        }
-
-        .measure-room-3 {
-            bottom: 10%;
-            left: 10%;
-            width: 80%;
-            height: 35%;
-        }
-
-        .measure-point {
-            position: absolute;
-            width: 12px;
-            height: 12px;
-            background: var(--blue-500);
-            border: 2px solid var(--white);
-            border-radius: 50%;
-            transform: translate(-50%, -50%);
-            cursor: pointer;
-            z-index: 10;
-            animation: pointPulse 2s infinite;
-        }
-
-        .measure-label {
-            position: absolute;
-            background: var(--blue-600);
-            color: white;
-            padding: 0.25rem 0.5rem;
-            border-radius: 4px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            transform: translate(-50%, -50%);
-            white-space: nowrap;
-        }
-
-        .measure-cursor {
-            position: absolute;
-            width: 24px;
-            height: 24px;
-            border: 2px solid var(--blue-400);
-            border-radius: 50%;
-            pointer-events: none;
-            animation: cursorMove 4s ease-in-out infinite;
-        }
-
-        @keyframes cursorMove {
-            0%, 100% { top: 20%; left: 15%; }
-            25% { top: 20%; left: 42%; }
-            50% { top: 47%; left: 42%; }
-            75% { top: 47%; left: 15%; }
-        }
-
-        @keyframes pointPulse {
-            0%, 100% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.5); }
-            50% { box-shadow: 0 0 0 8px rgba(59, 130, 246, 0); }
-        }
-
-        /* Step 3: Auto Line Items */
-        .line-items-demo {
-            max-height: 300px;
-            overflow: hidden;
-        }
-
-        .line-items-table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 0.8rem;
-        }
-
-        .line-items-table th {
-            background: rgba(59, 130, 246, 0.2);
-            color: var(--blue-400);
-            padding: 0.75rem;
-            text-align: left;
-            font-weight: 600;
-            position: sticky;
-            top: 0;
-        }
-
-        .line-items-table td {
-            padding: 0.75rem;
-            color: var(--gray-300);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-        }
-
-        .line-items-table tr {
-            transition: all var(--transition-fast);
-        }
-
-        .line-items-table tr:hover {
-            background: rgba(59, 130, 246, 0.1);
-        }
-
-        .line-items-table tr.adding {
-            animation: rowSlideIn 0.4s ease;
-        }
-
-        @keyframes rowSlideIn {
-            from {
-                opacity: 0;
-                transform: translateX(-20px);
-                background: rgba(59, 130, 246, 0.3);
-            }
-            to {
-                opacity: 1;
-                transform: translateX(0);
-                background: transparent;
-            }
-        }
-
-        .line-item-code {
-            font-family: monospace;
-            color: var(--blue-400);
-            font-weight: 600;
-        }
-
-        .line-item-qty {
-            color: var(--green-500);
-            font-weight: 600;
-        }
-
-        /* Step 4: Export */
-        .export-demo {
-            text-align: center;
-        }
-
-        .export-success {
-            margin-bottom: 1.5rem;
-        }
-
-        .export-success-icon {
-            width: 64px;
-            height: 64px;
-            background: var(--green-500);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 1rem;
-            animation: successPop 0.5s ease;
-        }
-
-        @keyframes successPop {
-            0% { transform: scale(0); }
-            50% { transform: scale(1.2); }
-            100% { transform: scale(1); }
-        }
-
-        .export-success-icon i {
-            color: white;
-            width: 32px;
-            height: 32px;
-        }
-
-        .export-success h4 {
-            color: var(--white);
-            font-size: 1.25rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .export-success p {
-            color: var(--gray-400);
-        }
-
-        .export-files {
-            display: flex;
-            gap: 1rem;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-
-        .export-file {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            padding: 1rem 1.5rem;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 0.5rem;
-            cursor: pointer;
-            transition: all var(--transition-normal);
-        }
-
-        .export-file:hover {
-            background: rgba(59, 130, 246, 0.1);
-            border-color: var(--blue-500);
-        }
-
-        .export-file-icon {
-            width: 40px;
-            height: 40px;
-            background: var(--blue-600);
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-        }
-
-        .export-file-info {
-            text-align: left;
-        }
-
-        .export-file-name {
-            color: var(--white);
-            font-weight: 600;
-            font-size: 0.875rem;
-        }
-
-        .export-file-size {
-            color: var(--gray-500);
-            font-size: 0.75rem;
-        }
-
-        /* JOC Way Stats */
-        .joc-way-stats {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 1rem;
-            padding: 1.5rem 2rem;
-            background: rgba(34, 197, 94, 0.1);
-            border-top: 1px solid rgba(34, 197, 94, 0.2);
-        }
-
-        .joc-way-stat {
-            text-align: center;
-        }
-
-        .joc-way-stat-value {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--green-500);
-        }
-
-        .joc-way-stat-label {
-            font-size: 0.75rem;
-            color: var(--gray-400);
-            margin-top: 0.25rem;
-        }
-
-        /* ============================================
-           TRANSLATION ENGINE DEMO SECTION
-           ============================================ */
-        .translation-engine-demo {
-            padding: 5rem 1.5rem;
-            background: linear-gradient(180deg, #0F172A 0%, #1E293B 100%);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .translation-engine-demo::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background-image: 
-                linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
-            background-size: 40px 40px;
-            pointer-events: none;
-        }
-
-        .translation-engine-header {
-            text-align: center;
-            margin-bottom: 2.5rem;
-            position: relative;
-            z-index: 1;
-        }
-
-        .translation-engine-header h2 {
-            font-size: 2.5rem;
-            font-weight: 700;
-            color: #F1F5F9;
-            margin-bottom: 0.75rem;
-        }
-
-        .translation-engine-header p {
-            font-size: 1.125rem;
-            color: #94A3B8;
-            max-width: 600px;
-            margin: 0 auto;
-        }
-
-        .translation-engine-container {
-            position: relative;
-            z-index: 1;
-            max-width: 1000px;
-            margin: 0 auto;
             border-radius: 16px;
             overflow: hidden;
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4);
             border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
-        .translation-engine-container iframe {
+        .demo-panel.active {
+            display: block;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .demo-panel iframe {
             display: block;
             width: 100%;
             height: 550px;
             border: none;
         }
 
-        .translation-engine-hook {
-            text-align: center;
-            margin-top: 2rem;
-            padding: 1rem 1.5rem;
-            background: rgba(255, 215, 0, 0.1);
-            border: 1px solid rgba(255, 215, 0, 0.2);
-            border-radius: 12px;
-            max-width: 600px;
-            margin-left: auto;
-            margin-right: auto;
-            position: relative;
-            z-index: 1;
-        }
-
-        .translation-engine-hook p {
-            font-size: 1rem;
-            color: #FFD700;
-            font-weight: 500;
-            margin: 0;
-        }
-
-        .translation-engine-hook .highlight {
-            color: #10B981;
-            font-weight: 700;
-        }
-
         @media (max-width: 768px) {
-            .translation-engine-demo {
-                padding: 3rem 1rem;
-            }
-
-            .translation-engine-header h2 {
-                font-size: 1.75rem;
-            }
-
-            .translation-engine-container iframe {
+            .demo-panel iframe {
                 height: 400px;
             }
+            .demo-tabs {
+                flex-direction: column;
+                max-width: 300px;
+                margin-left: auto;
+                margin-right: auto;
+            }
+        }
+
+        /* Demo CTA */
+        .demo-showcase-cta {
+            text-align: center;
+            margin-top: 2.5rem;
+        }
+
+        .demo-showcase-cta .btn-primary {
+            background: var(--white);
+            color: var(--blue-800);
+        }
+
+        .demo-showcase-cta .btn-primary:hover {
+            background: var(--gray-100);
         }
 
         /* ============================================
-           PROBLEM SECTION
+           FEATURES SECTION (SIMPLIFIED - 3 KEY)
            ============================================ */
-        .problem {
-            padding: 5rem 1.5rem;
+        .features-section {
+            padding: 6rem 1.5rem;
             background: var(--white);
         }
 
-        .problem-header {
+        .features-header {
             text-align: center;
-            margin-bottom: 3rem;
+            margin-bottom: 3.5rem;
         }
 
-        .problem-label {
-            display: inline-block;
-            padding: 0.5rem 1rem;
-            background: var(--red-100);
-            color: var(--red-500);
-            border-radius: 100px;
-            font-size: 0.875rem;
-            font-weight: 600;
-            margin-bottom: 1rem;
-        }
-
-        .problem-header h2 {
+        .features-header h2 {
             font-size: clamp(1.75rem, 4vw, 2.5rem);
             font-weight: 700;
             color: var(--gray-900);
-            margin-bottom: 1rem;
+            margin-bottom: 0.75rem;
         }
 
-        .problem-header p {
+        .features-header p {
             color: var(--gray-600);
             font-size: 1.125rem;
-            max-width: 600px;
-            margin: 0 auto;
         }
 
-        .problem-stats {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 2rem;
-            margin-bottom: 3rem;
-        }
-
-        .problem-stat {
-            text-align: center;
-            padding: 2rem;
-            background: var(--gray-50);
-            border-radius: 1rem;
-            border: 1px solid var(--gray-200);
-        }
-
-        .problem-stat-value {
-            font-size: 3rem;
-            font-weight: 800;
-            color: var(--red-500);
-            line-height: 1;
-        }
-
-        .problem-stat-label {
-            color: var(--gray-600);
-            margin-top: 0.5rem;
-            font-weight: 500;
-        }
-
-        .problem-points {
+        .features-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 1.5rem;
-        }
-
-        .problem-point {
-            display: flex;
-            gap: 1rem;
-            padding: 1.5rem;
-            background: var(--gray-50);
-            border-radius: 0.75rem;
-            border: 1px solid var(--gray-200);
-        }
-
-        .problem-point-icon {
-            width: 48px;
-            height: 48px;
-            background: var(--red-100);
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--red-500);
-            flex-shrink: 0;
-        }
-
-        .problem-point h4 {
-            font-weight: 600;
-            color: var(--gray-900);
-            margin-bottom: 0.25rem;
-        }
-
-        .problem-point p {
-            color: var(--gray-600);
-            font-size: 0.875rem;
-        }
-
-        /* ============================================
-           SOLUTION SECTION
-           ============================================ */
-        .solution {
-            padding: 5rem 1.5rem;
-            background: linear-gradient(180deg, var(--blue-50) 0%, var(--white) 100%);
-        }
-
-        .solution-header {
-            text-align: center;
-            margin-bottom: 3rem;
-        }
-
-        .solution-label {
-            display: inline-block;
-            padding: 0.5rem 1rem;
-            background: var(--green-100);
-            color: var(--green-500);
-            border-radius: 100px;
-            font-size: 0.875rem;
-            font-weight: 600;
-            margin-bottom: 1rem;
-        }
-
-        .solution-header h2 {
-            font-size: clamp(1.75rem, 4vw, 2.5rem);
-            font-weight: 700;
-            color: var(--gray-900);
-            margin-bottom: 1rem;
-        }
-
-        .solution-header p {
-            color: var(--gray-600);
-            font-size: 1.125rem;
-            max-width: 600px;
+            gap: 2rem;
+            max-width: 1000px;
             margin: 0 auto;
         }
 
-        .features {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 3rem;
-        }
-
-        .feature {
-            padding: 2rem;
-            background: var(--white);
+        .feature-card {
+            padding: 2.5rem;
+            background: var(--gray-50);
             border-radius: 1rem;
             border: 1px solid var(--gray-200);
             text-align: center;
             transition: all var(--transition-normal);
         }
 
-        .feature:hover {
+        .feature-card:hover {
             transform: translateY(-4px);
             box-shadow: var(--shadow-lg);
             border-color: var(--blue-300);
         }
 
         .feature-icon {
-            width: 64px;
-            height: 64px;
+            width: 72px;
+            height: 72px;
             background: linear-gradient(135deg, var(--blue-500), var(--blue-700));
-            border-radius: 16px;
+            border-radius: 18px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -1713,29 +627,30 @@
             margin: 0 auto 1.5rem;
         }
 
-        .feature h3 {
-            font-size: 1.25rem;
-            font-weight: 600;
+        .feature-card h3 {
+            font-size: 1.375rem;
+            font-weight: 700;
             color: var(--gray-900);
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.75rem;
         }
 
-        .feature p {
+        .feature-card p {
             color: var(--gray-600);
-            font-size: 0.9375rem;
+            font-size: 1rem;
+            line-height: 1.6;
         }
 
         /* ============================================
-           FEATURE COMPARISON TABLE (EXPANDED)
+           COMPARISON SECTION (ACCORDION)
            ============================================ */
         .comparison-section {
-            padding: 5rem 1.5rem;
+            padding: 6rem 1.5rem;
             background: var(--gray-50);
         }
 
         .comparison-header {
             text-align: center;
-            margin-bottom: 3rem;
+            margin-bottom: 2rem;
         }
 
         .comparison-header h2 {
@@ -1745,24 +660,58 @@
             margin-bottom: 0.5rem;
         }
 
-        .comparison-header p {
-            color: var(--gray-600);
-            font-size: 1.125rem;
+        .comparison-accordion {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .comparison-toggle {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            padding: 1.25rem 2rem;
+            background: var(--white);
+            border: 2px solid var(--blue-200);
+            border-radius: 0.75rem;
+            cursor: pointer;
+            transition: all var(--transition-normal);
+            font-weight: 600;
+            color: var(--blue-700);
+            font-size: 1.0625rem;
+        }
+
+        .comparison-toggle:hover {
+            background: var(--blue-50);
+            border-color: var(--blue-400);
+        }
+
+        .comparison-toggle i {
+            transition: transform var(--transition-normal);
+        }
+
+        .comparison-accordion.open .comparison-toggle i {
+            transform: rotate(180deg);
         }
 
         .comparison-table-wrapper {
-            max-width: 1000px;
-            margin: 0 auto;
-            overflow-x: auto;
-            border-radius: 1rem;
-            box-shadow: var(--shadow-lg);
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease;
+        }
+
+        .comparison-accordion.open .comparison-table-wrapper {
+            max-height: 800px;
+            margin-top: 1.5rem;
         }
 
         .comparison-table {
             width: 100%;
-            min-width: 700px;
             border-collapse: collapse;
             background: var(--white);
+            border-radius: 1rem;
+            overflow: hidden;
+            box-shadow: var(--shadow-lg);
         }
 
         .comparison-table thead {
@@ -1785,22 +734,6 @@
 
         .comparison-table th.highlight {
             background: var(--blue-600);
-            position: relative;
-        }
-
-        .comparison-table th.highlight::before {
-            content: '⭐ Best Choice';
-            position: absolute;
-            top: -28px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: var(--green-500);
-            color: white;
-            padding: 0.25rem 0.75rem;
-            border-radius: 100px;
-            font-size: 0.7rem;
-            font-weight: 600;
-            white-space: nowrap;
         }
 
         .comparison-table td {
@@ -1820,72 +753,21 @@
             background: var(--blue-50);
         }
 
-        .comparison-table tbody tr:hover {
-            background: var(--gray-50);
-        }
-
-        .comparison-table tbody tr:hover td.highlight {
-            background: var(--blue-100);
-        }
-
-        .comparison-table .icon-yes {
-            color: var(--green-500);
-        }
-
-        .comparison-table .icon-no {
-            color: var(--red-500);
-        }
-
-        .comparison-table .icon-partial {
-            color: var(--yellow-500);
-        }
-
-        .comparison-table tfoot {
-            background: var(--gray-100);
-        }
-
-        .comparison-table tfoot td {
-            padding: 1.25rem 1rem;
-            font-weight: 700;
-            border-bottom: none;
-        }
-
-        .comparison-table tfoot td.highlight {
-            background: var(--blue-100);
-            color: var(--blue-700);
-        }
-
-        .comparison-table tfoot .price-bad {
-            color: var(--red-500);
-            text-decoration: line-through;
-        }
-
-        .comparison-table tfoot .price-good {
-            color: var(--green-500);
-        }
+        .comparison-table .icon-yes { color: var(--green-500); }
+        .comparison-table .icon-no { color: var(--red-500); }
+        .comparison-table .icon-partial { color: var(--yellow-500); }
 
         /* ============================================
            ROI CALCULATOR SECTION
            ============================================ */
         .roi-section {
-            padding: 5rem 1.5rem;
+            padding: 6rem 1.5rem;
             background: linear-gradient(135deg, var(--blue-800), var(--blue-900));
-            position: relative;
-            overflow: hidden;
-        }
-
-        .roi-section::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
         }
 
         .roi-container {
             max-width: 900px;
             margin: 0 auto;
-            position: relative;
-            z-index: 1;
         }
 
         .roi-header {
@@ -1937,8 +819,7 @@
             font-size: 0.9375rem;
         }
 
-        .roi-input-group input,
-        .roi-input-group select {
+        .roi-input-group input {
             padding: 0.875rem 1rem;
             border: 2px solid var(--gray-200);
             border-radius: 0.5rem;
@@ -1946,8 +827,7 @@
             transition: all var(--transition-fast);
         }
 
-        .roi-input-group input:focus,
-        .roi-input-group select:focus {
+        .roi-input-group input:focus {
             outline: none;
             border-color: var(--blue-500);
             box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
@@ -2025,7 +905,7 @@
            SOCIAL PROOF SECTION
            ============================================ */
         .social-proof {
-            padding: 5rem 1.5rem;
+            padding: 6rem 1.5rem;
             background: var(--white);
         }
 
@@ -2121,13 +1001,6 @@
             justify-content: center;
             color: white;
             font-weight: 600;
-            overflow: hidden;
-        }
-
-        .testimonial-avatar img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
         }
 
         .testimonial-author-name {
@@ -2140,45 +1013,11 @@
             color: var(--gray-500);
         }
 
-        /* Agency Logos */
-        .agency-logos {
-            text-align: center;
-        }
-
-        .agency-logos-label {
-            color: var(--gray-500);
-            font-size: 0.875rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .agency-logos-grid {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 1.5rem;
-            align-items: center;
-        }
-
-        .agency-logo {
-            padding: 0.875rem 1.5rem;
-            background: var(--gray-100);
-            border-radius: 0.5rem;
-            color: var(--gray-600);
-            font-weight: 700;
-            font-size: 0.875rem;
-            transition: all var(--transition-normal);
-        }
-
-        .agency-logo:hover {
-            background: var(--blue-100);
-            color: var(--blue-700);
-        }
-
         /* ============================================
            PRICING SECTION
            ============================================ */
         .pricing {
-            padding: 5rem 1.5rem;
+            padding: 6rem 1.5rem;
             background: linear-gradient(180deg, var(--gray-50) 0%, var(--white) 100%);
         }
 
@@ -2199,37 +1038,6 @@
             margin-bottom: 1.5rem;
         }
 
-        /* Urgency Banner */
-        .pricing-urgency {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.75rem;
-            padding: 0.75rem 1.5rem;
-            background: linear-gradient(135deg, var(--orange-100), var(--yellow-100));
-            border: 2px solid var(--orange-500);
-            border-radius: 100px;
-            margin-bottom: 1.5rem;
-            animation: pulse-border 2s infinite;
-        }
-
-        @keyframes pulse-border {
-            0%, 100% { box-shadow: 0 0 0 0 rgba(249, 115, 22, 0.3); }
-            50% { box-shadow: 0 0 0 8px rgba(249, 115, 22, 0); }
-        }
-
-        .pricing-urgency i {
-            color: var(--orange-500);
-            width: 20px;
-            height: 20px;
-        }
-
-        .pricing-urgency span {
-            font-weight: 700;
-            color: var(--gray-900);
-            font-size: 0.9375rem;
-        }
-
-        /* Billing Toggle */
         .billing-toggle {
             display: inline-flex;
             align-items: center;
@@ -2263,7 +1071,6 @@
             font-weight: 600;
         }
 
-        /* Pricing Cards */
         .pricing-cards {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
@@ -2374,190 +1181,16 @@
             width: 100%;
         }
 
-        /* ============================================
-           BLOG PREVIEW SECTION
-           ============================================ */
-        .blog-preview-section {
-            padding: 5rem 1.5rem;
-            background: var(--gray-50);
-        }
-
-        .blog-preview-header {
+        .pricing-cta {
             text-align: center;
-            margin-bottom: 3rem;
-        }
-
-        .blog-preview-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.5rem 1rem;
-            background: var(--blue-100);
-            color: var(--blue-700);
-            border-radius: 100px;
-            font-size: 0.875rem;
-            font-weight: 600;
-            margin-bottom: 1rem;
-        }
-
-        .blog-preview-header h2 {
-            font-size: clamp(1.75rem, 4vw, 2.5rem);
-            font-weight: 700;
-            color: var(--gray-900);
-            margin-bottom: 0.5rem;
-        }
-
-        .blog-preview-header p {
-            color: var(--gray-600);
-            font-size: 1.125rem;
-        }
-
-        .blog-preview-grid {
-            display: grid;
-            gap: 1.5rem;
-            max-width: 900px;
-            margin: 0 auto;
-        }
-
-        @media (min-width: 768px) {
-            .blog-preview-grid {
-                grid-template-columns: 2fr 1fr;
-            }
-        }
-
-        .blog-preview-card {
-            background: var(--white);
-            border-radius: 1rem;
-            overflow: hidden;
-            border: 1px solid var(--gray-200);
-            text-decoration: none;
-            transition: all var(--transition-normal);
-            display: flex;
-            flex-direction: column;
-        }
-
-        .blog-preview-card:hover {
-            transform: translateY(-4px);
-            box-shadow: var(--shadow-lg);
-            border-color: var(--blue-300);
-        }
-
-        .blog-preview-card-image {
-            height: 160px;
-            background: linear-gradient(135deg, var(--blue-600), var(--blue-800));
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-        }
-
-        .blog-preview-card-image::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.1'%3E%3Cpath d='M20 20v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
-        }
-
-        .blog-preview-card-icon {
-            width: 64px;
-            height: 64px;
-            background: rgba(255,255,255,0.2);
-            border-radius: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            position: relative;
-            z-index: 1;
-        }
-
-        .blog-preview-card-content {
-            padding: 1.5rem;
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .blog-preview-card-category {
-            display: inline-block;
-            padding: 0.25rem 0.5rem;
-            background: var(--blue-100);
-            color: var(--blue-700);
-            border-radius: 4px;
-            font-size: 0.7rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            margin-bottom: 0.75rem;
-            width: fit-content;
-        }
-
-        .blog-preview-card-content h3 {
-            font-size: 1.25rem;
-            font-weight: 700;
-            color: var(--gray-900);
-            margin-bottom: 0.75rem;
-            line-height: 1.3;
-        }
-
-        .blog-preview-card-content p {
-            color: var(--gray-600);
-            font-size: 0.9375rem;
-            line-height: 1.6;
-            margin-bottom: 1rem;
-            flex: 1;
-        }
-
-        .blog-preview-card-meta {
-            display: flex;
-            gap: 1rem;
-            color: var(--gray-500);
-            font-size: 0.8125rem;
-        }
-
-        .blog-preview-card-meta span {
-            display: flex;
-            align-items: center;
-            gap: 0.375rem;
-        }
-
-        .blog-preview-cta {
-            background: var(--white);
-            border-radius: 1rem;
-            border: 2px dashed var(--gray-300);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            min-height: 200px;
-        }
-
-        .blog-preview-cta-content {
-            text-align: center;
-            padding: 2rem;
-        }
-
-        .blog-preview-cta-content i {
-            color: var(--blue-500);
-            margin-bottom: 1rem;
-        }
-
-        .blog-preview-cta-content h4 {
-            font-weight: 600;
-            color: var(--gray-700);
-            margin-bottom: 0.5rem;
-        }
-
-        .blog-preview-cta-content p {
-            color: var(--gray-500);
-            font-size: 0.875rem;
-            margin-bottom: 1rem;
+            margin-top: 2.5rem;
         }
 
         /* ============================================
            FAQ SECTION
            ============================================ */
         .faq-section {
-            padding: 5rem 1.5rem;
+            padding: 6rem 1.5rem;
             background: var(--white);
         }
 
@@ -2661,25 +1294,14 @@
            FINAL CTA SECTION
            ============================================ */
         .final-cta {
-            padding: 5rem 1.5rem;
+            padding: 6rem 1.5rem;
             background: linear-gradient(135deg, var(--blue-800), var(--blue-900));
-            position: relative;
-            overflow: hidden;
-        }
-
-        .final-cta::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
         }
 
         .final-cta-content {
             max-width: 700px;
             margin: 0 auto;
             text-align: center;
-            position: relative;
-            z-index: 1;
         }
 
         .final-cta h2 {
@@ -2808,6 +1430,49 @@
         }
 
         /* ============================================
+           STICKY MOBILE CTA
+           ============================================ */
+        .sticky-cta {
+            display: none;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            z-index: 999;
+            background: var(--white);
+            border-top: 1px solid var(--gray-200);
+            box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.1);
+            padding: 1rem 1.5rem;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            transform: translateY(100%);
+            transition: transform 0.3s ease;
+        }
+
+        .sticky-cta.visible {
+            transform: translateY(0);
+        }
+
+        .sticky-cta-text {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--gray-700);
+            flex: 1;
+        }
+
+        .sticky-cta .btn {
+            padding: 0.75rem 1.25rem;
+            font-size: 0.9375rem;
+        }
+
+        @media (max-width: 768px) {
+            .sticky-cta {
+                display: flex;
+            }
+        }
+
+        /* ============================================
            ANIMATIONS
            ============================================ */
         @keyframes fadeIn {
@@ -2826,54 +1491,16 @@
             }
         }
 
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
-        }
-
         /* ============================================
-           RESPONSIVE ADJUSTMENTS
+           RESPONSIVE
            ============================================ */
-        @media (max-width: 1024px) {
-            .pricing-cards {
-                grid-template-columns: repeat(2, 1fr) !important;
-            }
-        }
-
         @media (max-width: 768px) {
             .hero {
                 padding: 6rem 1rem 4rem;
             }
 
             .section {
-                padding: 3rem 1rem;
-            }
-
-            .demo {
-                padding: 3rem 1rem;
-            }
-
-            .old-way-stats,
-            .joc-way-stats {
-                grid-template-columns: 1fr;
-            }
-
-            .export-files {
-                flex-direction: column;
-            }
-
-            .pricing-cards {
-                grid-template-columns: 1fr !important;
-            }
-
-            .value-proposition {
-                flex-direction: column !important;
-                gap: 1rem !important;
-            }
-
-            .value-proposition > div[style*="width: 1px"] {
-                width: 80% !important;
-                height: 1px !important;
+                padding: 4rem 1rem;
             }
 
             .social-proof-stats {
@@ -2886,15 +1513,6 @@
         }
 
         @media (max-width: 480px) {
-            .hero-trust-badges {
-                gap: 0.5rem;
-            }
-
-            .trust-badge {
-                padding: 0.375rem 0.5rem;
-                font-size: 0.7rem;
-            }
-
             .logos-grid {
                 gap: 1rem;
             }
@@ -2907,7 +1525,7 @@
     </style>
 </head>
 <body>
-    <!-- Navigation (Sticky with CTA) -->
+    <!-- Navigation -->
     <nav class="nav" id="nav">
         <div class="nav-inner">
             <a href="#" class="nav-logo">
@@ -2917,17 +1535,15 @@
                 JOCHero
             </a>
             <ul class="nav-links">
-                <li><a href="#video">Demo</a></li>
+                <li><a href="#demo">Demo</a></li>
                 <li><a href="#features">Features</a></li>
                 <li><a href="#testimonials">Testimonials</a></li>
                 <li><a href="#pricing">Pricing</a></li>
-                <li><a href="/blog">Blog</a></li>
+                <li><a href="#faq">FAQ</a></li>
             </ul>
             <div class="nav-cta">
-                <span class="nav-urgency">🔥 Early pricing ends soon</span>
-                <a href="/sandbox" class="btn btn-outline btn-sm" style="border: 2px solid #FFD700; color: #FFD700;">🧪 Sandbox</a>
                 <a href="#" class="btn btn-secondary btn-sm">Sign In</a>
-                <a href="#pricing" class="btn btn-primary btn-sm">Get Started</a>
+                <a href="#pricing" class="btn btn-primary btn-sm">Start Free Trial</a>
             </div>
             <button class="nav-mobile-btn" aria-label="Menu">
                 <i data-lucide="menu" style="width: 24px; height: 24px;"></i>
@@ -2938,64 +1554,25 @@
     <!-- Hero Section -->
     <section class="hero">
         <div class="hero-content">
-            <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 0.5rem; margin-bottom: 1.5rem;">
-                <div class="hero-badge">
-                    <i data-lucide="badge-check"></i>
-                    Become a JOC Hero
-                </div>
-                <div class="hero-urgency-badge">
-                    <i data-lucide="clock" style="width: 14px; height: 14px;"></i>
-                    Limited Early Pricing
-                </div>
-            </div>
-            <h1>Stop Translating Takeoffs Into <span class="gradient-text">JOC Line Items</span></h1>
+            <h1>JOC Proposals in <span class="gradient-text">90 Minutes</span> — Not 8 Hours</h1>
             <p class="hero-subtitle">
-                The first takeoff software built specifically for Job Order Contracts. 
-                Click to measure, auto-populate line items, export proposals in minutes.
+                The only takeoff software built for Job Order Contracts. Upload drawings, click to measure, export agency-ready proposals.
             </p>
             <div class="hero-cta">
                 <a href="#pricing" class="btn btn-primary btn-lg">
                     <i data-lucide="rocket" style="width: 20px; height: 20px;"></i>
-                    Start Your Free Trial
+                    Start Free Trial
                 </a>
-                <a href="#video" class="btn btn-secondary btn-lg">
+                <a href="#demo" class="btn btn-secondary btn-lg">
                     <i data-lucide="play-circle" style="width: 20px; height: 20px;"></i>
                     Watch Demo
                 </a>
             </div>
             
-            <!-- Trust Badges -->
-            <div class="hero-trust-badges">
-                <div class="trust-badge green">
-                    <i data-lucide="shield-check"></i>
-                    60-Day Money Back
-                </div>
-                <div class="trust-badge blue">
-                    <i data-lucide="credit-card"></i>
-                    No Credit Card Required
-                </div>
-                <div class="trust-badge green">
-                    <i data-lucide="lock"></i>
-                    Bank-Level Security
-                </div>
-            </div>
-            
-            <div class="hero-trust">
-                <div class="hero-trust-avatars">
-                    <div class="hero-trust-avatar">JT</div>
-                    <div class="hero-trust-avatar">MK</div>
-                    <div class="hero-trust-avatar">SR</div>
-                    <div class="hero-trust-avatar">AL</div>
-                    <div class="hero-trust-avatar">+</div>
-                </div>
-                <div class="hero-trust-stars">
-                    <i data-lucide="star" style="width: 16px; height: 16px; fill: currentColor;"></i>
-                    <i data-lucide="star" style="width: 16px; height: 16px; fill: currentColor;"></i>
-                    <i data-lucide="star" style="width: 16px; height: 16px; fill: currentColor;"></i>
-                    <i data-lucide="star" style="width: 16px; height: 16px; fill: currentColor;"></i>
-                    <i data-lucide="star" style="width: 16px; height: 16px; fill: currentColor;"></i>
-                </div>
-                <span>4.9/5 from 127 reviews</span>
+            <div class="hero-trust-signal">
+                <span><span class="check">✓</span> 500+ contractors</span>
+                <span><span class="check">✓</span> Works with any UPB</span>
+                <span><span class="check">✓</span> No credit card required</span>
             </div>
         </div>
     </section>
@@ -3019,540 +1596,142 @@
         </div>
     </section>
 
-    <!-- Video Demo Section -->
-    <section class="video-section" id="video">
+    <!-- Demo Showcase Section (Tabbed) -->
+    <section class="demo-showcase" id="demo">
         <div class="container">
-            <div class="video-header">
+            <div class="demo-showcase-header">
                 <h2>See JOCHero in Action</h2>
-                <p>Watch how JOCHero transforms an 8-hour proposal into 47 minutes</p>
+                <p>Watch how JOCHero transforms an 8-hour proposal into 90 minutes</p>
             </div>
-            <div class="video-container">
-                <div class="video-wrapper" id="video-wrapper">
-                    <div class="video-thumbnail" id="video-thumbnail">
-                        <div class="video-play-btn">
-                            <i data-lucide="play"></i>
-                        </div>
-                        <div class="video-duration">0:15</div>
-                    </div>
-                    <!-- YouTube iframe will be inserted here on click -->
+
+            <div class="demo-tabs">
+                <button class="demo-tab active" data-demo="quick">Quick Overview (15s)</button>
+                <button class="demo-tab" data-demo="translation">Translation Engine (20s)</button>
+            </div>
+
+            <div class="demo-content">
+                <div class="demo-panel active" id="demo-quick">
+                    <iframe 
+                        src="demo/demo-translation.html" 
+                        loading="lazy"
+                        title="JOCHero Quick Demo"
+                    ></iframe>
+                </div>
+                <div class="demo-panel" id="demo-translation">
+                    <iframe 
+                        src="demo/demo-translation-engine.html" 
+                        loading="lazy"
+                        title="JOCHero Translation Engine Demo"
+                    ></iframe>
                 </div>
             </div>
-            <p class="video-cta">
-                <i data-lucide="clock" style="width: 14px; height: 14px; vertical-align: middle;"></i>
-                Just 15 seconds to see the magic
-            </p>
+
+            <div class="demo-showcase-cta">
+                <a href="#pricing" class="btn btn-primary btn-lg">
+                    <i data-lucide="rocket" style="width: 20px; height: 20px;"></i>
+                    Start Free Trial
+                </a>
+            </div>
         </div>
     </section>
 
-    <!-- Demo Section -->
-    <section class="demo" id="demo">
+    <!-- Features Section (Simplified - 3 Key) -->
+    <section class="features-section" id="features">
         <div class="container">
-            <div class="demo-header">
-                <h2>See the Difference in Action</h2>
-                <p>Compare the old way of manual estimating versus the JOCHero automated workflow</p>
+            <div class="features-header">
+                <h2>Three Steps to Faster Proposals</h2>
+                <p>From drawings to agency-ready exports in minutes, not hours</p>
             </div>
 
-            <div class="demo-toggle">
-                <button class="demo-toggle-btn" data-panel="old">
-                    <i data-lucide="x-circle" style="width: 16px; height: 16px;"></i>
-                    The Old Way
-                </button>
-                <button class="demo-toggle-btn active" data-panel="new">
-                    <i data-lucide="sparkles" style="width: 16px; height: 16px;"></i>
-                    JOCHero Way
-                </button>
-            </div>
-
-            <div class="demo-container">
-                <!-- Old Way Panel -->
-                <div class="demo-panel" id="panel-old">
-                    <div class="old-way">
-                        <div class="old-way-header">
-                            <div class="old-way-icon">
-                                <i data-lucide="file-spreadsheet" style="width: 24px; height: 24px;"></i>
-                            </div>
-                            <div>
-                                <div class="old-way-title">Manual Excel + UPB Lookup</div>
-                                <div class="old-way-subtitle">The painful process you know too well</div>
-                            </div>
-                        </div>
-
-                        <div class="excel-chaos">
-                            <div class="excel-toolbar">
-                                <span>📄 proposal_v3_FINAL_edited(2).xlsx</span>
-                            </div>
-                            <div class="excel-grid">
-                                <div class="excel-cell header"></div>
-                                <div class="excel-cell header">A</div>
-                                <div class="excel-cell header">B</div>
-                                <div class="excel-cell header">C</div>
-                                <div class="excel-cell header">D</div>
-                                <div class="excel-cell header">E</div>
-                                <div class="excel-cell header">F</div>
-
-                                <div class="excel-cell row-num">1</div>
-                                <div class="excel-cell long-text">JOC Code</div>
-                                <div class="excel-cell long-text">Description</div>
-                                <div class="excel-cell">UOM</div>
-                                <div class="excel-cell">Qty</div>
-                                <div class="excel-cell">Unit $</div>
-                                <div class="excel-cell">Ext $</div>
-
-                                <div class="excel-cell row-num">2</div>
-                                <div class="excel-cell error">09-210.05.1</div>
-                                <div class="excel-cell long-text">Gypsum board...</div>
-                                <div class="excel-cell">SF</div>
-                                <div class="excel-cell warning">1,234</div>
-                                <div class="excel-cell">$2.45</div>
-                                <div class="excel-cell error">#REF!</div>
-
-                                <div class="excel-cell row-num">3</div>
-                                <div class="excel-cell">09-912.33.2</div>
-                                <div class="excel-cell long-text">Paint, int latex...</div>
-                                <div class="excel-cell warning">GAL</div>
-                                <div class="excel-cell">???</div>
-                                <div class="excel-cell">$48.00</div>
-                                <div class="excel-cell">$0.00</div>
-
-                                <div class="excel-cell row-num">4</div>
-                                <div class="excel-cell warning">NEED CODE</div>
-                                <div class="excel-cell long-text">Ceiling tile 2x4...</div>
-                                <div class="excel-cell">EA</div>
-                                <div class="excel-cell">156</div>
-                                <div class="excel-cell error">LOOKUP</div>
-                                <div class="excel-cell">$0.00</div>
-                            </div>
-                        </div>
-
-                        <div class="old-way-stats">
-                            <div class="old-way-stat">
-                                <div class="old-way-stat-value">8+ hrs</div>
-                                <div class="old-way-stat-label">Per proposal</div>
-                            </div>
-                            <div class="old-way-stat">
-                                <div class="old-way-stat-value">23%</div>
-                                <div class="old-way-stat-label">Error rate</div>
-                            </div>
-                            <div class="old-way-stat">
-                                <div class="old-way-stat-value">$$$</div>
-                                <div class="old-way-stat-label">Lost profits</div>
-                            </div>
-                        </div>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i data-lucide="mouse-pointer-click" style="width: 32px; height: 32px;"></i>
                     </div>
+                    <h3>Click-to-Measure</h3>
+                    <p>Count items, draw lengths, define areas. Point, click, done — quantities calculated automatically.</p>
                 </div>
-
-                <!-- JOCHero Way Panel -->
-                <div class="demo-panel active" id="panel-new">
-                    <div class="joc-way">
-                        <div class="joc-way-header">
-                            <div class="joc-way-logo">
-                                <div class="joc-way-logo-icon">
-                                    <i data-lucide="ruler" style="width: 20px; height: 20px;"></i>
-                                </div>
-                                <span class="joc-way-logo-text">JOCHero</span>
-                            </div>
-                            <div class="joc-way-status">Auto-synced</div>
-                        </div>
-
-                        <div class="joc-demo-content">
-                            <div class="demo-steps">
-                                <div class="demo-step active" data-step="1">
-                                    <div class="demo-step-number">1</div>
-                                    <div class="demo-step-content">
-                                        <h4>Upload PDF Plans</h4>
-                                        <p>Drag & drop your drawings, instantly scaled</p>
-                                    </div>
-                                    <div class="demo-step-icon">
-                                        <i data-lucide="upload-cloud" style="width: 20px; height: 20px;"></i>
-                                    </div>
-                                </div>
-                                <div class="demo-step" data-step="2">
-                                    <div class="demo-step-number">2</div>
-                                    <div class="demo-step-content">
-                                        <h4>Click to Measure</h4>
-                                        <p>Point, click, done. Areas calculated automatically</p>
-                                    </div>
-                                    <div class="demo-step-icon">
-                                        <i data-lucide="mouse-pointer-click" style="width: 20px; height: 20px;"></i>
-                                    </div>
-                                </div>
-                                <div class="demo-step" data-step="3">
-                                    <div class="demo-step-number">3</div>
-                                    <div class="demo-step-content">
-                                        <h4>Auto-Populate Line Items</h4>
-                                        <p>JOC codes matched from your UPB, quantities filled</p>
-                                    </div>
-                                    <div class="demo-step-icon">
-                                        <i data-lucide="wand-2" style="width: 20px; height: 20px;"></i>
-                                    </div>
-                                </div>
-                                <div class="demo-step" data-step="4">
-                                    <div class="demo-step-number">4</div>
-                                    <div class="demo-step-content">
-                                        <h4>Export Proposal</h4>
-                                        <p>Agency-ready format, one click</p>
-                                    </div>
-                                    <div class="demo-step-icon">
-                                        <i data-lucide="file-output" style="width: 20px; height: 20px;"></i>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="demo-preview">
-                                <!-- Step 1: Upload -->
-                                <div class="demo-preview-content" id="preview-1">
-                                    <div class="upload-zone" id="upload-zone">
-                                        <div class="upload-icon">
-                                            <i data-lucide="file-up" style="width: 48px; height: 48px;"></i>
-                                        </div>
-                                        <div class="upload-text">Drop your PDF plans here</div>
-                                        <div class="upload-hint">or click to browse • PDF, DWG, PNG supported</div>
-                                        <div class="upload-progress">
-                                            <div class="progress-bar">
-                                                <div class="progress-fill" id="upload-progress"></div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- Step 2: Measure (hidden by default) -->
-                                <div class="demo-preview-content" id="preview-2" style="display: none;">
-                                    <div class="measure-demo">
-                                        <div class="measure-canvas">
-                                            <div class="measure-floor-plan">
-                                                <div class="measure-room measure-room-1"></div>
-                                                <div class="measure-room measure-room-2"></div>
-                                                <div class="measure-room measure-room-3"></div>
-                                                <div class="measure-point" style="top: 15%; left: 12%;"></div>
-                                                <div class="measure-point" style="top: 15%; left: 43%;"></div>
-                                                <div class="measure-point" style="top: 48%; left: 12%;"></div>
-                                                <div class="measure-point" style="top: 48%; left: 43%;"></div>
-                                                <div class="measure-label" style="top: 15%; left: 27%;">24'-6"</div>
-                                                <div class="measure-label" style="top: 31%; left: 12%;">18'-0"</div>
-                                                <div class="measure-cursor"></div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- Step 3: Line Items (hidden by default) -->
-                                <div class="demo-preview-content" id="preview-3" style="display: none;">
-                                    <div class="line-items-demo">
-                                        <table class="line-items-table">
-                                            <thead>
-                                                <tr>
-                                                    <th>JOC Code</th>
-                                                    <th>Description</th>
-                                                    <th>UOM</th>
-                                                    <th>Qty</th>
-                                                    <th>Amount</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody id="line-items-body">
-                                                <tr class="adding">
-                                                    <td class="line-item-code">09-2110.05.1</td>
-                                                    <td>Gypsum board, 5/8" fire rated</td>
-                                                    <td>SF</td>
-                                                    <td class="line-item-qty">1,248</td>
-                                                    <td>$3,057.60</td>
-                                                </tr>
-                                                <tr>
-                                                    <td class="line-item-code">09-9123.33.2</td>
-                                                    <td>Paint, interior latex, 2 coats</td>
-                                                    <td>SF</td>
-                                                    <td class="line-item-qty">1,248</td>
-                                                    <td>$1,872.00</td>
-                                                </tr>
-                                                <tr>
-                                                    <td class="line-item-code">09-5113.12.1</td>
-                                                    <td>Acoustic ceiling tile, 2x4</td>
-                                                    <td>SF</td>
-                                                    <td class="line-item-qty">442</td>
-                                                    <td>$2,652.00</td>
-                                                </tr>
-                                                <tr>
-                                                    <td class="line-item-code">09-6519.13.4</td>
-                                                    <td>VCT flooring, 12x12</td>
-                                                    <td>SF</td>
-                                                    <td class="line-item-qty">442</td>
-                                                    <td>$1,989.00</td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-
-                                <!-- Step 4: Export (hidden by default) -->
-                                <div class="demo-preview-content" id="preview-4" style="display: none;">
-                                    <div class="export-demo">
-                                        <div class="export-success">
-                                            <div class="export-success-icon">
-                                                <i data-lucide="check" style="width: 32px; height: 32px;"></i>
-                                            </div>
-                                            <h4>Proposal Ready!</h4>
-                                            <p>Total: $12,847.50 • 23 line items • NYC HHC Format</p>
-                                        </div>
-                                        <div class="export-files">
-                                            <div class="export-file">
-                                                <div class="export-file-icon">
-                                                    <i data-lucide="file-spreadsheet" style="width: 20px; height: 20px;"></i>
-                                                </div>
-                                                <div class="export-file-info">
-                                                    <div class="export-file-name">Proposal_Rm204.xlsx</div>
-                                                    <div class="export-file-size">Agency format</div>
-                                                </div>
-                                            </div>
-                                            <div class="export-file">
-                                                <div class="export-file-icon">
-                                                    <i data-lucide="file-text" style="width: 20px; height: 20px;"></i>
-                                                </div>
-                                                <div class="export-file-info">
-                                                    <div class="export-file-name">Proposal_Rm204.pdf</div>
-                                                    <div class="export-file-size">Print-ready</div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="joc-way-stats">
-                            <div class="joc-way-stat">
-                                <div class="joc-way-stat-value">47 min</div>
-                                <div class="joc-way-stat-label">Average time</div>
-                            </div>
-                            <div class="joc-way-stat">
-                                <div class="joc-way-stat-value">99.2%</div>
-                                <div class="joc-way-stat-label">Accuracy</div>
-                            </div>
-                            <div class="joc-way-stat">
-                                <div class="joc-way-stat-value">10x</div>
-                                <div class="joc-way-stat-label">Faster</div>
-                            </div>
-                        </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i data-lucide="wand-2" style="width: 32px; height: 32px;"></i>
                     </div>
+                    <h3>Auto-Map to UPB</h3>
+                    <p>AI matches your takeoffs to catalog codes instantly. No more manual UPB lookup or translation errors.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i data-lucide="file-output" style="width: 32px; height: 32px;"></i>
+                    </div>
+                    <h3>Agency-Ready Export</h3>
+                    <p>Coefficients applied, formatted for submission. One click to Excel or PDF in your agency's exact format.</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Translation Engine Demo Section -->
-    <section class="translation-engine-demo" id="translation-engine">
-        <div class="container">
-            <div class="translation-engine-header">
-                <h2>See How JOCHero Translates</h2>
-                <p>Watch messy quantity takeoffs transform into agency-ready JOC proposals in minutes</p>
-            </div>
-
-            <div class="translation-engine-container">
-                <iframe 
-                    src="demo/demo-translation-engine.html" 
-                    loading="lazy"
-                    title="JOCHero Translation Engine Demo"
-                ></iframe>
-            </div>
-
-            <div class="translation-engine-hook">
-                <p>Your estimator already did the work. JOCHero just translates it — with <span class="highlight">97% accuracy</span>.</p>
-            </div>
-        </div>
-    </section>
-
-    <!-- Problem Section -->
-    <section class="problem section">
-        <div class="container">
-            <div class="problem-header">
-                <span class="problem-label">The Problem</span>
-                <h2>JOC Estimating Is Stuck in the Stone Age</h2>
-                <p>While other contractors use modern takeoff software, JOC estimators are trapped in a manual nightmare</p>
-            </div>
-
-            <div class="problem-stats">
-                <div class="problem-stat">
-                    <div class="problem-stat-value">8+</div>
-                    <div class="problem-stat-label">Hours per proposal</div>
-                </div>
-                <div class="problem-stat">
-                    <div class="problem-stat-value">23%</div>
-                    <div class="problem-stat-label">Average error rate</div>
-                </div>
-                <div class="problem-stat">
-                    <div class="problem-stat-value">40%</div>
-                    <div class="problem-stat-label">Time on UPB lookup</div>
-                </div>
-            </div>
-
-            <div class="problem-points">
-                <div class="problem-point">
-                    <div class="problem-point-icon">
-                        <i data-lucide="file-spreadsheet" style="width: 24px; height: 24px;"></i>
-                    </div>
-                    <div>
-                        <h4>Excel Hell</h4>
-                        <p>Copy-paste chaos, broken formulas, version control nightmares. Every proposal is a minefield.</p>
-                    </div>
-                </div>
-                <div class="problem-point">
-                    <div class="problem-point-icon">
-                        <i data-lucide="book-open" style="width: 24px; height: 24px;"></i>
-                    </div>
-                    <div>
-                        <h4>Manual UPB Lookup</h4>
-                        <p>Flipping through 1,000+ page price books. Miss one code and you're leaving money on the table.</p>
-                    </div>
-                </div>
-                <div class="problem-point">
-                    <div class="problem-point-icon">
-                        <i data-lucide="calculator" style="width: 24px; height: 24px;"></i>
-                    </div>
-                    <div>
-                        <h4>Double Entry</h4>
-                        <p>Measure in takeoff software, then manually translate to JOC codes. Why do it twice?</p>
-                    </div>
-                </div>
-                <div class="problem-point">
-                    <div class="problem-point-icon">
-                        <i data-lucide="alert-triangle" style="width: 24px; height: 24px;"></i>
-                    </div>
-                    <div>
-                        <h4>Wrong Codes = Rejected</h4>
-                        <p>Agency kicks back proposal. Hours wasted. Relationship damaged. All for a typo.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Solution Section -->
-    <section class="solution section" id="features">
-        <div class="container">
-            <div class="solution-header">
-                <span class="solution-label">The Solution</span>
-                <h2>Finally, Takeoff Software That Speaks JOC</h2>
-                <p>JOCHero is purpose-built for Job Order Contracts. No translation, no workarounds, no pain.</p>
-            </div>
-
-            <div class="features">
-                <div class="feature">
-                    <div class="feature-icon">
-                        <i data-lucide="upload-cloud" style="width: 28px; height: 28px;"></i>
-                    </div>
-                    <h3>Instant PDF Import</h3>
-                    <p>Drop your plans, auto-detect scale, start measuring in seconds. Supports PDF, DWG, and images.</p>
-                </div>
-                <div class="feature">
-                    <div class="feature-icon">
-                        <i data-lucide="mouse-pointer-click" style="width: 28px; height: 28px;"></i>
-                    </div>
-                    <h3>Smart Takeoff</h3>
-                    <p>Click to measure areas, lengths, counts. AI-assisted edge detection for lightning-fast accuracy.</p>
-                </div>
-                <div class="feature">
-                    <div class="feature-icon">
-                        <i data-lucide="database" style="width: 28px; height: 28px;"></i>
-                    </div>
-                    <h3>Built-in UPB</h3>
-                    <p>Your agency's Unit Price Book loaded and searchable. Find codes instantly, never miss items.</p>
-                </div>
-                <div class="feature">
-                    <div class="feature-icon">
-                        <i data-lucide="file-output" style="width: 28px; height: 28px;"></i>
-                    </div>
-                    <h3>One-Click Export</h3>
-                    <p>Generate agency-compliant proposals in their exact format. Excel, PDF, or direct upload.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Feature Comparison Table -->
+    <!-- Comparison Section (Accordion) -->
     <section class="comparison-section" id="comparison">
         <div class="container">
             <div class="comparison-header">
                 <h2>How JOCHero Compares</h2>
-                <p>See why JOCHero is the best choice for JOC contractors</p>
             </div>
 
-            <div class="comparison-table-wrapper">
-                <table class="comparison-table">
-                    <thead>
-                        <tr>
-                            <th>Feature</th>
-                            <th>Excel</th>
-                            <th>Bluebeam</th>
-                            <th>Kreo</th>
-                            <th class="highlight">JOCHero</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>PDF Takeoff</td>
-                            <td><i data-lucide="x" class="icon-no" style="width: 20px; height: 20px;"></i></td>
-                            <td><i data-lucide="check" class="icon-yes" style="width: 20px; height: 20px;"></i></td>
-                            <td><i data-lucide="check" class="icon-yes" style="width: 20px; height: 20px;"></i></td>
-                            <td class="highlight"><i data-lucide="check" class="icon-yes" style="width: 20px; height: 20px;"></i></td>
-                        </tr>
-                        <tr>
-                            <td>Built-in UPB Database</td>
-                            <td><i data-lucide="x" class="icon-no" style="width: 20px; height: 20px;"></i></td>
-                            <td><i data-lucide="x" class="icon-no" style="width: 20px; height: 20px;"></i></td>
-                            <td><i data-lucide="x" class="icon-no" style="width: 20px; height: 20px;"></i></td>
-                            <td class="highlight"><i data-lucide="check" class="icon-yes" style="width: 20px; height: 20px;"></i></td>
-                        </tr>
-                        <tr>
-                            <td>Auto JOC Code Matching</td>
-                            <td><i data-lucide="x" class="icon-no" style="width: 20px; height: 20px;"></i></td>
-                            <td><i data-lucide="x" class="icon-no" style="width: 20px; height: 20px;"></i></td>
-                            <td><i data-lucide="x" class="icon-no" style="width: 20px; height: 20px;"></i></td>
-                            <td class="highlight"><i data-lucide="check" class="icon-yes" style="width: 20px; height: 20px;"></i></td>
-                        </tr>
-                        <tr>
-                            <td>Agency Format Export</td>
-                            <td><i data-lucide="minus" class="icon-partial" style="width: 20px; height: 20px;"></i></td>
-                            <td><i data-lucide="x" class="icon-no" style="width: 20px; height: 20px;"></i></td>
-                            <td><i data-lucide="x" class="icon-no" style="width: 20px; height: 20px;"></i></td>
-                            <td class="highlight"><i data-lucide="check" class="icon-yes" style="width: 20px; height: 20px;"></i></td>
-                        </tr>
-                        <tr>
-                            <td>Takeoff → Line Items (No re-entry)</td>
-                            <td><i data-lucide="x" class="icon-no" style="width: 20px; height: 20px;"></i></td>
-                            <td><i data-lucide="x" class="icon-no" style="width: 20px; height: 20px;"></i></td>
-                            <td><i data-lucide="minus" class="icon-partial" style="width: 20px; height: 20px;"></i></td>
-                            <td class="highlight"><i data-lucide="check" class="icon-yes" style="width: 20px; height: 20px;"></i></td>
-                        </tr>
-                        <tr>
-                            <td>Error Checking & Validation</td>
-                            <td><i data-lucide="x" class="icon-no" style="width: 20px; height: 20px;"></i></td>
-                            <td><i data-lucide="x" class="icon-no" style="width: 20px; height: 20px;"></i></td>
-                            <td><i data-lucide="minus" class="icon-partial" style="width: 20px; height: 20px;"></i></td>
-                            <td class="highlight"><i data-lucide="check" class="icon-yes" style="width: 20px; height: 20px;"></i></td>
-                        </tr>
-                        <tr>
-                            <td>AI Code Suggestions</td>
-                            <td><i data-lucide="x" class="icon-no" style="width: 20px; height: 20px;"></i></td>
-                            <td><i data-lucide="x" class="icon-no" style="width: 20px; height: 20px;"></i></td>
-                            <td><i data-lucide="x" class="icon-no" style="width: 20px; height: 20px;"></i></td>
-                            <td class="highlight"><i data-lucide="check" class="icon-yes" style="width: 20px; height: 20px;"></i></td>
-                        </tr>
-                        <tr>
-                            <td>Time Per Proposal</td>
-                            <td style="color: var(--red-500);">8+ hours</td>
-                            <td style="color: var(--yellow-500);">4-6 hours</td>
-                            <td style="color: var(--yellow-500);">3-4 hours</td>
-                            <td class="highlight" style="color: var(--green-500); font-weight: 700;">47 min</td>
-                        </tr>
-                    </tbody>
-                    <tfoot>
-                        <tr>
-                            <td>Price</td>
-                            <td class="price-bad">$20-40/mo</td>
-                            <td>$50/mo</td>
-                            <td class="price-bad">~$125/mo</td>
-                            <td class="highlight price-good">$100/mo</td>
-                        </tr>
-                    </tfoot>
-                </table>
+            <div class="comparison-accordion" id="comparison-accordion">
+                <div class="comparison-toggle">
+                    <span>See detailed feature comparison</span>
+                    <i data-lucide="chevron-down" style="width: 20px; height: 20px;"></i>
+                </div>
+
+                <div class="comparison-table-wrapper">
+                    <table class="comparison-table">
+                        <thead>
+                            <tr>
+                                <th>Feature</th>
+                                <th>Excel</th>
+                                <th>Bluebeam</th>
+                                <th class="highlight">JOCHero</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>PDF Takeoff</td>
+                                <td><i data-lucide="x" class="icon-no" style="width: 20px; height: 20px;"></i></td>
+                                <td><i data-lucide="check" class="icon-yes" style="width: 20px; height: 20px;"></i></td>
+                                <td class="highlight"><i data-lucide="check" class="icon-yes" style="width: 20px; height: 20px;"></i></td>
+                            </tr>
+                            <tr>
+                                <td>Built-in UPB Database</td>
+                                <td><i data-lucide="x" class="icon-no" style="width: 20px; height: 20px;"></i></td>
+                                <td><i data-lucide="x" class="icon-no" style="width: 20px; height: 20px;"></i></td>
+                                <td class="highlight"><i data-lucide="check" class="icon-yes" style="width: 20px; height: 20px;"></i></td>
+                            </tr>
+                            <tr>
+                                <td>Auto JOC Code Matching</td>
+                                <td><i data-lucide="x" class="icon-no" style="width: 20px; height: 20px;"></i></td>
+                                <td><i data-lucide="x" class="icon-no" style="width: 20px; height: 20px;"></i></td>
+                                <td class="highlight"><i data-lucide="check" class="icon-yes" style="width: 20px; height: 20px;"></i></td>
+                            </tr>
+                            <tr>
+                                <td>Agency Format Export</td>
+                                <td><i data-lucide="minus" class="icon-partial" style="width: 20px; height: 20px;"></i></td>
+                                <td><i data-lucide="x" class="icon-no" style="width: 20px; height: 20px;"></i></td>
+                                <td class="highlight"><i data-lucide="check" class="icon-yes" style="width: 20px; height: 20px;"></i></td>
+                            </tr>
+                            <tr>
+                                <td>AI Code Suggestions</td>
+                                <td><i data-lucide="x" class="icon-no" style="width: 20px; height: 20px;"></i></td>
+                                <td><i data-lucide="x" class="icon-no" style="width: 20px; height: 20px;"></i></td>
+                                <td class="highlight"><i data-lucide="check" class="icon-yes" style="width: 20px; height: 20px;"></i></td>
+                            </tr>
+                            <tr>
+                                <td>Time Per Proposal</td>
+                                <td style="color: var(--red-500);">8+ hours</td>
+                                <td style="color: var(--yellow-500);">4-6 hours</td>
+                                <td class="highlight" style="color: var(--green-500); font-weight: 700;">90 min</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </section>
@@ -3585,24 +1764,24 @@
                     </div>
                     <div class="roi-results-grid">
                         <div class="roi-result-item">
-                            <div class="roi-result-value" id="hours-saved">29.2</div>
+                            <div class="roi-result-value" id="hours-saved">26</div>
                             <div class="roi-result-label">Hours Saved</div>
                         </div>
                         <div class="roi-result-item">
-                            <div class="roi-result-value" id="money-saved">$1,460</div>
+                            <div class="roi-result-value" id="money-saved">$1,300</div>
                             <div class="roi-result-label">Money Saved</div>
                         </div>
                         <div class="roi-result-item">
-                            <div class="roi-result-value" id="roi-value">14.6x</div>
+                            <div class="roi-result-value" id="roi-value">13x</div>
                             <div class="roi-result-label">ROI on JOCHero</div>
                         </div>
                     </div>
                     <div class="roi-cta">
                         <p class="roi-cta-text">
                             With JOCHero Pro at $100/month, your net savings is 
-                            <span class="roi-cta-highlight" id="net-savings">$1,360/month</span>
+                            <span class="roi-cta-highlight" id="net-savings">$1,200/month</span>
                         </p>
-                        <a href="#pricing" class="btn btn-primary">Start Saving Today</a>
+                        <a href="#pricing" class="btn btn-primary">Start Free Trial</a>
                     </div>
                 </div>
             </div>
@@ -3610,7 +1789,7 @@
     </section>
 
     <!-- Social Proof Section -->
-    <section class="social-proof section" id="testimonials">
+    <section class="social-proof" id="testimonials">
         <div class="container">
             <div class="social-proof-header">
                 <h2>Loved by JOC Estimators</h2>
@@ -3689,33 +1868,15 @@
                     </div>
                 </div>
             </div>
-
-            <div class="agency-logos">
-                <div class="agency-logos-label">Trusted by contractors working with these agencies</div>
-                <div class="agency-logos-grid">
-                    <div class="agency-logo">NYC H+H</div>
-                    <div class="agency-logo">NYC SCA</div>
-                    <div class="agency-logo">DCAS</div>
-                    <div class="agency-logo">GSA</div>
-                    <div class="agency-logo">Port Authority</div>
-                    <div class="agency-logo">MTA</div>
-                    <div class="agency-logo">NYCHA</div>
-                </div>
-            </div>
         </div>
     </section>
 
     <!-- Pricing Section -->
-    <section class="pricing section" id="pricing">
+    <section class="pricing" id="pricing">
         <div class="container">
             <div class="pricing-header">
                 <h2>Premium Tools, Fair Pricing</h2>
                 <p>Professional-grade JOC software without the enterprise markup.</p>
-                
-                <div class="pricing-urgency">
-                    <i data-lucide="clock"></i>
-                    <span>🔥 Early adopter pricing — Lock in these rates before they increase!</span>
-                </div>
                 
                 <div class="billing-toggle">
                     <span class="billing-option" data-billing="monthly">Monthly</span>
@@ -3741,7 +1902,7 @@
                         <li><i data-lucide="check"></i> Excel export</li>
                         <li><i data-lucide="check"></i> Community support</li>
                     </ul>
-                    <a href="#" class="btn btn-secondary">Get Started Free</a>
+                    <a href="#" class="btn btn-secondary">Start Free Trial</a>
                 </div>
 
                 <!-- Pro: $100/month or $1,000/year -->
@@ -3808,47 +1969,12 @@
                     <a href="#" class="btn btn-secondary">Contact Sales</a>
                 </div>
             </div>
-        </div>
-    </section>
 
-    <!-- Blog Section -->
-    <section class="blog-preview-section" id="blog">
-        <div class="container">
-            <div class="blog-preview-header">
-                <div class="blog-preview-badge">
-                    <i data-lucide="book-open" style="width: 16px; height: 16px;"></i>
-                    From the Blog
-                </div>
-                <h2>Learn JOC Best Practices</h2>
-                <p>Expert insights on Job Order Contracting, estimating, and winning more government work.</p>
-            </div>
-            
-            <div class="blog-preview-grid">
-                <a href="/blog/what-is-job-order-contracting/" class="blog-preview-card featured">
-                    <div class="blog-preview-card-image">
-                        <div class="blog-preview-card-icon">
-                            <i data-lucide="file-text" style="width: 32px; height: 32px;"></i>
-                        </div>
-                    </div>
-                    <div class="blog-preview-card-content">
-                        <span class="blog-preview-card-category">JOC Fundamentals</span>
-                        <h3>What is Job Order Contracting? A Complete Guide for Contractors</h3>
-                        <p>Learn what JOC is, how it differs from traditional bidding, and why it's becoming the preferred method for smart contractors.</p>
-                        <div class="blog-preview-card-meta">
-                            <span><i data-lucide="user" style="width: 14px; height: 14px;"></i> Doug</span>
-                            <span><i data-lucide="clock" style="width: 14px; height: 14px;"></i> 12 min read</span>
-                        </div>
-                    </div>
+            <div class="pricing-cta">
+                <a href="#demo" class="btn btn-secondary">
+                    <i data-lucide="play-circle" style="width: 18px; height: 18px;"></i>
+                    Watch Demo
                 </a>
-                
-                <div class="blog-preview-cta">
-                    <div class="blog-preview-cta-content">
-                        <i data-lucide="arrow-right" style="width: 24px; height: 24px;"></i>
-                        <h4>More articles coming soon</h4>
-                        <p>Subscribe to get notified when we publish new JOC guides.</p>
-                        <a href="/blog" class="btn btn-secondary btn-sm">View All Articles</a>
-                    </div>
-                </div>
             </div>
         </div>
     </section>
@@ -3862,6 +1988,16 @@
             </div>
 
             <div class="faq-list">
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>Why do I spend 8+ hours on each JOC proposal?</span>
+                        <i data-lucide="chevron-down" style="width: 20px; height: 20px;"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Traditional estimating means double entry: measure in one tool, then manually translate to JOC codes. You're flipping through 1,000+ page UPB books, copy-pasting between Excel sheets, and praying you don't make a typo. JOCHero eliminates this by going direct from takeoff to JOC line items — no translation step.</p>
+                    </div>
+                </div>
+
                 <div class="faq-item">
                     <div class="faq-question">
                         <span>Why is JOCHero $100/month when Bluebeam is $50?</span>
@@ -3879,6 +2015,16 @@
                     </div>
                     <div class="faq-answer">
                         <p>Yes! We support most common UPB formats. Upload your Excel or PDF and we'll parse it automatically. NYC H+H, SCA, DCAS, and GSA are pre-loaded and ready to use.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>What if I pick the wrong JOC code?</span>
+                        <i data-lucide="chevron-down" style="width: 20px; height: 20px;"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Wrong codes = rejected proposals. That's hours wasted and relationships damaged. JOCHero's AI suggestions and built-in validation catch errors before you submit. Our users report rejection rates dropping from 15% to nearly zero.</p>
                     </div>
                 </div>
 
@@ -3911,26 +2057,6 @@
                         <p>Yes, no contracts. Cancel with one click from your account settings. Your data remains exportable for 30 days after cancellation. We also offer a 60-day money-back guarantee — if you're not saving time, we'll refund you.</p>
                     </div>
                 </div>
-
-                <div class="faq-item">
-                    <div class="faq-question">
-                        <span>How does the ROI math work?</span>
-                        <i data-lucide="chevron-down" style="width: 20px; height: 20px;"></i>
-                    </div>
-                    <div class="faq-answer">
-                        <p>At $50/hour estimator time, saving 6.5 hours per proposal = $325 saved. Most users complete 2+ proposals per month, meaning $650+ in time savings versus the $100/month cost. That's a 5-6x ROI before counting reduced errors and faster turnaround that helps you win more bids.</p>
-                    </div>
-                </div>
-
-                <div class="faq-item">
-                    <div class="faq-question">
-                        <span>Do you integrate with my existing software?</span>
-                        <i data-lucide="chevron-down" style="width: 20px; height: 20px;"></i>
-                    </div>
-                    <div class="faq-answer">
-                        <p>JOCHero exports to Excel, PDF, and direct agency upload formats. For Team and Enterprise plans, we offer API access for custom integrations with your ERP, project management, or accounting systems.</p>
-                    </div>
-                </div>
             </div>
 
             <div class="faq-contact">
@@ -3947,16 +2073,16 @@
     <!-- Final CTA Section -->
     <section class="final-cta">
         <div class="final-cta-content">
-            <h2>Ready to 10x Your Estimating Speed?</h2>
-            <p>Join 500+ JOC contractors who've escaped spreadsheet hell. Save 6.5 hours per proposal starting today.</p>
+            <h2>Ready to Save 6+ Hours Per Proposal?</h2>
+            <p>Join 500+ JOC contractors who've escaped spreadsheet hell. Start your free trial today.</p>
             <div class="final-cta-buttons">
                 <a href="#pricing" class="btn btn-primary btn-lg">
                     <i data-lucide="rocket" style="width: 20px; height: 20px;"></i>
-                    Start Your Free Trial
+                    Start Free Trial
                 </a>
-                <a href="#" class="btn btn-secondary btn-lg">
-                    <i data-lucide="message-circle" style="width: 20px; height: 20px;"></i>
-                    Talk to Sales
+                <a href="#demo" class="btn btn-secondary btn-lg">
+                    <i data-lucide="play-circle" style="width: 20px; height: 20px;"></i>
+                    Watch Demo
                 </a>
             </div>
             <div class="final-cta-trust">
@@ -4000,6 +2126,12 @@
         </div>
     </footer>
 
+    <!-- Sticky Mobile CTA -->
+    <div class="sticky-cta" id="sticky-cta">
+        <span class="sticky-cta-text">Ready to save 6+ hours per proposal?</span>
+        <a href="#pricing" class="btn btn-primary">Start Free Trial</a>
+    </div>
+
     <script>
         // Initialize Lucide Icons
         lucide.createIcons();
@@ -4014,134 +2146,33 @@
             }
         });
 
-        // Video play functionality
-        const videoWrapper = document.getElementById('video-wrapper');
-        const videoThumbnail = document.getElementById('video-thumbnail');
-        
-        if (videoWrapper && videoThumbnail) {
-            videoThumbnail.addEventListener('click', () => {
-                // Load JOCHero demo animation
-                videoThumbnail.style.display = 'none';
-                const iframe = document.createElement('iframe');
-                iframe.src = 'demo/demo-translation.html';
-                iframe.style.width = '100%';
-                iframe.style.height = '100%';
-                iframe.style.border = 'none';
-                iframe.style.borderRadius = '12px';
-                videoWrapper.appendChild(iframe);
-            });
-        }
+        // Demo tabs functionality
+        const demoTabs = document.querySelectorAll('.demo-tab');
+        const demoPanels = document.querySelectorAll('.demo-panel');
 
-        // Demo panel toggle
-        const toggleBtns = document.querySelectorAll('.demo-toggle-btn');
-        const panels = document.querySelectorAll('.demo-panel');
-
-        toggleBtns.forEach(btn => {
-            btn.addEventListener('click', () => {
-                const panel = btn.dataset.panel;
+        demoTabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                const demoId = tab.dataset.demo;
                 
-                toggleBtns.forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
+                demoTabs.forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
                 
-                panels.forEach(p => {
-                    if (p.id === `panel-${panel}`) {
-                        p.classList.add('active');
+                demoPanels.forEach(panel => {
+                    if (panel.id === `demo-${demoId}`) {
+                        panel.classList.add('active');
                     } else {
-                        p.classList.remove('active');
+                        panel.classList.remove('active');
                     }
                 });
             });
         });
 
-        // Interactive demo steps
-        const demoSteps = document.querySelectorAll('.demo-step');
-        const previews = document.querySelectorAll('.demo-preview-content');
-        let currentStep = 1;
-
-        function showStep(stepNum) {
-            demoSteps.forEach((step, i) => {
-                const num = i + 1;
-                step.classList.remove('active', 'completed');
-                if (num < stepNum) {
-                    step.classList.add('completed');
-                } else if (num === stepNum) {
-                    step.classList.add('active');
-                }
-            });
-
-            previews.forEach((preview, i) => {
-                preview.style.display = (i + 1 === stepNum) ? 'block' : 'none';
-            });
-
-            currentStep = stepNum;
-        }
-
-        demoSteps.forEach((step, i) => {
-            step.addEventListener('click', () => {
-                showStep(i + 1);
-            });
-        });
-
-        // Upload zone interaction
-        const uploadZone = document.getElementById('upload-zone');
-        const uploadProgress = document.getElementById('upload-progress');
-
-        if (uploadZone) {
-            uploadZone.addEventListener('click', () => {
-                if (!uploadZone.classList.contains('uploading')) {
-                    uploadZone.classList.add('uploading');
-                    let progress = 0;
-                    const interval = setInterval(() => {
-                        progress += 5;
-                        uploadProgress.style.width = progress + '%';
-                        if (progress >= 100) {
-                            clearInterval(interval);
-                            setTimeout(() => {
-                                uploadZone.classList.remove('uploading');
-                                uploadProgress.style.width = '0%';
-                                showStep(2);
-                            }, 300);
-                        }
-                    }, 50);
-                }
-            });
-        }
-
-        // Auto-advance demo
-        let demoAutoplay = null;
-        function startDemoAutoplay() {
-            demoAutoplay = setInterval(() => {
-                const nextStep = currentStep >= 4 ? 1 : currentStep + 1;
-                showStep(nextStep);
-            }, 4000);
-        }
-
-        function stopDemoAutoplay() {
-            if (demoAutoplay) {
-                clearInterval(demoAutoplay);
-                demoAutoplay = null;
-            }
-        }
-
-        // Start autoplay when demo section is visible
-        const demoSection = document.getElementById('demo');
-        const demoObserver = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    startDemoAutoplay();
-                } else {
-                    stopDemoAutoplay();
-                }
-            });
-        }, { threshold: 0.3 });
-
-        if (demoSection) {
-            demoObserver.observe(demoSection);
-        }
-
-        // Stop autoplay on user interaction
-        demoSteps.forEach(step => {
-            step.addEventListener('click', stopDemoAutoplay);
+        // Comparison accordion
+        const comparisonAccordion = document.getElementById('comparison-accordion');
+        const comparisonToggle = comparisonAccordion.querySelector('.comparison-toggle');
+        
+        comparisonToggle.addEventListener('click', () => {
+            comparisonAccordion.classList.toggle('open');
         });
 
         // Billing toggle
@@ -4177,11 +2208,7 @@
             const question = item.querySelector('.faq-question');
             question.addEventListener('click', () => {
                 const isOpen = item.classList.contains('open');
-                
-                // Close all
                 faqItems.forEach(i => i.classList.remove('open'));
-                
-                // Open clicked if it wasn't open
                 if (!isOpen) {
                     item.classList.add('open');
                 }
@@ -4200,26 +2227,38 @@
             const proposals = parseInt(proposalsInput.value) || 4;
             const hourlyRate = parseInt(hourlyRateInput.value) || 50;
             
-            // Assumptions: JOCHero saves 7.3 hours per proposal (from 8 hours to 0.78 hours)
-            const hoursSavedPerProposal = 7.3;
-            const jocheroCost = 100; // Pro plan monthly
+            // JOCHero saves ~6.5 hours per proposal (from 8 hours to 1.5 hours)
+            const hoursSavedPerProposal = 6.5;
+            const jocheroCost = 100;
             
             const totalHoursSaved = proposals * hoursSavedPerProposal;
             const totalMoneySaved = totalHoursSaved * hourlyRate;
             const roi = totalMoneySaved / jocheroCost;
             const netSavings = totalMoneySaved - jocheroCost;
             
-            hoursSavedEl.textContent = totalHoursSaved.toFixed(1);
+            hoursSavedEl.textContent = totalHoursSaved.toFixed(0);
             moneySavedEl.textContent = '$' + totalMoneySaved.toLocaleString();
-            roiValueEl.textContent = roi.toFixed(1) + 'x';
+            roiValueEl.textContent = roi.toFixed(0) + 'x';
             netSavingsEl.textContent = '$' + netSavings.toLocaleString() + '/month';
         }
 
         if (proposalsInput && hourlyRateInput) {
             proposalsInput.addEventListener('input', calculateROI);
             hourlyRateInput.addEventListener('input', calculateROI);
-            calculateROI(); // Initial calculation
+            calculateROI();
         }
+
+        // Sticky CTA visibility
+        const stickyCta = document.getElementById('sticky-cta');
+        const heroSection = document.querySelector('.hero');
+        
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 500) {
+                stickyCta.classList.add('visible');
+            } else {
+                stickyCta.classList.remove('visible');
+            }
+        });
 
         // Smooth scroll for anchor links
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
@@ -4237,9 +2276,9 @@
             });
         });
 
-        // Add entrance animations on scroll
+        // Entrance animations on scroll
         const animateOnScroll = () => {
-            const elements = document.querySelectorAll('.feature, .testimonial, .pricing-card, .problem-point, .problem-stat, .faq-item, .logo-item');
+            const elements = document.querySelectorAll('.feature-card, .testimonial, .pricing-card, .faq-item, .logo-item');
             
             elements.forEach(el => {
                 const rect = el.getBoundingClientRect();
@@ -4253,18 +2292,17 @@
         };
 
         window.addEventListener('scroll', animateOnScroll);
-        animateOnScroll(); // Run once on load
+        animateOnScroll();
     </script>
     
     <!-- Feedback Widget for Beta Testers -->
     <link rel="stylesheet" href="components/FeedbackWidget.css">
     <script src="components/FeedbackWidget.js"></script>
     <script>
-        // Initialize feedback widget
         document.addEventListener('DOMContentLoaded', function() {
             if (typeof FeedbackWidget !== 'undefined') {
                 FeedbackWidget.init({
-                    apiUrl: 'https://api.jochero.com', // Will update when backend deployed
+                    apiUrl: 'https://api.jochero.com',
                     position: 'bottom-right'
                 });
             }
@@ -4272,5 +2310,3 @@
     </script>
 </body>
 </html>
-<!-- Redeploy Mon Feb  9 14:21:58 EST 2026 -->
-<!-- Test auto-deploy - Mon Feb  9 14:22:23 EST 2026 -->

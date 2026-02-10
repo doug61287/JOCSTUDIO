@@ -11,7 +11,7 @@ dotenv.config({ path: '.env.test' });
 
 // Test configuration
 export const config = {
-  baseUrl: process.env.API_BASE_URL || 'http://localhost:3000/api',
+  baseUrl: process.env.API_BASE_URL || 'http://localhost:3001',
   testDb: process.env.TEST_DATABASE_URL || 'postgresql://test:test@localhost:5432/jocstudio_test',
   jwtSecret: process.env.JWT_SECRET || 'test-secret-key',
   timeout: 10000,
