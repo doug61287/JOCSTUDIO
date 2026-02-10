@@ -603,11 +603,11 @@
                         </div>
                         <div class="password-requirements">
                             <div class="requirement" id="req-length">
-                                <i data-lucide="circle" style="width: 14px; height: 14px;"></i>
+                                <span class="req-icon" style="font-size: 14px; margin-right: 6px;">○</span>
                                 At least 8 characters
                             </div>
                             <div class="requirement" id="req-number">
-                                <i data-lucide="circle" style="width: 14px; height: 14px;"></i>
+                                <span class="req-icon" style="font-size: 14px; margin-right: 6px;">○</span>
                                 At least 1 number
                             </div>
                         </div>
@@ -818,16 +818,17 @@
 
         function updateRequirement(id, met) {
             const el = document.getElementById(id);
-            const icon = el.querySelector('i');
+            const iconContainer = el.querySelector('.req-icon');
             
             if (met) {
                 el.classList.add('met');
-                icon.setAttribute('data-lucide', 'check-circle');
+                iconContainer.innerHTML = '✓';
+                iconContainer.style.color = 'var(--green-500)';
             } else {
                 el.classList.remove('met');
-                icon.setAttribute('data-lucide', 'circle');
+                iconContainer.innerHTML = '○';
+                iconContainer.style.color = 'var(--gray-500)';
             }
-            lucide.createIcons();
         }
 
         function validatePasswordMatch() {
