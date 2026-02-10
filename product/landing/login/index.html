@@ -459,6 +459,11 @@
                 if (response.ok) {
                     const data = await response.json();
                     if (data.success || data.token) {
+                        // Save token for authenticated requests
+                        const token = data.data?.accessToken || data.accessToken || data.token;
+                        if (token) {
+                            localStorage.setItem('jochero_token', token);
+                        }
                         // Redirect to app
                         window.location.href = data.redirectUrl || '/app';
                     } else {

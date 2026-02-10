@@ -532,6 +532,22 @@
     <script>
         lucide.createIcons();
 
+        // Check if user is logged in (has JWT token)
+        const isLoggedIn = localStorage.getItem('jochero_token') || sessionStorage.getItem('jochero_token');
+        if (isLoggedIn) {
+            // Hide invite section for logged-in users
+            const inviteSection = document.querySelector('.invite-section');
+            if (inviteSection) inviteSection.style.display = 'none';
+            // Show welcome message instead
+            const header = document.querySelector('.container');
+            if (header) {
+                const welcomeMsg = document.createElement('div');
+                welcomeMsg.style.cssText = 'background: rgba(16, 185, 129, 0.2); border: 1px solid #10B981; border-radius: 10px; padding: 1rem; margin-bottom: 2rem; text-align: center;';
+                welcomeMsg.innerHTML = '✅ <strong>You\'re logged in!</strong> Explore the sample project below.';
+                header.insertBefore(welcomeMsg, header.firstChild.nextSibling);
+            }
+        }
+
         // Invite code form handling
         const inviteForm = document.getElementById('invite-form');
         const inviteInput = document.getElementById('invite-code');
