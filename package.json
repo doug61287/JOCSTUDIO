@@ -5,7 +5,7 @@
   "scripts": {
     "postinstall": "npm install --prefix product/backend",
     "build": "npm run db:generate --prefix product/backend",
-    "start": "npm start --prefix product/backend"
+    "start": "chmod +x start.sh && ./start.sh"
   },
   "engines": {
     "node": ">=18.0.0"

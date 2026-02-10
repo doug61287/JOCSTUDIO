@@ -1,1 +1,1 @@
-web: cd product/backend && npx prisma generate && npm start
+web: chmod +x start.sh && ./start.sh
