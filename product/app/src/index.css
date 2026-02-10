@@ -6,36 +6,50 @@
   box-sizing: border-box;
 }
 
+:root {
+  --bg-primary: #0f1419;
+  --bg-secondary: #1a1f2e;
+  --bg-elevated: #242b3d;
+  --border-color: rgba(255, 255, 255, 0.1);
+  --text-primary: #ffffff;
+  --text-secondary: rgba(255, 255, 255, 0.6);
+  --text-muted: rgba(255, 255, 255, 0.4);
+  --accent-blue: #3b82f6;
+  --accent-green: #10b981;
+  --accent-gold: #fbbf24;
+}
+
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  background: linear-gradient(135deg, #1E3A8A 0%, #111827 100%);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: linear-gradient(135deg, #0f1419 0%, #1a1f2e 50%, #1e3a5f 100%);
   min-height: 100vh;
-  color: white;
+  color: var(--text-primary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 #root {
   min-height: 100vh;
 }
 
-/* Custom scrollbar */
+/* Custom scrollbar - Kreo style */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 6px;
+  height: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 4px;
+  background: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.3);
-  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.5);
+  background: rgba(255, 255, 255, 0.25);
 }
 
 /* PDF canvas container */
@@ -44,6 +58,7 @@ body {
   overflow: hidden;
   background: #1a1a2e;
   border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
 }
 
 .pdf-canvas {
@@ -55,56 +70,201 @@ body {
   top: 0;
   left: 0;
   pointer-events: auto;
-  cursor: crosshair;
 }
 
-/* Tool buttons */
+/* Tool buttons - Kreo inspired */
 .tool-btn {
-  @apply p-2 rounded-lg transition-all;
+  @apply p-2 rounded-lg transition-all duration-150;
   @apply hover:bg-white/10;
 }
 
 .tool-btn.active {
-  @apply bg-blue-600 text-white;
+  @apply bg-blue-600 text-white shadow-lg;
+  box-shadow: 0 0 20px rgba(59, 130, 246, 0.4);
 }
 
-/* Measurement items */
+/* Measurement items - Kreo style cards */
 .measurement-item {
-  @apply p-3 rounded-lg bg-white/5 border border-white/10;
-  @apply hover:bg-white/10 cursor-pointer transition-all;
+  @apply p-3 rounded-xl bg-white/5 border border-white/5;
+  @apply hover:bg-white/10 cursor-pointer transition-all duration-150;
 }
 
 .measurement-item.selected {
-  @apply border-blue-500 bg-blue-500/20;
+  @apply border-blue-500/50 bg-blue-500/10;
+  box-shadow: 0 0 0 1px rgba(59, 130, 246, 0.3);
 }
 
-/* Input fields */
+/* Input fields - Modern style */
 input[type="text"],
 input[type="number"],
 select {
-  @apply bg-white/10 border border-white/20 rounded-lg px-3 py-2;
-  @apply text-white placeholder-white/50;
-  @apply focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500;
+  @apply bg-white/5 border border-white/10 rounded-lg px-3 py-2;
+  @apply text-white placeholder-white/30;
+  @apply focus:outline-none focus:border-blue-500/50 focus:ring-2 focus:ring-blue-500/20;
+  @apply transition-all duration-150;
 }
 
-/* Buttons */
+input[type="text"]:hover,
+input[type="number"]:hover,
+select:hover {
+  @apply border-white/20;
+}
+
+/* Buttons - Kreo inspired */
 .btn {
-  @apply px-4 py-2 rounded-lg font-medium transition-all;
-  @apply disabled:opacity-50 disabled:cursor-not-allowed;
+  @apply px-4 py-2.5 rounded-lg font-medium transition-all duration-150;
+  @apply disabled:opacity-40 disabled:cursor-not-allowed;
+  @apply active:scale-[0.98];
 }
 
 .btn-primary {
-  @apply bg-blue-600 hover:bg-blue-700 text-white;
+  @apply bg-blue-600 hover:bg-blue-500 text-white;
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
+}
+
+.btn-primary:hover {
+  box-shadow: 0 4px 16px rgba(59, 130, 246, 0.4);
 }
 
 .btn-secondary {
-  @apply bg-white/10 hover:bg-white/20 text-white border border-white/20;
+  @apply bg-white/5 hover:bg-white/10 text-white border border-white/10;
+}
+
+.btn-secondary:hover {
+  @apply border-white/20;
 }
 
 .btn-gold {
-  @apply bg-yellow-400 hover:bg-yellow-500 text-blue-900;
+  @apply text-gray-900 font-semibold;
+  background: linear-gradient(135deg, #fbbf24, #f59e0b);
+  box-shadow: 0 2px 8px rgba(251, 191, 36, 0.3);
+}
+
+.btn-gold:hover {
+  background: linear-gradient(135deg, #fcd34d, #fbbf24);
+  box-shadow: 0 4px 16px rgba(251, 191, 36, 0.4);
+}
+
+.btn-gold:disabled {
+  background: rgba(251, 191, 36, 0.3);
+  box-shadow: none;
 }
 
 .btn-danger {
-  @apply bg-red-600 hover:bg-red-700 text-white;
+  @apply bg-red-600/80 hover:bg-red-600 text-white;
+}
+
+/* Glass morphism panels */
+.glass-panel {
+  background: rgba(26, 31, 46, 0.8);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* Tooltip */
+[data-tooltip] {
+  position: relative;
+}
+
+[data-tooltip]::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 0.5rem 0.75rem;
+  background: var(--bg-elevated);
+  border-radius: 6px;
+  font-size: 0.75rem;
+  white-space: nowrap;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.15s;
+}
+
+[data-tooltip]:hover::after {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Animation for measurement points */
+@keyframes pulse-ring {
+  0% {
+    transform: scale(0.8);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(2);
+    opacity: 0;
+  }
+}
+
+.measurement-point-active::before {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: var(--accent-blue);
+  animation: pulse-ring 1s ease-out infinite;
+}
+
+/* Fade in animation */
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-in {
+  animation: fade-in 0.2s ease-out;
+}
+
+/* Loading spinner */
+.spinner {
+  width: 20px;
+  height: 20px;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-top-color: var(--accent-blue);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Badge styles */
+.badge {
+  @apply px-2 py-0.5 rounded-full text-xs font-medium;
+}
+
+.badge-blue {
+  @apply bg-blue-500/20 text-blue-400;
+}
+
+.badge-green {
+  @apply bg-green-500/20 text-green-400;
+}
+
+.badge-gold {
+  @apply bg-yellow-500/20 text-yellow-400;
+}
+
+/* Focus visible for accessibility */
+:focus-visible {
+  outline: 2px solid var(--accent-blue);
+  outline-offset: 2px;
+}
+
+/* Selection color */
+::selection {
+  background: rgba(59, 130, 246, 0.4);
 }
