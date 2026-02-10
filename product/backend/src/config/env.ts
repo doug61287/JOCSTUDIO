@@ -1,8 +1,10 @@
 import { z } from 'zod';
 import dotenv from 'dotenv';
 
-// Load .env file
-dotenv.config();
+// Only load .env file in development (Railway sets env vars directly)
+if (process.env.NODE_ENV !== 'production') {
+  dotenv.config();
+}
 
 const envSchema = z.object({
   // Server
