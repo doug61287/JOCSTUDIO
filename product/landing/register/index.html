@@ -733,12 +733,14 @@
 
                 if (response.ok) {
                     const data = await response.json();
-                    if (data.valid) {
+                    // Handle both { valid: true } and { success: true, data: { valid: true } }
+                    const isValid = data.valid || (data.data && data.data.valid) || data.success;
+                    if (isValid) {
                         validatedCode = code;
                         document.getElementById('verified-code').textContent = code;
                         goToStep(2);
                     } else {
-                        showCodeError(data.message || 'Invalid or expired invite code');
+                        showCodeError(data.message || (data.data && data.data.message) || 'Invalid or expired invite code');
                     }
                 } else {
                     // Fallback: Accept code format for demo purposes
