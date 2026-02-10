@@ -12,6 +12,7 @@ const tools: { id: Tool; icon: string; label: string; shortcut: string }[] = [
   { id: 'line', icon: '📏', label: 'Measure Length', shortcut: 'L' },
   { id: 'count', icon: '🔢', label: 'Count Items', shortcut: 'C' },
   { id: 'area', icon: '⬛', label: 'Measure Area', shortcut: 'A' },
+  { id: 'space', icon: '🏠', label: 'Define Space/Room', shortcut: 'S' },
 ];
 
 export function Toolbar({ onCalibrate }: ToolbarProps) {

@@ -37,15 +37,31 @@ export function calculatePolygonArea(points: Point[], scale: number): number {
   return area / (scale * scale);
 }
 
+export function calculatePolygonPerimeter(points: Point[], scale: number): number {
+  if (points.length < 2) return 0;
+  
+  let perimeter = 0;
+  const n = points.length;
+  
+  for (let i = 0; i < n; i++) {
+    const j = (i + 1) % n;
+    perimeter += distance(points[i], points[j]);
+  }
+  
+  // Convert from pixels to feet
+  return pixelsToFeet(perimeter, scale);
+}
+
 export function generateId(): string {
   return Math.random().toString(36).substring(2, 11);
 }
 
-export function getMeasurementColor(type: 'line' | 'count' | 'area'): string {
+export function getMeasurementColor(type: 'line' | 'count' | 'area' | 'space'): string {
   switch (type) {
     case 'line': return '#3B82F6'; // Blue
     case 'count': return '#10B981'; // Green
     case 'area': return '#F59E0B'; // Orange
+    case 'space': return '#8B5CF6'; // Purple
     default: return '#6B7280'; // Gray
   }
 }

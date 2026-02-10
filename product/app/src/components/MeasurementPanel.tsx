@@ -133,6 +133,7 @@ export function MeasurementPanel() {
     line: { icon: '📏', label: 'Linear Measurements', unit: 'LF' },
     count: { icon: '🔢', label: 'Item Counts', unit: 'EA' },
     area: { icon: '⬛', label: 'Area Measurements', unit: 'SF' },
+    space: { icon: '🏠', label: 'Spaces / Rooms', unit: 'SF' },
   };
 
   return (
@@ -231,9 +232,21 @@ export function MeasurementPanel() {
                                   style={{ backgroundColor: m.color }}
                                 />
                                 <span className="text-lg font-bold text-blue-400">
-                                  {formatMeasurement(m.value, m.unit)}
+                                  {m.type === 'space' && m.spaceName ? (
+                                    <span className="text-purple-400">{m.spaceName}</span>
+                                  ) : (
+                                    formatMeasurement(m.value, m.unit)
+                                  )}
                                 </span>
                               </div>
+                              
+                              {/* Space-specific measurements */}
+                              {m.type === 'space' && (
+                                <div className="flex gap-3 text-sm text-white/60 mt-1">
+                                  <span>📐 {m.value.toFixed(1)} SF</span>
+                                  <span>📏 {m.perimeter?.toFixed(1) || 0} LF</span>
+                                </div>
+                              )}
                               <div className="flex items-center gap-1">
                                 <button
                                   onClick={(e) => {

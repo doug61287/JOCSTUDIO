@@ -6,7 +6,8 @@ import {
   pixelsToFeet, 
   generateId, 
   getMeasurementColor,
-  calculatePolygonArea 
+  calculatePolygonArea,
+  calculatePolygonPerimeter
 } from '../utils/geometry';
 
 interface MeasurementCanvasProps {
@@ -95,6 +96,43 @@ export function MeasurementCanvas({ width, height }: MeasurementCanvasProps) {
         ctx.textAlign = 'center';
         ctx.fillText(`${m.value.toFixed(1)} SF`, cx, cy);
       }
+      
+      // Draw spaces (rooms)
+      if (m.type === 'space' && m.points.length >= 3) {
+        // Fill with semi-transparent purple
+        ctx.beginPath();
+        ctx.moveTo(m.points[0].x, m.points[0].y);
+        m.points.slice(1).forEach((p) => ctx.lineTo(p.x, p.y));
+        ctx.closePath();
+        ctx.fillStyle = m.color + '30';
+        ctx.fill();
+        ctx.strokeStyle = isSelected ? '#FFD700' : m.color;
+        ctx.lineWidth = isSelected ? 3 : 2;
+        ctx.setLineDash([8, 4]);
+        ctx.stroke();
+        ctx.setLineDash([]);
+        
+        // Draw room name and measurements at centroid
+        const cx = m.points.reduce((sum, p) => sum + p.x, 0) / m.points.length;
+        const cy = m.points.reduce((sum, p) => sum + p.y, 0) / m.points.length;
+        
+        // Background for text
+        ctx.fillStyle = 'rgba(0,0,0,0.7)';
+        ctx.fillRect(cx - 60, cy - 35, 120, 50);
+        
+        // Room name
+        ctx.font = 'bold 14px sans-serif';
+        ctx.fillStyle = m.color;
+        ctx.textAlign = 'center';
+        ctx.fillText(m.spaceName || 'Space', cx, cy - 15);
+        
+        // Area and perimeter
+        ctx.font = '12px sans-serif';
+        ctx.fillStyle = 'white';
+        ctx.fillText(`${m.value.toFixed(1)} SF`, cx, cy + 2);
+        ctx.fillStyle = 'rgba(255,255,255,0.7)';
+        ctx.fillText(`${m.perimeter?.toFixed(1) || 0} LF perim.`, cx, cy + 18);
+      }
     });
     
     // Draw temporary points
@@ -117,18 +155,32 @@ export function MeasurementCanvas({ width, height }: MeasurementCanvasProps) {
         ctx.fillText(`${feet.toFixed(1)} LF`, mousePos.x + 10, mousePos.y - 10);
       }
       
-      if (activeTool === 'area') {
+      if (activeTool === 'area' || activeTool === 'space') {
         ctx.beginPath();
         ctx.moveTo(tempPoints[0].x, tempPoints[0].y);
         tempPoints.slice(1).forEach((p) => ctx.lineTo(p.x, p.y));
         if (mousePos) ctx.lineTo(mousePos.x, mousePos.y);
         ctx.stroke();
         
+        // For space tool, use dashed line
+        if (activeTool === 'space') {
+          ctx.setLineDash([8, 4]);
+          ctx.stroke();
+          ctx.setLineDash([]);
+        }
+        
         tempPoints.forEach((p) => {
           ctx.beginPath();
           ctx.arc(p.x, p.y, 5, 0, Math.PI * 2);
           ctx.fill();
         });
+        
+        // Show "Double-click to complete" hint
+        if (tempPoints.length >= 2 && mousePos) {
+          ctx.font = '12px sans-serif';
+          ctx.fillStyle = 'white';
+          ctx.fillText('Double-click to complete', mousePos.x + 15, mousePos.y - 15);
+        }
       }
       
       // Draw temp count points
@@ -201,6 +253,10 @@ export function MeasurementCanvas({ width, height }: MeasurementCanvasProps) {
     if (activeTool === 'area') {
       setTempPoints([...tempPoints, point]);
     }
+    
+    if (activeTool === 'space') {
+      setTempPoints([...tempPoints, point]);
+    }
   }, [activeTool, tempPoints, project, addMeasurement, selectMeasurement]);
 
   const handleDoubleClick = useCallback(() => {
@@ -228,6 +284,27 @@ export function MeasurementCanvas({ width, height }: MeasurementCanvasProps) {
         color: getMeasurementColor('area'),
       };
       addMeasurement(measurement);
+      setTempPoints([]);
+    }
+    
+    if (activeTool === 'space' && tempPoints.length >= 3) {
+      const spaceName = prompt('Enter room/space name:', 'Room 1');
+      if (spaceName) {
+        const area = calculatePolygonArea(tempPoints, project!.scale);
+        const perimeter = calculatePolygonPerimeter(tempPoints, project!.scale);
+        const measurement: Measurement = {
+          id: generateId(),
+          type: 'space',
+          points: tempPoints,
+          value: area,
+          unit: 'SF',
+          color: getMeasurementColor('space'),
+          spaceName: spaceName,
+          perimeter: perimeter,
+          finishes: [],
+        };
+        addMeasurement(measurement);
+      }
       setTempPoints([]);
     }
   }, [activeTool, tempPoints, project, addMeasurement]);

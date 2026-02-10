@@ -5,13 +5,25 @@ export interface Point {
 
 export interface Measurement {
   id: string;
-  type: 'line' | 'count' | 'area';
+  type: 'line' | 'count' | 'area' | 'space';
   points: Point[];
-  value: number; // LF for lines, count for counts, SF for areas
+  value: number; // LF for lines, count for counts, SF for areas/spaces
   unit: string;
   label?: string;
   jocItem?: JOCItem;
   color: string;
+  // Space-specific fields
+  spaceName?: string;
+  perimeter?: number; // LF for spaces
+  finishes?: SpaceFinish[];
+}
+
+export interface SpaceFinish {
+  id: string;
+  type: 'floor' | 'wall' | 'ceiling' | 'base' | 'paint';
+  jocItem?: JOCItem;
+  quantity: number; // auto-calculated from space
+  unit: string;
 }
 
 export interface JOCItem {
@@ -33,4 +45,4 @@ export interface Project {
   createdAt: Date;
 }
 
-export type Tool = 'select' | 'pan' | 'line' | 'count' | 'area' | 'calibrate';
+export type Tool = 'select' | 'pan' | 'line' | 'count' | 'area' | 'space' | 'calibrate';

@@ -37,6 +37,24 @@ export const jocCatalogue: JOCItem[] = [
   { code: '26 27 26.10 0120', description: 'Receptacle, GFI, 20A', unit: 'EA', unitPrice: 125.00, division: '26' },
   { code: '26 51 13.10 0100', description: 'Light Fixture, 2x4 LED', unit: 'EA', unitPrice: 185.00, division: '26' },
   { code: '26 51 13.10 0120', description: 'Light Fixture, 2x2 LED', unit: 'EA', unitPrice: 145.00, division: '26' },
+  
+  // Division 09 - Finishes (for Spaces/Rooms)
+  { code: '09 29 00.10 0100', description: 'Gypsum Board, 5/8" Type X', unit: 'SF', unitPrice: 2.85, division: '09' },
+  { code: '09 29 00.10 0120', description: 'Gypsum Board, 1/2" Regular', unit: 'SF', unitPrice: 2.25, division: '09' },
+  { code: '09 65 13.10 0100', description: 'Resilient Flooring, VCT', unit: 'SF', unitPrice: 4.50, division: '09' },
+  { code: '09 65 19.10 0100', description: 'Resilient Flooring, Rubber', unit: 'SF', unitPrice: 8.75, division: '09' },
+  { code: '09 68 13.10 0100', description: 'Carpet Tile, Commercial', unit: 'SF', unitPrice: 6.50, division: '09' },
+  { code: '09 64 23.10 0100', description: 'Wood Flooring, Oak Strip', unit: 'SF', unitPrice: 12.00, division: '09' },
+  { code: '09 91 23.10 0100', description: 'Paint, Interior, 2 Coats', unit: 'SF', unitPrice: 1.85, division: '09' },
+  { code: '09 91 23.10 0120', description: 'Paint, Interior, Primer + 2 Coats', unit: 'SF', unitPrice: 2.45, division: '09' },
+  { code: '09 51 23.10 0100', description: 'Acoustical Ceiling Tile, 2x2', unit: 'SF', unitPrice: 5.25, division: '09' },
+  { code: '09 51 23.10 0120', description: 'Acoustical Ceiling Tile, 2x4', unit: 'SF', unitPrice: 4.75, division: '09' },
+  { code: '09 65 66.10 0100', description: 'Resilient Base, 4" Rubber', unit: 'LF', unitPrice: 3.50, division: '09' },
+  { code: '09 65 66.10 0120', description: 'Resilient Base, 6" Rubber', unit: 'LF', unitPrice: 4.25, division: '09' },
+  
+  // Division 10 - Specialties
+  { code: '10 21 13.10 0100', description: 'Toilet Compartment, Floor Mounted', unit: 'EA', unitPrice: 850.00, division: '10' },
+  { code: '10 28 13.10 0100', description: 'Toilet Accessories, Set', unit: 'EA', unitPrice: 185.00, division: '10' },
 ];
 
 export function searchJOCItems(query: string): JOCItem[] {
