@@ -77,8 +77,20 @@
                 <div class="flex items-center gap-4">
                     <a href="/blog" class="text-white/70 hover:text-white text-sm">Blog</a>
                     <a href="#" class="text-white/70 hover:text-white text-sm">Help</a>
-                    <div class="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-500 rounded-full flex items-center justify-center text-white text-sm font-bold cursor-pointer">
-                        <span id="userInitial">U</span>
+                    <div class="relative group">
+                        <div class="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-500 rounded-full flex items-center justify-center text-white text-sm font-bold cursor-pointer">
+                            <span id="userInitial">U</span>
+                        </div>
+                        <!-- Dropdown -->
+                        <div class="absolute right-0 mt-2 w-48 bg-gray-800 rounded-lg shadow-xl border border-white/10 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all">
+                            <div class="p-3 border-b border-white/10">
+                                <div class="font-medium text-white text-sm" id="userNameDropdown">User</div>
+                                <div class="text-xs text-white/50" id="userEmailDropdown">email@example.com</div>
+                            </div>
+                            <a href="#" onclick="signOut()" class="block px-3 py-2 text-sm text-red-400 hover:bg-white/5">
+                                Sign Out
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -767,21 +779,33 @@
             }
         }
 
+        // Sign out function
+        function signOut() {
+            localStorage.removeItem('jochero_token');
+            localStorage.removeItem('jochero_user');
+            localStorage.removeItem('jochero_stats');
+            localStorage.removeItem('jochero_projects');
+            window.location.href = '/auth';
+        }
+
         // Check if user is logged in
         const token = localStorage.getItem('jochero_token');
         const user = localStorage.getItem('jochero_user');
         
         if (!token) {
             // Redirect to login if not authenticated
-            // window.location.href = '/login';
+            window.location.href = '/auth';
         }
         
         // Populate user info
         if (user) {
             try {
                 const userData = JSON.parse(user);
-                document.getElementById('userName').textContent = userData.name || userData.email?.split('@')[0] || 'Hero';
+                const displayName = userData.name || userData.email?.split('@')[0] || 'Hero';
+                document.getElementById('userName').textContent = displayName;
                 document.getElementById('userInitial').textContent = (userData.name || userData.email || 'U')[0].toUpperCase();
+                document.getElementById('userNameDropdown').textContent = displayName;
+                document.getElementById('userEmailDropdown').textContent = userData.email || '';
             } catch (e) {}
         }
         
