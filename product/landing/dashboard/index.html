@@ -96,9 +96,9 @@
         </div>
 
         <!-- Quick Stats -->
-        <div class="grid grid-cols-2 sm:grid-cols-5 gap-4 mb-8">
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
             <!-- JOC Line Items - Featured -->
-            <div class="col-span-2 sm:col-span-1 glass rounded-xl p-4 bg-gradient-to-br from-amber-500/20 to-orange-500/20 border border-amber-500/30">
+            <div class="glass rounded-xl p-4 bg-gradient-to-br from-amber-500/20 to-orange-500/20 border border-amber-500/30">
                 <div class="text-2xl mb-1">📚</div>
                 <div class="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-orange-400" id="lineItemCount">
                     <span class="counter" data-target="65331">0</span>
@@ -111,19 +111,9 @@
                 <div class="text-sm text-white/60">Projects</div>
             </div>
             <div class="glass rounded-xl p-4">
-                <div class="text-2xl mb-1">📏</div>
-                <div class="text-2xl font-bold text-white" id="measurementCount">0</div>
-                <div class="text-sm text-white/60">Measurements</div>
-            </div>
-            <div class="glass rounded-xl p-4">
                 <div class="text-2xl mb-1">🔄</div>
                 <div class="text-2xl font-bold text-white" id="translationCount">0</div>
                 <div class="text-sm text-white/60">Translations</div>
-            </div>
-            <div class="glass rounded-xl p-4">
-                <div class="text-2xl mb-1">⏱️</div>
-                <div class="text-2xl font-bold text-white" id="timeSaved">0h</div>
-                <div class="text-sm text-white/60">Time Saved</div>
             </div>
         </div>
 
@@ -798,9 +788,7 @@
         // Load stats from localStorage (or API in future)
         const stats = JSON.parse(localStorage.getItem('jochero_stats') || '{}');
         document.getElementById('projectCount').textContent = stats.projects || 0;
-        document.getElementById('measurementCount').textContent = stats.measurements || 0;
         document.getElementById('translationCount').textContent = stats.translations || 0;
-        document.getElementById('timeSaved').textContent = (stats.timeSaved || 0) + 'h';
         
         // Load recent projects
         const projects = JSON.parse(localStorage.getItem('jochero_projects') || '[]');
