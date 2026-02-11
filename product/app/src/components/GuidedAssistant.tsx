@@ -1,5 +1,6 @@
 import { useState, useCallback, useMemo } from 'react';
-import { catalogueTree, TreeNode, CSI_DIVISIONS } from '../data/catalogueTree';
+import { catalogueTree, TreeNode } from '../data/catalogueTree';
+import { DIVISIONS, SECTIONS, SUBSECTIONS } from '../data/tocHierarchy';
 
 interface GuidedAssistantProps {
   measurementId?: string;
@@ -15,53 +16,44 @@ interface GuidedAssistantProps {
   onClose: () => void;
 }
 
-// Derive a friendly name from code and first item
+// Derive a friendly name from TOC hierarchy or node data
 function getNodeDisplayName(node: TreeNode): string {
   if (node.isItem) {
     return node.name;
   }
   
-  // If it's a division, use CSI name
-  if (node.code.length === 2) {
-    return CSI_DIVISIONS[node.code] || node.name;
+  const code = node.code;
+  
+  // Division level (2 digits)
+  if (code.length === 2) {
+    return DIVISIONS[code] || node.name;
   }
   
-  // For sections/subsections, try to derive from first child item
-  if (node.children && node.children.length > 0) {
-    // Find first actual item in this branch
-    const findFirstItem = (n: TreeNode): TreeNode | null => {
-      if (n.isItem) return n;
-      if (n.children) {
-        for (const child of n.children) {
-          const found = findFirstItem(child);
-          if (found) return found;
-        }
-      }
-      return null;
-    };
-    
-    const firstItem = findFirstItem(node);
-    if (firstItem && firstItem.name) {
-      // Extract key terms from the item name
-      const name = firstItem.name;
-      
-      // For storefronts, doors, etc - use descriptive prefix
-      if (name.includes('Aluminum') && name.includes('Storefront')) {
-        return 'Aluminum-Framed Storefronts';
-      }
-      if (name.includes('Stainless') && name.includes('Storefront')) {
-        return 'Stainless Steel-Framed Storefronts';
-      }
-      
-      // Truncate long names
-      if (name.length > 40) {
-        return name.substring(0, 37) + '...';
-      }
-      return name;
+  // Section level (4 digits -> "XX XX")
+  if (code.length === 4) {
+    const sectionCode = `${code.substring(0, 2)} ${code.substring(2, 4)}`;
+    return SECTIONS[sectionCode] || node.name;
+  }
+  
+  // Subsection level (6+ digits -> "XX XX XX")
+  if (code.length >= 6) {
+    const subsectionCode = `${code.substring(0, 2)} ${code.substring(2, 4)} ${code.substring(4, 6)}`;
+    if (SUBSECTIONS[subsectionCode]) {
+      return SUBSECTIONS[subsectionCode];
+    }
+    // Try 4-digit subsection format
+    const altCode = `${code.substring(0, 2)} ${code.substring(2, 4)}`;
+    if (SUBSECTIONS[altCode] && !SECTIONS[altCode]) {
+      return SUBSECTIONS[altCode];
     }
   }
   
-  return node.name;
+  // Fallback: use node name or derive from first child
+  if (node.name && node.name !== code) {
+    return node.name;
+  }
+  
+  return `Section ${code}`;
 }
 
 // Get emoji for division
