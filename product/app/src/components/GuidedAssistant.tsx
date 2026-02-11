@@ -30,9 +30,11 @@ function getNodeDisplayName(node: TreeNode): string {
   }
   
   // Section level (4 digits -> "XX XX")
+  // Note: In TOC, some 4-digit codes are actually subsections (e.g., 09 23 under 09 20)
   if (code.length === 4) {
     const sectionCode = `${code.substring(0, 2)} ${code.substring(2, 4)}`;
-    return SECTIONS[sectionCode] || node.name;
+    // Check SECTIONS first, then SUBSECTIONS (for TOC structure mismatch)
+    return SECTIONS[sectionCode] || SUBSECTIONS[sectionCode] || node.name;
   }
   
   // Subsection level (6+ digits -> "XX XX XX")
