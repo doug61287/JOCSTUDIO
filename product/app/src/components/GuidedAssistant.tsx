@@ -171,7 +171,7 @@ export function GuidedAssistant({ onSelect, onClose, measurementLabel }: GuidedA
   }));
 
   return (
-    <div className="flex flex-col h-full max-h-[600px] bg-gray-900 rounded-xl border border-white/10 overflow-hidden">
+    <div className="flex flex-col h-full bg-gray-900 rounded-xl border border-white/10 overflow-hidden shadow-2xl">
       {/* Header */}
       <div className="p-4 border-b border-white/10 bg-gray-800/50">
         <div className="flex items-center justify-between mb-3">
@@ -272,7 +272,7 @@ export function GuidedAssistant({ onSelect, onClose, measurementLabel }: GuidedA
         )}
         
         {/* Options grid */}
-        <div className={`grid gap-2 ${isRoot ? 'grid-cols-2' : 'grid-cols-1'}`}>
+        <div className={`grid gap-2 ${isRoot ? 'grid-cols-2 sm:grid-cols-3' : 'grid-cols-1'}`}>
           {children.map((child) => (
             <button
               key={child.id}
@@ -288,12 +288,12 @@ export function GuidedAssistant({ onSelect, onClose, measurementLabel }: GuidedA
                   <span className="text-2xl">{getDivisionEmoji(child.code)}</span>
                 )}
                 <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2">
-                    <span className={`font-medium ${child.isItem ? 'text-green-400' : 'text-white'}`}>
+                  <div className="flex items-start gap-2">
+                    <span className={`font-medium leading-tight ${child.isItem ? 'text-green-400' : 'text-white'}`}>
                       {getNodeDisplayName(child)}
                     </span>
                     {child.isItem && (
-                      <span className="text-green-400">✓</span>
+                      <span className="text-green-400 flex-shrink-0">✓</span>
                     )}
                   </div>
                   
