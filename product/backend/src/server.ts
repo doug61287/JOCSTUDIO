@@ -22,6 +22,7 @@ import { layersRoutes } from './modules/layers/layers.routes.js';
 import { feedbackRoutes } from './modules/feedback/feedback.routes.js';
 import { invitesRoutes } from './modules/invites/invites.routes.js';
 import { catalogueRoutes } from './modules/catalogue/catalogue.routes.js';
+import { trainingRoutes } from './modules/training/training.routes.js';
 
 // Create Fastify instance
 const fastify = Fastify({
@@ -135,6 +136,7 @@ async function registerRoutes() {
   await fastify.register(feedbackRoutes, { prefix: '/feedback' });
   await fastify.register(invitesRoutes, { prefix: '/invites' });
   await fastify.register(catalogueRoutes, { prefix: '/catalogue' });
+  await fastify.register(trainingRoutes, { prefix: '/training' });
 
   // Nested routes under projects
   fastify.register(async (projectScope) => {

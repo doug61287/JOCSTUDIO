@@ -552,6 +552,371 @@ export const decisionTree: TreeNode = {
       ]
     },
 
+    // ============ DEMOLITION ============
+    {
+      id: 'demo',
+      label: 'Demolition',
+      icon: '🔨',
+      question: 'What are you demolishing?',
+      keywords: ['demo', 'demolition', 'remove', 'tear out', 'rip out'],
+      children: [
+        {
+          id: 'demo-interior',
+          label: 'Interior Demolition',
+          icon: '🏚️',
+          question: 'What interior element?',
+          keywords: ['interior', 'inside'],
+          children: [
+            { id: 'demo-int-drywall', label: 'Drywall / Plaster', keywords: ['drywall', 'plaster', 'wall'], jocCodes: ['02411916-0001', '02411916-0002', '02411916-0003'] },
+            { id: 'demo-int-ceiling', label: 'Ceiling (ACT/Drywall)', keywords: ['ceiling', 'act', 'tile'], jocCodes: ['02411916-0050', '02411916-0051'] },
+            { id: 'demo-int-floor', label: 'Flooring (VCT/Tile/Carpet)', keywords: ['floor', 'vct', 'tile', 'carpet'], jocCodes: ['02411916-0080', '02411916-0081', '02411916-0082'] },
+            { id: 'demo-int-partition', label: 'Partition/Stud Wall', keywords: ['partition', 'stud', 'framing'], jocCodes: ['02411916-0100', '02411916-0101'] },
+            { id: 'demo-int-door', label: 'Doors & Frames', keywords: ['door', 'frame', 'hardware'], jocCodes: ['02411916-0120', '02411916-0121'] },
+            { id: 'demo-int-fixture', label: 'Plumbing Fixtures', keywords: ['toilet', 'sink', 'fixture'], jocCodes: ['02411916-0150', '02411916-0151'] },
+            { id: 'demo-int-cabinets', label: 'Cabinets/Casework', keywords: ['cabinet', 'casework', 'millwork'], jocCodes: ['02411916-0170', '02411916-0171'] }
+          ]
+        },
+        {
+          id: 'demo-masonry',
+          label: 'Masonry Demolition',
+          icon: '🧱',
+          keywords: ['masonry', 'brick', 'cmu', 'block', 'concrete block'],
+          jocCodes: ['02411916-0020', '02411916-0021', '02411916-0022', '02411916-0023']
+        },
+        {
+          id: 'demo-concrete',
+          label: 'Concrete Demolition',
+          icon: '🪨',
+          question: 'What concrete element?',
+          keywords: ['concrete', 'slab', 'foundation'],
+          children: [
+            { id: 'demo-conc-slab', label: 'Floor Slab', keywords: ['slab', 'floor', 'sog'], jocCodes: ['02411916-0200', '02411916-0201'] },
+            { id: 'demo-conc-wall', label: 'Concrete Wall', keywords: ['wall', 'foundation'], jocCodes: ['02411916-0210', '02411916-0211'] },
+            { id: 'demo-conc-curb', label: 'Curb/Pad', keywords: ['curb', 'pad', 'housekeeping'], jocCodes: ['02411916-0220', '02411916-0221'] },
+            { id: 'demo-conc-sawcut', label: 'Sawcutting', keywords: ['sawcut', 'saw cut', 'cut'], jocCodes: ['03811300-0001', '03811300-0002'] }
+          ]
+        },
+        {
+          id: 'demo-hazmat',
+          label: 'Hazmat/Abatement',
+          icon: '☢️',
+          question: 'What type of hazmat?',
+          keywords: ['hazmat', 'abatement', 'asbestos', 'lead', 'mold'],
+          children: [
+            { id: 'demo-hazmat-acm', label: 'Asbestos (ACM)', keywords: ['asbestos', 'acm', 'friable'], jocCodes: ['02821300-0001', '02821300-0002', '02821300-0003'] },
+            { id: 'demo-hazmat-lead', label: 'Lead Paint', keywords: ['lead', 'lbp', 'lead paint'], jocCodes: ['02831300-0001', '02831300-0002'] },
+            { id: 'demo-hazmat-mold', label: 'Mold Remediation', keywords: ['mold', 'mildew', 'fungus'], jocCodes: ['02871300-0001', '02871300-0002'] }
+          ]
+        },
+        {
+          id: 'demo-mep',
+          label: 'MEP Demolition',
+          icon: '⚡',
+          question: 'What MEP system?',
+          keywords: ['mep', 'mechanical', 'electrical', 'plumbing'],
+          children: [
+            { id: 'demo-mep-elec', label: 'Electrical (Conduit/Wire)', keywords: ['electrical', 'conduit', 'wire'], jocCodes: ['02411926-0001', '02411926-0002'] },
+            { id: 'demo-mep-plumb', label: 'Plumbing (Pipe)', keywords: ['plumbing', 'pipe', 'drain'], jocCodes: ['02411922-0001', '02411922-0002'] },
+            { id: 'demo-mep-hvac', label: 'HVAC (Duct)', keywords: ['hvac', 'duct', 'diffuser'], jocCodes: ['02411923-0001', '02411923-0002'] },
+            { id: 'demo-mep-sprinkler', label: 'Sprinkler (Pipe/Heads)', keywords: ['sprinkler', 'fire', 'head'], jocCodes: ['02411921-0001', '02411921-0002'] }
+          ]
+        }
+      ]
+    },
+
+    // ============ CONCRETE ============
+    {
+      id: 'concrete',
+      label: 'Concrete',
+      icon: '🪨',
+      question: 'What concrete work?',
+      keywords: ['concrete', 'cement', 'pour', 'slab'],
+      children: [
+        {
+          id: 'concrete-slab',
+          label: 'Slab on Grade',
+          icon: '⬜',
+          question: 'What thickness?',
+          keywords: ['slab', 'sog', 'floor', 'grade'],
+          children: [
+            { id: 'concrete-slab-4', label: '4" Slab', keywords: ['4 inch', '4"'], jocCodes: ['03311300-0001', '03311300-0002'] },
+            { id: 'concrete-slab-6', label: '6" Slab', keywords: ['6 inch', '6"'], jocCodes: ['03311300-0010', '03311300-0011'] },
+            { id: 'concrete-slab-8', label: '8" Slab', keywords: ['8 inch', '8"'], jocCodes: ['03311300-0020', '03311300-0021'] }
+          ]
+        },
+        {
+          id: 'concrete-elevated',
+          label: 'Elevated Slab',
+          icon: '🏗️',
+          keywords: ['elevated', 'suspended', 'deck'],
+          jocCodes: ['03311300-0100', '03311300-0101', '03311300-0102']
+        },
+        {
+          id: 'concrete-curb',
+          label: 'Curb/Pad/Housekeeping',
+          icon: '📐',
+          keywords: ['curb', 'pad', 'housekeeping', 'equipment pad'],
+          jocCodes: ['03311300-0150', '03311300-0151', '03311300-0152']
+        },
+        {
+          id: 'concrete-repair',
+          label: 'Concrete Repair',
+          icon: '🔧',
+          keywords: ['repair', 'patch', 'spall', 'crack'],
+          jocCodes: ['03011300-0001', '03011300-0002', '03011300-0003']
+        },
+        {
+          id: 'concrete-rebar',
+          label: 'Reinforcing Steel',
+          icon: '🔩',
+          keywords: ['rebar', 'reinforcing', 'steel', 'mesh', 'wwf'],
+          jocCodes: ['03211300-0001', '03211300-0002', '03211300-0003']
+        }
+      ]
+    },
+
+    // ============ MASONRY ============
+    {
+      id: 'masonry',
+      label: 'Masonry',
+      icon: '🧱',
+      question: 'What masonry work?',
+      keywords: ['masonry', 'brick', 'block', 'cmu', 'stone'],
+      children: [
+        {
+          id: 'masonry-cmu',
+          label: 'CMU Block Wall',
+          icon: '⬛',
+          question: 'What block size?',
+          keywords: ['cmu', 'block', 'concrete block'],
+          children: [
+            { id: 'masonry-cmu-4', label: '4" CMU', keywords: ['4 inch', '4"'], jocCodes: ['04221300-0001', '04221300-0002'] },
+            { id: 'masonry-cmu-6', label: '6" CMU', keywords: ['6 inch', '6"'], jocCodes: ['04221300-0010', '04221300-0011'] },
+            { id: 'masonry-cmu-8', label: '8" CMU', keywords: ['8 inch', '8"'], jocCodes: ['04221300-0020', '04221300-0021'] },
+            { id: 'masonry-cmu-12', label: '12" CMU', keywords: ['12 inch', '12"'], jocCodes: ['04221300-0030', '04221300-0031'] }
+          ]
+        },
+        {
+          id: 'masonry-brick',
+          label: 'Brick',
+          icon: '🟫',
+          keywords: ['brick', 'face brick', 'veneer'],
+          jocCodes: ['04211300-0001', '04211300-0002', '04211300-0003']
+        },
+        {
+          id: 'masonry-repair',
+          label: 'Masonry Repair/Repointing',
+          icon: '🔧',
+          keywords: ['repair', 'repoint', 'tuckpoint', 'mortar'],
+          jocCodes: ['04011300-0001', '04011300-0002', '04011300-0003']
+        },
+        {
+          id: 'masonry-grout',
+          label: 'Grout Fill',
+          icon: '🫗',
+          keywords: ['grout', 'fill', 'solid grout'],
+          jocCodes: ['04051600-0001', '04051600-0002']
+        }
+      ]
+    },
+
+    // ============ SPECIALTIES ============
+    {
+      id: 'specialties',
+      label: 'Specialties',
+      icon: '🚿',
+      question: 'What specialty item?',
+      keywords: ['specialties', 'accessory', 'toilet', 'locker'],
+      children: [
+        {
+          id: 'spec-toilet',
+          label: 'Toilet Accessories',
+          icon: '🧻',
+          question: 'What accessory?',
+          keywords: ['toilet', 'restroom', 'bathroom', 'accessory'],
+          children: [
+            { id: 'spec-toilet-dispenser', label: 'Paper Dispenser', keywords: ['paper', 'dispenser', 'toilet paper'], jocCodes: ['10281300-0001', '10281300-0002'] },
+            { id: 'spec-toilet-towel', label: 'Paper Towel Dispenser', keywords: ['towel', 'dispenser'], jocCodes: ['10281300-0010', '10281300-0011'] },
+            { id: 'spec-toilet-soap', label: 'Soap Dispenser', keywords: ['soap', 'dispenser'], jocCodes: ['10281300-0020', '10281300-0021'] },
+            { id: 'spec-toilet-mirror', label: 'Mirror', keywords: ['mirror'], jocCodes: ['10281300-0030', '10281300-0031'] },
+            { id: 'spec-toilet-grab', label: 'Grab Bar', keywords: ['grab', 'bar', 'ada', 'handicap'], jocCodes: ['10281300-0040', '10281300-0041'] },
+            { id: 'spec-toilet-partition', label: 'Toilet Partition', keywords: ['partition', 'stall'], jocCodes: ['10211300-0001', '10211300-0002'] }
+          ]
+        },
+        {
+          id: 'spec-lockers',
+          label: 'Lockers',
+          icon: '🔐',
+          keywords: ['locker', 'storage'],
+          jocCodes: ['10511300-0001', '10511300-0002', '10511300-0003']
+        },
+        {
+          id: 'spec-signage',
+          label: 'Signage',
+          icon: '🪧',
+          question: 'What type of sign?',
+          keywords: ['sign', 'signage', 'wayfinding'],
+          children: [
+            { id: 'spec-sign-room', label: 'Room ID Sign', keywords: ['room', 'id', 'ada'], jocCodes: ['10141300-0001', '10141300-0002'] },
+            { id: 'spec-sign-directory', label: 'Directory Sign', keywords: ['directory', 'lobby'], jocCodes: ['10141300-0010', '10141300-0011'] },
+            { id: 'spec-sign-exit', label: 'Exit/Safety Sign', keywords: ['exit', 'safety', 'egress'], jocCodes: ['10141300-0020', '10141300-0021'] }
+          ]
+        },
+        {
+          id: 'spec-corner',
+          label: 'Corner Guards',
+          icon: '📐',
+          keywords: ['corner', 'guard', 'protection'],
+          jocCodes: ['10261300-0001', '10261300-0002']
+        },
+        {
+          id: 'spec-extinguisher',
+          label: 'Fire Extinguisher Cabinet',
+          icon: '🧯',
+          keywords: ['extinguisher', 'cabinet', 'fire'],
+          jocCodes: ['10441300-0001', '10441300-0002']
+        }
+      ]
+    },
+
+    // ============ INSULATION ============
+    {
+      id: 'insulation',
+      label: 'Insulation',
+      icon: '🧊',
+      question: 'What insulation type?',
+      keywords: ['insulation', 'insulate', 'batt', 'rigid'],
+      children: [
+        {
+          id: 'insul-batt',
+          label: 'Batt Insulation',
+          icon: '🟨',
+          question: 'What R-value?',
+          keywords: ['batt', 'fiberglass', 'mineral wool'],
+          children: [
+            { id: 'insul-batt-r11', label: 'R-11 (3-1/2")', keywords: ['r-11', 'r11'], jocCodes: ['07211300-0001', '07211300-0002'] },
+            { id: 'insul-batt-r13', label: 'R-13 (3-1/2")', keywords: ['r-13', 'r13'], jocCodes: ['07211300-0010', '07211300-0011'] },
+            { id: 'insul-batt-r19', label: 'R-19 (6")', keywords: ['r-19', 'r19'], jocCodes: ['07211300-0020', '07211300-0021'] },
+            { id: 'insul-batt-r30', label: 'R-30 (10")', keywords: ['r-30', 'r30'], jocCodes: ['07211300-0030', '07211300-0031'] }
+          ]
+        },
+        {
+          id: 'insul-rigid',
+          label: 'Rigid Board',
+          icon: '📋',
+          keywords: ['rigid', 'board', 'xps', 'eps', 'polyiso'],
+          jocCodes: ['07211300-0100', '07211300-0101', '07211300-0102']
+        },
+        {
+          id: 'insul-spray',
+          label: 'Spray Foam',
+          icon: '🫧',
+          keywords: ['spray', 'foam', 'spf', 'closed cell', 'open cell'],
+          jocCodes: ['07211300-0150', '07211300-0151']
+        },
+        {
+          id: 'insul-pipe',
+          label: 'Pipe Insulation',
+          icon: '🔧',
+          keywords: ['pipe', 'mechanical', 'fiberglass'],
+          jocCodes: ['23071300-0001', '23071300-0002', '23071300-0003']
+        }
+      ]
+    },
+
+    // ============ WINDOWS/GLAZING ============
+    {
+      id: 'glazing',
+      label: 'Windows & Glazing',
+      icon: '🪟',
+      question: 'What glazing work?',
+      keywords: ['window', 'glass', 'glazing', 'storefront'],
+      children: [
+        {
+          id: 'glazing-window',
+          label: 'Window (Punched)',
+          icon: '🖼️',
+          question: 'What window type?',
+          keywords: ['window', 'punched', 'opening'],
+          children: [
+            { id: 'glazing-win-fixed', label: 'Fixed Window', keywords: ['fixed', 'picture'], jocCodes: ['08511300-0001', '08511300-0002'] },
+            { id: 'glazing-win-operable', label: 'Operable Window', keywords: ['operable', 'casement', 'awning'], jocCodes: ['08511300-0010', '08511300-0011'] },
+            { id: 'glazing-win-slider', label: 'Sliding Window', keywords: ['sliding', 'slider'], jocCodes: ['08511300-0020', '08511300-0021'] }
+          ]
+        },
+        {
+          id: 'glazing-storefront',
+          label: 'Storefront System',
+          icon: '🏪',
+          keywords: ['storefront', 'curtain wall', 'aluminum'],
+          jocCodes: ['08411300-0001', '08411300-0002', '08411300-0003']
+        },
+        {
+          id: 'glazing-interior',
+          label: 'Interior Glazing',
+          icon: '🔲',
+          keywords: ['interior', 'sidelite', 'borrowed lite', 'relite'],
+          jocCodes: ['08811300-0001', '08811300-0002']
+        },
+        {
+          id: 'glazing-repair',
+          label: 'Glass Repair/Replacement',
+          icon: '🔧',
+          keywords: ['repair', 'replace', 'broken'],
+          jocCodes: ['08811300-0050', '08811300-0051']
+        }
+      ]
+    },
+
+    // ============ SITE WORK ============
+    {
+      id: 'sitework',
+      label: 'Site Work',
+      icon: '🏗️',
+      question: 'What site work?',
+      keywords: ['site', 'exterior', 'paving', 'landscape'],
+      children: [
+        {
+          id: 'site-paving',
+          label: 'Paving',
+          icon: '🛣️',
+          question: 'What paving type?',
+          keywords: ['paving', 'asphalt', 'concrete', 'pavement'],
+          children: [
+            { id: 'site-pave-asphalt', label: 'Asphalt Paving', keywords: ['asphalt', 'blacktop'], jocCodes: ['32121300-0001', '32121300-0002'] },
+            { id: 'site-pave-concrete', label: 'Concrete Paving', keywords: ['concrete', 'sidewalk'], jocCodes: ['32131300-0001', '32131300-0002'] },
+            { id: 'site-pave-pavers', label: 'Unit Pavers', keywords: ['paver', 'brick', 'interlock'], jocCodes: ['32141300-0001', '32141300-0002'] }
+          ]
+        },
+        {
+          id: 'site-curb',
+          label: 'Curb & Gutter',
+          icon: '🚧',
+          keywords: ['curb', 'gutter', 'edge'],
+          jocCodes: ['32161300-0001', '32161300-0002']
+        },
+        {
+          id: 'site-fence',
+          label: 'Fencing',
+          icon: '🚧',
+          question: 'What fence type?',
+          keywords: ['fence', 'fencing', 'gate'],
+          children: [
+            { id: 'site-fence-chain', label: 'Chain Link', keywords: ['chain', 'link', 'cyclone'], jocCodes: ['32311300-0001', '32311300-0002'] },
+            { id: 'site-fence-ornamental', label: 'Ornamental Metal', keywords: ['ornamental', 'iron', 'aluminum'], jocCodes: ['32311300-0020', '32311300-0021'] },
+            { id: 'site-fence-wood', label: 'Wood Fence', keywords: ['wood', 'privacy'], jocCodes: ['32311300-0030', '32311300-0031'] }
+          ]
+        },
+        {
+          id: 'site-landscape',
+          label: 'Landscaping',
+          icon: '🌳',
+          keywords: ['landscape', 'planting', 'tree', 'shrub'],
+          jocCodes: ['32911300-0001', '32911300-0002', '32911300-0003']
+        }
+      ]
+    },
+
     // ============ OTHER ============
     {
       id: 'other',

@@ -486,3 +486,43 @@ model InviteRedemption {
   @@index([inviteCodeId])
   @@index([userId])
 }
+
+// ============================================
+// TRAINING DATA (ML Selection Learning)
+// ============================================
+
+model TrainingSelection {
+  id                  String   @id @default(uuid())
+  sessionId           String
+  userId              String?
+  
+  // Measurement context
+  measurementId       String
+  measurementType     String   // line, count, area, space
+  measurementValue    Float
+  measurementLabel    String?
+  
+  // Decision tree path
+  path                Json     // ["wall", "wall-drywall", "wall-drywall-5/8-fire"]
+  keywords            Json     @default("[]") // Keywords typed by user
+  
+  // Selected item
+  selectedTaskCode    String
+  selectedDescription String
+  selectedUnit        String
+  selectedUnitCost    Float
+  
+  // Alternatives that were shown
+  alternativesShown   Json     @default("[]") // Task codes of other options shown
+  
+  // Timing
+  timeToSelect        Int?     // Milliseconds from start to selection
+  
+  createdAt           DateTime @default(now())
+
+  @@index([sessionId])
+  @@index([userId])
+  @@index([selectedTaskCode])
+  @@index([measurementType])
+  @@index([createdAt(sort: Desc)])
+}

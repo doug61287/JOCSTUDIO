@@ -237,27 +237,63 @@ export function GuidedAssistant({
   };
 
   // Handle item selection
-  const handleItemSelect = (item: JOCItem) => {
-    // Log the selection for training
-    const selectionLog: SelectionLog = {
+  const handleItemSelect = async (item: JOCItem) => {
+    // Generate or get session ID
+    let sessionId = localStorage.getItem('jochero_session_id');
+    if (!sessionId) {
+      sessionId = `session-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+      localStorage.setItem('jochero_session_id', sessionId);
+    }
+    
+    // Calculate time to select (from component mount)
+    const timeToSelect = Date.now() - (window as any).__assistantStartTime || 0;
+    
+    // Build training data
+    const trainingData = {
+      sessionId,
       measurementId,
       measurementType,
       measurementValue,
+      measurementLabel: measurementLabel || undefined,
       path: path.map(n => n.id),
-      selectedItem: item,
-      timestamp: new Date(),
+      keywords: inputValue ? inputValue.split(/\s+/).filter(w => w.length >= 2) : [],
+      selectedTaskCode: item.taskCode,
+      selectedDescription: item.description,
+      selectedUnit: item.unit,
+      selectedUnitCost: item.unitCost,
+      alternativesShown: messages
+        .filter(m => m.type === 'result' && m.items)
+        .flatMap(m => m.items?.map(i => i.taskCode) || [])
+        .slice(0, 10),
+      timeToSelect,
     };
     
-    // Store in localStorage for now (later: send to API)
+    // Store locally as backup
     const logs = JSON.parse(localStorage.getItem('jochero_selections') || '[]');
-    logs.push(selectionLog);
-    localStorage.setItem('jochero_selections', JSON.stringify(logs));
+    logs.push({ ...trainingData, timestamp: new Date().toISOString() });
+    localStorage.setItem('jochero_selections', JSON.stringify(logs.slice(-100))); // Keep last 100
     
-    console.log('Selection logged:', selectionLog);
+    // Send to backend API (fire and forget)
+    try {
+      fetch(`${API_URL}/training/selections`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(trainingData),
+      }).catch(e => console.warn('Training API error:', e));
+    } catch (e) {
+      // Silently fail - training is not critical
+    }
+    
+    console.log('Training selection logged:', trainingData);
     
     // Call the onSelect callback
     onSelect(item);
   };
+  
+  // Track start time for timing
+  useEffect(() => {
+    (window as any).__assistantStartTime = Date.now();
+  }, []);
 
   // Go back in the path
   const handleBack = () => {
