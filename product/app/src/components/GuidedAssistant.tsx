@@ -114,14 +114,19 @@ export function GuidedAssistant({ onSelect, onClose, measurementLabel }: GuidedA
       });
     }
     
-    // Sort: items with more children first, then alphabetically
+    // Sort sequentially by task code (line item number)
     return filtered.sort((a, b) => {
+      // Categories (non-items) come before items at same level
       if (a.isItem && !b.isItem) return 1;
       if (!a.isItem && b.isItem) return -1;
-      const countA = a.itemCount || 0;
-      const countB = b.itemCount || 0;
-      if (countA !== countB) return countB - countA;
-      return getNodeDisplayName(a).localeCompare(getNodeDisplayName(b));
+      
+      // Sort by code numerically/sequentially
+      const codeA = a.code || '';
+      const codeB = b.code || '';
+      
+      // Pad codes for proper numeric comparison
+      const padCode = (code: string) => code.replace(/\d+/g, n => n.padStart(6, '0'));
+      return padCode(codeA).localeCompare(padCode(codeB));
     });
   }, [currentNode, searchTerm, showSearch]);
   

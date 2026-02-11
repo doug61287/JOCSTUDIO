@@ -101,14 +101,24 @@ export function TranslationMachine({ onSelectItem, className = '' }: Translation
         const data = await res.json();
 
         if (data.success) {
+          // Sort helper - sequential by task code
+          const sortByTaskCode = (items: JOCItem[]) => {
+            return [...items].sort((a, b) => {
+              const padCode = (code: string) => code.replace(/\d+/g, n => n.padStart(6, '0'));
+              return padCode(a.taskCode).localeCompare(padCode(b.taskCode));
+            });
+          };
+          
           if (currentMode === 'translate') {
             const result = data.data as TranslateResult;
+            // Keep translate results in score order (relevance)
             setResults(result.items);
             setKeywords(result.keywords);
             setStats({ total: result.items.length, took: result.took });
           } else {
             const result = data.data as SearchResult;
-            setResults(result.items);
+            // Sort search results by task code sequentially
+            setResults(sortByTaskCode(result.items));
             setKeywords([]);
             setStats({ total: result.total, took: result.took });
           }
@@ -140,7 +150,12 @@ export function TranslationMachine({ onSelectItem, className = '' }: Translation
         .then(res => res.json())
         .then(data => {
           if (data.success) {
-            setResults(data.data.items);
+            // Sort by task code sequentially
+            const sortedItems = [...data.data.items].sort((a: JOCItem, b: JOCItem) => {
+              const padCode = (code: string) => code.replace(/\d+/g, n => n.padStart(6, '0'));
+              return padCode(a.taskCode).localeCompare(padCode(b.taskCode));
+            });
+            setResults(sortedItems);
             setStats({ total: data.data.count, took: 0 });
           }
         })
