@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useProjectStore } from '../stores/projectStore';
+import { useShallow } from 'zustand/react/shallow';
 import type { Tool } from '../types';
 
 interface ToolbarProps {
@@ -14,7 +15,16 @@ const measureTools: { id: Tool; icon: string; label: string; shortcut: string }[
 ];
 
 export function Toolbar({ onCalibrate }: ToolbarProps) {
-  const { activeTool, setActiveTool, zoom, setZoom, project } = useProjectStore();
+  const { activeTool, setActiveTool, zoom, setZoom, projectName, scale } = useProjectStore(
+    useShallow((state) => ({
+      activeTool: state.activeTool,
+      setActiveTool: state.setActiveTool,
+      zoom: state.zoom,
+      setZoom: state.setZoom,
+      projectName: state.project?.name || 'New Project',
+      scale: state.project?.scale ?? 0,
+    }))
+  );
   const [showShortcuts, setShowShortcuts] = useState(false);
 
   // Keyboard shortcuts
@@ -51,7 +61,7 @@ export function Toolbar({ onCalibrate }: ToolbarProps) {
       <div className="flex items-center gap-2 pr-3 border-r border-white/10">
         <span className="text-lg">📐</span>
         <div className="hidden sm:block">
-          <div className="text-sm font-medium text-white">{project?.name || 'New Project'}</div>
+          <div className="text-sm font-medium text-white">{projectName}</div>
         </div>
       </div>
 
@@ -85,7 +95,7 @@ export function Toolbar({ onCalibrate }: ToolbarProps) {
       <button
         onClick={onCalibrate}
         className={`flex items-center gap-2 px-3 py-1.5 rounded transition-all text-sm
-          ${project?.scale && project.scale > 1 
+          ${scale > 1 
             ? 'hover:bg-white/10 text-white/70' 
             : 'bg-yellow-500/20 text-yellow-300 hover:bg-yellow-500/30 animate-pulse'}`}
         title="Calibrate Scale"
@@ -100,9 +110,9 @@ export function Toolbar({ onCalibrate }: ToolbarProps) {
       {/* Scale Info */}
       <div className="hidden md:flex items-center gap-2 text-xs text-white/50 pr-2 border-r border-white/10">
         <span>Scale:</span>
-        <span className={project?.scale && project.scale > 1 ? 'text-green-400' : 'text-yellow-400'}>
-          {project?.scale && project.scale > 1 
-            ? `${project.scale.toFixed(1)} px/ft` 
+        <span className={scale > 1 ? 'text-green-400' : 'text-yellow-400'}>
+          {scale > 1 
+            ? `${scale.toFixed(1)} px/ft` 
             : 'Not Set'}
         </span>
       </div>

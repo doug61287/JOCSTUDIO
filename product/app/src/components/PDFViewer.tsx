@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
 import * as pdfjsLib from 'pdfjs-dist';
 import { useProjectStore } from '../stores/projectStore';
+import { useShallow } from 'zustand/react/shallow';
 import { MeasurementCanvas } from './MeasurementCanvas';
 import { BottomToolbar } from './BottomToolbar';
 
@@ -30,7 +31,16 @@ export function PDFViewer() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const viewerRef = useRef<HTMLDivElement>(null);
-  const { project, zoom, setZoom, activeTool } = useProjectStore();
+  
+  // Only subscribe to fields we actually need - prevents re-render when measurements change
+  const { pdfUrl, zoom, setZoom, activeTool } = useProjectStore(
+    useShallow((state) => ({
+      pdfUrl: state.project?.pdfUrl,
+      zoom: state.zoom,
+      setZoom: state.setZoom,
+      activeTool: state.activeTool,
+    }))
+  );
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
   const [pageNum, setPageNum] = useState(1);
   const [numPages, setNumPages] = useState(0);
@@ -47,11 +57,11 @@ export function PDFViewer() {
 
   // Load PDF document
   useEffect(() => {
-    if (!project?.pdfUrl) return;
+    if (!pdfUrl) return;
 
     const loadPDF = async () => {
       try {
-        const pdf = await pdfjsLib.getDocument(project.pdfUrl).promise;
+        const pdf = await pdfjsLib.getDocument(pdfUrl).promise;
         setPdfDoc(pdf);
         setNumPages(pdf.numPages);
         setInitialFitDone(false);
@@ -90,7 +100,7 @@ export function PDFViewer() {
     };
 
     loadPDF();
-  }, [project?.pdfUrl, thumbSize]);
+  }, [pdfUrl, thumbSize]);
 
   // Maximum render scale to prevent canvas size issues (lowered for large arch drawings)
   // Large format drawings (36x48") at 150 DPI = 5400x7200px, at 1.0x already ~39MP

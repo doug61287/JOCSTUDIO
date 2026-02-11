@@ -1,4 +1,5 @@
 import { useProjectStore } from '../stores/projectStore';
+import { useShallow } from 'zustand/react/shallow';
 import type { Tool } from '../types';
 
 interface BottomToolbarProps {
@@ -26,7 +27,14 @@ export function BottomToolbar({
   onZoomChange,
   pageSize 
 }: BottomToolbarProps) {
-  const { activeTool, setActiveTool, zoom, project } = useProjectStore();
+  const { activeTool, setActiveTool, zoom, scale } = useProjectStore(
+    useShallow((state) => ({
+      activeTool: state.activeTool,
+      setActiveTool: state.setActiveTool,
+      zoom: state.zoom,
+      scale: state.project?.scale ?? 0,
+    }))
+  );
 
   const goToFirst = () => onPageChange(1);
   const goToPrev = () => onPageChange(Math.max(1, pageNum - 1));
@@ -186,8 +194,8 @@ export function BottomToolbar({
           <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3" />
           </svg>
-          <span className={project?.scale && project.scale > 1 ? 'text-green-400' : 'text-yellow-400'}>
-            {project?.scale && project.scale > 1 ? `${project.scale.toFixed(1)} px/ft` : 'Scale Not Set'}
+          <span className={scale > 1 ? 'text-green-400' : 'text-yellow-400'}>
+            {scale > 1 ? `${scale.toFixed(1)} px/ft` : 'Scale Not Set'}
           </span>
         </div>
 
