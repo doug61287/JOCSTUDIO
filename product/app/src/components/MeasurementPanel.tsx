@@ -36,7 +36,7 @@ export function MeasurementPanel() {
       !filterQuery || 
       m.type.includes(filterQuery.toLowerCase()) ||
       m.jocItem?.description.toLowerCase().includes(filterQuery.toLowerCase()) ||
-      m.jocItem?.code.toLowerCase().includes(filterQuery.toLowerCase())
+      m.jocItem?.taskCode.toLowerCase().includes(filterQuery.toLowerCase())
     );
     
     return filtered.reduce((acc, m) => {
@@ -54,7 +54,7 @@ export function MeasurementPanel() {
     
     project.measurements.forEach((m) => {
       if (m.jocItem) {
-        const key = m.jocItem.code;
+        const key = m.jocItem.taskCode;
         if (!grouped[key]) {
           grouped[key] = { item: m.jocItem, quantity: 0, measurements: [] };
         }
@@ -63,14 +63,14 @@ export function MeasurementPanel() {
       }
     });
     
-    return Object.values(grouped).sort((a, b) => a.item.code.localeCompare(b.item.code));
+    return Object.values(grouped).sort((a, b) => a.item.taskCode.localeCompare(b.item.taskCode));
   }, [project]);
 
   const totals = useMemo(() => {
     if (!project) return { subtotal: 0, total: 0 };
     
     const subtotal = lineItemTotals.reduce((sum, { item, quantity }) => 
-      sum + (quantity * item.unitPrice), 0
+      sum + (quantity * item.unitCost), 0
     );
     
     return {
@@ -111,7 +111,7 @@ export function MeasurementPanel() {
     const lines = [
       'JOC Code,Description,Quantity,Unit,Unit Price,Extended Price',
       ...lineItemTotals.map(({ item, quantity }) => 
-        `"${item.code}","${item.description}",${quantity.toFixed(2)},${item.unit},${item.unitPrice.toFixed(2)},${(quantity * item.unitPrice).toFixed(2)}`
+        `"${item.taskCode}","${item.description}",${quantity.toFixed(2)},${item.unit},${item.unitCost.toFixed(2)},${(quantity * item.unitCost).toFixed(2)}`
       ),
       '',
       `,,,,Subtotal,${totals.subtotal.toFixed(2)}`,
@@ -275,10 +275,10 @@ export function MeasurementPanel() {
                             
                             {m.jocItem ? (
                               <div className="bg-white/5 rounded p-2 text-sm mt-2">
-                                <div className="text-white/50 text-xs font-mono">{m.jocItem.code}</div>
+                                <div className="text-white/50 text-xs font-mono">{m.jocItem.taskCode}</div>
                                 <div className="truncate text-white/80">{m.jocItem.description}</div>
                                 <div className="text-green-400 font-medium mt-1">
-                                  ${(m.value * m.jocItem.unitPrice).toFixed(2)}
+                                  ${(m.value * m.jocItem.unitCost).toFixed(2)}
                                 </div>
                               </div>
                             ) : (
@@ -319,17 +319,17 @@ export function MeasurementPanel() {
                                 <div className="max-h-48 overflow-auto space-y-1">
                                   {searchResults.map((item) => (
                                     <button
-                                      key={item.code}
+                                      key={item.taskCode}
                                       onClick={(e) => {
                                         e.stopPropagation();
                                         handleAssignItem(m.id, item);
                                       }}
                                       className="w-full text-left p-2 rounded hover:bg-white/10 text-sm"
                                     >
-                                      <div className="text-white/50 text-xs font-mono">{item.code}</div>
+                                      <div className="text-white/50 text-xs font-mono">{item.taskCode}</div>
                                       <div className="truncate">{item.description}</div>
                                       <div className="text-green-400">
-                                        ${item.unitPrice.toFixed(2)}/{item.unit}
+                                        ${item.unitCost.toFixed(2)}/{item.unit}
                                       </div>
                                     </button>
                                   ))}
@@ -377,15 +377,15 @@ export function MeasurementPanel() {
             ) : (
               <div className="space-y-2">
                 {lineItemTotals.map(({ item, quantity }) => (
-                  <div key={item.code} className="bg-white/5 rounded-lg p-3">
-                    <div className="text-xs text-white/50 font-mono">{item.code}</div>
+                  <div key={item.taskCode} className="bg-white/5 rounded-lg p-3">
+                    <div className="text-xs text-white/50 font-mono">{item.taskCode}</div>
                     <div className="text-sm truncate">{item.description}</div>
                     <div className="flex justify-between mt-2">
                       <span className="text-white/60">
-                        {quantity.toFixed(2)} {item.unit} × ${item.unitPrice.toFixed(2)}
+                        {quantity.toFixed(2)} {item.unit} × ${item.unitCost.toFixed(2)}
                       </span>
                       <span className="text-green-400 font-medium">
-                        ${(quantity * item.unitPrice).toFixed(2)}
+                        ${(quantity * item.unitCost).toFixed(2)}
                       </span>
                     </div>
                   </div>
@@ -452,12 +452,12 @@ export function MeasurementPanel() {
               measurementValue={showAssistant.value}
               measurementLabel={showAssistant.label || showAssistant.spaceName}
               onSelect={(item) => {
-                // Convert the item to the expected format
+                // Item already has correct format from GuidedAssistant
                 const jocItem: JOCItem = {
-                  code: item.taskCode,
+                  taskCode: item.taskCode,
                   description: item.description,
                   unit: item.unit,
-                  unitPrice: item.unitCost,
+                  unitCost: item.unitCost,
                 };
                 handleAssignItem(showAssistant.id, jocItem);
                 setShowAssistant(null);

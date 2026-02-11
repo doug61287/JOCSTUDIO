@@ -3,9 +3,9 @@
  * Conversational line item selection with learning
  */
 
-import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { decisionTree, findNode, getNodePath, matchKeywords, TreeNode } from '../data/decisionTree';
-import { jocCatalogue, JOCItem, searchJOCItems } from '../data/jocCatalogue';
+import { useState, useEffect, useRef, useCallback } from 'react';
+import { decisionTree, matchKeywords, TreeNode } from '../data/decisionTree';
+import { jocCatalogue, JOCItem } from '../data/jocCatalogue';
 
 interface Message {
   id: string;
@@ -13,15 +13,6 @@ interface Message {
   content: string;
   options?: TreeNode[];
   items?: JOCItem[];
-  timestamp: Date;
-}
-
-interface SelectionLog {
-  measurementId: string;
-  measurementType: string;
-  measurementValue: number;
-  path: string[];
-  selectedItem: JOCItem;
   timestamp: Date;
 }
 
@@ -45,7 +36,7 @@ export function GuidedAssistant({
   onClose,
 }: GuidedAssistantProps) {
   const [messages, setMessages] = useState<Message[]>([]);
-  const [currentNode, setCurrentNode] = useState<TreeNode>(decisionTree);
+  const [, setCurrentNode] = useState<TreeNode>(decisionTree);
   const [path, setPath] = useState<TreeNode[]>([decisionTree]);
   const [inputValue, setInputValue] = useState('');
   const [loading, setLoading] = useState(false);

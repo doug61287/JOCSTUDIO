@@ -1,12 +1,8 @@
 // NYC H+H Construction Task Catalog - Curated for MVP Demo
 // Full catalogue: 65,331 items (projects/jocstudio/product/data/nyc-hh-ctc-2024.json)
 
-export interface JOCItem {
-  taskCode: string;
-  description: string;
-  unit: string;
-  unitCost: number;
-}
+import type { JOCItem } from '../types';
+export type { JOCItem };
 
 /**
  * Search JOC catalogue by task code or description keywords

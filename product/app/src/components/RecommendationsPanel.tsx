@@ -3,7 +3,7 @@
  * Analyzes training data and generates actionable insights
  */
 
-import React, { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 
 const API_URL = 'https://web-production-309c2.up.railway.app';
 

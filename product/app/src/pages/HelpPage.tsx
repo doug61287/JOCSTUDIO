@@ -2,7 +2,7 @@
  * Help Page - In-app user guide
  */
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 
 type Section = 'quick-start' | 'tools' | 'translation' | 'assistant' | 'shortcuts' | 'tips';

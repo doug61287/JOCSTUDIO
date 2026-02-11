@@ -27,11 +27,13 @@ export interface SpaceFinish {
 }
 
 export interface JOCItem {
-  code: string;
+  taskCode: string;      // JOC task code (e.g., "09290513-0045")
+  code?: string;         // Alias for taskCode (backwards compatibility)
   description: string;
   unit: string;
-  unitPrice: number;
-  division: string;
+  unitCost: number;      // Cost per unit
+  unitPrice?: number;    // Alias for unitCost (backwards compatibility)
+  division?: string;     // CSI division (optional)
 }
 
 export interface Project {

@@ -3,7 +3,7 @@
  * Plain English → JOC Line Items
  */
 
-import React, { useState, useCallback, useRef, useEffect } from 'react';
+import { useState, useCallback, useRef, useEffect } from 'react';
 import debounce from 'lodash.debounce';
 
 const API_URL = 'https://web-production-309c2.up.railway.app';
