@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard | JOCHero</title>
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect fill='%231E40AF' rx='15' width='100' height='100'/><text y='70' x='50' text-anchor='middle' font-size='50' fill='white'>📐</text></svg>">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwindcss.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'hero-blue': '#1E40AF',
+                        'hero-gold': '#FFD700',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        
+        .glass {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+        
+        .gradient-border {
+            position: relative;
+        }
+        .gradient-border::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: inherit;
+            padding: 2px;
+            background: linear-gradient(135deg, #3B82F6, #8B5CF6, #EC4899);
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+        }
+        
+        .animate-pulse-slow {
+            animation: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        .float { animation: float 4s ease-in-out infinite; }
+    </style>
+</head>
+<body class="min-h-screen bg-gradient-to-br from-gray-900 via-slate-900 to-blue-950">
+    <!-- Navigation -->
+    <nav class="fixed top-0 left-0 right-0 z-50 glass">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center gap-3">
+                    <span class="text-2xl">📐</span>
+                    <span class="text-xl font-bold text-white">JOCHero</span>
+                    <span class="px-2 py-0.5 bg-gradient-to-r from-yellow-400 to-orange-400 text-gray-900 text-xs font-bold rounded">BETA</span>
+                </div>
+                
+                <div class="flex items-center gap-4">
+                    <a href="/blog" class="text-white/70 hover:text-white text-sm">Blog</a>
+                    <a href="#" class="text-white/70 hover:text-white text-sm">Help</a>
+                    <div class="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-500 rounded-full flex items-center justify-center text-white text-sm font-bold cursor-pointer">
+                        <span id="userInitial">U</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="pt-24 pb-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+        <!-- Welcome Header -->
+        <div class="mb-8">
+            <h1 class="text-3xl sm:text-4xl font-bold text-white mb-2">
+                Welcome back, <span id="userName" class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400">Hero</span> 👋
+            </h1>
+            <p class="text-white/60">Your JOC command center. What would you like to do today?</p>
+        </div>
+
+        <!-- Quick Stats -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
+            <div class="glass rounded-xl p-4">
+                <div class="text-2xl mb-1">📁</div>
+                <div class="text-2xl font-bold text-white" id="projectCount">0</div>
+                <div class="text-sm text-white/60">Projects</div>
+            </div>
+            <div class="glass rounded-xl p-4">
+                <div class="text-2xl mb-1">📏</div>
+                <div class="text-2xl font-bold text-white" id="measurementCount">0</div>
+                <div class="text-sm text-white/60">Measurements</div>
+            </div>
+            <div class="glass rounded-xl p-4">
+                <div class="text-2xl mb-1">🔄</div>
+                <div class="text-2xl font-bold text-white" id="translationCount">0</div>
+                <div class="text-sm text-white/60">Translations</div>
+            </div>
+            <div class="glass rounded-xl p-4">
+                <div class="text-2xl mb-1">⏱️</div>
+                <div class="text-2xl font-bold text-white" id="timeSaved">0h</div>
+                <div class="text-sm text-white/60">Time Saved</div>
+            </div>
+        </div>
+
+        <!-- Main Tools Grid -->
+        <h2 class="text-xl font-semibold text-white mb-4">🛠️ Tools</h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+            
+            <!-- Takeoff Tool - Primary -->
+            <a href="/app" class="group col-span-1 sm:col-span-2 lg:col-span-1 lg:row-span-2">
+                <div class="h-full glass rounded-2xl p-6 card-hover gradient-border bg-gradient-to-br from-blue-600/20 to-purple-600/20">
+                    <div class="text-5xl mb-4 float">📐</div>
+                    <h3 class="text-2xl font-bold text-white mb-2">Takeoff Tool</h3>
+                    <p class="text-white/70 mb-4">Upload drawings, measure, and assign JOC line items. The heart of JOCHero.</p>
+                    <ul class="space-y-2 text-sm text-white/60 mb-6">
+                        <li class="flex items-center gap-2">
+                            <span class="text-green-400">✓</span> PDF Upload & Viewer
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <span class="text-green-400">✓</span> Scale Calibration (Presets)
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <span class="text-green-400">✓</span> Smart Snap (⚡ Endpoints, Midpoints)
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <span class="text-green-400">✓</span> Line, Area, Count, Space Tools
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <span class="text-green-400">✓</span> Page Navigation (Bluebeam-style)
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <span class="text-green-400">✓</span> CSV Export
+                        </li>
+                    </ul>
+                    <div class="flex items-center gap-2 text-blue-400 font-semibold group-hover:gap-3 transition-all">
+                        Launch Takeoff <span>→</span>
+                    </div>
+                </div>
+            </a>
+
+            <!-- Translation Machine -->
+            <a href="/app#translate" class="group">
+                <div class="h-full glass rounded-2xl p-6 card-hover">
+                    <div class="text-4xl mb-3">🔮</div>
+                    <h3 class="text-xl font-bold text-white mb-2">Translation Machine</h3>
+                    <p class="text-white/70 text-sm mb-4">Type plain English, get matching JOC line items from 65,331 items.</p>
+                    <div class="flex flex-wrap gap-2 mb-4">
+                        <span class="px-2 py-1 bg-amber-500/20 text-amber-300 text-xs rounded">Synonyms</span>
+                        <span class="px-2 py-1 bg-amber-500/20 text-amber-300 text-xs rounded">Smart Match</span>
+                        <span class="px-2 py-1 bg-amber-500/20 text-amber-300 text-xs rounded">65K Items</span>
+                    </div>
+                    <div class="flex items-center gap-2 text-amber-400 font-medium text-sm group-hover:gap-3 transition-all">
+                        Open Translator <span>→</span>
+                    </div>
+                </div>
+            </a>
+
+            <!-- Guided Estimation -->
+            <a href="/app#guide" class="group">
+                <div class="h-full glass rounded-2xl p-6 card-hover">
+                    <div class="text-4xl mb-3">🤖</div>
+                    <h3 class="text-xl font-bold text-white mb-2">Guided Estimation</h3>
+                    <p class="text-white/70 text-sm mb-4">Chat-based assistant walks you through category → line item selection.</p>
+                    <div class="flex flex-wrap gap-2 mb-4">
+                        <span class="px-2 py-1 bg-purple-500/20 text-purple-300 text-xs rounded">17 Categories</span>
+                        <span class="px-2 py-1 bg-purple-500/20 text-purple-300 text-xs rounded">Decision Tree</span>
+                    </div>
+                    <div class="flex items-center gap-2 text-purple-400 font-medium text-sm group-hover:gap-3 transition-all">
+                        Start Guide <span>→</span>
+                    </div>
+                </div>
+            </a>
+
+            <!-- Learning Insights -->
+            <a href="/app/insights" class="group">
+                <div class="h-full glass rounded-2xl p-6 card-hover">
+                    <div class="text-4xl mb-3">📊</div>
+                    <h3 class="text-xl font-bold text-white mb-2">Learning Insights</h3>
+                    <p class="text-white/70 text-sm mb-4">See how JOCHero learns from your selections to improve recommendations.</p>
+                    <div class="flex flex-wrap gap-2 mb-4">
+                        <span class="px-2 py-1 bg-green-500/20 text-green-300 text-xs rounded">Analytics</span>
+                        <span class="px-2 py-1 bg-green-500/20 text-green-300 text-xs rounded">ML Training</span>
+                    </div>
+                    <div class="flex items-center gap-2 text-green-400 font-medium text-sm group-hover:gap-3 transition-all">
+                        View Insights <span>→</span>
+                    </div>
+                </div>
+            </a>
+
+            <!-- JOC Catalogue -->
+            <a href="/app#catalogue" class="group">
+                <div class="h-full glass rounded-2xl p-6 card-hover">
+                    <div class="text-4xl mb-3">📚</div>
+                    <h3 class="text-xl font-bold text-white mb-2">JOC Catalogue</h3>
+                    <p class="text-white/70 text-sm mb-4">Browse the full NYC H+H CTC 2024 catalogue with 65,331 line items.</p>
+                    <div class="flex flex-wrap gap-2 mb-4">
+                        <span class="px-2 py-1 bg-blue-500/20 text-blue-300 text-xs rounded">25 Divisions</span>
+                        <span class="px-2 py-1 bg-blue-500/20 text-blue-300 text-xs rounded">2024 Pricing</span>
+                    </div>
+                    <div class="flex items-center gap-2 text-blue-400 font-medium text-sm group-hover:gap-3 transition-all">
+                        Browse Catalogue <span>→</span>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+        <!-- Resources Section -->
+        <h2 class="text-xl font-semibold text-white mb-4">📖 Resources</h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-12">
+            
+            <a href="/blog" class="glass rounded-xl p-4 card-hover flex items-center gap-4">
+                <div class="text-3xl">📝</div>
+                <div>
+                    <h4 class="font-semibold text-white">Blog</h4>
+                    <p class="text-sm text-white/60">JOC tips & guides</p>
+                </div>
+            </a>
+            
+            <a href="/sandbox" class="glass rounded-xl p-4 card-hover flex items-center gap-4">
+                <div class="text-3xl">🎮</div>
+                <div>
+                    <h4 class="font-semibold text-white">Sandbox Demo</h4>
+                    <p class="text-sm text-white/60">Try with sample project</p>
+                </div>
+            </a>
+            
+            <a href="#" class="glass rounded-xl p-4 card-hover flex items-center gap-4">
+                <div class="text-3xl">🎥</div>
+                <div>
+                    <h4 class="font-semibold text-white">Video Tutorials</h4>
+                    <p class="text-sm text-white/60">Coming soon</p>
+                </div>
+            </a>
+            
+            <a href="#" class="glass rounded-xl p-4 card-hover flex items-center gap-4">
+                <div class="text-3xl">💬</div>
+                <div>
+                    <h4 class="font-semibold text-white">Get Support</h4>
+                    <p class="text-sm text-white/60">We're here to help</p>
+                </div>
+            </a>
+        </div>
+
+        <!-- Recent Activity (Placeholder) -->
+        <h2 class="text-xl font-semibold text-white mb-4">🕐 Recent Projects</h2>
+        <div class="glass rounded-2xl p-6">
+            <div id="recentProjects" class="space-y-3">
+                <!-- Populated by JS -->
+            </div>
+            <div id="noProjects" class="text-center py-8">
+                <div class="text-5xl mb-4 opacity-50">📁</div>
+                <p class="text-white/60 mb-4">No projects yet. Start your first takeoff!</p>
+                <a href="/app" class="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-all">
+                    <span>📐</span> New Project
+                </a>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-white/10 py-6 px-4">
+        <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div class="text-white/40 text-sm">
+                © 2026 JOCHero • Beta v1.0
+            </div>
+            <div class="flex items-center gap-6 text-sm">
+                <a href="/blog" class="text-white/60 hover:text-white">Blog</a>
+                <a href="#" class="text-white/60 hover:text-white">Privacy</a>
+                <a href="#" class="text-white/60 hover:text-white">Terms</a>
+                <a href="mailto:support@jochero.com" class="text-white/60 hover:text-white">Contact</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Check if user is logged in
+        const token = localStorage.getItem('jochero_token');
+        const user = localStorage.getItem('jochero_user');
+        
+        if (!token) {
+            // Redirect to login if not authenticated
+            // window.location.href = '/login';
+        }
+        
+        // Populate user info
+        if (user) {
+            try {
+                const userData = JSON.parse(user);
+                document.getElementById('userName').textContent = userData.name || userData.email?.split('@')[0] || 'Hero';
+                document.getElementById('userInitial').textContent = (userData.name || userData.email || 'U')[0].toUpperCase();
+            } catch (e) {}
+        }
+        
+        // Load stats from localStorage (or API in future)
+        const stats = JSON.parse(localStorage.getItem('jochero_stats') || '{}');
+        document.getElementById('projectCount').textContent = stats.projects || 0;
+        document.getElementById('measurementCount').textContent = stats.measurements || 0;
+        document.getElementById('translationCount').textContent = stats.translations || 0;
+        document.getElementById('timeSaved').textContent = (stats.timeSaved || 0) + 'h';
+        
+        // Load recent projects
+        const projects = JSON.parse(localStorage.getItem('jochero_projects') || '[]');
+        const recentContainer = document.getElementById('recentProjects');
+        const noProjectsEl = document.getElementById('noProjects');
+        
+        if (projects.length > 0) {
+            noProjectsEl.style.display = 'none';
+            projects.slice(0, 5).forEach(project => {
+                const el = document.createElement('a');
+                el.href = `/app?project=${project.id}`;
+                el.className = 'flex items-center justify-between p-3 rounded-lg hover:bg-white/5 transition-all';
+                el.innerHTML = `
+                    <div class="flex items-center gap-3">
+                        <span class="text-2xl">📄</span>
+                        <div>
+                            <div class="font-medium text-white">${project.name}</div>
+                            <div class="text-sm text-white/60">${project.measurements || 0} measurements</div>
+                        </div>
+                    </div>
+                    <div class="text-sm text-white/40">${project.date || ''}</div>
+                `;
+                recentContainer.appendChild(el);
+            });
+        }
+    </script>
+</body>
+</html>
