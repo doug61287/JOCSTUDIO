@@ -1,6 +1,7 @@
 import { useState, useMemo } from 'react';
 import { useProjectStore } from '../stores/projectStore';
 import { searchJOCItems } from '../data/jocCatalogue';
+import { GuidedAssistant } from './GuidedAssistant';
 import type { JOCItem, Measurement } from '../types';
 import { formatMeasurement, generateId } from '../utils/geometry';
 
@@ -18,6 +19,7 @@ export function MeasurementPanel() {
   const [searchQuery, setSearchQuery] = useState('');
   const [filterQuery, setFilterQuery] = useState('');
   const [showJOCSearch, setShowJOCSearch] = useState<string | null>(null);
+  const [showAssistant, setShowAssistant] = useState<Measurement | null>(null);
   const [activeTab, setActiveTab] = useState<'measurements' | 'summary'>('measurements');
   const [expandedGroups, setExpandedGroups] = useState<Set<string>>(new Set(['line', 'count', 'area']));
 
@@ -280,15 +282,26 @@ export function MeasurementPanel() {
                                 </div>
                               </div>
                             ) : (
-                              <button
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  setShowJOCSearch(m.id);
-                                }}
-                                className="mt-2 text-sm text-blue-400 hover:text-blue-300 flex items-center gap-1"
-                              >
-                                <span>+</span> Assign JOC Item
-                              </button>
+                              <div className="mt-2 flex gap-2">
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    setShowAssistant(m);
+                                  }}
+                                  className="flex-1 px-2 py-1.5 text-xs bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-black font-medium rounded-lg flex items-center justify-center gap-1"
+                                >
+                                  <span>🤖</span> Guide Me
+                                </button>
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    setShowJOCSearch(m.id);
+                                  }}
+                                  className="flex-1 px-2 py-1.5 text-xs bg-white/10 hover:bg-white/20 text-white rounded-lg flex items-center justify-center gap-1"
+                                >
+                                  <span>🔍</span> Search
+                                </button>
+                              </div>
                             )}
 
                             {/* JOC Search Dropdown */}
@@ -425,6 +438,32 @@ export function MeasurementPanel() {
             >
               📤 Export JOC Proposal
             </button>
+          </div>
+        </div>
+      )}
+
+      {/* Guided Assistant Modal */}
+      {showAssistant && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm">
+          <div className="w-full max-w-lg h-[600px] mx-4">
+            <GuidedAssistant
+              measurementId={showAssistant.id}
+              measurementType={showAssistant.type as 'line' | 'count' | 'area' | 'space'}
+              measurementValue={showAssistant.value}
+              measurementLabel={showAssistant.label || showAssistant.spaceName}
+              onSelect={(item) => {
+                // Convert the item to the expected format
+                const jocItem: JOCItem = {
+                  code: item.taskCode,
+                  description: item.description,
+                  unit: item.unit,
+                  unitPrice: item.unitCost,
+                };
+                handleAssignItem(showAssistant.id, jocItem);
+                setShowAssistant(null);
+              }}
+              onClose={() => setShowAssistant(null)}
+            />
           </div>
         </div>
       )}
