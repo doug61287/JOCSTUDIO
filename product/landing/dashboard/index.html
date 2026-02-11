@@ -262,153 +262,261 @@
         <h2 class="text-xl font-semibold text-white mb-4">📘 User Guides</h2>
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-12">
             
-            <div class="glass rounded-xl p-5 card-hover">
-                <div class="flex items-center gap-3 mb-3">
-                    <div class="w-10 h-10 bg-blue-500/20 rounded-lg flex items-center justify-center text-xl">🚀</div>
-                    <h4 class="font-semibold text-white">Getting Started</h4>
-                </div>
-                <ul class="space-y-2 text-sm text-white/70">
-                    <li class="flex items-center gap-2 hover:text-white cursor-pointer">
-                        <span class="text-blue-400">→</span> Uploading Your First Drawing
-                    </li>
-                    <li class="flex items-center gap-2 hover:text-white cursor-pointer">
-                        <span class="text-blue-400">→</span> Setting the Scale
-                    </li>
-                    <li class="flex items-center gap-2 hover:text-white cursor-pointer">
-                        <span class="text-blue-400">→</span> Your First Measurement
-                    </li>
-                    <li class="flex items-center gap-2 hover:text-white cursor-pointer">
-                        <span class="text-blue-400">→</span> Exporting to CSV
-                    </li>
-                </ul>
-            </div>
-
-            <div class="glass rounded-xl p-5 card-hover">
-                <div class="flex items-center gap-3 mb-3">
-                    <div class="w-10 h-10 bg-purple-500/20 rounded-lg flex items-center justify-center text-xl">📐</div>
-                    <h4 class="font-semibold text-white">Measurement Tools</h4>
-                </div>
-                <ul class="space-y-2 text-sm text-white/70">
-                    <li class="flex items-center gap-2 hover:text-white cursor-pointer">
-                        <span class="text-purple-400">→</span> Line Tool (Linear Feet)
-                    </li>
-                    <li class="flex items-center gap-2 hover:text-white cursor-pointer">
-                        <span class="text-purple-400">→</span> Area Tool (Square Feet)
-                    </li>
-                    <li class="flex items-center gap-2 hover:text-white cursor-pointer">
-                        <span class="text-purple-400">→</span> Count Tool (Items)
-                    </li>
-                    <li class="flex items-center gap-2 hover:text-white cursor-pointer">
-                        <span class="text-purple-400">→</span> Space Tool (Rooms)
-                    </li>
-                    <li class="flex items-center gap-2 hover:text-white cursor-pointer">
-                        <span class="text-purple-400">→</span> Using Snap (⚡)
-                    </li>
-                </ul>
-            </div>
-
-            <div class="glass rounded-xl p-5 card-hover">
-                <div class="flex items-center gap-3 mb-3">
-                    <div class="w-10 h-10 bg-amber-500/20 rounded-lg flex items-center justify-center text-xl">🔮</div>
-                    <h4 class="font-semibold text-white">Translation & Catalogue</h4>
-                </div>
-                <ul class="space-y-2 text-sm text-white/70">
-                    <li class="flex items-center gap-2 hover:text-white cursor-pointer">
-                        <span class="text-amber-400">→</span> Using the Translation Machine
-                    </li>
-                    <li class="flex items-center gap-2 hover:text-white cursor-pointer">
-                        <span class="text-amber-400">→</span> Guided Estimation Assistant
-                    </li>
-                    <li class="flex items-center gap-2 hover:text-white cursor-pointer">
-                        <span class="text-amber-400">→</span> Browsing the JOC Catalogue
-                    </li>
-                    <li class="flex items-center gap-2 hover:text-white cursor-pointer">
-                        <span class="text-amber-400">→</span> Assigning Line Items
-                    </li>
-                </ul>
-            </div>
-
-            <div class="glass rounded-xl p-5 card-hover">
-                <div class="flex items-center gap-3 mb-3">
-                    <div class="w-10 h-10 bg-green-500/20 rounded-lg flex items-center justify-center text-xl">⌨️</div>
-                    <h4 class="font-semibold text-white">Keyboard Shortcuts</h4>
-                </div>
-                <div class="grid grid-cols-2 gap-2 text-sm">
-                    <div class="flex items-center gap-2">
-                        <span class="px-2 py-0.5 bg-white/10 rounded font-mono text-white">L</span>
-                        <span class="text-white/70">Line</span>
+            <!-- Getting Started -->
+            <div class="glass rounded-xl overflow-hidden">
+                <button onclick="toggleGuide('guide-start')" class="w-full p-5 flex items-center justify-between hover:bg-white/5 transition-all">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 bg-blue-500/20 rounded-lg flex items-center justify-center text-xl">🚀</div>
+                        <h4 class="font-semibold text-white">Getting Started</h4>
                     </div>
-                    <div class="flex items-center gap-2">
-                        <span class="px-2 py-0.5 bg-white/10 rounded font-mono text-white">A</span>
-                        <span class="text-white/70">Area</span>
+                    <span id="guide-start-icon" class="text-white/50 transition-transform">▼</span>
+                </button>
+                <div id="guide-start" class="hidden px-5 pb-5 space-y-4 text-sm text-white/80 border-t border-white/10">
+                    <div class="pt-4">
+                        <h5 class="font-semibold text-blue-400 mb-2">📄 Uploading Your First Drawing</h5>
+                        <p class="mb-2">Drag & drop any PDF onto the main canvas, or click the <strong>Upload PDF</strong> button in the header.</p>
+                        <p class="text-white/60">Supported: PDF files up to 50MB. Multi-page drawings work great!</p>
                     </div>
-                    <div class="flex items-center gap-2">
-                        <span class="px-2 py-0.5 bg-white/10 rounded font-mono text-white">C</span>
-                        <span class="text-white/70">Count</span>
+                    <div>
+                        <h5 class="font-semibold text-blue-400 mb-2">📏 Setting the Scale</h5>
+                        <p class="mb-2">Click the <strong>📐 ruler icon</strong> in the toolbar to open calibration.</p>
+                        <ul class="list-disc list-inside text-white/60 space-y-1">
+                            <li><strong>Presets:</strong> Choose common scales like 1/4" = 1'-0"</li>
+                            <li><strong>Measure:</strong> Draw over a known dimension on the plan</li>
+                            <li><strong>Manual:</strong> Enter pixels-per-foot directly</li>
+                        </ul>
                     </div>
-                    <div class="flex items-center gap-2">
-                        <span class="px-2 py-0.5 bg-white/10 rounded font-mono text-white">S</span>
-                        <span class="text-white/70">Space</span>
+                    <div>
+                        <h5 class="font-semibold text-blue-400 mb-2">✏️ Your First Measurement</h5>
+                        <ol class="list-decimal list-inside text-white/60 space-y-1">
+                            <li>Press <kbd class="px-1 bg-white/10 rounded">L</kbd> for Line tool</li>
+                            <li>Click the start point on your drawing</li>
+                            <li>Click the end point - measurement appears!</li>
+                            <li>View measurements in the right panel</li>
+                        </ol>
                     </div>
-                    <div class="flex items-center gap-2">
-                        <span class="px-2 py-0.5 bg-white/10 rounded font-mono text-white">V</span>
-                        <span class="text-white/70">Select</span>
-                    </div>
-                    <div class="flex items-center gap-2">
-                        <span class="px-2 py-0.5 bg-white/10 rounded font-mono text-white">H</span>
-                        <span class="text-white/70">Pan</span>
-                    </div>
-                    <div class="flex items-center gap-2">
-                        <span class="px-2 py-0.5 bg-white/10 rounded font-mono text-white">Esc</span>
-                        <span class="text-white/70">Cancel</span>
-                    </div>
-                    <div class="flex items-center gap-2">
-                        <span class="px-2 py-0.5 bg-white/10 rounded font-mono text-white">Del</span>
-                        <span class="text-white/70">Delete</span>
+                    <div>
+                        <h5 class="font-semibold text-blue-400 mb-2">📥 Exporting to CSV</h5>
+                        <p class="text-white/60">Click <strong>Export CSV</strong> in the measurements panel. The file includes all measurements with JOC line items, quantities, and totals - ready for your proposal.</p>
                     </div>
                 </div>
             </div>
 
-            <div class="glass rounded-xl p-5 card-hover">
-                <div class="flex items-center gap-3 mb-3">
-                    <div class="w-10 h-10 bg-red-500/20 rounded-lg flex items-center justify-center text-xl">📏</div>
-                    <h4 class="font-semibold text-white">Scale & Calibration</h4>
+            <!-- Measurement Tools -->
+            <div class="glass rounded-xl overflow-hidden">
+                <button onclick="toggleGuide('guide-tools')" class="w-full p-5 flex items-center justify-between hover:bg-white/5 transition-all">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 bg-purple-500/20 rounded-lg flex items-center justify-center text-xl">📐</div>
+                        <h4 class="font-semibold text-white">Measurement Tools</h4>
+                    </div>
+                    <span id="guide-tools-icon" class="text-white/50 transition-transform">▼</span>
+                </button>
+                <div id="guide-tools" class="hidden px-5 pb-5 space-y-4 text-sm text-white/80 border-t border-white/10">
+                    <div class="pt-4">
+                        <h5 class="font-semibold text-purple-400 mb-2">📏 Line Tool (L) - Linear Feet</h5>
+                        <p class="text-white/60">Click start point → click end point. Perfect for walls, pipes, conduit, trim. Shows length in LF.</p>
+                    </div>
+                    <div>
+                        <h5 class="font-semibold text-purple-400 mb-2">⬛ Area Tool (A) - Square Feet</h5>
+                        <p class="text-white/60">Click to place polygon points. Double-click to close. Great for flooring, ceiling, paint areas. Shows area in SF.</p>
+                    </div>
+                    <div>
+                        <h5 class="font-semibold text-purple-400 mb-2">🔢 Count Tool (C) - Items</h5>
+                        <p class="text-white/60">Click to count items (lights, receptacles, fixtures). Each click adds a numbered marker. Double-click to finish.</p>
+                    </div>
+                    <div>
+                        <h5 class="font-semibold text-purple-400 mb-2">🏠 Space Tool (S) - Rooms</h5>
+                        <p class="text-white/60">Define room boundaries. Calculates both area AND perimeter. Name each space for finish schedules.</p>
+                    </div>
+                    <div>
+                        <h5 class="font-semibold text-purple-400 mb-2">⚡ Snap Feature</h5>
+                        <p class="mb-2 text-white/60">Snap helps you click precisely on existing points:</p>
+                        <ul class="list-disc list-inside text-white/60 space-y-1">
+                            <li><span class="text-green-400">●</span> Endpoints - existing measurement endpoints</li>
+                            <li><span class="text-blue-400">◆</span> Midpoints - center of lines</li>
+                            <li><span class="text-amber-400">✕</span> Intersections - where lines cross</li>
+                            <li><span class="text-purple-400">⊥</span> Perpendicular - 90° from lines</li>
+                        </ul>
+                        <p class="mt-2 text-white/60">Toggle snap types in the top-right corner of the canvas.</p>
+                    </div>
                 </div>
-                <ul class="space-y-2 text-sm text-white/70">
-                    <li class="flex items-center gap-2 hover:text-white cursor-pointer">
-                        <span class="text-red-400">→</span> Using Scale Presets
-                    </li>
-                    <li class="flex items-center gap-2 hover:text-white cursor-pointer">
-                        <span class="text-red-400">→</span> Manual Calibration
-                    </li>
-                    <li class="flex items-center gap-2 hover:text-white cursor-pointer">
-                        <span class="text-red-400">→</span> PDF DPI Settings
-                    </li>
-                    <li class="flex items-center gap-2 hover:text-white cursor-pointer">
-                        <span class="text-red-400">→</span> Troubleshooting Scale
-                    </li>
-                </ul>
             </div>
 
-            <div class="glass rounded-xl p-5 card-hover">
-                <div class="flex items-center gap-3 mb-3">
-                    <div class="w-10 h-10 bg-cyan-500/20 rounded-lg flex items-center justify-center text-xl">💡</div>
-                    <h4 class="font-semibold text-white">Tips & Best Practices</h4>
+            <!-- Translation & Catalogue -->
+            <div class="glass rounded-xl overflow-hidden">
+                <button onclick="toggleGuide('guide-translate')" class="w-full p-5 flex items-center justify-between hover:bg-white/5 transition-all">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 bg-amber-500/20 rounded-lg flex items-center justify-center text-xl">🔮</div>
+                        <h4 class="font-semibold text-white">Translation & Catalogue</h4>
+                    </div>
+                    <span id="guide-translate-icon" class="text-white/50 transition-transform">▼</span>
+                </button>
+                <div id="guide-translate" class="hidden px-5 pb-5 space-y-4 text-sm text-white/80 border-t border-white/10">
+                    <div class="pt-4">
+                        <h5 class="font-semibold text-amber-400 mb-2">🔮 Translation Machine</h5>
+                        <p class="mb-2 text-white/60">Click the <strong>🔮 Translate</strong> button in the header. Type plain English like:</p>
+                        <ul class="list-disc list-inside text-white/60 space-y-1">
+                            <li>"install 5/8 drywall ceiling"</li>
+                            <li>"4 inch copper pipe"</li>
+                            <li>"remove existing floor tile"</li>
+                        </ul>
+                        <p class="mt-2 text-white/60">JOCHero matches your description to 65,331 JOC catalogue items using synonyms and smart matching.</p>
+                    </div>
+                    <div>
+                        <h5 class="font-semibold text-amber-400 mb-2">🤖 Guided Estimation Assistant</h5>
+                        <p class="mb-2 text-white/60">Don't know the exact term? Click <strong>🤖 Guide Me</strong> on any unassigned measurement.</p>
+                        <p class="text-white/60">The chat assistant walks you through: Category → Subcategory → Specific item. No construction knowledge required!</p>
+                    </div>
+                    <div>
+                        <h5 class="font-semibold text-amber-400 mb-2">📚 Browsing the Catalogue</h5>
+                        <p class="text-white/60">Switch to "Browse" mode in the Translation Machine to explore by CSI division (01-49). Filter by division, search by task code, or scroll through items.</p>
+                    </div>
+                    <div>
+                        <h5 class="font-semibold text-amber-400 mb-2">🔗 Assigning Line Items</h5>
+                        <p class="text-white/60">Once you find the right item, click to assign it to your measurement. The unit cost multiplies by your quantity automatically.</p>
+                    </div>
                 </div>
-                <ul class="space-y-2 text-sm text-white/70">
-                    <li class="flex items-center gap-2 hover:text-white cursor-pointer">
-                        <span class="text-cyan-400">→</span> Organizing Multi-Page Drawings
-                    </li>
-                    <li class="flex items-center gap-2 hover:text-white cursor-pointer">
-                        <span class="text-cyan-400">→</span> Efficient Takeoff Workflow
-                    </li>
-                    <li class="flex items-center gap-2 hover:text-white cursor-pointer">
-                        <span class="text-cyan-400">→</span> Using Page Navigation
-                    </li>
-                    <li class="flex items-center gap-2 hover:text-white cursor-pointer">
-                        <span class="text-cyan-400">→</span> Preparing Your Proposal
-                    </li>
-                </ul>
+            </div>
+
+            <!-- Keyboard Shortcuts -->
+            <div class="glass rounded-xl overflow-hidden">
+                <button onclick="toggleGuide('guide-keys')" class="w-full p-5 flex items-center justify-between hover:bg-white/5 transition-all">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 bg-green-500/20 rounded-lg flex items-center justify-center text-xl">⌨️</div>
+                        <h4 class="font-semibold text-white">Keyboard Shortcuts</h4>
+                    </div>
+                    <span id="guide-keys-icon" class="text-white/50 transition-transform">▼</span>
+                </button>
+                <div id="guide-keys" class="hidden px-5 pb-5 text-sm border-t border-white/10">
+                    <div class="pt-4 grid grid-cols-2 gap-3">
+                        <div class="flex items-center gap-2">
+                            <kbd class="px-2 py-1 bg-white/10 rounded font-mono text-white min-w-[32px] text-center">L</kbd>
+                            <span class="text-white/70">Line Tool</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <kbd class="px-2 py-1 bg-white/10 rounded font-mono text-white min-w-[32px] text-center">A</kbd>
+                            <span class="text-white/70">Area Tool</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <kbd class="px-2 py-1 bg-white/10 rounded font-mono text-white min-w-[32px] text-center">C</kbd>
+                            <span class="text-white/70">Count Tool</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <kbd class="px-2 py-1 bg-white/10 rounded font-mono text-white min-w-[32px] text-center">S</kbd>
+                            <span class="text-white/70">Space Tool</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <kbd class="px-2 py-1 bg-white/10 rounded font-mono text-white min-w-[32px] text-center">V</kbd>
+                            <span class="text-white/70">Select</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <kbd class="px-2 py-1 bg-white/10 rounded font-mono text-white min-w-[32px] text-center">H</kbd>
+                            <span class="text-white/70">Pan/Hand</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <kbd class="px-2 py-1 bg-white/10 rounded font-mono text-white min-w-[32px] text-center">Esc</kbd>
+                            <span class="text-white/70">Cancel</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <kbd class="px-2 py-1 bg-white/10 rounded font-mono text-white min-w-[32px] text-center">Del</kbd>
+                            <span class="text-white/70">Delete</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <kbd class="px-2 py-1 bg-white/10 rounded font-mono text-white min-w-[32px] text-center">+/-</kbd>
+                            <span class="text-white/70">Zoom In/Out</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <kbd class="px-2 py-1 bg-white/10 rounded font-mono text-white min-w-[32px] text-center">0</kbd>
+                            <span class="text-white/70">Fit to Screen</span>
+                        </div>
+                    </div>
+                    <p class="mt-4 text-xs text-white/50">Pro tip: Keep your left hand on the keyboard for tool switching while your right hand clicks!</p>
+                </div>
+            </div>
+
+            <!-- Scale & Calibration -->
+            <div class="glass rounded-xl overflow-hidden">
+                <button onclick="toggleGuide('guide-scale')" class="w-full p-5 flex items-center justify-between hover:bg-white/5 transition-all">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 bg-red-500/20 rounded-lg flex items-center justify-center text-xl">📏</div>
+                        <h4 class="font-semibold text-white">Scale & Calibration</h4>
+                    </div>
+                    <span id="guide-scale-icon" class="text-white/50 transition-transform">▼</span>
+                </button>
+                <div id="guide-scale" class="hidden px-5 pb-5 space-y-4 text-sm text-white/80 border-t border-white/10">
+                    <div class="pt-4">
+                        <h5 class="font-semibold text-red-400 mb-2">📋 Using Scale Presets</h5>
+                        <p class="text-white/60 mb-2">If you know your drawing's scale (check the title block), use presets:</p>
+                        <div class="grid grid-cols-2 gap-2 text-xs text-white/60">
+                            <div>• 1/8" = 1'-0" (floor plans)</div>
+                            <div>• 1/4" = 1'-0" (standard)</div>
+                            <div>• 1/2" = 1'-0" (details)</div>
+                            <div>• 1" = 10' (site plans)</div>
+                        </div>
+                    </div>
+                    <div>
+                        <h5 class="font-semibold text-red-400 mb-2">📐 Manual Calibration</h5>
+                        <ol class="list-decimal list-inside text-white/60 space-y-1">
+                            <li>Find a dimension line with a known length (e.g., "10'-0"")</li>
+                            <li>Use the Line tool to trace that dimension</li>
+                            <li>Open Calibration → Measure tab</li>
+                            <li>Enter the real distance + measured pixels</li>
+                            <li>Scale is calculated automatically!</li>
+                        </ol>
+                    </div>
+                    <div>
+                        <h5 class="font-semibold text-red-400 mb-2">🖥️ PDF DPI Settings</h5>
+                        <p class="text-white/60">If scale seems off, try adjusting PDF DPI: 72 (standard), 96 (Windows), 150 (print), 300 (high-res). Most construction PDFs are 72 or 150.</p>
+                    </div>
+                    <div>
+                        <h5 class="font-semibold text-red-400 mb-2">🔧 Troubleshooting Scale</h5>
+                        <ul class="list-disc list-inside text-white/60 space-y-1">
+                            <li>Measurements too big? Increase pixels-per-foot</li>
+                            <li>Measurements too small? Decrease pixels-per-foot</li>
+                            <li>Always verify by measuring a known dimension</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tips & Best Practices -->
+            <div class="glass rounded-xl overflow-hidden">
+                <button onclick="toggleGuide('guide-tips')" class="w-full p-5 flex items-center justify-between hover:bg-white/5 transition-all">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 bg-cyan-500/20 rounded-lg flex items-center justify-center text-xl">💡</div>
+                        <h4 class="font-semibold text-white">Tips & Best Practices</h4>
+                    </div>
+                    <span id="guide-tips-icon" class="text-white/50 transition-transform">▼</span>
+                </button>
+                <div id="guide-tips" class="hidden px-5 pb-5 space-y-4 text-sm text-white/80 border-t border-white/10">
+                    <div class="pt-4">
+                        <h5 class="font-semibold text-cyan-400 mb-2">📑 Organizing Multi-Page Drawings</h5>
+                        <p class="text-white/60">Use the page navigation panel (left side) to jump between sheets. Thumbnail previews help you find the right page fast. Scale may vary between sheets - recalibrate if needed.</p>
+                    </div>
+                    <div>
+                        <h5 class="font-semibold text-cyan-400 mb-2">⚡ Efficient Takeoff Workflow</h5>
+                        <ol class="list-decimal list-inside text-white/60 space-y-1">
+                            <li>Set scale first (always!)</li>
+                            <li>Do all measurements of one type together</li>
+                            <li>Use keyboard shortcuts - don't click tools</li>
+                            <li>Assign JOC items in batches at the end</li>
+                            <li>Review totals before exporting</li>
+                        </ol>
+                    </div>
+                    <div>
+                        <h5 class="font-semibold text-cyan-400 mb-2">🎯 Accuracy Tips</h5>
+                        <ul class="list-disc list-inside text-white/60 space-y-1">
+                            <li>Zoom in for precise clicks</li>
+                            <li>Use Snap (⚡) to connect measurements</li>
+                            <li>Double-check scale with a known dimension</li>
+                            <li>Name your spaces clearly for the proposal</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h5 class="font-semibold text-cyan-400 mb-2">📤 Preparing Your Proposal</h5>
+                        <p class="text-white/60">Before exporting: verify all measurements have JOC items assigned, check the coefficient/multiplier, review the Summary tab for totals. Export generates a clean CSV ready for your JOC proposal template.</p>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -633,6 +741,34 @@
     </footer>
 
     <script>
+        // Toggle guide accordion
+        function toggleGuide(id) {
+            const content = document.getElementById(id);
+            const icon = document.getElementById(id + '-icon');
+            const isHidden = content.classList.contains('hidden');
+            
+            // Close all other guides
+            document.querySelectorAll('[id^="guide-"]:not([id$="-icon"])').forEach(el => {
+                if (el.id !== id) {
+                    el.classList.add('hidden');
+                }
+            });
+            document.querySelectorAll('[id$="-icon"]').forEach(el => {
+                if (el.id !== id + '-icon') {
+                    el.style.transform = 'rotate(0deg)';
+                }
+            });
+            
+            // Toggle clicked guide
+            if (isHidden) {
+                content.classList.remove('hidden');
+                icon.style.transform = 'rotate(180deg)';
+            } else {
+                content.classList.add('hidden');
+                icon.style.transform = 'rotate(0deg)';
+            }
+        }
+
         // Check if user is logged in
         const token = localStorage.getItem('jochero_token');
         const user = localStorage.getItem('jochero_user');
