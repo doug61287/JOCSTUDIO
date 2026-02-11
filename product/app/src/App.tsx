@@ -108,6 +108,15 @@ function App() {
             <span className="hidden sm:inline">Upload PDF</span>
           </button>
           
+          {/* Help Link */}
+          <Link
+            to="/help"
+            className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-white/10 text-white/60"
+            title="Help & Guides"
+          >
+            ❓
+          </Link>
+          
           {/* Insights Dashboard Link */}
           <Link
             to="/insights"
