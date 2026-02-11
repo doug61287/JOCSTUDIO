@@ -92,6 +92,10 @@ export function PDFViewer() {
     loadPDF();
   }, [project?.pdfUrl, thumbSize]);
 
+  // Maximum render scale to prevent canvas size issues
+  const MAX_RENDER_SCALE = 2.5;
+  const [cssScale, setCssScale] = useState(1);
+
   // Render current page with fit-to-container on first load
   useEffect(() => {
     if (!pdfDoc || !canvasRef.current || !viewerRef.current) return;
@@ -118,8 +122,14 @@ export function PDFViewer() {
           setInitialFitDone(true);
         }
         
-        // Render at the zoom level (zoom = 1 means 100% of PDF's natural size)
-        const viewport = page.getViewport({ scale: effectiveZoom });
+        // Cap render scale to prevent canvas size issues
+        // Use CSS transform for zoom beyond the cap
+        const renderScale = Math.min(effectiveZoom, MAX_RENDER_SCALE);
+        const extraScale = effectiveZoom / renderScale;
+        setCssScale(extraScale);
+        
+        // Render at capped scale
+        const viewport = page.getViewport({ scale: renderScale });
         
         const canvas = canvasRef.current!;
         const context = canvas.getContext('2d')!;
@@ -127,7 +137,11 @@ export function PDFViewer() {
         canvas.width = viewport.width;
         canvas.height = viewport.height;
         
-        setDimensions({ width: viewport.width, height: viewport.height });
+        // Dimensions reflect the VISUAL size (with CSS scaling)
+        setDimensions({ 
+          width: viewport.width * extraScale, 
+          height: viewport.height * extraScale 
+        });
         
         await page.render({
           canvasContext: context,
@@ -338,8 +352,22 @@ export function PDFViewer() {
         >
           <div className="inline-block min-w-full min-h-full">
             <div className="flex items-start justify-center p-6">
-              <div className="pdf-container relative shadow-2xl overflow-hidden bg-white">
-                <canvas ref={canvasRef} className="pdf-canvas block" />
+              <div 
+              className="pdf-container relative shadow-2xl bg-white"
+              style={{ 
+                width: dimensions.width, 
+                height: dimensions.height,
+                overflow: 'hidden'
+              }}
+            >
+                <canvas 
+                  ref={canvasRef} 
+                  className="pdf-canvas block" 
+                  style={{ 
+                    transform: cssScale > 1 ? `scale(${cssScale})` : undefined,
+                    transformOrigin: 'top left'
+                  }}
+                />
                 {dimensions.width > 0 && dimensions.height > 0 && (
                   <MeasurementCanvas width={dimensions.width} height={dimensions.height} />
                 )}
