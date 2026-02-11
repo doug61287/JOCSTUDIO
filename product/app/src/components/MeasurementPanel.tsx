@@ -21,7 +21,7 @@ export function MeasurementPanel() {
   const [showJOCSearch, setShowJOCSearch] = useState<string | null>(null);
   const [showAssistant, setShowAssistant] = useState<Measurement | null>(null);
   const [activeTab, setActiveTab] = useState<'measurements' | 'summary'>('measurements');
-  const [expandedGroups, setExpandedGroups] = useState<Set<string>>(new Set(['line', 'count', 'area']));
+  const [expandedGroups, setExpandedGroups] = useState<Set<string>>(new Set(['line', 'polyline', 'count', 'area']));
 
   const searchResults = useMemo(() => {
     if (!searchQuery) return [];
@@ -131,10 +131,11 @@ export function MeasurementPanel() {
 
   if (!project) return null;
 
-  const groupLabels = {
-    line: { icon: '📏', label: 'Linear Measurements', unit: 'LF' },
-    count: { icon: '🔢', label: 'Item Counts', unit: 'EA' },
-    area: { icon: '⬛', label: 'Area Measurements', unit: 'SF' },
+  const groupLabels: Record<string, { icon: string; label: string; unit: string }> = {
+    line: { icon: '📏', label: 'Linear (Single)', unit: 'LF' },
+    polyline: { icon: '📐', label: 'Linear (Multi-Segment)', unit: 'LF' },
+    count: { icon: '🔢', label: 'Counts', unit: 'EA' },
+    area: { icon: '⬛', label: 'Areas', unit: 'SF' },
     space: { icon: '🏠', label: 'Spaces / Rooms', unit: 'SF' },
   };
 
