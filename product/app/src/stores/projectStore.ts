@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import type { Project, Measurement, Tool, JOCItem } from '../types';
+import type { Project, Measurement, MeasurementGroup, Tool, JOCItem } from '../types';
 
 interface ProjectState {
   project: Project | null;
@@ -19,6 +19,11 @@ interface ProjectState {
   selectMeasurement: (id: string | null) => void;
   assignJOCItem: (measurementId: string, item: JOCItem) => void;
   setCoefficient: (coef: number) => void;
+  // Group actions
+  addGroup: (group: MeasurementGroup) => void;
+  updateGroup: (id: string, updates: Partial<MeasurementGroup>) => void;
+  deleteGroup: (id: string) => void;
+  assignToGroup: (measurementId: string, groupId: string | undefined) => void;
 }
 
 export const useProjectStore = create<ProjectState>((set) => ({
@@ -27,6 +32,7 @@ export const useProjectStore = create<ProjectState>((set) => ({
     name: 'New Project',
     scale: 10, // 10 pixels = 1 foot default
     measurements: [],
+    groups: [],
     coefficient: 1.0,
     createdAt: new Date(),
   },
@@ -85,5 +91,42 @@ export const useProjectStore = create<ProjectState>((set) => ({
   
   setCoefficient: (coef) => set((state) => ({
     project: state.project ? { ...state.project, coefficient: coef } : null
+  })),
+
+  // Group management
+  addGroup: (group) => set((state) => ({
+    project: state.project ? {
+      ...state.project,
+      groups: [...state.project.groups, group]
+    } : null
+  })),
+
+  updateGroup: (id, updates) => set((state) => ({
+    project: state.project ? {
+      ...state.project,
+      groups: state.project.groups.map((g) =>
+        g.id === id ? { ...g, ...updates } : g
+      )
+    } : null
+  })),
+
+  deleteGroup: (id) => set((state) => ({
+    project: state.project ? {
+      ...state.project,
+      groups: state.project.groups.filter((g) => g.id !== id),
+      // Unassign measurements from deleted group
+      measurements: state.project.measurements.map((m) =>
+        m.groupId === id ? { ...m, groupId: undefined } : m
+      )
+    } : null
+  })),
+
+  assignToGroup: (measurementId, groupId) => set((state) => ({
+    project: state.project ? {
+      ...state.project,
+      measurements: state.project.measurements.map((m) =>
+        m.id === measurementId ? { ...m, groupId } : m
+      )
+    } : null
   })),
 }));

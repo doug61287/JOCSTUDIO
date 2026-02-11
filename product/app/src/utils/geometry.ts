@@ -18,6 +18,17 @@ export function calculateLineLength(points: Point[], scale: number): number {
   return pixelsToFeet(pixelLength, scale);
 }
 
+export function calculatePolylineLength(points: Point[], scale: number): number {
+  if (points.length < 2) return 0;
+  
+  let totalLength = 0;
+  for (let i = 0; i < points.length - 1; i++) {
+    totalLength += distance(points[i], points[i + 1]);
+  }
+  
+  return pixelsToFeet(totalLength, scale);
+}
+
 export function calculatePolygonArea(points: Point[], scale: number): number {
   if (points.length < 3) return 0;
   
@@ -56,9 +67,10 @@ export function generateId(): string {
   return Math.random().toString(36).substring(2, 11);
 }
 
-export function getMeasurementColor(type: 'line' | 'count' | 'area' | 'space'): string {
+export function getMeasurementColor(type: 'line' | 'polyline' | 'count' | 'area' | 'space'): string {
   switch (type) {
     case 'line': return '#3B82F6'; // Blue
+    case 'polyline': return '#06B6D4'; // Cyan
     case 'count': return '#10B981'; // Green
     case 'area': return '#F59E0B'; // Orange
     case 'space': return '#8B5CF6'; // Purple

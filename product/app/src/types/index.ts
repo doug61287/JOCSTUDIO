@@ -5,17 +5,26 @@ export interface Point {
 
 export interface Measurement {
   id: string;
-  type: 'line' | 'count' | 'area' | 'space';
+  type: 'line' | 'polyline' | 'count' | 'area' | 'space';
   points: Point[];
   value: number; // LF for lines, count for counts, SF for areas/spaces
   unit: string;
   label?: string;
   jocItem?: JOCItem;
   color: string;
+  groupId?: string; // Reference to parent group
   // Space-specific fields
   spaceName?: string;
   perimeter?: number; // LF for spaces
   finishes?: SpaceFinish[];
+}
+
+export interface MeasurementGroup {
+  id: string;
+  name: string;
+  color: string;
+  expanded: boolean;
+  order: number;
 }
 
 export interface SpaceFinish {
@@ -43,8 +52,9 @@ export interface Project {
   pdfUrl?: string;
   scale: number; // pixels per foot
   measurements: Measurement[];
+  groups: MeasurementGroup[];
   coefficient: number;
   createdAt: Date;
 }
 
-export type Tool = 'select' | 'pan' | 'text' | 'line' | 'count' | 'area' | 'space' | 'calibrate';
+export type Tool = 'select' | 'pan' | 'text' | 'line' | 'polyline' | 'count' | 'area' | 'space' | 'calibrate';

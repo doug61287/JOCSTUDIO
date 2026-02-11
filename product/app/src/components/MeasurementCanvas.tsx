@@ -7,7 +7,8 @@ import {
   generateId, 
   getMeasurementColor,
   calculatePolygonArea,
-  calculatePolygonPerimeter
+  calculatePolygonPerimeter,
+  calculatePolylineLength
 } from '../utils/geometry';
 import {
   applySnap,
@@ -93,23 +94,104 @@ export function MeasurementCanvas({ width, height }: MeasurementCanvasProps) {
         ctx.fillText(`${m.value.toFixed(1)} LF`, midX + 10, midY - 10);
       }
       
-      if (m.type === 'count') {
+      // Draw polyline (multi-segment line for perimeters)
+      if (m.type === 'polyline' && m.points.length >= 2) {
+        ctx.strokeStyle = isSelected ? '#FFD700' : m.color;
+        ctx.lineWidth = isSelected ? 4 : 3;
+        ctx.setLineDash([]);
+        
+        // Draw the polyline segments
+        ctx.beginPath();
+        ctx.moveTo(m.points[0].x, m.points[0].y);
+        m.points.slice(1).forEach((p) => ctx.lineTo(p.x, p.y));
+        ctx.stroke();
+        
+        // Draw vertices with segment lengths
         m.points.forEach((p, idx) => {
-          ctx.fillStyle = m.color + '40';
-          ctx.strokeStyle = isSelected ? '#FFD700' : m.color;
-          ctx.lineWidth = isSelected ? 3 : 2;
+          // Draw vertex marker
           ctx.beginPath();
-          ctx.arc(p.x, p.y, 12, 0, Math.PI * 2);
+          ctx.arc(p.x, p.y, 6, 0, Math.PI * 2);
+          ctx.fillStyle = m.color;
           ctx.fill();
+          ctx.strokeStyle = 'white';
+          ctx.lineWidth = 2;
           ctx.stroke();
           
-          // Draw number
-          ctx.font = 'bold 12px sans-serif';
+          // Draw segment length label
+          if (idx < m.points.length - 1 && project) {
+            const nextP = m.points[idx + 1];
+            const segLen = pixelsToFeet(distance(p, nextP), project.scale);
+            const midX = (p.x + nextP.x) / 2;
+            const midY = (p.y + nextP.y) / 2;
+            
+            ctx.font = 'bold 11px sans-serif';
+            ctx.fillStyle = m.color;
+            ctx.strokeStyle = 'rgba(0,0,0,0.8)';
+            ctx.lineWidth = 3;
+            ctx.textAlign = 'center';
+            ctx.strokeText(`${segLen.toFixed(1)}'`, midX, midY - 8);
+            ctx.fillText(`${segLen.toFixed(1)}'`, midX, midY - 8);
+          }
+        });
+        
+        // Draw total length badge at end
+        const lastP = m.points[m.points.length - 1];
+        ctx.font = 'bold 13px sans-serif';
+        ctx.fillStyle = 'white';
+        ctx.strokeStyle = m.color;
+        ctx.lineWidth = 1;
+        
+        // Badge background
+        const totalText = `Total: ${m.value.toFixed(1)} LF`;
+        const textWidth = ctx.measureText(totalText).width;
+        ctx.fillStyle = m.color;
+        ctx.fillRect(lastP.x + 10, lastP.y - 20, textWidth + 12, 22);
+        ctx.fillStyle = 'white';
+        ctx.textAlign = 'left';
+        ctx.fillText(totalText, lastP.x + 16, lastP.y - 5);
+      }
+      
+      // Draw count markers (Kreo-style)
+      if (m.type === 'count') {
+        m.points.forEach((p, idx) => {
+          // Outer ring
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, 14, 0, Math.PI * 2);
+          ctx.fillStyle = m.color + '30';
+          ctx.fill();
+          ctx.strokeStyle = isSelected ? '#FFD700' : m.color;
+          ctx.lineWidth = isSelected ? 3 : 2;
+          ctx.stroke();
+          
+          // Inner circle
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, 8, 0, Math.PI * 2);
+          ctx.fillStyle = m.color;
+          ctx.fill();
+          
+          // Number
+          ctx.font = 'bold 11px sans-serif';
           ctx.fillStyle = 'white';
           ctx.textAlign = 'center';
           ctx.textBaseline = 'middle';
           ctx.fillText(String(idx + 1), p.x, p.y);
         });
+        
+        // Draw count badge
+        if (m.points.length > 0) {
+          const lastP = m.points[m.points.length - 1];
+          ctx.font = 'bold 12px sans-serif';
+          const countText = `${m.value} EA`;
+          const textWidth = ctx.measureText(countText).width;
+          
+          // Badge background
+          ctx.fillStyle = m.color;
+          ctx.fillRect(lastP.x + 16, lastP.y - 12, textWidth + 10, 20);
+          ctx.fillStyle = 'white';
+          ctx.textAlign = 'left';
+          ctx.textBaseline = 'middle';
+          ctx.fillText(countText, lastP.x + 21, lastP.y - 2);
+        }
       }
       
       if (m.type === 'area' && m.points.length >= 3) {
@@ -190,7 +272,7 @@ export function MeasurementCanvas({ width, height }: MeasurementCanvasProps) {
     
     // Draw temporary points and preview
     if (tempPoints.length > 0 || mousePos) {
-      const currentColor = getMeasurementColor(activeTool as 'line' | 'count' | 'area' | 'space');
+      const currentColor = getMeasurementColor(activeTool as 'line' | 'polyline' | 'count' | 'area' | 'space');
       ctx.strokeStyle = currentColor;
       ctx.fillStyle = currentColor + '40';
       ctx.lineWidth = 2;
@@ -218,6 +300,79 @@ export function MeasurementCanvas({ width, height }: MeasurementCanvasProps) {
         ctx.lineWidth = 3;
         ctx.strokeText(`${feet.toFixed(1)} LF`, displayPos.x + 15, displayPos.y - 15);
         ctx.fillText(`${feet.toFixed(1)} LF`, displayPos.x + 15, displayPos.y - 15);
+      }
+      
+      // Polyline preview
+      if (activeTool === 'polyline' && tempPoints.length > 0) {
+        const polyColor = getMeasurementColor('polyline');
+        ctx.strokeStyle = polyColor;
+        ctx.lineWidth = 3;
+        
+        // Draw existing segments
+        ctx.beginPath();
+        ctx.moveTo(tempPoints[0].x, tempPoints[0].y);
+        tempPoints.slice(1).forEach((p) => ctx.lineTo(p.x, p.y));
+        if (displayPos) ctx.lineTo(displayPos.x, displayPos.y);
+        ctx.stroke();
+        
+        // Draw vertices
+        tempPoints.forEach((p, idx) => {
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, 6, 0, Math.PI * 2);
+          ctx.fillStyle = polyColor;
+          ctx.fill();
+          ctx.strokeStyle = 'white';
+          ctx.lineWidth = 2;
+          ctx.stroke();
+          
+          // Segment length
+          if (idx < tempPoints.length - 1) {
+            const nextP = tempPoints[idx + 1];
+            const segLen = pixelsToFeet(distance(p, nextP), project.scale);
+            const midX = (p.x + nextP.x) / 2;
+            const midY = (p.y + nextP.y) / 2;
+            ctx.font = 'bold 11px sans-serif';
+            ctx.fillStyle = polyColor;
+            ctx.textAlign = 'center';
+            ctx.fillText(`${segLen.toFixed(1)}'`, midX, midY - 8);
+          }
+        });
+        
+        // Current segment length preview
+        if (displayPos && tempPoints.length > 0) {
+          const lastP = tempPoints[tempPoints.length - 1];
+          const currLen = pixelsToFeet(distance(lastP, displayPos), project.scale);
+          ctx.font = 'bold 11px sans-serif';
+          ctx.fillStyle = polyColor;
+          ctx.textAlign = 'center';
+          const midX = (lastP.x + displayPos.x) / 2;
+          const midY = (lastP.y + displayPos.y) / 2;
+          ctx.fillText(`${currLen.toFixed(1)}'`, midX, midY - 8);
+        }
+        
+        // Total length badge
+        let totalLen = calculatePolylineLength(tempPoints, project.scale);
+        if (displayPos && tempPoints.length > 0) {
+          totalLen += pixelsToFeet(distance(tempPoints[tempPoints.length - 1], displayPos), project.scale);
+        }
+        
+        const badgeX = displayPos?.x || tempPoints[tempPoints.length - 1].x;
+        const badgeY = displayPos?.y || tempPoints[tempPoints.length - 1].y;
+        const totalText = `Total: ${totalLen.toFixed(1)} LF`;
+        const textWidth = ctx.measureText(totalText).width;
+        
+        ctx.fillStyle = polyColor;
+        ctx.fillRect(badgeX + 12, badgeY - 18, textWidth + 12, 22);
+        ctx.fillStyle = 'white';
+        ctx.textAlign = 'left';
+        ctx.font = 'bold 12px sans-serif';
+        ctx.fillText(totalText, badgeX + 18, badgeY - 3);
+        
+        // Instructions
+        ctx.font = '11px sans-serif';
+        ctx.fillStyle = 'rgba(255,255,255,0.7)';
+        ctx.textAlign = 'center';
+        ctx.fillText('Double-click to complete', badgeX, badgeY + 20);
       }
       
       if ((activeTool === 'area' || activeTool === 'space') && tempPoints.length > 0) {
@@ -365,8 +520,28 @@ export function MeasurementCanvas({ width, height }: MeasurementCanvasProps) {
       }
     }
     
-    if (activeTool === 'count') {
+    // Polyline: add points, double-click to complete
+    if (activeTool === 'polyline') {
       setTempPoints([...tempPoints, point]);
+    }
+    
+    // Count: each click adds a marker
+    if (activeTool === 'count') {
+      // Add point immediately
+      const newPoints = [...tempPoints, point];
+      setTempPoints(newPoints);
+      
+      // Auto-save after each click (Kreo-style: each click = 1 count item)
+      const measurement: Measurement = {
+        id: generateId(),
+        type: 'count',
+        points: [point],
+        value: 1,
+        unit: 'EA',
+        color: getMeasurementColor('count'),
+      };
+      addMeasurement(measurement);
+      setTempPoints([]); // Reset for next count
     }
     
     if (activeTool === 'area') {
@@ -379,14 +554,16 @@ export function MeasurementCanvas({ width, height }: MeasurementCanvasProps) {
   }, [activeTool, tempPoints, project, addMeasurement, selectMeasurement, getSnappedPoint]);
 
   const handleDoubleClick = useCallback(() => {
-    if (activeTool === 'count' && tempPoints.length > 0) {
+    // Polyline: complete the multi-segment line
+    if (activeTool === 'polyline' && tempPoints.length >= 2) {
+      const totalLength = calculatePolylineLength(tempPoints, project!.scale);
       const measurement: Measurement = {
         id: generateId(),
-        type: 'count',
+        type: 'polyline',
         points: tempPoints,
-        value: tempPoints.length,
-        unit: 'EA',
-        color: getMeasurementColor('count'),
+        value: totalLength,
+        unit: 'LF',
+        color: getMeasurementColor('polyline'),
       };
       addMeasurement(measurement);
       setTempPoints([]);
