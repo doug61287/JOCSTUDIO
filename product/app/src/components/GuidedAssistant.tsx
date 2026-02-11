@@ -1,447 +1,349 @@
-/**
- * Guided Estimation Assistant
- * Conversational line item selection with learning
- */
-
-import { useState, useEffect, useRef, useCallback } from 'react';
-import { decisionTree, matchKeywords, TreeNode } from '../data/decisionTree';
-import { jocCatalogue, JOCItem } from '../data/jocCatalogue';
-
-interface Message {
-  id: string;
-  type: 'assistant' | 'user' | 'options' | 'result';
-  content: string;
-  options?: TreeNode[];
-  items?: JOCItem[];
-  timestamp: Date;
-}
+import { useState, useCallback, useMemo } from 'react';
+import { catalogueTree, TreeNode, CSI_DIVISIONS } from '../data/catalogueTree';
 
 interface GuidedAssistantProps {
-  measurementId: string;
-  measurementType: 'line' | 'count' | 'area' | 'space';
-  measurementValue: number;
+  measurementId?: string;
+  measurementType?: 'line' | 'count' | 'area' | 'space';
+  measurementValue?: number;
   measurementLabel?: string;
-  onSelect: (item: JOCItem) => void;
+  onSelect: (item: {
+    taskCode: string;
+    description: string;
+    unit: string;
+    unitCost: number;
+  }) => void;
   onClose: () => void;
 }
 
-const API_URL = 'https://web-production-309c2.up.railway.app';
-
-export function GuidedAssistant({
-  measurementId,
-  measurementType,
-  measurementValue,
-  measurementLabel,
-  onSelect,
-  onClose,
-}: GuidedAssistantProps) {
-  const [messages, setMessages] = useState<Message[]>([]);
-  const [, setCurrentNode] = useState<TreeNode>(decisionTree);
-  const [path, setPath] = useState<TreeNode[]>([decisionTree]);
-  const [inputValue, setInputValue] = useState('');
-  const [loading, setLoading] = useState(false);
-  const messagesEndRef = useRef<HTMLDivElement>(null);
-
-  // Scroll to bottom on new messages
-  useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages]);
-
-  // Initial greeting
-  useEffect(() => {
-    const unitLabel = measurementType === 'line' ? 'LF' : measurementType === 'area' ? 'SF' : 'EA';
-    const greeting = measurementLabel 
-      ? `I see you have "${measurementLabel}" - ${measurementValue.toFixed(1)} ${unitLabel}. Let's find the right JOC item!`
-      : `I see you have a ${measurementType} measurement of ${measurementValue.toFixed(1)} ${unitLabel}. Let's find the right JOC item!`;
-    
-    setMessages([
-      {
-        id: '1',
-        type: 'assistant',
-        content: greeting,
-        timestamp: new Date(),
-      },
-      {
-        id: '2',
-        type: 'options',
-        content: decisionTree.question || 'What are you measuring?',
-        options: decisionTree.children,
-        timestamp: new Date(),
-      },
-    ]);
-  }, [measurementType, measurementValue, measurementLabel]);
-
-  // Handle option selection
-  const handleOptionSelect = useCallback((node: TreeNode) => {
-    // Add user selection message
-    setMessages(prev => [...prev, {
-      id: `user-${Date.now()}`,
-      type: 'user',
-      content: `${node.icon || ''} ${node.label}`.trim(),
-      timestamp: new Date(),
-    }]);
-
-    const newPath = [...path, node];
-    setPath(newPath);
-    setCurrentNode(node);
-
-    // If node has children, show next question
-    if (node.children && node.children.length > 0) {
-      setTimeout(() => {
-        setMessages(prev => [...prev, {
-          id: `options-${Date.now()}`,
-          type: 'options',
-          content: node.question || 'What type?',
-          options: node.children,
-          timestamp: new Date(),
-        }]);
-      }, 300);
-    }
-    // If node has JOC codes, fetch and show items
-    else if (node.jocCodes && node.jocCodes.length > 0) {
-      showJOCItems(node.jocCodes, newPath);
-    }
-    // If it's the "Other" option, prompt for search
-    else if (node.id === 'other') {
-      setMessages(prev => [...prev, {
-        id: `search-${Date.now()}`,
-        type: 'assistant',
-        content: 'Type what you\'re looking for and I\'ll search the catalogue...',
-        timestamp: new Date(),
-      }]);
-    }
-  }, [path]);
-
-  // Show JOC items for selected codes
-  const showJOCItems = async (jocCodes: string[], nodePath: TreeNode[]) => {
-    setLoading(true);
-    
-    // First try to find items in local catalogue
-    let items: JOCItem[] = jocCatalogue.filter(item => 
-      jocCodes.some(code => item.taskCode.startsWith(code.replace(/-\d+$/, '')))
-    );
-
-    // If not found locally, search via API
-    if (items.length === 0) {
-      try {
-        // Get keywords from path
-        const keywords = nodePath.flatMap(n => n.keywords || []).join(' ');
-        const res = await fetch(`${API_URL}/catalogue/search?q=${encodeURIComponent(keywords)}&limit=10`);
-        const data = await res.json();
-        if (data.success) {
-          items = data.data.items;
+// Derive a friendly name from code and first item
+function getNodeDisplayName(node: TreeNode): string {
+  if (node.isItem) {
+    return node.name;
+  }
+  
+  // If it's a division, use CSI name
+  if (node.code.length === 2) {
+    return CSI_DIVISIONS[node.code] || node.name;
+  }
+  
+  // For sections/subsections, try to derive from first child item
+  if (node.children && node.children.length > 0) {
+    // Find first actual item in this branch
+    const findFirstItem = (n: TreeNode): TreeNode | null => {
+      if (n.isItem) return n;
+      if (n.children) {
+        for (const child of n.children) {
+          const found = findFirstItem(child);
+          if (found) return found;
         }
-      } catch (e) {
-        console.error('API search failed:', e);
       }
-    }
-
-    setLoading(false);
-
-    if (items.length > 0) {
-      setMessages(prev => [...prev, {
-        id: `result-${Date.now()}`,
-        type: 'result',
-        content: `Found ${items.length} matching items:`,
-        items,
-        timestamp: new Date(),
-      }]);
-    } else {
-      setMessages(prev => [...prev, {
-        id: `noresult-${Date.now()}`,
-        type: 'assistant',
-        content: 'No exact matches found. Try describing what you need:',
-        timestamp: new Date(),
-      }]);
-    }
-  };
-
-  // Handle free-text search
-  const handleSearch = async () => {
-    if (!inputValue.trim()) return;
-
-    const query = inputValue.trim();
-    setInputValue('');
-
-    // Add user message
-    setMessages(prev => [...prev, {
-      id: `user-${Date.now()}`,
-      type: 'user',
-      content: query,
-      timestamp: new Date(),
-    }]);
-
-    // Check if keywords match any tree node
-    const matchedNodes = matchKeywords(query);
-    if (matchedNodes.length > 0 && matchedNodes[0].jocCodes) {
-      // Found a specific match in tree
-      const node = matchedNodes[0];
-      setTimeout(() => {
-        setMessages(prev => [...prev, {
-          id: `match-${Date.now()}`,
-          type: 'assistant',
-          content: `Looks like "${node.label}"! Let me find those items...`,
-          timestamp: new Date(),
-        }]);
-        showJOCItems(node.jocCodes!, [...path, node]);
-      }, 300);
-      return;
-    }
-
-    // Otherwise, use translation API
-    setLoading(true);
-    try {
-      const res = await fetch(`${API_URL}/catalogue/translate`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ description: query, limit: 10 }),
-      });
-      const data = await res.json();
-      
-      if (data.success && data.data.items.length > 0) {
-        setMessages(prev => [...prev, {
-          id: `result-${Date.now()}`,
-          type: 'result',
-          content: `Found ${data.data.items.length} items matching "${query}":`,
-          items: data.data.items,
-          timestamp: new Date(),
-        }]);
-      } else {
-        setMessages(prev => [...prev, {
-          id: `noresult-${Date.now()}`,
-          type: 'assistant',
-          content: 'No matches found. Try different keywords or select from the categories above.',
-          timestamp: new Date(),
-        }]);
-      }
-    } catch (e) {
-      console.error('Translation API failed:', e);
-      setMessages(prev => [...prev, {
-        id: `error-${Date.now()}`,
-        type: 'assistant',
-        content: 'Sorry, search failed. Please try selecting from the categories.',
-        timestamp: new Date(),
-      }]);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // Handle item selection
-  const handleItemSelect = async (item: JOCItem) => {
-    // Generate or get session ID
-    let sessionId = localStorage.getItem('jochero_session_id');
-    if (!sessionId) {
-      sessionId = `session-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-      localStorage.setItem('jochero_session_id', sessionId);
-    }
-    
-    // Calculate time to select (from component mount)
-    const timeToSelect = Date.now() - (window as any).__assistantStartTime || 0;
-    
-    // Build training data
-    const trainingData = {
-      sessionId,
-      measurementId,
-      measurementType,
-      measurementValue,
-      measurementLabel: measurementLabel || undefined,
-      path: path.map(n => n.id),
-      keywords: inputValue ? inputValue.split(/\s+/).filter(w => w.length >= 2) : [],
-      selectedTaskCode: item.taskCode,
-      selectedDescription: item.description,
-      selectedUnit: item.unit,
-      selectedUnitCost: item.unitCost,
-      alternativesShown: messages
-        .filter(m => m.type === 'result' && m.items)
-        .flatMap(m => m.items?.map(i => i.taskCode) || [])
-        .slice(0, 10),
-      timeToSelect,
+      return null;
     };
     
-    // Store locally as backup
-    const logs = JSON.parse(localStorage.getItem('jochero_selections') || '[]');
-    logs.push({ ...trainingData, timestamp: new Date().toISOString() });
-    localStorage.setItem('jochero_selections', JSON.stringify(logs.slice(-100))); // Keep last 100
-    
-    // Send to backend API (fire and forget)
-    try {
-      fetch(`${API_URL}/training/selections`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(trainingData),
-      }).catch(e => console.warn('Training API error:', e));
-    } catch (e) {
-      // Silently fail - training is not critical
-    }
-    
-    console.log('Training selection logged:', trainingData);
-    
-    // Call the onSelect callback
-    onSelect(item);
-  };
-  
-  // Track start time for timing
-  useEffect(() => {
-    (window as any).__assistantStartTime = Date.now();
-  }, []);
-
-  // Go back in the path
-  const handleBack = () => {
-    if (path.length > 1) {
-      const newPath = path.slice(0, -1);
-      const parentNode = newPath[newPath.length - 1];
-      setPath(newPath);
-      setCurrentNode(parentNode);
+    const firstItem = findFirstItem(node);
+    if (firstItem && firstItem.name) {
+      // Extract key terms from the item name
+      const name = firstItem.name;
       
-      // Remove last assistant/options message and show parent options
-      setMessages(prev => {
-        const filtered = prev.slice(0, -2);
-        return [...filtered, {
-          id: `options-${Date.now()}`,
-          type: 'options',
-          content: parentNode.question || 'What are you measuring?',
-          options: parentNode.children,
-          timestamp: new Date(),
-        }];
+      // For storefronts, doors, etc - use descriptive prefix
+      if (name.includes('Aluminum') && name.includes('Storefront')) {
+        return 'Aluminum-Framed Storefronts';
+      }
+      if (name.includes('Stainless') && name.includes('Storefront')) {
+        return 'Stainless Steel-Framed Storefronts';
+      }
+      
+      // Truncate long names
+      if (name.length > 40) {
+        return name.substring(0, 37) + '...';
+      }
+      return name;
+    }
+  }
+  
+  return node.name;
+}
+
+// Get emoji for division
+function getDivisionEmoji(code: string): string {
+  const emojis: Record<string, string> = {
+    '01': '📋', // General Requirements
+    '02': '🏚️', // Existing Conditions (Demo)
+    '03': '🧱', // Concrete
+    '04': '🧱', // Masonry
+    '05': '🔩', // Metals
+    '06': '🪵', // Wood
+    '07': '🌡️', // Thermal
+    '08': '🚪', // Openings
+    '09': '🎨', // Finishes
+    '10': '🔧', // Specialties
+    '11': '⚙️', // Equipment
+    '12': '🪑', // Furnishings
+    '13': '🏗️', // Special Construction
+    '14': '🛗', // Conveying
+    '21': '🔥', // Fire Suppression
+    '22': '🚿', // Plumbing
+    '23': '❄️', // HVAC
+    '25': '🤖', // Automation
+    '26': '⚡', // Electrical
+    '27': '📡', // Communications
+    '28': '🔒', // Security
+    '31': '⛏️', // Earthwork
+    '32': '🌳', // Exterior
+    '33': '🔌', // Utilities
+    '34': '🚗', // Transportation
+    '35': '🚢', // Marine
+  };
+  return emojis[code] || '📦';
+}
+
+export function GuidedAssistant({ onSelect, onClose, measurementLabel }: GuidedAssistantProps) {
+  const [path, setPath] = useState<TreeNode[]>([catalogueTree]);
+  const [searchTerm, setSearchTerm] = useState(measurementLabel || '');
+  const [showSearch, setShowSearch] = useState(false);
+  
+  const currentNode = path[path.length - 1];
+  const isRoot = path.length === 1;
+  const isDivisionLevel = path.length === 2;
+  
+  // Get children to display
+  const children = useMemo(() => {
+    if (!currentNode.children) return [];
+    
+    let filtered = currentNode.children;
+    
+    // Filter by search if active
+    if (searchTerm && showSearch) {
+      const term = searchTerm.toLowerCase();
+      filtered = filtered.filter(child => {
+        const name = getNodeDisplayName(child).toLowerCase();
+        const code = (child.code || '').toLowerCase();
+        return name.includes(term) || code.includes(term);
       });
     }
-  };
+    
+    // Sort: items with more children first, then alphabetically
+    return filtered.sort((a, b) => {
+      if (a.isItem && !b.isItem) return 1;
+      if (!a.isItem && b.isItem) return -1;
+      const countA = a.itemCount || 0;
+      const countB = b.itemCount || 0;
+      if (countA !== countB) return countB - countA;
+      return getNodeDisplayName(a).localeCompare(getNodeDisplayName(b));
+    });
+  }, [currentNode, searchTerm, showSearch]);
+  
+  const handleSelect = useCallback((node: TreeNode) => {
+    if (node.isItem) {
+      // Final selection - assign item
+      onSelect({
+        taskCode: node.code,
+        description: node.name,
+        unit: node.unit || 'EA',
+        unitCost: node.unitCost || 0,
+      });
+      onClose();
+    } else if (node.children && node.children.length > 0) {
+      // Navigate deeper
+      setPath([...path, node]);
+      setSearchTerm('');
+      setShowSearch(false);
+    }
+  }, [path, onSelect, onClose]);
+  
+  const handleBack = useCallback(() => {
+    if (path.length > 1) {
+      setPath(path.slice(0, -1));
+      setSearchTerm('');
+    }
+  }, [path]);
+  
+  const handleBackToRoot = useCallback(() => {
+    setPath([catalogueTree]);
+    setSearchTerm('');
+    setShowSearch(false);
+  }, []);
+  
+  // Breadcrumb path
+  const breadcrumbs = path.slice(1).map(node => ({
+    code: node.code,
+    name: getNodeDisplayName(node),
+  }));
 
   return (
-    <div className="flex flex-col h-full bg-zinc-900 rounded-xl border border-zinc-800 overflow-hidden">
+    <div className="flex flex-col h-full max-h-[600px] bg-gray-900 rounded-xl border border-white/10 overflow-hidden">
       {/* Header */}
-      <div className="px-4 py-3 border-b border-zinc-800 bg-zinc-900/50 flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <span className="text-2xl">🤖</span>
-          <div>
-            <h2 className="text-sm font-semibold text-white">Estimation Assistant</h2>
-            <p className="text-xs text-zinc-500">
-              {path.map(n => n.label).slice(1).join(' → ') || 'Select a category'}
-            </p>
+      <div className="p-4 border-b border-white/10 bg-gray-800/50">
+        <div className="flex items-center justify-between mb-3">
+          <div className="flex items-center gap-2">
+            <span className="text-2xl">🤖</span>
+            <h3 className="font-bold text-white">Guide Me</h3>
+            <span className="px-2 py-0.5 bg-purple-500/20 text-purple-400 text-xs rounded-full">
+              65,331 items
+            </span>
           </div>
-        </div>
-        
-        <div className="flex items-center gap-2">
-          {path.length > 1 && (
-            <button
-              onClick={handleBack}
-              className="px-2 py-1 text-xs text-zinc-400 hover:text-white rounded hover:bg-zinc-800"
-            >
-              ← Back
-            </button>
-          )}
           <button
             onClick={onClose}
-            className="text-zinc-400 hover:text-white"
+            className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-white/10 text-white/60"
           >
             ✕
           </button>
         </div>
-      </div>
-
-      {/* Messages */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-4">
-        {messages.map((msg) => (
-          <div key={msg.id} className={`flex ${msg.type === 'user' ? 'justify-end' : 'justify-start'}`}>
-            {msg.type === 'assistant' && (
-              <div className="max-w-[80%] bg-zinc-800 rounded-lg px-4 py-2 text-white text-sm">
-                {msg.content}
-              </div>
-            )}
-            
-            {msg.type === 'user' && (
-              <div className="max-w-[80%] bg-amber-500 rounded-lg px-4 py-2 text-black text-sm font-medium">
-                {msg.content}
-              </div>
-            )}
-            
-            {msg.type === 'options' && (
-              <div className="w-full space-y-2">
-                <p className="text-sm text-zinc-300">{msg.content}</p>
-                <div className="grid grid-cols-2 gap-2">
-                  {msg.options?.map((opt) => (
-                    <button
-                      key={opt.id}
-                      onClick={() => handleOptionSelect(opt)}
-                      className="flex items-center gap-2 px-3 py-2 bg-zinc-800 hover:bg-zinc-700 rounded-lg text-left transition-colors group"
-                    >
-                      <span className="text-xl">{opt.icon || '📦'}</span>
-                      <span className="text-sm text-white group-hover:text-amber-400">{opt.label}</span>
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
-            
-            {msg.type === 'result' && msg.items && (
-              <div className="w-full space-y-2">
-                <p className="text-sm text-zinc-300">{msg.content}</p>
-                <div className="space-y-2">
-                  {msg.items.map((item, i) => (
-                    <button
-                      key={item.taskCode}
-                      onClick={() => handleItemSelect(item)}
-                      className={`w-full text-left px-3 py-2 rounded-lg border transition-all hover:border-amber-500 ${
-                        i === 0 
-                          ? 'bg-amber-500/10 border-amber-500/50' 
-                          : 'bg-zinc-800 border-zinc-700'
-                      }`}
-                    >
-                      <div className="flex justify-between items-start">
-                        <div className="flex-1 min-w-0">
-                          <span className="text-xs font-mono text-amber-500">{item.taskCode}</span>
-                          <p className="text-sm text-white truncate">{item.description}</p>
-                        </div>
-                        <div className="text-right shrink-0 ml-2">
-                          <div className="text-sm font-medium text-white">${item.unitCost.toFixed(2)}</div>
-                          <div className="text-xs text-zinc-500">/{item.unit}</div>
-                        </div>
-                      </div>
-                      {i === 0 && (
-                        <div className="mt-1 text-xs text-amber-400">⭐ Best match</div>
-                      )}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
-        ))}
         
-        {loading && (
-          <div className="flex justify-start">
-            <div className="bg-zinc-800 rounded-lg px-4 py-2 text-zinc-400 text-sm flex items-center gap-2">
-              <div className="w-4 h-4 border-2 border-amber-500 border-t-transparent rounded-full animate-spin" />
-              Searching...
-            </div>
+        {/* Breadcrumbs */}
+        {breadcrumbs.length > 0 && (
+          <div className="flex items-center gap-1 text-sm flex-wrap">
+            <button
+              onClick={handleBackToRoot}
+              className="text-white/50 hover:text-white"
+            >
+              🏠
+            </button>
+            {breadcrumbs.map((crumb, i) => (
+              <span key={crumb.code} className="flex items-center gap-1">
+                <span className="text-white/30">/</span>
+                <span className={i === breadcrumbs.length - 1 ? 'text-purple-400 font-medium' : 'text-white/60'}>
+                  {crumb.name}
+                </span>
+              </span>
+            ))}
+          </div>
+        )}
+      </div>
+      
+      {/* Search Toggle */}
+      {!isRoot && (
+        <div className="px-4 py-2 border-b border-white/10 bg-gray-800/30">
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setShowSearch(!showSearch)}
+              className={`px-3 py-1.5 rounded-lg text-sm flex items-center gap-1 transition-all ${
+                showSearch ? 'bg-blue-600 text-white' : 'bg-white/10 text-white/70 hover:text-white'
+              }`}
+            >
+              🔍 Filter
+            </button>
+            {showSearch && (
+              <input
+                type="text"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                placeholder="Type to filter..."
+                className="flex-1 px-3 py-1.5 bg-white/5 border border-white/10 rounded-lg text-white text-sm focus:outline-none focus:border-blue-500"
+                autoFocus
+              />
+            )}
+            <span className="text-xs text-white/40">
+              {children.length} option{children.length !== 1 ? 's' : ''}
+            </span>
+          </div>
+        </div>
+      )}
+      
+      {/* Content */}
+      <div className="flex-1 overflow-y-auto p-4">
+        {/* Back button */}
+        {!isRoot && (
+          <button
+            onClick={handleBack}
+            className="w-full mb-3 p-3 rounded-lg bg-white/5 hover:bg-white/10 text-left text-white/70 hover:text-white flex items-center gap-2 transition-all"
+          >
+            <span>←</span>
+            <span>Back</span>
+          </button>
+        )}
+        
+        {/* Root level - show divisions */}
+        {isRoot && (
+          <div className="mb-4">
+            <p className="text-white/60 text-sm mb-4">
+              What type of work are you doing? Select a category:
+            </p>
           </div>
         )}
         
-        <div ref={messagesEndRef} />
+        {/* Division level instructions */}
+        {isDivisionLevel && (
+          <div className="mb-4 p-3 bg-purple-500/10 border border-purple-500/30 rounded-lg">
+            <p className="text-purple-300 text-sm">
+              📂 Select a section within <strong>{getNodeDisplayName(currentNode)}</strong>
+            </p>
+          </div>
+        )}
+        
+        {/* Options grid */}
+        <div className={`grid gap-2 ${isRoot ? 'grid-cols-2' : 'grid-cols-1'}`}>
+          {children.map((child) => (
+            <button
+              key={child.id}
+              onClick={() => handleSelect(child)}
+              className={`p-3 rounded-lg text-left transition-all ${
+                child.isItem
+                  ? 'bg-green-500/10 border border-green-500/30 hover:bg-green-500/20'
+                  : 'bg-white/5 border border-white/10 hover:bg-white/10 hover:border-white/20'
+              }`}
+            >
+              <div className="flex items-start gap-3">
+                {isRoot && (
+                  <span className="text-2xl">{getDivisionEmoji(child.code)}</span>
+                )}
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2">
+                    <span className={`font-medium ${child.isItem ? 'text-green-400' : 'text-white'}`}>
+                      {getNodeDisplayName(child)}
+                    </span>
+                    {child.isItem && (
+                      <span className="text-green-400">✓</span>
+                    )}
+                  </div>
+                  
+                  <div className="flex items-center gap-2 mt-1">
+                    <span className="text-xs font-mono text-white/40">{child.code}</span>
+                    {child.itemCount && !child.isItem && (
+                      <span className="text-xs text-white/40">
+                        • {child.itemCount.toLocaleString()} items
+                      </span>
+                    )}
+                    {child.isItem && child.unit && (
+                      <>
+                        <span className="text-xs text-white/40">• {child.unit}</span>
+                        <span className="text-xs text-green-400">${child.unitCost?.toFixed(2)}</span>
+                      </>
+                    )}
+                  </div>
+                </div>
+                
+                {!child.isItem && (
+                  <span className="text-white/30">→</span>
+                )}
+              </div>
+            </button>
+          ))}
+        </div>
+        
+        {children.length === 0 && (
+          <div className="text-center py-8 text-white/50">
+            <span className="text-4xl mb-2 block">🔍</span>
+            <p>No matching items found</p>
+            {showSearch && searchTerm && (
+              <button
+                onClick={() => setSearchTerm('')}
+                className="mt-2 text-blue-400 hover:text-blue-300 text-sm"
+              >
+                Clear filter
+              </button>
+            )}
+          </div>
+        )}
       </div>
-
-      {/* Input */}
-      <div className="p-4 border-t border-zinc-800">
-        <form onSubmit={(e) => { e.preventDefault(); handleSearch(); }} className="flex gap-2">
-          <input
-            type="text"
-            value={inputValue}
-            onChange={(e) => setInputValue(e.target.value)}
-            placeholder="Or type to search..."
-            className="flex-1 px-3 py-2 bg-zinc-800 border border-zinc-700 rounded-lg text-white text-sm placeholder:text-zinc-500 focus:outline-none focus:border-amber-500"
-          />
-          <button
-            type="submit"
-            disabled={!inputValue.trim() || loading}
-            className="px-4 py-2 bg-amber-500 hover:bg-amber-400 disabled:opacity-50 disabled:cursor-not-allowed rounded-lg text-black text-sm font-medium transition-colors"
-          >
-            Search
-          </button>
-        </form>
+      
+      {/* Footer */}
+      <div className="p-4 border-t border-white/10 bg-gray-800/50">
+        <div className="flex items-center justify-between text-xs text-white/50">
+          <span>Navigate the JOC catalogue hierarchy</span>
+          <span>ESC to close</span>
+        </div>
       </div>
     </div>
   );
 }
-
-export default GuidedAssistant;
