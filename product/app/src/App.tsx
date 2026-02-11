@@ -154,7 +154,7 @@ function App() {
       <Toolbar onCalibrate={() => setShowCalibration(true)} />
 
       {/* Main Content */}
-      <div className="flex-1 flex overflow-hidden bg-gradient-to-br from-gray-900 via-gray-900 to-blue-900">
+      <div className="flex-1 flex overflow-hidden bg-gray-900">
         {/* PDF Viewer */}
         <div
           className="flex-1 relative"
