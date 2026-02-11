@@ -56,6 +56,47 @@ function getNodeDisplayName(node: TreeNode): string {
   return `Section ${code}`;
 }
 
+// Parse item description into structured parts for better display
+function parseItemDescription(description: string): { type: string; specs: string } {
+  // Common item type keywords to identify at the end
+  const typeKeywords = [
+    'Door Frame', 'Door', 'Frame', 'Window', 'Hardware', 'Lock', 'Closer',
+    'Tile', 'Flooring', 'Paint', 'Coating', 'Ceiling', 'Wall', 'Panel',
+    'Pipe', 'Fitting', 'Valve', 'Fixture', 'Light', 'Switch', 'Outlet',
+    'Duct', 'Diffuser', 'Grille', 'Insulation', 'Roofing', 'Flashing',
+    'Railing', 'Stair', 'Grating', 'Anchor', 'Fastener', 'Bolt'
+  ];
+  
+  // Try to find type at the end of description
+  let type = '';
+  let specs = description;
+  
+  for (const keyword of typeKeywords) {
+    if (description.toLowerCase().includes(keyword.toLowerCase())) {
+      // Find where the type info starts (usually after dimensions/specs)
+      const idx = description.toLowerCase().lastIndexOf(keyword.toLowerCase());
+      if (idx > 0) {
+        type = description.substring(idx).trim();
+        specs = description.substring(0, idx).trim();
+        // Clean up trailing comma/space from specs
+        specs = specs.replace(/[,\s]+$/, '');
+        break;
+      }
+    }
+  }
+  
+  // If no type found, try to split at first comma for short format
+  if (!type && description.includes(',')) {
+    const parts = description.split(',');
+    if (parts.length >= 2) {
+      type = parts[parts.length - 1].trim();
+      specs = parts.slice(0, -1).join(',').trim();
+    }
+  }
+  
+  return { type: type || description, specs };
+}
+
 // Get emoji for division
 function getDivisionEmoji(code: string): string {
   const emojis: Record<string, string> = {
@@ -120,13 +161,23 @@ export function GuidedAssistant({ onSelect, onClose, measurementLabel }: GuidedA
       if (a.isItem && !b.isItem) return 1;
       if (!a.isItem && b.isItem) return -1;
       
-      // Sort by code numerically/sequentially
+      // Sort by task code: split by hyphen, compare prefix then item number
       const codeA = a.code || '';
       const codeB = b.code || '';
       
-      // Pad codes for proper numeric comparison
-      const padCode = (code: string) => code.replace(/\d+/g, n => n.padStart(6, '0'));
-      return padCode(codeA).localeCompare(padCode(codeB));
+      // Handle task codes like "08121313-0013"
+      const [prefixA, itemA] = codeA.split('-');
+      const [prefixB, itemB] = codeB.split('-');
+      
+      // Compare prefix first (section code)
+      if (prefixA !== prefixB) {
+        return prefixA.localeCompare(prefixB);
+      }
+      
+      // Same prefix - compare item numbers numerically
+      const numA = parseInt(itemA || '0', 10);
+      const numB = parseInt(itemB || '0', 10);
+      return numA - numB;
     });
   }, [currentNode, searchTerm, showSearch]);
   
@@ -298,29 +349,49 @@ export function GuidedAssistant({ onSelect, onClose, measurementLabel }: GuidedA
                 /* Non-root items - horizontal layout */
                 <div className="flex items-start gap-3">
                   <div className="flex-1 min-w-0">
-                    <div className="flex items-start gap-2">
-                      <span className={`font-medium leading-tight ${child.isItem ? 'text-green-400' : 'text-white'}`}>
-                        {getNodeDisplayName(child)}
-                      </span>
-                      {child.isItem && (
-                        <span className="text-green-400 flex-shrink-0">✓</span>
-                      )}
-                    </div>
-                    
-                    <div className="flex items-center gap-2 mt-1 flex-wrap">
-                      <span className="text-xs font-mono text-white/40">{child.code}</span>
-                      {child.itemCount && !child.isItem && (
-                        <span className="text-xs text-white/40">
-                          • {child.itemCount.toLocaleString()} items
-                        </span>
-                      )}
-                      {child.isItem && child.unit && (
-                        <>
-                          <span className="text-xs text-white/40">• {child.unit}</span>
-                          <span className="text-xs text-green-400 font-medium">${child.unitCost?.toFixed(2)}</span>
-                        </>
-                      )}
-                    </div>
+                    {child.isItem ? (
+                      /* Line item - structured display */
+                      <>
+                        {(() => {
+                          const { type, specs } = parseItemDescription(child.name);
+                          return (
+                            <>
+                              <div className="flex items-center gap-2 mb-1">
+                                <span className="text-xs font-mono bg-green-500/20 text-green-400 px-1.5 py-0.5 rounded">
+                                  {child.code}
+                                </span>
+                                <span className="text-green-400 font-medium text-sm">${child.unitCost?.toFixed(2)}/{child.unit}</span>
+                              </div>
+                              <div className="font-medium text-green-300 text-sm leading-tight">
+                                {type}
+                              </div>
+                              {specs && specs !== type && (
+                                <div className="text-xs text-white/50 mt-0.5 leading-tight">
+                                  {specs}
+                                </div>
+                              )}
+                            </>
+                          );
+                        })()}
+                      </>
+                    ) : (
+                      /* Category - simple display */
+                      <>
+                        <div className="flex items-start gap-2">
+                          <span className="font-medium leading-tight text-white">
+                            {getNodeDisplayName(child)}
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-2 mt-1 flex-wrap">
+                          <span className="text-xs font-mono text-white/40">{child.code}</span>
+                          {child.itemCount && (
+                            <span className="text-xs text-white/40">
+                              • {child.itemCount.toLocaleString()} items
+                            </span>
+                          )}
+                        </div>
+                      </>
+                    )}
                   </div>
                   
                   {!child.isItem && (

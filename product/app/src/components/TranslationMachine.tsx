@@ -101,11 +101,21 @@ export function TranslationMachine({ onSelectItem, className = '' }: Translation
         const data = await res.json();
 
         if (data.success) {
-          // Sort helper - sequential by task code
+          // Sort helper - sequential by task code (e.g., 08121313-0013)
           const sortByTaskCode = (items: JOCItem[]) => {
             return [...items].sort((a, b) => {
-              const padCode = (code: string) => code.replace(/\d+/g, n => n.padStart(6, '0'));
-              return padCode(a.taskCode).localeCompare(padCode(b.taskCode));
+              const [prefixA, itemA] = a.taskCode.split('-');
+              const [prefixB, itemB] = b.taskCode.split('-');
+              
+              // Compare prefix first
+              if (prefixA !== prefixB) {
+                return prefixA.localeCompare(prefixB);
+              }
+              
+              // Same prefix - compare item numbers numerically
+              const numA = parseInt(itemA || '0', 10);
+              const numB = parseInt(itemB || '0', 10);
+              return numA - numB;
             });
           };
           
@@ -152,8 +162,10 @@ export function TranslationMachine({ onSelectItem, className = '' }: Translation
           if (data.success) {
             // Sort by task code sequentially
             const sortedItems = [...data.data.items].sort((a: JOCItem, b: JOCItem) => {
-              const padCode = (code: string) => code.replace(/\d+/g, n => n.padStart(6, '0'));
-              return padCode(a.taskCode).localeCompare(padCode(b.taskCode));
+              const [prefixA, itemA] = a.taskCode.split('-');
+              const [prefixB, itemB] = b.taskCode.split('-');
+              if (prefixA !== prefixB) return prefixA.localeCompare(prefixB);
+              return parseInt(itemA || '0', 10) - parseInt(itemB || '0', 10);
             });
             setResults(sortedItems);
             setStats({ total: data.data.count, took: 0 });
