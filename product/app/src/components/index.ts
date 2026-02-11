@@ -9,3 +9,4 @@ export { TranslationMachine } from './TranslationMachine';
 export { GuidedAssistant } from './GuidedAssistant';
 export { RecommendationsPanel } from './RecommendationsPanel';
 export { ActiveItemPicker } from './ActiveItemPicker';
+export { FormattingPanel, QuickFormatBar } from './FormattingPanel';

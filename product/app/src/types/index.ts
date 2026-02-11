@@ -3,6 +3,15 @@ export interface Point {
   y: number;
 }
 
+export interface MeasurementStyle {
+  lineStyle: 'solid' | 'dashed' | 'dotted';
+  lineWidth: number; // 1-6
+  fontSize: number; // 10-18
+  showValue: boolean;
+  showItemName: boolean;
+  showCost: boolean;
+}
+
 export interface Measurement {
   id: string;
   type: 'line' | 'polyline' | 'count' | 'area' | 'space';
@@ -13,11 +22,22 @@ export interface Measurement {
   jocItem?: JOCItem;
   color: string;
   groupId?: string; // Reference to parent group
+  style?: MeasurementStyle; // Formatting options
   // Space-specific fields
   spaceName?: string;
   perimeter?: number; // LF for spaces
   finishes?: SpaceFinish[];
 }
+
+// Default formatting style
+export const DEFAULT_STYLE: MeasurementStyle = {
+  lineStyle: 'solid',
+  lineWidth: 3,
+  fontSize: 12,
+  showValue: true,
+  showItemName: true,
+  showCost: false,
+};
 
 export interface MeasurementGroup {
   id: string;

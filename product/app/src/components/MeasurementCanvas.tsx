@@ -1,6 +1,7 @@
 import { useRef, useEffect, useState, useCallback } from 'react';
 import { useProjectStore } from '../stores/projectStore';
-import type { Point, Measurement } from '../types';
+import type { Point, Measurement, MeasurementStyle } from '../types';
+import { DEFAULT_STYLE } from '../types';
 import { 
   distance, 
   pixelsToFeet, 
@@ -212,6 +213,16 @@ export function MeasurementCanvas({ width, height }: MeasurementCanvasProps) {
     project.measurements.forEach((m) => {
       const isSelected = m.id === selectedMeasurement;
       const baseColor = m.color;
+      const style: MeasurementStyle = m.style || DEFAULT_STYLE;
+      
+      // Get line dash pattern from style
+      const getLineDash = (lineStyle: string): number[] => {
+        switch (lineStyle) {
+          case 'dashed': return [10, 5];
+          case 'dotted': return [3, 3];
+          default: return [];
+        }
+      };
       
       // ============================================
       // LINE MEASUREMENTS - Kreo Style
@@ -229,11 +240,13 @@ export function MeasurementCanvas({ width, height }: MeasurementCanvasProps) {
         ctx.shadowOffsetY = 1;
         
         ctx.strokeStyle = isSelected ? '#FFD700' : baseColor;
-        ctx.lineWidth = isSelected ? 4 : 3;
+        ctx.lineWidth = isSelected ? style.lineWidth + 1 : style.lineWidth;
+        ctx.setLineDash(getLineDash(style.lineStyle));
         ctx.beginPath();
         ctx.moveTo(p1.x, p1.y);
         ctx.lineTo(p2.x, p2.y);
         ctx.stroke();
+        ctx.setLineDash([]);
         
         ctx.shadowColor = 'transparent';
         
@@ -256,14 +269,22 @@ export function MeasurementCanvas({ width, height }: MeasurementCanvasProps) {
         const midX = (p1.x + p2.x) / 2;
         const midY = (p1.y + p2.y) / 2;
         
-        // Show JOC item name if assigned
-        if (m.jocItem) {
+        // Show JOC item name if assigned and enabled
+        if (m.jocItem && style.showItemName) {
           const itemName = getShortItemName(m.jocItem.description, 18);
-          drawPillBadge(ctx, midX + 12, midY - 20, itemName, 'rgba(0,0,0,0.75)', baseColor, 10);
+          drawPillBadge(ctx, midX + 12, midY - 20, itemName, 'rgba(0,0,0,0.75)', baseColor, style.fontSize - 2);
         }
         
-        // Length badge
-        drawPillBadge(ctx, midX + 12, midY, `${m.value.toFixed(1)} LF`, baseColor);
+        // Show cost if enabled
+        if (m.jocItem && style.showCost) {
+          const cost = (m.value * m.jocItem.unitCost).toFixed(0);
+          drawPillBadge(ctx, midX + 12, midY + 20, `$${cost}`, '#22c55e', 'white', style.fontSize - 2);
+        }
+        
+        // Length badge (if showValue enabled)
+        if (style.showValue) {
+          drawPillBadge(ctx, midX + 12, midY, `${m.value.toFixed(1)} LF`, baseColor, 'white', style.fontSize);
+        }
       }
       
       // ============================================
@@ -278,11 +299,13 @@ export function MeasurementCanvas({ width, height }: MeasurementCanvasProps) {
         ctx.shadowBlur = 3;
         
         ctx.strokeStyle = isSelected ? '#FFD700' : baseColor;
-        ctx.lineWidth = isSelected ? 4 : 3;
+        ctx.lineWidth = isSelected ? style.lineWidth + 1 : style.lineWidth;
+        ctx.setLineDash(getLineDash(style.lineStyle));
         ctx.beginPath();
         ctx.moveTo(m.points[0].x, m.points[0].y);
         m.points.slice(1).forEach((p) => ctx.lineTo(p.x, p.y));
         ctx.stroke();
+        ctx.setLineDash([]);
         
         ctx.shadowColor = 'transparent';
         
@@ -302,23 +325,29 @@ export function MeasurementCanvas({ width, height }: MeasurementCanvasProps) {
           ctx.stroke();
           
           // Segment length (small pill)
-          if (idx < m.points.length - 1) {
+          if (idx < m.points.length - 1 && style.showValue) {
             const nextP = m.points[idx + 1];
             const segLen = pixelsToFeet(distance(p, nextP), project.scale);
             const mx = (p.x + nextP.x) / 2;
             const my = (p.y + nextP.y) / 2;
             
-            drawPillBadge(ctx, mx - 20, my - 12, `${segLen.toFixed(1)}'`, 'rgba(0,0,0,0.6)', baseColor, 10);
+            drawPillBadge(ctx, mx - 20, my - 12, `${segLen.toFixed(1)}'`, 'rgba(0,0,0,0.6)', baseColor, style.fontSize - 2);
           }
         });
         
         // Total badge at end
         const lastP = m.points[m.points.length - 1];
-        if (m.jocItem) {
+        if (m.jocItem && style.showItemName) {
           const itemName = getShortItemName(m.jocItem.description, 18);
-          drawPillBadge(ctx, lastP.x + 12, lastP.y - 32, itemName, 'rgba(0,0,0,0.75)', baseColor, 10);
+          drawPillBadge(ctx, lastP.x + 12, lastP.y - 32, itemName, 'rgba(0,0,0,0.75)', baseColor, style.fontSize - 2);
         }
-        drawPillBadge(ctx, lastP.x + 12, lastP.y - 10, `Total: ${m.value.toFixed(1)} LF`, baseColor, 'white', 13);
+        if (m.jocItem && style.showCost) {
+          const cost = (m.value * m.jocItem.unitCost).toFixed(0);
+          drawPillBadge(ctx, lastP.x + 12, lastP.y + 12, `$${cost}`, '#22c55e', 'white', style.fontSize - 2);
+        }
+        if (style.showValue) {
+          drawPillBadge(ctx, lastP.x + 12, lastP.y - 10, `Total: ${m.value.toFixed(1)} LF`, baseColor, 'white', style.fontSize);
+        }
       }
       
       // ============================================
@@ -333,11 +362,17 @@ export function MeasurementCanvas({ width, height }: MeasurementCanvasProps) {
         if (m.points.length > 0) {
           const lastP = m.points[m.points.length - 1];
           
-          if (m.jocItem) {
+          if (m.jocItem && style.showItemName) {
             const itemName = getShortItemName(m.jocItem.description, 22);
-            drawPillBadge(ctx, lastP.x + 20, lastP.y - 35, itemName, 'rgba(0,0,0,0.8)', baseColor, 11);
+            drawPillBadge(ctx, lastP.x + 20, lastP.y - 35, itemName, 'rgba(0,0,0,0.8)', baseColor, style.fontSize - 1);
           }
-          drawPillBadge(ctx, lastP.x + 20, lastP.y - 12, `${m.value} EA`, baseColor, 'white', 12);
+          if (m.jocItem && style.showCost) {
+            const cost = (m.value * m.jocItem.unitCost).toFixed(0);
+            drawPillBadge(ctx, lastP.x + 20, lastP.y + 8, `$${cost}`, '#22c55e', 'white', style.fontSize - 1);
+          }
+          if (style.showValue) {
+            drawPillBadge(ctx, lastP.x + 20, lastP.y - 12, `${m.value} EA`, baseColor, 'white', style.fontSize);
+          }
         }
       }
       
@@ -357,10 +392,12 @@ export function MeasurementCanvas({ width, height }: MeasurementCanvasProps) {
         ctx.shadowColor = 'rgba(0,0,0,0.2)';
         ctx.shadowBlur = 3;
         ctx.strokeStyle = isSelected ? '#FFD700' : baseColor;
-        ctx.lineWidth = isSelected ? 3 : 2;
+        ctx.lineWidth = isSelected ? style.lineWidth + 1 : style.lineWidth;
+        ctx.setLineDash(getLineDash(style.lineStyle));
         ctx.lineCap = 'round';
         ctx.lineJoin = 'round';
         ctx.stroke();
+        ctx.setLineDash([]);
         ctx.shadowColor = 'transparent';
         
         // Vertex markers
@@ -378,11 +415,17 @@ export function MeasurementCanvas({ width, height }: MeasurementCanvasProps) {
         const cx = m.points.reduce((sum, p) => sum + p.x, 0) / m.points.length;
         const cy = m.points.reduce((sum, p) => sum + p.y, 0) / m.points.length;
         
-        if (m.jocItem) {
+        if (m.jocItem && style.showItemName) {
           const itemName = getShortItemName(m.jocItem.description, 20);
-          drawPillBadge(ctx, cx - 50, cy - 22, itemName, 'rgba(0,0,0,0.8)', baseColor, 11);
+          drawPillBadge(ctx, cx - 50, cy - 22, itemName, 'rgba(0,0,0,0.8)', baseColor, style.fontSize - 1);
         }
-        drawPillBadge(ctx, cx - 30, cy, `${m.value.toFixed(1)} SF`, baseColor, 'white', 14);
+        if (m.jocItem && style.showCost) {
+          const cost = (m.value * m.jocItem.unitCost).toFixed(0);
+          drawPillBadge(ctx, cx - 30, cy + 22, `$${cost}`, '#22c55e', 'white', style.fontSize - 1);
+        }
+        if (style.showValue) {
+          drawPillBadge(ctx, cx - 30, cy, `${m.value.toFixed(1)} SF`, baseColor, 'white', style.fontSize);
+        }
       }
       
       // ============================================
@@ -397,10 +440,10 @@ export function MeasurementCanvas({ width, height }: MeasurementCanvasProps) {
         ctx.closePath();
         ctx.fill();
         
-        // Dashed border
+        // Border (use style line settings)
         ctx.strokeStyle = isSelected ? '#FFD700' : baseColor;
-        ctx.lineWidth = isSelected ? 3 : 2;
-        ctx.setLineDash([10, 5]);
+        ctx.lineWidth = isSelected ? style.lineWidth + 1 : style.lineWidth;
+        ctx.setLineDash(getLineDash(style.lineStyle) || [10, 5]); // Default dashed for spaces
         ctx.lineCap = 'round';
         ctx.stroke();
         ctx.setLineDash([]);
@@ -423,7 +466,7 @@ export function MeasurementCanvas({ width, height }: MeasurementCanvasProps) {
         ctx.shadowOffsetY = 3;
         
         const cardWidth = 130;
-        const cardHeight = 60;
+        const cardHeight = style.showCost && m.jocItem ? 75 : 60;
         ctx.fillStyle = 'rgba(0,0,0,0.85)';
         drawRoundedRect(ctx, cx - cardWidth/2, cy - cardHeight/2, cardWidth, cardHeight, 8);
         ctx.fill();
@@ -431,21 +474,31 @@ export function MeasurementCanvas({ width, height }: MeasurementCanvasProps) {
         ctx.shadowColor = 'transparent';
         
         // Room name
-        ctx.font = 'bold 14px -apple-system, BlinkMacSystemFont, sans-serif';
+        ctx.font = `bold ${style.fontSize + 2}px -apple-system, BlinkMacSystemFont, sans-serif`;
         ctx.fillStyle = baseColor;
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
-        ctx.fillText(m.spaceName || 'Space', cx, cy - 16);
+        ctx.fillText(m.spaceName || 'Space', cx, cy - 18);
         
         // Area
-        ctx.font = 'bold 13px -apple-system, BlinkMacSystemFont, sans-serif';
-        ctx.fillStyle = 'white';
-        ctx.fillText(`${m.value.toFixed(0)} SF`, cx, cy + 4);
+        if (style.showValue) {
+          ctx.font = `bold ${style.fontSize + 1}px -apple-system, BlinkMacSystemFont, sans-serif`;
+          ctx.fillStyle = 'white';
+          ctx.fillText(`${m.value.toFixed(0)} SF`, cx, cy + 2);
+        }
         
         // Perimeter
-        ctx.font = '11px -apple-system, BlinkMacSystemFont, sans-serif';
+        ctx.font = `${style.fontSize - 1}px -apple-system, BlinkMacSystemFont, sans-serif`;
         ctx.fillStyle = 'rgba(255,255,255,0.6)';
-        ctx.fillText(`${m.perimeter?.toFixed(0) || 0} LF perimeter`, cx, cy + 20);
+        ctx.fillText(`${m.perimeter?.toFixed(0) || 0} LF perimeter`, cx, cy + 18);
+        
+        // Cost
+        if (style.showCost && m.jocItem) {
+          const cost = (m.value * m.jocItem.unitCost).toFixed(0);
+          ctx.font = `bold ${style.fontSize}px -apple-system, BlinkMacSystemFont, sans-serif`;
+          ctx.fillStyle = '#22c55e';
+          ctx.fillText(`$${cost}`, cx, cy + 32);
+        }
       }
     });
     

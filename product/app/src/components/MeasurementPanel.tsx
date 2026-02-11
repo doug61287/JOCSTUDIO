@@ -2,6 +2,7 @@ import { useState, useMemo } from 'react';
 import { useProjectStore } from '../stores/projectStore';
 import { searchJOCItems } from '../data/jocCatalogue';
 import { GuidedAssistant } from './GuidedAssistant';
+import { FormattingPanel } from './FormattingPanel';
 import type { JOCItem, Measurement, MeasurementGroup } from '../types';
 import { formatMeasurement, generateId } from '../utils/geometry';
 
@@ -39,6 +40,7 @@ export function MeasurementPanel() {
   const [editingGroup, setEditingGroup] = useState<string | null>(null);
   const [draggedMeasurement, setDraggedMeasurement] = useState<string | null>(null);
   const [dragOverGroup, setDragOverGroup] = useState<string | null>(null);
+  const [showFormatting, setShowFormatting] = useState<string | null>(null);
 
   const searchResults = useMemo(() => {
     if (!searchQuery) return [];
@@ -257,6 +259,16 @@ export function MeasurementPanel() {
               📁
             </button>
           )}
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              setShowFormatting(m.id);
+            }}
+            className="p-1 hover:bg-white/10 rounded text-xs"
+            title="Format"
+          >
+            🎨
+          </button>
           <button
             onClick={(e) => {
               e.stopPropagation();
@@ -783,6 +795,14 @@ export function MeasurementPanel() {
             />
           </div>
         </div>
+      )}
+
+      {/* Formatting Panel Modal */}
+      {showFormatting && (
+        <FormattingPanel 
+          measurementId={showFormatting} 
+          onClose={() => setShowFormatting(null)} 
+        />
       )}
     </div>
   );
