@@ -47,4 +47,4 @@ export interface Project {
   createdAt: Date;
 }
 
-export type Tool = 'select' | 'pan' | 'line' | 'count' | 'area' | 'space' | 'calibrate';
+export type Tool = 'select' | 'pan' | 'text' | 'line' | 'count' | 'area' | 'space' | 'calibrate';

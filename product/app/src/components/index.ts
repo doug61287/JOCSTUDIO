@@ -1,4 +1,5 @@
 export { Toolbar } from './Toolbar';
+export { BottomToolbar } from './BottomToolbar';
 export { PDFViewer } from './PDFViewer';
 export { MeasurementCanvas } from './MeasurementCanvas';
 export { MeasurementPanel } from './MeasurementPanel';

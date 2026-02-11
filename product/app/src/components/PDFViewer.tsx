@@ -2,6 +2,7 @@ import { useEffect, useRef, useState, useCallback } from 'react';
 import * as pdfjsLib from 'pdfjs-dist';
 import { useProjectStore } from '../stores/projectStore';
 import { MeasurementCanvas } from './MeasurementCanvas';
+import { BottomToolbar } from './BottomToolbar';
 
 // Set worker path - using unpkg, version must match installed pdfjs-dist
 pdfjsLib.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@4.10.38/build/pdf.worker.min.mjs`;
@@ -11,11 +12,25 @@ interface PageThumbnail {
   dataUrl: string;
 }
 
+type ThumbnailSize = 'small' | 'medium' | 'large';
+
+const THUMB_SCALES: Record<ThumbnailSize, number> = {
+  small: 0.1,
+  medium: 0.15,
+  large: 0.22,
+};
+
+const NAV_WIDTHS: Record<ThumbnailSize, number> = {
+  small: 140,
+  medium: 180,
+  large: 240,
+};
+
 export function PDFViewer() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const viewerRef = useRef<HTMLDivElement>(null);
-  const { project, zoom, setZoom } = useProjectStore();
+  const { project, zoom, setZoom, activeTool } = useProjectStore();
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
   const [pageNum, setPageNum] = useState(1);
   const [numPages, setNumPages] = useState(0);
@@ -23,6 +38,12 @@ export function PDFViewer() {
   const [thumbnails, setThumbnails] = useState<PageThumbnail[]>([]);
   const [showNav, setShowNav] = useState(true);
   const [initialFitDone, setInitialFitDone] = useState(false);
+  const [thumbSize, setThumbSize] = useState<ThumbnailSize>('medium');
+  const [pageSize, setPageSize] = useState<{ width: number; height: number } | null>(null);
+  
+  // Pan state
+  const [isPanning, setIsPanning] = useState(false);
+  const [panStart, setPanStart] = useState<{ x: number; y: number; scrollLeft: number; scrollTop: number } | null>(null);
 
   // Load PDF document
   useEffect(() => {
@@ -35,11 +56,17 @@ export function PDFViewer() {
         setNumPages(pdf.numPages);
         setInitialFitDone(false);
         
+        // Get first page size for info display
+        const firstPage = await pdf.getPage(1);
+        const baseViewport = firstPage.getViewport({ scale: 1 });
+        setPageSize({ width: baseViewport.width, height: baseViewport.height });
+        
         // Generate thumbnails for navigation
         const thumbs: PageThumbnail[] = [];
-        for (let i = 1; i <= Math.min(pdf.numPages, 50); i++) { // Limit to 50 pages for performance
+        const thumbScale = THUMB_SCALES[thumbSize];
+        for (let i = 1; i <= Math.min(pdf.numPages, 100); i++) { // Limit to 100 pages for performance
           const page = await pdf.getPage(i);
-          const viewport = page.getViewport({ scale: 0.15 });
+          const viewport = page.getViewport({ scale: thumbScale });
           
           const canvas = document.createElement('canvas');
           canvas.width = viewport.width;
@@ -63,7 +90,7 @@ export function PDFViewer() {
     };
 
     loadPDF();
-  }, [project?.pdfUrl]);
+  }, [project?.pdfUrl, thumbSize]);
 
   // Render current page with fit-to-container on first load
   useEffect(() => {
@@ -129,119 +156,172 @@ export function PDFViewer() {
     setPageNum(page);
   }, []);
 
+  const handleFitToWidth = useCallback(async () => {
+    if (!pdfDoc || !viewerRef.current) return;
+    const page = await pdfDoc.getPage(pageNum);
+    const containerWidth = viewerRef.current.clientWidth - 48;
+    const baseViewport = page.getViewport({ scale: 1 });
+    const fitScale = containerWidth / baseViewport.width;
+    setZoom(fitScale);
+  }, [pdfDoc, pageNum, setZoom]);
+
+  const handleFitToPage = useCallback(async () => {
+    if (!pdfDoc || !viewerRef.current) return;
+    const page = await pdfDoc.getPage(pageNum);
+    const containerWidth = viewerRef.current.clientWidth - 48;
+    const containerHeight = viewerRef.current.clientHeight - 48;
+    const baseViewport = page.getViewport({ scale: 1 });
+    const scaleX = containerWidth / baseViewport.width;
+    const scaleY = containerHeight / baseViewport.height;
+    const fitScale = Math.min(scaleX, scaleY);
+    setZoom(fitScale);
+  }, [pdfDoc, pageNum, setZoom]);
+
+  // Pan handlers
+  const handlePanStart = useCallback((e: React.MouseEvent) => {
+    if (activeTool !== 'pan' || !viewerRef.current) return;
+    setIsPanning(true);
+    setPanStart({
+      x: e.clientX,
+      y: e.clientY,
+      scrollLeft: viewerRef.current.scrollLeft,
+      scrollTop: viewerRef.current.scrollTop,
+    });
+  }, [activeTool]);
+
+  const handlePanMove = useCallback((e: React.MouseEvent) => {
+    if (!isPanning || !panStart || !viewerRef.current) return;
+    const dx = e.clientX - panStart.x;
+    const dy = e.clientY - panStart.y;
+    viewerRef.current.scrollLeft = panStart.scrollLeft - dx;
+    viewerRef.current.scrollTop = panStart.scrollTop - dy;
+  }, [isPanning, panStart]);
+
+  const handlePanEnd = useCallback(() => {
+    setIsPanning(false);
+    setPanStart(null);
+  }, []);
+
+  const cycleThumbnailSize = () => {
+    const sizes: ThumbnailSize[] = ['small', 'medium', 'large'];
+    const currentIndex = sizes.indexOf(thumbSize);
+    const nextIndex = (currentIndex + 1) % sizes.length;
+    setThumbSize(sizes[nextIndex]);
+  };
+
   return (
-    <div ref={containerRef} className="h-full flex bg-gray-900 overflow-hidden">
-      {/* Left Navigation Pane - Bluebeam style */}
-      {numPages > 0 && (
-        <div 
-          className={`${showNav ? 'w-48' : 'w-0'} transition-all duration-200 flex-shrink-0 border-r border-white/10 bg-gray-900/80 overflow-hidden`}
-        >
-          {showNav && (
-            <div className="h-full flex flex-col">
-              {/* Nav Header */}
-              <div className="p-2 border-b border-white/10 flex items-center justify-between">
-                <span className="text-xs font-medium text-white/70">Pages ({numPages})</span>
-                <button
-                  onClick={() => setShowNav(false)}
-                  className="w-6 h-6 flex items-center justify-center rounded hover:bg-white/10 text-white/50 text-xs"
-                  title="Hide navigation"
-                >
-                  ✕
-                </button>
-              </div>
-              
-              {/* Thumbnail List */}
-              <div className="flex-1 overflow-y-auto p-2 space-y-2">
-                {thumbnails.map((thumb) => (
-                  <button
-                    key={thumb.pageNum}
-                    onClick={() => handlePageClick(thumb.pageNum)}
-                    className={`w-full rounded-lg overflow-hidden border-2 transition-all hover:border-blue-400 ${
-                      pageNum === thumb.pageNum 
-                        ? 'border-blue-500 ring-2 ring-blue-500/30' 
-                        : 'border-white/20'
-                    }`}
-                  >
-                    <img 
-                      src={thumb.dataUrl} 
-                      alt={`Page ${thumb.pageNum}`}
-                      className="w-full"
-                    />
-                    <div className={`text-xs py-1 text-center ${
-                      pageNum === thumb.pageNum ? 'bg-blue-600 text-white' : 'bg-gray-800 text-white/60'
-                    }`}>
-                      {thumb.pageNum}
-                    </div>
-                  </button>
-                ))}
-                
-                {numPages > 50 && (
-                  <div className="text-xs text-white/40 text-center py-2">
-                    +{numPages - 50} more pages
+    <div ref={containerRef} className="h-full flex flex-col bg-gray-900 overflow-hidden">
+      <div className="flex-1 flex overflow-hidden">
+        {/* Left Navigation Pane - Bluebeam style */}
+        {numPages > 0 && (
+          <div 
+            className={`${showNav ? `w-[${NAV_WIDTHS[thumbSize]}px]` : 'w-0'} transition-all duration-200 flex-shrink-0 border-r border-[#3f3f46] bg-[#252526] overflow-hidden`}
+            style={{ width: showNav ? NAV_WIDTHS[thumbSize] : 0 }}
+          >
+            {showNav && (
+              <div className="h-full flex flex-col">
+                {/* Nav Header */}
+                <div className="p-2 border-b border-[#3f3f46] flex items-center justify-between bg-[#2d2d30]">
+                  <span className="text-xs font-medium text-white/70">Pages</span>
+                  <div className="flex items-center gap-1">
+                    {/* Thumbnail Size Toggle */}
+                    <button
+                      onClick={cycleThumbnailSize}
+                      className="w-6 h-6 flex items-center justify-center rounded hover:bg-white/10 text-white/50 text-xs"
+                      title={`Thumbnail size: ${thumbSize}`}
+                    >
+                      {thumbSize === 'small' ? '▫' : thumbSize === 'medium' ? '◻' : '⬜'}
+                    </button>
+                    <button
+                      onClick={() => setShowNav(false)}
+                      className="w-6 h-6 flex items-center justify-center rounded hover:bg-white/10 text-white/50 text-xs"
+                      title="Hide navigation"
+                    >
+                      ✕
+                    </button>
                   </div>
-                )}
+                </div>
+                
+                {/* Thumbnail List */}
+                <div className="flex-1 overflow-y-auto p-2 space-y-2">
+                  {thumbnails.map((thumb) => (
+                    <button
+                      key={thumb.pageNum}
+                      onClick={() => handlePageClick(thumb.pageNum)}
+                      className={`w-full rounded overflow-hidden border-2 transition-all hover:border-blue-400 ${
+                        pageNum === thumb.pageNum 
+                          ? 'border-blue-500 ring-2 ring-blue-500/30' 
+                          : 'border-[#3f3f46]'
+                      }`}
+                    >
+                      <img 
+                        src={thumb.dataUrl} 
+                        alt={`Page ${thumb.pageNum}`}
+                        className="w-full bg-white"
+                      />
+                      <div className={`text-xs py-1 text-center ${
+                        pageNum === thumb.pageNum ? 'bg-blue-600 text-white' : 'bg-[#2d2d30] text-white/60'
+                      }`}>
+                        <div>{thumb.pageNum}</div>
+                        <div className="text-[10px] text-white/40">Scale Not Set</div>
+                      </div>
+                    </button>
+                  ))}
+                  
+                  {numPages > 100 && (
+                    <div className="text-xs text-white/40 text-center py-2">
+                      +{numPages - 100} more pages
+                    </div>
+                  )}
+                </div>
               </div>
-            </div>
-          )}
-        </div>
-      )}
-
-      {/* Toggle Nav Button (when hidden) */}
-      {!showNav && numPages > 1 && (
-        <button
-          onClick={() => setShowNav(true)}
-          className="absolute left-2 top-1/2 -translate-y-1/2 z-10 w-8 h-16 bg-gray-800/90 hover:bg-gray-700 rounded-r-lg flex items-center justify-center text-white/60 hover:text-white border border-white/10 border-l-0"
-          title="Show page navigation"
-        >
-          <span className="text-lg">📄</span>
-        </button>
-      )}
-
-      {/* Main PDF Viewer */}
-      <div 
-        ref={viewerRef} 
-        className="flex-1 overflow-auto p-6 bg-gray-900"
-      >
-        <div className="min-h-full flex items-start justify-center">
-          <div className="pdf-container inline-block relative shadow-2xl overflow-hidden rounded-lg bg-white">
-            <canvas ref={canvasRef} className="pdf-canvas block" />
-            {dimensions.width > 0 && dimensions.height > 0 && (
-              <MeasurementCanvas width={dimensions.width} height={dimensions.height} />
             )}
+          </div>
+        )}
+
+        {/* Toggle Nav Button (when hidden) */}
+        {!showNav && numPages > 0 && (
+          <button
+            onClick={() => setShowNav(true)}
+            className="absolute left-0 top-1/2 -translate-y-1/2 z-10 w-6 h-20 bg-[#2d2d30] hover:bg-[#3f3f46] flex items-center justify-center text-white/60 hover:text-white border-r border-[#3f3f46] rounded-r"
+            title="Show page navigation"
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            </svg>
+          </button>
+        )}
+
+        {/* Main PDF Viewer */}
+        <div 
+          ref={viewerRef} 
+          className="flex-1 overflow-auto p-6 bg-[#1e1e1e]"
+          style={{ cursor: activeTool === 'pan' ? (isPanning ? 'grabbing' : 'grab') : 'default' }}
+          onMouseDown={handlePanStart}
+          onMouseMove={handlePanMove}
+          onMouseUp={handlePanEnd}
+          onMouseLeave={handlePanEnd}
+        >
+          <div className="min-h-full flex items-start justify-center">
+            <div className="pdf-container inline-block relative shadow-2xl overflow-hidden bg-white">
+              <canvas ref={canvasRef} className="pdf-canvas block" />
+              {dimensions.width > 0 && dimensions.height > 0 && (
+                <MeasurementCanvas width={dimensions.width} height={dimensions.height} />
+              )}
+            </div>
           </div>
         </div>
       </div>
       
-      {/* Bottom Page Navigation */}
-      {numPages > 1 && (
-        <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-gray-900/95 backdrop-blur rounded-lg px-4 py-2 flex items-center gap-4 border border-white/10 shadow-xl">
-          <button
-            onClick={() => setPageNum(Math.max(1, pageNum - 1))}
-            disabled={pageNum <= 1}
-            className="px-3 py-1 rounded bg-white/10 hover:bg-white/20 disabled:opacity-30 disabled:cursor-not-allowed text-sm transition-all"
-          >
-            ← Prev
-          </button>
-          <div className="flex items-center gap-2">
-            <input
-              type="number"
-              min={1}
-              max={numPages}
-              value={pageNum}
-              onChange={(e) => setPageNum(Math.min(numPages, Math.max(1, parseInt(e.target.value) || 1)))}
-              className="w-12 px-2 py-1 bg-white/10 rounded text-center text-sm"
-            />
-            <span className="text-sm text-white/60">of {numPages}</span>
-          </div>
-          <button
-            onClick={() => setPageNum(Math.min(numPages, pageNum + 1))}
-            disabled={pageNum >= numPages}
-            className="px-3 py-1 rounded bg-white/10 hover:bg-white/20 disabled:opacity-30 disabled:cursor-not-allowed text-sm transition-all"
-          >
-            Next →
-          </button>
-        </div>
-      )}
+      {/* Bottom Toolbar - Bluebeam style */}
+      <BottomToolbar
+        pageNum={pageNum}
+        numPages={numPages}
+        onPageChange={setPageNum}
+        onFitToWidth={handleFitToWidth}
+        onFitToPage={handleFitToPage}
+        pageSize={pageSize ?? undefined}
+      />
     </div>
   );
 }

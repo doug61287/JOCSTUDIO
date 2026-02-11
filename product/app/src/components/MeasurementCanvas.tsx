@@ -315,6 +315,9 @@ export function MeasurementCanvas({ width, height }: MeasurementCanvasProps) {
   }, [draw]);
 
   const handleClick = useCallback((e: React.MouseEvent<HTMLCanvasElement>) => {
+    // Pan and text tools don't interact with measurement canvas
+    if (activeTool === 'pan' || activeTool === 'text') return;
+    
     const rect = canvasRef.current!.getBoundingClientRect();
     const rawPoint: Point = {
       x: e.clientX - rect.left,
@@ -460,7 +463,13 @@ export function MeasurementCanvas({ width, height }: MeasurementCanvasProps) {
         onClick={handleClick}
         onDoubleClick={handleDoubleClick}
         onMouseMove={handleMouseMove}
-        style={{ cursor: activeTool === 'select' ? 'default' : 'crosshair' }}
+        style={{ 
+          cursor: activeTool === 'select' ? 'default' 
+            : activeTool === 'pan' ? 'grab' 
+            : activeTool === 'text' ? 'text' 
+            : 'crosshair',
+          pointerEvents: activeTool === 'pan' ? 'none' : 'auto'  // Let pan events pass through
+        }}
       />
       
       {/* Snap Status Indicator */}
