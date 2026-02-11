@@ -127,7 +127,7 @@ export function PDFViewer() {
   }, []);
 
   return (
-    <div ref={containerRef} className="h-full flex bg-gray-900/50">
+    <div ref={containerRef} className="h-full flex bg-gray-900 overflow-hidden">
       {/* Left Navigation Pane - Bluebeam style */}
       {numPages > 0 && (
         <div 
@@ -197,11 +197,11 @@ export function PDFViewer() {
       {/* Main PDF Viewer */}
       <div 
         ref={viewerRef} 
-        className="flex-1 overflow-auto p-6"
+        className="flex-1 overflow-auto p-6 bg-gray-900"
       >
         <div className="min-h-full flex items-start justify-center">
-          <div className="pdf-container inline-block relative shadow-2xl overflow-hidden rounded-lg">
-            <canvas ref={canvasRef} className="pdf-canvas" />
+          <div className="pdf-container inline-block relative shadow-2xl overflow-hidden rounded-lg bg-white">
+            <canvas ref={canvasRef} className="pdf-canvas block" />
             {dimensions.width > 0 && dimensions.height > 0 && (
               <MeasurementCanvas width={dimensions.width} height={dimensions.height} />
             )}
