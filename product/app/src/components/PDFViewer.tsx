@@ -329,19 +329,21 @@ export function PDFViewer() {
         {/* Main PDF Viewer */}
         <div 
           ref={viewerRef} 
-          className="flex-1 overflow-auto p-6 bg-[#1e1e1e]"
+          className="flex-1 overflow-auto bg-[#1e1e1e]"
           style={{ cursor: activeTool === 'pan' ? (isPanning ? 'grabbing' : 'grab') : 'default' }}
           onMouseDown={handlePanStart}
           onMouseMove={handlePanMove}
           onMouseUp={handlePanEnd}
           onMouseLeave={handlePanEnd}
         >
-          <div className="min-h-full flex items-start justify-center">
-            <div className="pdf-container inline-block relative shadow-2xl overflow-hidden bg-white">
-              <canvas ref={canvasRef} className="pdf-canvas block" />
-              {dimensions.width > 0 && dimensions.height > 0 && (
-                <MeasurementCanvas width={dimensions.width} height={dimensions.height} />
-              )}
+          <div className="inline-block min-w-full min-h-full">
+            <div className="flex items-start justify-center p-6">
+              <div className="pdf-container relative shadow-2xl overflow-hidden bg-white">
+                <canvas ref={canvasRef} className="pdf-canvas block" />
+                {dimensions.width > 0 && dimensions.height > 0 && (
+                  <MeasurementCanvas width={dimensions.width} height={dimensions.height} />
+                )}
+              </div>
             </div>
           </div>
         </div>
