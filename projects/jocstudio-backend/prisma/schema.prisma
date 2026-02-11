@@ -1,0 +1,402 @@
+// JOCstudio Database Schema
+// Construction Takeoff & JOC Estimating Platform
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================
+// USER & AUTHENTICATION
+// ============================================
+
+model User {
+  id               String   @id @default(uuid())
+  email            String   @unique
+  passwordHash     String
+  name             String
+  role             UserRole @default(USER)
+  emailVerified    Boolean  @default(false)
+  emailVerifyToken String?
+  resetToken       String?
+  resetTokenExpiry DateTime?
+  stripeCustomerId String?
+  avatarUrl        String?
+  preferences      Json     @default("{}")
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  lastLoginAt DateTime?
+
+  // Relations
+  ownedOrganizations   Organization[]       @relation("OrganizationOwner")
+  organizationMembers  OrganizationMember[]
+  ownedProjects        Project[]            @relation("ProjectOwner")
+  measurements         Measurement[]
+  jocLineItems         JOCLineItem[]
+  refreshTokens        RefreshToken[]
+
+  @@index([email])
+  @@index([stripeCustomerId])
+}
+
+enum UserRole {
+  USER
+  ADMIN
+  SUPER_ADMIN
+}
+
+model RefreshToken {
+  id        String   @id @default(uuid())
+  token     String   @unique
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  revokedAt DateTime?
+
+  @@index([token])
+  @@index([userId])
+}
+
+// ============================================
+// ORGANIZATIONS & TEAMS
+// ============================================
+
+model Organization {
+  id                   String           @id @default(uuid())
+  name                 String
+  slug                 String           @unique
+  plan                 OrganizationPlan @default(FREE)
+  seats                Int              @default(1)
+  stripeSubscriptionId String?
+  logoUrl              String?
+  settings             Json             @default("{}")
+
+  ownerId String
+  owner   User   @relation("OrganizationOwner", fields: [ownerId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  members  OrganizationMember[]
+  projects Project[]
+  invites  OrganizationInvite[]
+
+  @@index([slug])
+  @@index([ownerId])
+}
+
+enum OrganizationPlan {
+  FREE
+  PRO
+  TEAM
+  ENTERPRISE
+}
+
+model OrganizationMember {
+  id     String         @id @default(uuid())
+  role   OrgMemberRole  @default(MEMBER)
+
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  joinedAt DateTime @default(now())
+
+  @@unique([organizationId, userId])
+  @@index([organizationId])
+  @@index([userId])
+}
+
+enum OrgMemberRole {
+  OWNER
+  ADMIN
+  MEMBER
+  VIEWER
+}
+
+model OrganizationInvite {
+  id        String   @id @default(uuid())
+  email     String
+  role      OrgMemberRole @default(MEMBER)
+  token     String   @unique
+  expiresAt DateTime
+
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@index([token])
+  @@index([email])
+}
+
+// ============================================
+// PROJECTS
+// ============================================
+
+model Project {
+  id          String        @id @default(uuid())
+  name        String
+  description String?
+  status      ProjectStatus @default(DRAFT)
+  
+  // PDF document info
+  pdfUrl       String?
+  pdfFilename  String?
+  pdfPageCount Int?
+  pdfFileSize  Int?
+  
+  // Calibration & settings
+  settings    Json @default("{}")
+  // { scale: { value: 96, unit: "inch" }, units: "imperial", calibration: {...} }
+  
+  // Ownership
+  ownerId String
+  owner   User   @relation("ProjectOwner", fields: [ownerId], references: [id])
+
+  // Optional organization
+  organizationId String?
+  organization   Organization? @relation(fields: [organizationId], references: [id], onDelete: SetNull)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  archivedAt DateTime?
+
+  // Relations
+  layers       Layer[]
+  spaces       Space[]
+  measurements Measurement[]
+
+  @@index([ownerId])
+  @@index([organizationId])
+  @@index([status])
+}
+
+enum ProjectStatus {
+  DRAFT
+  IN_PROGRESS
+  REVIEW
+  COMPLETED
+  ARCHIVED
+}
+
+// ============================================
+// LAYERS
+// ============================================
+
+model Layer {
+  id       String  @id @default(uuid())
+  name     String
+  color    String  @default("#3B82F6")
+  visible  Boolean @default(true)
+  locked   Boolean @default(false)
+  order    Int     @default(0)
+  opacity  Float   @default(1.0)
+
+  projectId String
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  measurements Measurement[]
+
+  @@index([projectId])
+  @@index([order])
+}
+
+// ============================================
+// SPACES (Rooms/Zones)
+// ============================================
+
+model Space {
+  id        String    @id @default(uuid())
+  name      String
+  type      SpaceType @default(ROOM)
+  
+  // Polygon geometry as JSON
+  // { points: [{x, y}, ...], pageIndex: 0 }
+  geometry  Json
+  
+  // Calculated values
+  area      Float?
+  perimeter Float?
+
+  projectId String
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  measurements Measurement[]
+
+  @@index([projectId])
+}
+
+enum SpaceType {
+  ROOM
+  ZONE
+  AREA
+  FLOOR
+  BUILDING
+}
+
+// ============================================
+// MEASUREMENTS (Takeoff Items)
+// ============================================
+
+model Measurement {
+  id    String          @id @default(uuid())
+  type  MeasurementType
+  label String?
+  color String          @default("#EF4444")
+  
+  // Geometry stored as JSON
+  // Count: { points: [{x, y}], pageIndex: 0 }
+  // Length: { points: [{x, y}, {x, y}], pageIndex: 0 }
+  // Area: { points: [{x, y}, ...], pageIndex: 0 }
+  geometry Json
+  
+  // Calculated/entered values
+  quantity Float
+  unit     String  @default("EA")
+  
+  // Optional grouping
+  parentId String?
+  parent   Measurement?  @relation("MeasurementHierarchy", fields: [parentId], references: [id], onDelete: SetNull)
+  children Measurement[] @relation("MeasurementHierarchy")
+
+  // Relations
+  projectId String
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  layerId String?
+  layer   Layer?  @relation(fields: [layerId], references: [id], onDelete: SetNull)
+
+  spaceId String?
+  space   Space?  @relation(fields: [spaceId], references: [id], onDelete: SetNull)
+
+  createdById String
+  createdBy   User   @relation(fields: [createdById], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  jocLineItems JOCLineItem[]
+
+  @@index([projectId])
+  @@index([layerId])
+  @@index([spaceId])
+  @@index([parentId])
+  @@index([type])
+}
+
+enum MeasurementType {
+  COUNT
+  LENGTH
+  AREA
+  VOLUME
+}
+
+// ============================================
+// JOC LINE ITEMS (Assigned UPB Codes)
+// ============================================
+
+model JOCLineItem {
+  id          String @id @default(uuid())
+  
+  // UPB Reference
+  upbCode     String
+  description String
+  
+  // Pricing
+  quantity    Float
+  unit        String
+  unitPrice   Float
+  totalPrice  Float
+  
+  // Adjustment coefficients as JSON
+  // { location: 1.05, complexity: 1.1, ... }
+  coefficients Json @default("{}")
+  
+  notes String?
+
+  measurementId String
+  measurement   Measurement @relation(fields: [measurementId], references: [id], onDelete: Cascade)
+
+  createdById String
+  createdBy   User   @relation(fields: [createdById], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([measurementId])
+  @@index([upbCode])
+}
+
+// ============================================
+// UPB CATALOG (Cached Reference Data)
+// ============================================
+
+model UPBCatalog {
+  id           String @id @default(uuid())
+  contractType String // NYC_HHC, NYC_DDC, etc.
+  
+  division     String // 01, 02, 03... (CSI division)
+  category     String
+  lineNumber   String
+  
+  description  String
+  unit         String
+  basePrice    Float
+  
+  // Metadata
+  version       String
+  effectiveDate DateTime
+  expiresDate   DateTime?
+  
+  // Search optimization
+  searchVector  String? // For full-text search
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([contractType, lineNumber, version])
+  @@index([contractType])
+  @@index([division])
+  @@index([lineNumber])
+  @@index([description])
+}
+
+// ============================================
+// FILE UPLOADS
+// ============================================
+
+model FileUpload {
+  id           String     @id @default(uuid())
+  filename     String
+  originalName String
+  mimeType     String
+  size         Int
+  path         String
+  url          String?
+  provider     String     @default("local") // local, supabase, s3
+  
+  uploadedById String
+  
+  createdAt DateTime @default(now())
+
+  @@index([uploadedById])
+}

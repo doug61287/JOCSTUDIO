@@ -1,0 +1,38 @@
+{
+  "name": "Test User",
+  "phone": "test",
+  "onboarded": true,
+  "onboardedAt": "2026-02-11T18:00:00Z",
+  "keywords": ["product manager", "pm", "product lead"],
+  "industries": ["biotech", "healthcare", "medtech"],
+  "salaryMin": 120000,
+  "salaryMax": 180000,
+  "location": "New York, NY",
+  "remotePreference": "hybrid",
+  "experienceYears": 5,
+  "resume": {
+    "lastUpdated": null,
+    "filePath": null,
+    "parsed": {
+      "skills": [],
+      "experience": [],
+      "education": []
+    }
+  },
+  "digest": {
+    "frequency": "daily",
+    "time": "08:00",
+    "timezone": "America/New_York",
+    "format": "summary",
+    "maxListings": 5,
+    "includeCompanyProfiles": true,
+    "includeNewCompanies": true,
+    "paused": false
+  },
+  "history": {
+    "searchesRun": 0,
+    "jobsViewed": [],
+    "jobsApplied": [],
+    "lastDigestSent": null
+  }
+}
