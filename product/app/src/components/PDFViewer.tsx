@@ -98,12 +98,29 @@ export function PDFViewer() {
   
   // Store scroll ratios to preserve position during zoom
   const scrollRatioRef = useRef({ x: 0.5, y: 0 });
+  
+  // Prevent re-render loops
+  const isRenderingRef = useRef(false);
+  const lastRenderRef = useRef({ zoom: 0, pageNum: 0 });
 
   // Render current page with fit-to-container on first load
   useEffect(() => {
     if (!pdfDoc || !canvasRef.current || !viewerRef.current) return;
+    
+    // Prevent concurrent renders and unnecessary re-renders
+    if (isRenderingRef.current) return;
+    
+    // Skip if already rendered at this zoom/page (prevents loops)
+    const roundedZoom = Math.round(zoom * 100) / 100;
+    if (initialFitDone && 
+        lastRenderRef.current.zoom === roundedZoom && 
+        lastRenderRef.current.pageNum === pageNum) {
+      return;
+    }
 
     const renderPage = async () => {
+      isRenderingRef.current = true;
+      
       try {
         const page = await pdfDoc.getPage(pageNum);
         
@@ -150,8 +167,13 @@ export function PDFViewer() {
           canvasContext: context,
           viewport: viewport,
         }).promise;
+        
+        // Track what we rendered
+        lastRenderRef.current = { zoom: roundedZoom, pageNum };
       } catch (error) {
         console.error('Error rendering page:', error);
+      } finally {
+        isRenderingRef.current = false;
       }
     };
 
