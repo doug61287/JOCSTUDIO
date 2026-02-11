@@ -30,7 +30,9 @@ export function MeasurementCanvas({ width, height }: MeasurementCanvasProps) {
     activeTool, 
     addMeasurement, 
     selectedMeasurement,
-    selectMeasurement 
+    selectMeasurement,
+    activeJOCItem,
+    activeGroupId
   } = useProjectStore();
   
   const [tempPoints, setTempPoints] = useState<Point[]>([]);
@@ -514,6 +516,9 @@ export function MeasurementCanvas({ width, height }: MeasurementCanvasProps) {
           value: feet,
           unit: 'LF',
           color: getMeasurementColor('line'),
+          // Auto-assign active JOC item and group (sticky selection!)
+          jocItem: activeJOCItem || undefined,
+          groupId: activeGroupId || undefined,
         };
         addMeasurement(measurement);
         setTempPoints([]);
@@ -525,12 +530,8 @@ export function MeasurementCanvas({ width, height }: MeasurementCanvasProps) {
       setTempPoints([...tempPoints, point]);
     }
     
-    // Count: each click adds a marker
+    // Count: each click adds a marker (auto-assigns active JOC item if set)
     if (activeTool === 'count') {
-      // Add point immediately
-      const newPoints = [...tempPoints, point];
-      setTempPoints(newPoints);
-      
       // Auto-save after each click (Kreo-style: each click = 1 count item)
       const measurement: Measurement = {
         id: generateId(),
@@ -539,9 +540,11 @@ export function MeasurementCanvas({ width, height }: MeasurementCanvasProps) {
         value: 1,
         unit: 'EA',
         color: getMeasurementColor('count'),
+        // Auto-assign active JOC item and group (sticky selection!)
+        jocItem: activeJOCItem || undefined,
+        groupId: activeGroupId || undefined,
       };
       addMeasurement(measurement);
-      setTempPoints([]); // Reset for next count
     }
     
     if (activeTool === 'area') {
@@ -564,6 +567,9 @@ export function MeasurementCanvas({ width, height }: MeasurementCanvasProps) {
         value: totalLength,
         unit: 'LF',
         color: getMeasurementColor('polyline'),
+        // Auto-assign active JOC item and group (sticky selection!)
+        jocItem: activeJOCItem || undefined,
+        groupId: activeGroupId || undefined,
       };
       addMeasurement(measurement);
       setTempPoints([]);
@@ -578,6 +584,9 @@ export function MeasurementCanvas({ width, height }: MeasurementCanvasProps) {
         value: area,
         unit: 'SF',
         color: getMeasurementColor('area'),
+        // Auto-assign active JOC item and group (sticky selection!)
+        jocItem: activeJOCItem || undefined,
+        groupId: activeGroupId || undefined,
       };
       addMeasurement(measurement);
       setTempPoints([]);
@@ -598,6 +607,9 @@ export function MeasurementCanvas({ width, height }: MeasurementCanvasProps) {
           spaceName: spaceName,
           perimeter: perimeter,
           finishes: [],
+          // Auto-assign active JOC item and group (sticky selection!)
+          jocItem: activeJOCItem || undefined,
+          groupId: activeGroupId || undefined,
         };
         addMeasurement(measurement);
       }

@@ -6,6 +6,9 @@ interface ProjectState {
   activeTool: Tool;
   selectedMeasurement: string | null;
   zoom: number;
+  // Sticky item - persists selection across clicks
+  activeJOCItem: JOCItem | null;
+  activeGroupId: string | null;
   
   // Actions
   setProject: (project: Project) => void;
@@ -19,6 +22,9 @@ interface ProjectState {
   selectMeasurement: (id: string | null) => void;
   assignJOCItem: (measurementId: string, item: JOCItem) => void;
   setCoefficient: (coef: number) => void;
+  // Sticky item actions
+  setActiveJOCItem: (item: JOCItem | null) => void;
+  setActiveGroupId: (groupId: string | null) => void;
   // Group actions
   addGroup: (group: MeasurementGroup) => void;
   updateGroup: (id: string, updates: Partial<MeasurementGroup>) => void;
@@ -39,6 +45,9 @@ export const useProjectStore = create<ProjectState>((set) => ({
   activeTool: 'select',
   selectedMeasurement: null,
   zoom: 1,
+  // Sticky item state - select once, click many times
+  activeJOCItem: null,
+  activeGroupId: null,
 
   setProject: (project) => set({ project }),
   
@@ -92,6 +101,10 @@ export const useProjectStore = create<ProjectState>((set) => ({
   setCoefficient: (coef) => set((state) => ({
     project: state.project ? { ...state.project, coefficient: coef } : null
   })),
+
+  // Sticky item - select JOC item once, apply to multiple measurements
+  setActiveJOCItem: (item) => set({ activeJOCItem: item }),
+  setActiveGroupId: (groupId) => set({ activeGroupId: groupId }),
 
   // Group management
   addGroup: (group) => set((state) => ({

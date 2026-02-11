@@ -7,6 +7,7 @@ import { MeasurementPanel } from './components/MeasurementPanel';
 import { DropZone } from './components/DropZone';
 import { CalibrationDialog } from './components/CalibrationDialog';
 import { TranslationMachine } from './components/TranslationMachine';
+import { ActiveItemPicker } from './components/ActiveItemPicker';
 
 function App() {
   const { project, setPdfUrl, setProject, addMeasurement } = useProjectStore();
@@ -162,7 +163,11 @@ function App() {
           onDragOver={(e) => e.preventDefault()}
         >
           {project?.pdfUrl ? (
-            <PDFViewer />
+            <>
+              <PDFViewer />
+              {/* Sticky Item Picker - shows when measurement tools are active */}
+              <ActiveItemPicker />
+            </>
           ) : (
             <DropZone onFileSelect={handleFileSelect} />
           )}
