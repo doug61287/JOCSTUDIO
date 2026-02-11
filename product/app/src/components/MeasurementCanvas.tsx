@@ -36,7 +36,7 @@ export function MeasurementCanvas({ width, height }: MeasurementCanvasProps) {
   const [mousePos, setMousePos] = useState<Point | null>(null);
   const [snapResult, setSnapResult] = useState<SnapResult | null>(null);
   const [snapSettings, setSnapSettings] = useState<SnapSettings>(DEFAULT_SNAP_SETTINGS);
-  const [showSnapIndicator, setShowSnapIndicator] = useState(true);
+  const [showSnapIndicator] = useState(true);
 
   // Get snapped position for current mouse position
   const getSnappedPoint = useCallback((rawPoint: Point): Point => {
@@ -264,7 +264,7 @@ export function MeasurementCanvas({ width, height }: MeasurementCanvasProps) {
     
     // Draw snap indicator
     if (showSnapIndicator && snapResult?.snapped && snapResult.snapPoint && mousePos) {
-      const { color, symbol } = getSnapIndicatorStyle(snapResult.snapPoint.type);
+      const { color } = getSnapIndicatorStyle(snapResult.snapPoint.type);
       const sp = snapResult.point;
       
       // Draw snap crosshair
