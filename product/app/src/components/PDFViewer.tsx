@@ -80,16 +80,19 @@ export function PDFViewer() {
           const containerHeight = viewerRef.current.clientHeight - 48;
           const baseViewport = page.getViewport({ scale: 1 });
           
+          // Calculate scale needed to fit page in container
           const scaleX = containerWidth / baseViewport.width;
           const scaleY = containerHeight / baseViewport.height;
-          const fitScale = Math.min(scaleX, scaleY, 1.5) * 0.9; // 90% of fit, max 1.5x
+          // Use the smaller scale to ensure the whole page fits
+          const fitScale = Math.min(scaleX, scaleY);
           
           effectiveZoom = fitScale;
           setZoom(fitScale);
           setInitialFitDone(true);
         }
         
-        const viewport = page.getViewport({ scale: effectiveZoom * 1.5 });
+        // Render at the zoom level (zoom = 1 means 100% of PDF's natural size)
+        const viewport = page.getViewport({ scale: effectiveZoom });
         
         const canvas = canvasRef.current!;
         const context = canvas.getContext('2d')!;
