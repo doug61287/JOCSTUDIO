@@ -7,6 +7,7 @@ interface BottomToolbarProps {
   onPageChange: (page: number) => void;
   onFitToWidth: () => void;
   onFitToPage: () => void;
+  onZoomChange: (newZoom: number) => void;
   pageSize?: { width: number; height: number };
 }
 
@@ -22,9 +23,10 @@ export function BottomToolbar({
   onPageChange, 
   onFitToWidth, 
   onFitToPage,
+  onZoomChange,
   pageSize 
 }: BottomToolbarProps) {
-  const { activeTool, setActiveTool, zoom, setZoom, project } = useProjectStore();
+  const { activeTool, setActiveTool, zoom, project } = useProjectStore();
 
   const goToFirst = () => onPageChange(1);
   const goToPrev = () => onPageChange(Math.max(1, pageNum - 1));
@@ -69,7 +71,7 @@ export function BottomToolbar({
       {/* Zoom Controls */}
       <div className="flex items-center gap-0.5 px-2 border-r border-white/10">
         <button
-          onClick={() => setZoom(Math.max(0.1, zoom - 0.1))}
+          onClick={() => onZoomChange(Math.max(0.1, zoom - 0.1))}
           className="w-7 h-7 flex items-center justify-center rounded hover:bg-white/10 text-white/70"
           title="Zoom Out (-)"
         >
@@ -78,7 +80,7 @@ export function BottomToolbar({
           </svg>
         </button>
         <button
-          onClick={() => setZoom(Math.min(5, zoom + 0.1))}
+          onClick={() => onZoomChange(Math.min(5, zoom + 0.1))}
           className="w-7 h-7 flex items-center justify-center rounded hover:bg-white/10 text-white/70"
           title="Zoom In (+)"
         >

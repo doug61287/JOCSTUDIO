@@ -92,9 +92,12 @@ export function PDFViewer() {
     loadPDF();
   }, [project?.pdfUrl, thumbSize]);
 
-  // Maximum render scale to prevent canvas size issues
-  const MAX_RENDER_SCALE = 2.5;
+  // Maximum render scale to prevent canvas size issues (lowered for large arch drawings)
+  const MAX_RENDER_SCALE = 1.5;
   const [cssScale, setCssScale] = useState(1);
+  
+  // Store scroll ratios to preserve position during zoom
+  const scrollRatioRef = useRef({ x: 0.5, y: 0 });
 
   // Render current page with fit-to-container on first load
   useEffect(() => {
@@ -155,14 +158,17 @@ export function PDFViewer() {
     renderPage();
   }, [pdfDoc, zoom, pageNum, initialFitDone, setZoom]);
 
-  // Center scroll position after render
+  // Restore scroll position after render (preserves zoom point)
   useEffect(() => {
     if (dimensions.width > 0 && viewerRef.current && initialFitDone) {
       const viewer = viewerRef.current;
-      // Center horizontally
-      viewer.scrollLeft = (viewer.scrollWidth - viewer.clientWidth) / 2;
-      // Start near top
-      viewer.scrollTop = 0;
+      
+      // Restore scroll position based on saved ratios
+      const targetScrollLeft = scrollRatioRef.current.x * viewer.scrollWidth - viewer.clientWidth / 2;
+      const targetScrollTop = scrollRatioRef.current.y * viewer.scrollHeight - viewer.clientHeight / 2;
+      
+      viewer.scrollLeft = Math.max(0, targetScrollLeft);
+      viewer.scrollTop = Math.max(0, targetScrollTop);
     }
   }, [dimensions, initialFitDone]);
 
@@ -216,6 +222,21 @@ export function PDFViewer() {
     setPanStart(null);
   }, []);
 
+  // Zoom handler that preserves scroll position
+  const handleZoomChange = useCallback((newZoom: number) => {
+    if (viewerRef.current) {
+      const viewer = viewerRef.current;
+      // Save scroll position ratio before zoom
+      if (viewer.scrollWidth > viewer.clientWidth) {
+        scrollRatioRef.current.x = (viewer.scrollLeft + viewer.clientWidth / 2) / viewer.scrollWidth;
+      }
+      if (viewer.scrollHeight > viewer.clientHeight) {
+        scrollRatioRef.current.y = (viewer.scrollTop + viewer.clientHeight / 2) / viewer.scrollHeight;
+      }
+    }
+    setZoom(newZoom);
+  }, [setZoom]);
+
   // Keep zoom in a ref for native event handler
   const zoomRef = useRef(zoom);
   useEffect(() => { zoomRef.current = zoom; }, [zoom]);
@@ -231,6 +252,15 @@ export function PDFViewer() {
       if (e.ctrlKey || e.metaKey) {
         e.preventDefault();
         e.stopPropagation();
+        
+        // Save scroll position ratio before zoom
+        if (viewer.scrollWidth > viewer.clientWidth) {
+          scrollRatioRef.current.x = (viewer.scrollLeft + viewer.clientWidth / 2) / viewer.scrollWidth;
+        }
+        if (viewer.scrollHeight > viewer.clientHeight) {
+          scrollRatioRef.current.y = (viewer.scrollTop + viewer.clientHeight / 2) / viewer.scrollHeight;
+        }
+        
         const delta = e.deltaY > 0 ? -0.1 : 0.1;
         const newZoom = Math.min(5, Math.max(0.1, zoomRef.current + delta));
         setZoom(newZoom);
@@ -384,6 +414,7 @@ export function PDFViewer() {
         onPageChange={setPageNum}
         onFitToWidth={handleFitToWidth}
         onFitToPage={handleFitToPage}
+        onZoomChange={handleZoomChange}
         pageSize={pageSize ?? undefined}
       />
     </div>
