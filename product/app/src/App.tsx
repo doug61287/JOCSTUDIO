@@ -1,4 +1,5 @@
 import { useState, useCallback, useRef } from 'react';
+import { Link } from 'react-router-dom';
 import { useProjectStore } from './stores/projectStore';
 import { Toolbar } from './components/Toolbar';
 import { PDFViewer } from './components/PDFViewer';
@@ -106,6 +107,15 @@ function App() {
             <span>📄</span>
             <span className="hidden sm:inline">Upload PDF</span>
           </button>
+          
+          {/* Insights Dashboard Link */}
+          <Link
+            to="/insights"
+            className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-white/10 text-white/60"
+            title="Learning Insights"
+          >
+            📊
+          </Link>
           
           {/* Dark/Light Mode Toggle */}
           <button
