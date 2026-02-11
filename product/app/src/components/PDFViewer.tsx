@@ -202,14 +202,39 @@ export function PDFViewer() {
     setPanStart(null);
   }, []);
 
-  // Ctrl + Mouse Wheel zoom
-  const handleWheel = useCallback((e: React.WheelEvent) => {
-    if (e.ctrlKey || e.metaKey) {
-      e.preventDefault();
-      const delta = e.deltaY > 0 ? -0.1 : 0.1;
-      setZoom(Math.min(5, Math.max(0.1, zoom + delta)));
-    }
-  }, [zoom, setZoom]);
+  // Keep zoom in a ref for native event handler
+  const zoomRef = useRef(zoom);
+  useEffect(() => { zoomRef.current = zoom; }, [zoom]);
+
+  // Ctrl + Mouse Wheel zoom, Shift + Wheel horizontal pan
+  // Using native event listener to properly prevent browser zoom
+  useEffect(() => {
+    const viewer = viewerRef.current;
+    if (!viewer) return;
+
+    const handleWheelNative = (e: WheelEvent) => {
+      // Ctrl/Cmd + Wheel = Zoom drawing only
+      if (e.ctrlKey || e.metaKey) {
+        e.preventDefault();
+        e.stopPropagation();
+        const delta = e.deltaY > 0 ? -0.1 : 0.1;
+        const newZoom = Math.min(5, Math.max(0.1, zoomRef.current + delta));
+        setZoom(newZoom);
+        return;
+      }
+      
+      // Shift + Wheel = Horizontal scroll
+      if (e.shiftKey) {
+        e.preventDefault();
+        viewer.scrollLeft += e.deltaY;
+        return;
+      }
+    };
+
+    // passive: false is required to allow preventDefault
+    viewer.addEventListener('wheel', handleWheelNative, { passive: false });
+    return () => viewer.removeEventListener('wheel', handleWheelNative);
+  }, [setZoom]);
 
   const cycleThumbnailSize = () => {
     const sizes: ThumbnailSize[] = ['small', 'medium', 'large'];
@@ -310,7 +335,6 @@ export function PDFViewer() {
           onMouseMove={handlePanMove}
           onMouseUp={handlePanEnd}
           onMouseLeave={handlePanEnd}
-          onWheel={handleWheel}
         >
           <div className="min-h-full flex items-start justify-center">
             <div className="pdf-container inline-block relative shadow-2xl overflow-hidden bg-white">
