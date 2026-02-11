@@ -51,6 +51,149 @@ export function MeasurementCanvas({ width, height }: MeasurementCanvasProps) {
     return result.point;
   }, [project, snapSettings, tempPoints]);
 
+  // ============================================
+  // KREO-STYLE DRAWING HELPERS
+  // ============================================
+  
+  // Draw a rounded rectangle (pill badge)
+  const drawRoundedRect = (
+    ctx: CanvasRenderingContext2D, 
+    x: number, y: number, 
+    w: number, h: number, 
+    r: number
+  ) => {
+    ctx.beginPath();
+    ctx.moveTo(x + r, y);
+    ctx.lineTo(x + w - r, y);
+    ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+    ctx.lineTo(x + w, y + h - r);
+    ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+    ctx.lineTo(x + r, y + h);
+    ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+    ctx.lineTo(x, y + r);
+    ctx.quadraticCurveTo(x, y, x + r, y);
+    ctx.closePath();
+  };
+
+  // Draw a Kreo-style pill badge with text
+  const drawPillBadge = (
+    ctx: CanvasRenderingContext2D,
+    x: number, y: number,
+    text: string,
+    bgColor: string,
+    textColor: string = 'white',
+    fontSize: number = 12
+  ) => {
+    ctx.font = `bold ${fontSize}px -apple-system, BlinkMacSystemFont, sans-serif`;
+    const metrics = ctx.measureText(text);
+    const padding = 8;
+    const height = fontSize + 8;
+    const width = metrics.width + padding * 2;
+    const radius = height / 2;
+    
+    // Shadow
+    ctx.shadowColor = 'rgba(0,0,0,0.3)';
+    ctx.shadowBlur = 4;
+    ctx.shadowOffsetY = 2;
+    
+    // Background
+    ctx.fillStyle = bgColor;
+    drawRoundedRect(ctx, x, y - height/2, width, height, radius);
+    ctx.fill();
+    
+    // Reset shadow
+    ctx.shadowColor = 'transparent';
+    ctx.shadowBlur = 0;
+    ctx.shadowOffsetY = 0;
+    
+    // Text
+    ctx.fillStyle = textColor;
+    ctx.textAlign = 'left';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(text, x + padding, y);
+    
+    return width;
+  };
+
+  // Draw a pin-style marker (Kreo count style)
+  const drawPinMarker = (
+    ctx: CanvasRenderingContext2D,
+    x: number, y: number,
+    color: string,
+    label: string,
+    isSelected: boolean
+  ) => {
+    const size = 18;
+    const pinHeight = 8;
+    
+    // Shadow
+    ctx.shadowColor = 'rgba(0,0,0,0.4)';
+    ctx.shadowBlur = 6;
+    ctx.shadowOffsetY = 3;
+    
+    // Pin body (circle)
+    ctx.beginPath();
+    ctx.arc(x, y - pinHeight, size/2, 0, Math.PI * 2);
+    
+    // Create gradient
+    const gradient = ctx.createRadialGradient(x - 3, y - pinHeight - 3, 0, x, y - pinHeight, size/2);
+    gradient.addColorStop(0, lightenColor(color, 30));
+    gradient.addColorStop(1, color);
+    ctx.fillStyle = gradient;
+    ctx.fill();
+    
+    // Border
+    ctx.strokeStyle = isSelected ? '#FFD700' : darkenColor(color, 20);
+    ctx.lineWidth = isSelected ? 3 : 2;
+    ctx.stroke();
+    
+    // Pin point (triangle)
+    ctx.beginPath();
+    ctx.moveTo(x - 5, y - pinHeight + 6);
+    ctx.lineTo(x, y);
+    ctx.lineTo(x + 5, y - pinHeight + 6);
+    ctx.fillStyle = color;
+    ctx.fill();
+    
+    // Reset shadow
+    ctx.shadowColor = 'transparent';
+    ctx.shadowBlur = 0;
+    ctx.shadowOffsetY = 0;
+    
+    // Label
+    ctx.font = 'bold 11px -apple-system, BlinkMacSystemFont, sans-serif';
+    ctx.fillStyle = 'white';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(label, x, y - pinHeight);
+  };
+
+  // Helper to lighten a hex color
+  const lightenColor = (hex: string, percent: number): string => {
+    const num = parseInt(hex.replace('#', ''), 16);
+    const amt = Math.round(2.55 * percent);
+    const R = Math.min(255, (num >> 16) + amt);
+    const G = Math.min(255, ((num >> 8) & 0x00FF) + amt);
+    const B = Math.min(255, (num & 0x0000FF) + amt);
+    return `rgb(${R},${G},${B})`;
+  };
+
+  // Helper to darken a hex color
+  const darkenColor = (hex: string, percent: number): string => {
+    const num = parseInt(hex.replace('#', ''), 16);
+    const amt = Math.round(2.55 * percent);
+    const R = Math.max(0, (num >> 16) - amt);
+    const G = Math.max(0, ((num >> 8) & 0x00FF) - amt);
+    const B = Math.max(0, (num & 0x0000FF) - amt);
+    return `rgb(${R},${G},${B})`;
+  };
+
+  // Get short name for JOC item
+  const getShortItemName = (desc: string, maxLen: number = 20): string => {
+    const firstPart = desc.split(',')[0].trim();
+    return firstPart.length > maxLen ? firstPart.slice(0, maxLen) + '...' : firstPart;
+  };
+
   // Draw all measurements and snap indicators
   const draw = useCallback(() => {
     const canvas = canvasRef.current;
@@ -68,207 +211,241 @@ export function MeasurementCanvas({ width, height }: MeasurementCanvasProps) {
     // Draw existing measurements
     project.measurements.forEach((m) => {
       const isSelected = m.id === selectedMeasurement;
-      ctx.strokeStyle = isSelected ? '#FFD700' : m.color;
-      ctx.fillStyle = m.color + '40';
-      ctx.lineWidth = isSelected ? 3 : 2;
+      const baseColor = m.color;
       
+      // ============================================
+      // LINE MEASUREMENTS - Kreo Style
+      // ============================================
       if (m.type === 'line' && m.points.length >= 2) {
+        const [p1, p2] = m.points;
+        
+        // Line with rounded caps
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+        
+        // Shadow for depth
+        ctx.shadowColor = 'rgba(0,0,0,0.2)';
+        ctx.shadowBlur = 3;
+        ctx.shadowOffsetY = 1;
+        
+        ctx.strokeStyle = isSelected ? '#FFD700' : baseColor;
+        ctx.lineWidth = isSelected ? 4 : 3;
         ctx.beginPath();
-        ctx.moveTo(m.points[0].x, m.points[0].y);
-        ctx.lineTo(m.points[1].x, m.points[1].y);
+        ctx.moveTo(p1.x, p1.y);
+        ctx.lineTo(p2.x, p2.y);
         ctx.stroke();
         
-        // Draw endpoints
-        m.points.forEach((p) => {
+        ctx.shadowColor = 'transparent';
+        
+        // Endpoint markers with gradient
+        [p1, p2].forEach((p) => {
+          const grad = ctx.createRadialGradient(p.x - 2, p.y - 2, 0, p.x, p.y, 7);
+          grad.addColorStop(0, lightenColor(baseColor, 40));
+          grad.addColorStop(1, baseColor);
+          
           ctx.beginPath();
-          ctx.arc(p.x, p.y, 5, 0, Math.PI * 2);
+          ctx.arc(p.x, p.y, 6, 0, Math.PI * 2);
+          ctx.fillStyle = grad;
           ctx.fill();
+          ctx.strokeStyle = isSelected ? '#FFD700' : 'white';
+          ctx.lineWidth = 2;
+          ctx.stroke();
         });
         
-        // Draw length label
-        const midX = (m.points[0].x + m.points[1].x) / 2;
-        const midY = (m.points[0].y + m.points[1].y) / 2;
-        ctx.font = 'bold 14px sans-serif';
-        ctx.fillStyle = 'white';
-        ctx.strokeStyle = 'rgba(0,0,0,0.7)';
-        ctx.lineWidth = 3;
-        ctx.strokeText(`${m.value.toFixed(1)} LF`, midX + 10, midY - 10);
-        ctx.fillText(`${m.value.toFixed(1)} LF`, midX + 10, midY - 10);
+        // Pill badge at midpoint
+        const midX = (p1.x + p2.x) / 2;
+        const midY = (p1.y + p2.y) / 2;
+        
+        // Show JOC item name if assigned
+        if (m.jocItem) {
+          const itemName = getShortItemName(m.jocItem.description, 18);
+          drawPillBadge(ctx, midX + 12, midY - 20, itemName, 'rgba(0,0,0,0.75)', baseColor, 10);
+        }
+        
+        // Length badge
+        drawPillBadge(ctx, midX + 12, midY, `${m.value.toFixed(1)} LF`, baseColor);
       }
       
-      // Draw polyline (multi-segment line for perimeters)
+      // ============================================
+      // POLYLINE MEASUREMENTS - Kreo Style
+      // ============================================
       if (m.type === 'polyline' && m.points.length >= 2) {
-        ctx.strokeStyle = isSelected ? '#FFD700' : m.color;
-        ctx.lineWidth = isSelected ? 4 : 3;
-        ctx.setLineDash([]);
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
         
-        // Draw the polyline segments
+        // Shadow
+        ctx.shadowColor = 'rgba(0,0,0,0.2)';
+        ctx.shadowBlur = 3;
+        
+        ctx.strokeStyle = isSelected ? '#FFD700' : baseColor;
+        ctx.lineWidth = isSelected ? 4 : 3;
         ctx.beginPath();
         ctx.moveTo(m.points[0].x, m.points[0].y);
         m.points.slice(1).forEach((p) => ctx.lineTo(p.x, p.y));
         ctx.stroke();
         
-        // Draw vertices with segment lengths
+        ctx.shadowColor = 'transparent';
+        
+        // Vertex markers with segment lengths
         m.points.forEach((p, idx) => {
-          // Draw vertex marker
+          // Gradient vertex
+          const grad = ctx.createRadialGradient(p.x - 2, p.y - 2, 0, p.x, p.y, 7);
+          grad.addColorStop(0, lightenColor(baseColor, 40));
+          grad.addColorStop(1, baseColor);
+          
           ctx.beginPath();
           ctx.arc(p.x, p.y, 6, 0, Math.PI * 2);
-          ctx.fillStyle = m.color;
+          ctx.fillStyle = grad;
           ctx.fill();
           ctx.strokeStyle = 'white';
           ctx.lineWidth = 2;
           ctx.stroke();
           
-          // Draw segment length label
-          if (idx < m.points.length - 1 && project) {
+          // Segment length (small pill)
+          if (idx < m.points.length - 1) {
             const nextP = m.points[idx + 1];
             const segLen = pixelsToFeet(distance(p, nextP), project.scale);
-            const midX = (p.x + nextP.x) / 2;
-            const midY = (p.y + nextP.y) / 2;
+            const mx = (p.x + nextP.x) / 2;
+            const my = (p.y + nextP.y) / 2;
             
-            ctx.font = 'bold 11px sans-serif';
-            ctx.fillStyle = m.color;
-            ctx.strokeStyle = 'rgba(0,0,0,0.8)';
-            ctx.lineWidth = 3;
-            ctx.textAlign = 'center';
-            ctx.strokeText(`${segLen.toFixed(1)}'`, midX, midY - 8);
-            ctx.fillText(`${segLen.toFixed(1)}'`, midX, midY - 8);
+            drawPillBadge(ctx, mx - 20, my - 12, `${segLen.toFixed(1)}'`, 'rgba(0,0,0,0.6)', baseColor, 10);
           }
         });
         
-        // Draw total length badge at end
+        // Total badge at end
         const lastP = m.points[m.points.length - 1];
-        ctx.font = 'bold 13px sans-serif';
-        ctx.fillStyle = 'white';
-        ctx.strokeStyle = m.color;
-        ctx.lineWidth = 1;
-        
-        // Badge background
-        const totalText = `Total: ${m.value.toFixed(1)} LF`;
-        const textWidth = ctx.measureText(totalText).width;
-        ctx.fillStyle = m.color;
-        ctx.fillRect(lastP.x + 10, lastP.y - 20, textWidth + 12, 22);
-        ctx.fillStyle = 'white';
-        ctx.textAlign = 'left';
-        ctx.fillText(totalText, lastP.x + 16, lastP.y - 5);
+        if (m.jocItem) {
+          const itemName = getShortItemName(m.jocItem.description, 18);
+          drawPillBadge(ctx, lastP.x + 12, lastP.y - 32, itemName, 'rgba(0,0,0,0.75)', baseColor, 10);
+        }
+        drawPillBadge(ctx, lastP.x + 12, lastP.y - 10, `Total: ${m.value.toFixed(1)} LF`, baseColor, 'white', 13);
       }
       
-      // Draw count markers (Kreo-style)
+      // ============================================
+      // COUNT MEASUREMENTS - Kreo Pin Style
+      // ============================================
       if (m.type === 'count') {
         m.points.forEach((p, idx) => {
-          // Outer ring
-          ctx.beginPath();
-          ctx.arc(p.x, p.y, 14, 0, Math.PI * 2);
-          ctx.fillStyle = m.color + '30';
-          ctx.fill();
-          ctx.strokeStyle = isSelected ? '#FFD700' : m.color;
-          ctx.lineWidth = isSelected ? 3 : 2;
-          ctx.stroke();
-          
-          // Inner circle
-          ctx.beginPath();
-          ctx.arc(p.x, p.y, 8, 0, Math.PI * 2);
-          ctx.fillStyle = m.color;
-          ctx.fill();
-          
-          // Number
-          ctx.font = 'bold 11px sans-serif';
-          ctx.fillStyle = 'white';
-          ctx.textAlign = 'center';
-          ctx.textBaseline = 'middle';
-          ctx.fillText(String(idx + 1), p.x, p.y);
+          drawPinMarker(ctx, p.x, p.y, baseColor, String(idx + 1), isSelected);
         });
         
-        // Draw count badge
+        // Item name + count badge
         if (m.points.length > 0) {
           const lastP = m.points[m.points.length - 1];
-          ctx.font = 'bold 12px sans-serif';
-          const countText = `${m.value} EA`;
-          const textWidth = ctx.measureText(countText).width;
           
-          // Badge background
-          ctx.fillStyle = m.color;
-          ctx.fillRect(lastP.x + 16, lastP.y - 12, textWidth + 10, 20);
-          ctx.fillStyle = 'white';
-          ctx.textAlign = 'left';
-          ctx.textBaseline = 'middle';
-          ctx.fillText(countText, lastP.x + 21, lastP.y - 2);
+          if (m.jocItem) {
+            const itemName = getShortItemName(m.jocItem.description, 22);
+            drawPillBadge(ctx, lastP.x + 20, lastP.y - 35, itemName, 'rgba(0,0,0,0.8)', baseColor, 11);
+          }
+          drawPillBadge(ctx, lastP.x + 20, lastP.y - 12, `${m.value} EA`, baseColor, 'white', 12);
         }
       }
       
+      // ============================================
+      // AREA MEASUREMENTS - Kreo Style
+      // ============================================
       if (m.type === 'area' && m.points.length >= 3) {
-        ctx.fillStyle = m.color + '40';
-        ctx.strokeStyle = isSelected ? '#FFD700' : m.color;
-        ctx.lineWidth = isSelected ? 3 : 2;
+        // Semi-transparent fill
+        ctx.fillStyle = baseColor + '35';
         ctx.beginPath();
         ctx.moveTo(m.points[0].x, m.points[0].y);
         m.points.slice(1).forEach((p) => ctx.lineTo(p.x, p.y));
         ctx.closePath();
         ctx.fill();
-        ctx.stroke();
         
-        // Draw vertices
+        // Border with shadow
+        ctx.shadowColor = 'rgba(0,0,0,0.2)';
+        ctx.shadowBlur = 3;
+        ctx.strokeStyle = isSelected ? '#FFD700' : baseColor;
+        ctx.lineWidth = isSelected ? 3 : 2;
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+        ctx.stroke();
+        ctx.shadowColor = 'transparent';
+        
+        // Vertex markers
         m.points.forEach((p) => {
           ctx.beginPath();
-          ctx.arc(p.x, p.y, 4, 0, Math.PI * 2);
-          ctx.fillStyle = m.color;
+          ctx.arc(p.x, p.y, 5, 0, Math.PI * 2);
+          ctx.fillStyle = baseColor;
           ctx.fill();
+          ctx.strokeStyle = 'white';
+          ctx.lineWidth = 2;
+          ctx.stroke();
         });
         
-        // Draw area label at centroid
+        // Center badge
         const cx = m.points.reduce((sum, p) => sum + p.x, 0) / m.points.length;
         const cy = m.points.reduce((sum, p) => sum + p.y, 0) / m.points.length;
-        ctx.font = 'bold 14px sans-serif';
-        ctx.fillStyle = 'white';
-        ctx.strokeStyle = 'rgba(0,0,0,0.7)';
-        ctx.lineWidth = 3;
-        ctx.textAlign = 'center';
-        ctx.strokeText(`${m.value.toFixed(1)} SF`, cx, cy);
-        ctx.fillText(`${m.value.toFixed(1)} SF`, cx, cy);
+        
+        if (m.jocItem) {
+          const itemName = getShortItemName(m.jocItem.description, 20);
+          drawPillBadge(ctx, cx - 50, cy - 22, itemName, 'rgba(0,0,0,0.8)', baseColor, 11);
+        }
+        drawPillBadge(ctx, cx - 30, cy, `${m.value.toFixed(1)} SF`, baseColor, 'white', 14);
       }
       
-      // Draw spaces (rooms)
+      // ============================================
+      // SPACE (ROOM) MEASUREMENTS - Kreo Style
+      // ============================================
       if (m.type === 'space' && m.points.length >= 3) {
-        ctx.fillStyle = m.color + '30';
+        // Lighter fill for rooms
+        ctx.fillStyle = baseColor + '25';
         ctx.beginPath();
         ctx.moveTo(m.points[0].x, m.points[0].y);
         m.points.slice(1).forEach((p) => ctx.lineTo(p.x, p.y));
         ctx.closePath();
         ctx.fill();
-        ctx.strokeStyle = isSelected ? '#FFD700' : m.color;
+        
+        // Dashed border
+        ctx.strokeStyle = isSelected ? '#FFD700' : baseColor;
         ctx.lineWidth = isSelected ? 3 : 2;
-        ctx.setLineDash([8, 4]);
+        ctx.setLineDash([10, 5]);
+        ctx.lineCap = 'round';
         ctx.stroke();
         ctx.setLineDash([]);
         
-        // Draw vertices
+        // Vertex markers
         m.points.forEach((p) => {
           ctx.beginPath();
           ctx.arc(p.x, p.y, 4, 0, Math.PI * 2);
-          ctx.fillStyle = m.color;
+          ctx.fillStyle = baseColor;
           ctx.fill();
         });
         
-        // Draw room name and measurements at centroid
+        // Room info card at centroid
         const cx = m.points.reduce((sum, p) => sum + p.x, 0) / m.points.length;
         const cy = m.points.reduce((sum, p) => sum + p.y, 0) / m.points.length;
         
-        // Background for text
-        ctx.fillStyle = 'rgba(0,0,0,0.7)';
-        ctx.fillRect(cx - 60, cy - 35, 120, 50);
+        // Card background with shadow
+        ctx.shadowColor = 'rgba(0,0,0,0.4)';
+        ctx.shadowBlur = 8;
+        ctx.shadowOffsetY = 3;
+        
+        const cardWidth = 130;
+        const cardHeight = 60;
+        ctx.fillStyle = 'rgba(0,0,0,0.85)';
+        drawRoundedRect(ctx, cx - cardWidth/2, cy - cardHeight/2, cardWidth, cardHeight, 8);
+        ctx.fill();
+        
+        ctx.shadowColor = 'transparent';
         
         // Room name
-        ctx.font = 'bold 14px sans-serif';
-        ctx.fillStyle = m.color;
+        ctx.font = 'bold 14px -apple-system, BlinkMacSystemFont, sans-serif';
+        ctx.fillStyle = baseColor;
         ctx.textAlign = 'center';
-        ctx.fillText(m.spaceName || 'Space', cx, cy - 15);
+        ctx.textBaseline = 'middle';
+        ctx.fillText(m.spaceName || 'Space', cx, cy - 16);
         
-        // Area and perimeter
-        ctx.font = '12px sans-serif';
+        // Area
+        ctx.font = 'bold 13px -apple-system, BlinkMacSystemFont, sans-serif';
         ctx.fillStyle = 'white';
-        ctx.fillText(`${m.value.toFixed(1)} SF`, cx, cy + 2);
-        ctx.fillStyle = 'rgba(255,255,255,0.7)';
-        ctx.fillText(`${m.perimeter?.toFixed(1) || 0} LF perim.`, cx, cy + 18);
+        ctx.fillText(`${m.value.toFixed(0)} SF`, cx, cy + 4);
+        
+        // Perimeter
+        ctx.font = '11px -apple-system, BlinkMacSystemFont, sans-serif';
+        ctx.fillStyle = 'rgba(255,255,255,0.6)';
+        ctx.fillText(`${m.perimeter?.toFixed(0) || 0} LF perimeter`, cx, cy + 20);
       }
     });
     
