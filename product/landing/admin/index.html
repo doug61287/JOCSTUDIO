@@ -1,0 +1,927 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard | JOCHero</title>
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect fill='%231E40AF' rx='15' width='100' height='100'/><text y='70' x='50' text-anchor='middle' font-size='50' fill='white'>📐</text></svg>">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwindcss.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'hero-blue': '#1E40AF',
+                        'hero-gold': '#FFD700',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        
+        .glass {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+        
+        .gradient-border {
+            position: relative;
+        }
+        .gradient-border::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: inherit;
+            padding: 2px;
+            background: linear-gradient(135deg, #3B82F6, #8B5CF6, #EC4899);
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+        }
+        
+        .animate-pulse-slow {
+            animation: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        .float { animation: float 4s ease-in-out infinite; }
+    </style>
+</head>
+<body class="min-h-screen bg-gradient-to-br from-gray-900 via-slate-900 to-blue-950">
+    <!-- Navigation -->
+    <nav class="fixed top-0 left-0 right-0 z-50 glass">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center gap-3">
+                    <span class="text-2xl">📐</span>
+                    <span class="text-xl font-bold text-white">JOCHero</span>
+                    <span class="px-2 py-0.5 bg-gradient-to-r from-yellow-400 to-orange-400 text-gray-900 text-xs font-bold rounded">BETA</span>
+                </div>
+                
+                <div class="flex items-center gap-4">
+                    <a href="/blog" class="text-white/70 hover:text-white text-sm">Blog</a>
+                    <a href="#" class="text-white/70 hover:text-white text-sm">Help</a>
+                    <div class="relative group">
+                        <div class="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-500 rounded-full flex items-center justify-center text-white text-sm font-bold cursor-pointer">
+                            <span id="userInitial">U</span>
+                        </div>
+                        <!-- Dropdown -->
+                        <div class="absolute right-0 mt-2 w-48 bg-gray-800 rounded-lg shadow-xl border border-white/10 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all">
+                            <div class="p-3 border-b border-white/10">
+                                <div class="font-medium text-white text-sm" id="userNameDropdown">User</div>
+                                <div class="text-xs text-white/50" id="userEmailDropdown">email@example.com</div>
+                            </div>
+                            <a href="#" onclick="signOut()" class="block px-3 py-2 text-sm text-red-400 hover:bg-white/5">
+                                Sign Out
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="pt-24 pb-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+        <!-- Welcome Header -->
+        <div class="mb-8">
+            <div class="flex items-center gap-3 mb-2">
+                <h1 class="text-3xl sm:text-4xl font-bold text-white">
+                    🎛️ Mission Control
+                </h1>
+                <span class="px-3 py-1 bg-red-500/20 border border-red-500/50 text-red-400 text-xs font-bold rounded-full">ADMIN</span>
+            </div>
+            <p class="text-white/60">JOCHero founder dashboard. Everything you need to run the platform.</p>
+        </div>
+
+        <!-- Quick Links Bar -->
+        <div class="flex flex-wrap gap-3 mb-8">
+            <a href="https://github.com/doug61287/JOCSTUDIO" target="_blank" class="px-4 py-2 bg-gray-800 hover:bg-gray-700 rounded-lg text-white text-sm flex items-center gap-2 transition-all">
+                <span>🐙</span> GitHub Repo
+            </a>
+            <a href="https://vercel.com/dougs-projects-20d1afd5/jocstudio" target="_blank" class="px-4 py-2 bg-gray-800 hover:bg-gray-700 rounded-lg text-white text-sm flex items-center gap-2 transition-all">
+                <span>▲</span> Vercel Dashboard
+            </a>
+            <a href="https://railway.app" target="_blank" class="px-4 py-2 bg-gray-800 hover:bg-gray-700 rounded-lg text-white text-sm flex items-center gap-2 transition-all">
+                <span>🚂</span> Railway Backend
+            </a>
+            <a href="https://supabase.com/dashboard" target="_blank" class="px-4 py-2 bg-gray-800 hover:bg-gray-700 rounded-lg text-white text-sm flex items-center gap-2 transition-all">
+                <span>⚡</span> Supabase DB
+            </a>
+            <a href="https://web-production-309c2.up.railway.app/health" target="_blank" class="px-4 py-2 bg-green-600/20 hover:bg-green-600/30 border border-green-500/50 rounded-lg text-green-400 text-sm flex items-center gap-2 transition-all">
+                <span>💚</span> API Health
+            </a>
+        </div>
+
+        <!-- Quick Stats -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
+            <!-- JOC Line Items - Featured -->
+            <div class="glass rounded-xl p-4 bg-gradient-to-br from-amber-500/20 to-orange-500/20 border border-amber-500/30">
+                <div class="text-2xl mb-1">📚</div>
+                <div class="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-orange-400" id="lineItemCount">
+                    <span class="counter" data-target="65331">0</span>
+                </div>
+                <div class="text-sm text-amber-300/80">JOC Line Items</div>
+            </div>
+            <div class="glass rounded-xl p-4">
+                <div class="text-2xl mb-1">👥</div>
+                <div class="text-2xl font-bold text-white" id="userCount">0</div>
+                <div class="text-sm text-white/60">Beta Users</div>
+            </div>
+            <div class="glass rounded-xl p-4">
+                <div class="text-2xl mb-1">📁</div>
+                <div class="text-2xl font-bold text-white" id="projectCount">0</div>
+                <div class="text-sm text-white/60">Total Projects</div>
+            </div>
+            <div class="glass rounded-xl p-4">
+                <div class="text-2xl mb-1">🔄</div>
+                <div class="text-2xl font-bold text-white" id="translationCount">0</div>
+                <div class="text-sm text-white/60">Translations</div>
+            </div>
+        </div>
+
+        <!-- Beta Invite Codes -->
+        <div class="glass rounded-xl p-6 mb-8">
+            <h3 class="font-semibold text-white mb-4 flex items-center gap-2">
+                <span>🎟️</span> Beta Invite Codes
+            </h3>
+            <div class="grid grid-cols-2 sm:grid-cols-5 gap-3">
+                <div class="bg-green-500/20 border border-green-500/50 rounded-lg p-3 text-center">
+                    <div class="font-mono text-green-400 text-sm">JOCHERO-A7B3C9D2</div>
+                    <div class="text-xs text-white/50 mt-1">Joe (assigned)</div>
+                </div>
+                <div class="bg-white/5 border border-white/10 rounded-lg p-3 text-center">
+                    <div class="font-mono text-white/80 text-sm">K8M4N6P1</div>
+                    <div class="text-xs text-white/50 mt-1">Available</div>
+                </div>
+                <div class="bg-white/5 border border-white/10 rounded-lg p-3 text-center">
+                    <div class="font-mono text-white/80 text-sm">Q2W5E8R3</div>
+                    <div class="text-xs text-white/50 mt-1">Available</div>
+                </div>
+                <div class="bg-white/5 border border-white/10 rounded-lg p-3 text-center">
+                    <div class="font-mono text-white/80 text-sm">T9Y7U4I6</div>
+                    <div class="text-xs text-white/50 mt-1">Available</div>
+                </div>
+                <div class="bg-white/5 border border-white/10 rounded-lg p-3 text-center">
+                    <div class="font-mono text-white/80 text-sm">+5 more</div>
+                    <div class="text-xs text-white/50 mt-1">Available</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Tools Grid -->
+        <h2 class="text-xl font-semibold text-white mb-4">🛠️ Tools</h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+            
+            <!-- Takeoff Tool - Primary -->
+            <a href="/app" class="group col-span-1 sm:col-span-2 lg:col-span-1 lg:row-span-2">
+                <div class="h-full glass rounded-2xl p-6 card-hover gradient-border bg-gradient-to-br from-blue-600/20 to-purple-600/20">
+                    <div class="text-5xl mb-4 float">📐</div>
+                    <h3 class="text-2xl font-bold text-white mb-2">Takeoff Tool</h3>
+                    <p class="text-white/70 mb-4">Upload drawings, measure, and assign JOC line items. The heart of JOCHero.</p>
+                    <ul class="space-y-2 text-sm text-white/60 mb-6">
+                        <li class="flex items-center gap-2">
+                            <span class="text-green-400">✓</span> PDF Upload & Viewer
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <span class="text-green-400">✓</span> Scale Calibration (Presets)
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <span class="text-green-400">✓</span> Smart Snap (⚡ Endpoints, Midpoints)
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <span class="text-green-400">✓</span> Line, Area, Count, Space Tools
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <span class="text-green-400">✓</span> Page Navigation (Bluebeam-style)
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <span class="text-green-400">✓</span> CSV Export
+                        </li>
+                    </ul>
+                    <div class="flex items-center gap-2 text-blue-400 font-semibold group-hover:gap-3 transition-all">
+                        Launch Takeoff <span>→</span>
+                    </div>
+                </div>
+            </a>
+
+            <!-- Translation Machine -->
+            <a href="/app#translate" class="group">
+                <div class="h-full glass rounded-2xl p-6 card-hover">
+                    <div class="text-4xl mb-3">🔮</div>
+                    <h3 class="text-xl font-bold text-white mb-2">Translation Machine</h3>
+                    <p class="text-white/70 text-sm mb-4">Type plain English, get matching JOC line items from 65,331 items.</p>
+                    <div class="flex flex-wrap gap-2 mb-4">
+                        <span class="px-2 py-1 bg-amber-500/20 text-amber-300 text-xs rounded">Synonyms</span>
+                        <span class="px-2 py-1 bg-amber-500/20 text-amber-300 text-xs rounded">Smart Match</span>
+                        <span class="px-2 py-1 bg-amber-500/20 text-amber-300 text-xs rounded">65K Items</span>
+                    </div>
+                    <div class="flex items-center gap-2 text-amber-400 font-medium text-sm group-hover:gap-3 transition-all">
+                        Open Translator <span>→</span>
+                    </div>
+                </div>
+            </a>
+
+            <!-- Guided Estimation -->
+            <a href="/app#guide" class="group">
+                <div class="h-full glass rounded-2xl p-6 card-hover">
+                    <div class="text-4xl mb-3">🤖</div>
+                    <h3 class="text-xl font-bold text-white mb-2">Guided Estimation</h3>
+                    <p class="text-white/70 text-sm mb-4">Chat-based assistant walks you through category → line item selection.</p>
+                    <div class="flex flex-wrap gap-2 mb-4">
+                        <span class="px-2 py-1 bg-purple-500/20 text-purple-300 text-xs rounded">17 Categories</span>
+                        <span class="px-2 py-1 bg-purple-500/20 text-purple-300 text-xs rounded">Decision Tree</span>
+                    </div>
+                    <div class="flex items-center gap-2 text-purple-400 font-medium text-sm group-hover:gap-3 transition-all">
+                        Start Guide <span>→</span>
+                    </div>
+                </div>
+            </a>
+
+            <!-- Learning Insights -->
+            <a href="/app/insights" class="group">
+                <div class="h-full glass rounded-2xl p-6 card-hover">
+                    <div class="text-4xl mb-3">📊</div>
+                    <h3 class="text-xl font-bold text-white mb-2">Learning Insights</h3>
+                    <p class="text-white/70 text-sm mb-4">See how JOCHero learns from your selections to improve recommendations.</p>
+                    <div class="flex flex-wrap gap-2 mb-4">
+                        <span class="px-2 py-1 bg-green-500/20 text-green-300 text-xs rounded">Analytics</span>
+                        <span class="px-2 py-1 bg-green-500/20 text-green-300 text-xs rounded">ML Training</span>
+                    </div>
+                    <div class="flex items-center gap-2 text-green-400 font-medium text-sm group-hover:gap-3 transition-all">
+                        View Insights <span>→</span>
+                    </div>
+                </div>
+            </a>
+
+            <!-- JOC Catalogue -->
+            <a href="/app#catalogue" class="group">
+                <div class="h-full glass rounded-2xl p-6 card-hover">
+                    <div class="text-4xl mb-3">📚</div>
+                    <h3 class="text-xl font-bold text-white mb-2">JOC Catalogue</h3>
+                    <p class="text-white/70 text-sm mb-4">Browse the full NYC H+H CTC 2024 catalogue with 65,331 line items.</p>
+                    <div class="flex flex-wrap gap-2 mb-4">
+                        <span class="px-2 py-1 bg-blue-500/20 text-blue-300 text-xs rounded">25 Divisions</span>
+                        <span class="px-2 py-1 bg-blue-500/20 text-blue-300 text-xs rounded">2024 Pricing</span>
+                    </div>
+                    <div class="flex items-center gap-2 text-blue-400 font-medium text-sm group-hover:gap-3 transition-all">
+                        Browse Catalogue <span>→</span>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+        <!-- Resources Section -->
+        <h2 class="text-xl font-semibold text-white mb-4">📖 Resources</h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-12">
+            
+            <a href="/blog" class="glass rounded-xl p-4 card-hover flex items-center gap-4">
+                <div class="text-3xl">📝</div>
+                <div>
+                    <h4 class="font-semibold text-white">Blog</h4>
+                    <p class="text-sm text-white/60">JOC tips & guides</p>
+                </div>
+            </a>
+            
+            <a href="/sandbox" class="glass rounded-xl p-4 card-hover flex items-center gap-4">
+                <div class="text-3xl">🎮</div>
+                <div>
+                    <h4 class="font-semibold text-white">Sandbox Demo</h4>
+                    <p class="text-sm text-white/60">Try with sample project</p>
+                </div>
+            </a>
+            
+            <a href="#" class="glass rounded-xl p-4 card-hover flex items-center gap-4">
+                <div class="text-3xl">🎥</div>
+                <div>
+                    <h4 class="font-semibold text-white">Video Tutorials</h4>
+                    <p class="text-sm text-white/60">Coming soon</p>
+                </div>
+            </a>
+            
+            <a href="#" class="glass rounded-xl p-4 card-hover flex items-center gap-4">
+                <div class="text-3xl">💬</div>
+                <div>
+                    <h4 class="font-semibold text-white">Get Support</h4>
+                    <p class="text-sm text-white/60">We're here to help</p>
+                </div>
+            </a>
+        </div>
+
+        <!-- User Guides Section -->
+        <h2 class="text-xl font-semibold text-white mb-4">📘 User Guides</h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-12">
+            
+            <!-- Getting Started -->
+            <div class="glass rounded-xl overflow-hidden">
+                <button onclick="toggleGuide('guide-start')" class="w-full p-5 flex items-center justify-between hover:bg-white/5 transition-all">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 bg-blue-500/20 rounded-lg flex items-center justify-center text-xl">🚀</div>
+                        <h4 class="font-semibold text-white">Getting Started</h4>
+                    </div>
+                    <span id="guide-start-icon" class="text-white/50 transition-transform">▼</span>
+                </button>
+                <div id="guide-start" class="hidden px-5 pb-5 space-y-4 text-sm text-white/80 border-t border-white/10">
+                    <div class="pt-4">
+                        <h5 class="font-semibold text-blue-400 mb-2">📄 Uploading Your First Drawing</h5>
+                        <p class="mb-2">Drag & drop any PDF onto the main canvas, or click the <strong>Upload PDF</strong> button in the header.</p>
+                        <p class="text-white/60">Supported: PDF files up to 50MB. Multi-page drawings work great!</p>
+                    </div>
+                    <div>
+                        <h5 class="font-semibold text-blue-400 mb-2">📏 Setting the Scale</h5>
+                        <p class="mb-2">Click the <strong>📐 ruler icon</strong> in the toolbar to open calibration.</p>
+                        <ul class="list-disc list-inside text-white/60 space-y-1">
+                            <li><strong>Presets:</strong> Choose common scales like 1/4" = 1'-0"</li>
+                            <li><strong>Measure:</strong> Draw over a known dimension on the plan</li>
+                            <li><strong>Manual:</strong> Enter pixels-per-foot directly</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h5 class="font-semibold text-blue-400 mb-2">✏️ Your First Measurement</h5>
+                        <ol class="list-decimal list-inside text-white/60 space-y-1">
+                            <li>Press <kbd class="px-1 bg-white/10 rounded">L</kbd> for Line tool</li>
+                            <li>Click the start point on your drawing</li>
+                            <li>Click the end point - measurement appears!</li>
+                            <li>View measurements in the right panel</li>
+                        </ol>
+                    </div>
+                    <div>
+                        <h5 class="font-semibold text-blue-400 mb-2">📥 Exporting to CSV</h5>
+                        <p class="text-white/60">Click <strong>Export CSV</strong> in the measurements panel. The file includes all measurements with JOC line items, quantities, and totals - ready for your proposal.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Measurement Tools -->
+            <div class="glass rounded-xl overflow-hidden">
+                <button onclick="toggleGuide('guide-tools')" class="w-full p-5 flex items-center justify-between hover:bg-white/5 transition-all">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 bg-purple-500/20 rounded-lg flex items-center justify-center text-xl">📐</div>
+                        <h4 class="font-semibold text-white">Measurement Tools</h4>
+                    </div>
+                    <span id="guide-tools-icon" class="text-white/50 transition-transform">▼</span>
+                </button>
+                <div id="guide-tools" class="hidden px-5 pb-5 space-y-4 text-sm text-white/80 border-t border-white/10">
+                    <div class="pt-4">
+                        <h5 class="font-semibold text-purple-400 mb-2">📏 Line Tool (L) - Linear Feet</h5>
+                        <p class="text-white/60">Click start point → click end point. Perfect for walls, pipes, conduit, trim. Shows length in LF.</p>
+                    </div>
+                    <div>
+                        <h5 class="font-semibold text-purple-400 mb-2">⬛ Area Tool (A) - Square Feet</h5>
+                        <p class="text-white/60">Click to place polygon points. Double-click to close. Great for flooring, ceiling, paint areas. Shows area in SF.</p>
+                    </div>
+                    <div>
+                        <h5 class="font-semibold text-purple-400 mb-2">🔢 Count Tool (C) - Items</h5>
+                        <p class="text-white/60">Click to count items (lights, receptacles, fixtures). Each click adds a numbered marker. Double-click to finish.</p>
+                    </div>
+                    <div>
+                        <h5 class="font-semibold text-purple-400 mb-2">🏠 Space Tool (S) - Rooms</h5>
+                        <p class="text-white/60">Define room boundaries. Calculates both area AND perimeter. Name each space for finish schedules.</p>
+                    </div>
+                    <div>
+                        <h5 class="font-semibold text-purple-400 mb-2">⚡ Snap Feature</h5>
+                        <p class="mb-2 text-white/60">Snap helps you click precisely on existing points:</p>
+                        <ul class="list-disc list-inside text-white/60 space-y-1">
+                            <li><span class="text-green-400">●</span> Endpoints - existing measurement endpoints</li>
+                            <li><span class="text-blue-400">◆</span> Midpoints - center of lines</li>
+                            <li><span class="text-amber-400">✕</span> Intersections - where lines cross</li>
+                            <li><span class="text-purple-400">⊥</span> Perpendicular - 90° from lines</li>
+                        </ul>
+                        <p class="mt-2 text-white/60">Toggle snap types in the top-right corner of the canvas.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Translation & Catalogue -->
+            <div class="glass rounded-xl overflow-hidden">
+                <button onclick="toggleGuide('guide-translate')" class="w-full p-5 flex items-center justify-between hover:bg-white/5 transition-all">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 bg-amber-500/20 rounded-lg flex items-center justify-center text-xl">🔮</div>
+                        <h4 class="font-semibold text-white">Translation & Catalogue</h4>
+                    </div>
+                    <span id="guide-translate-icon" class="text-white/50 transition-transform">▼</span>
+                </button>
+                <div id="guide-translate" class="hidden px-5 pb-5 space-y-4 text-sm text-white/80 border-t border-white/10">
+                    <div class="pt-4">
+                        <h5 class="font-semibold text-amber-400 mb-2">🔮 Translation Machine</h5>
+                        <p class="mb-2 text-white/60">Click the <strong>🔮 Translate</strong> button in the header. Type plain English like:</p>
+                        <ul class="list-disc list-inside text-white/60 space-y-1">
+                            <li>"install 5/8 drywall ceiling"</li>
+                            <li>"4 inch copper pipe"</li>
+                            <li>"remove existing floor tile"</li>
+                        </ul>
+                        <p class="mt-2 text-white/60">JOCHero matches your description to 65,331 JOC catalogue items using synonyms and smart matching.</p>
+                    </div>
+                    <div>
+                        <h5 class="font-semibold text-amber-400 mb-2">🤖 Guided Estimation Assistant</h5>
+                        <p class="mb-2 text-white/60">Don't know the exact term? Click <strong>🤖 Guide Me</strong> on any unassigned measurement.</p>
+                        <p class="text-white/60">The chat assistant walks you through: Category → Subcategory → Specific item. No construction knowledge required!</p>
+                    </div>
+                    <div>
+                        <h5 class="font-semibold text-amber-400 mb-2">📚 Browsing the Catalogue</h5>
+                        <p class="text-white/60">Switch to "Browse" mode in the Translation Machine to explore by CSI division (01-49). Filter by division, search by task code, or scroll through items.</p>
+                    </div>
+                    <div>
+                        <h5 class="font-semibold text-amber-400 mb-2">🔗 Assigning Line Items</h5>
+                        <p class="text-white/60">Once you find the right item, click to assign it to your measurement. The unit cost multiplies by your quantity automatically.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Keyboard Shortcuts -->
+            <div class="glass rounded-xl overflow-hidden">
+                <button onclick="toggleGuide('guide-keys')" class="w-full p-5 flex items-center justify-between hover:bg-white/5 transition-all">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 bg-green-500/20 rounded-lg flex items-center justify-center text-xl">⌨️</div>
+                        <h4 class="font-semibold text-white">Keyboard Shortcuts</h4>
+                    </div>
+                    <span id="guide-keys-icon" class="text-white/50 transition-transform">▼</span>
+                </button>
+                <div id="guide-keys" class="hidden px-5 pb-5 text-sm border-t border-white/10">
+                    <div class="pt-4 grid grid-cols-2 gap-3">
+                        <div class="flex items-center gap-2">
+                            <kbd class="px-2 py-1 bg-white/10 rounded font-mono text-white min-w-[32px] text-center">L</kbd>
+                            <span class="text-white/70">Line Tool</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <kbd class="px-2 py-1 bg-white/10 rounded font-mono text-white min-w-[32px] text-center">A</kbd>
+                            <span class="text-white/70">Area Tool</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <kbd class="px-2 py-1 bg-white/10 rounded font-mono text-white min-w-[32px] text-center">C</kbd>
+                            <span class="text-white/70">Count Tool</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <kbd class="px-2 py-1 bg-white/10 rounded font-mono text-white min-w-[32px] text-center">S</kbd>
+                            <span class="text-white/70">Space Tool</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <kbd class="px-2 py-1 bg-white/10 rounded font-mono text-white min-w-[32px] text-center">V</kbd>
+                            <span class="text-white/70">Select</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <kbd class="px-2 py-1 bg-white/10 rounded font-mono text-white min-w-[32px] text-center">H</kbd>
+                            <span class="text-white/70">Pan/Hand</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <kbd class="px-2 py-1 bg-white/10 rounded font-mono text-white min-w-[32px] text-center">Esc</kbd>
+                            <span class="text-white/70">Cancel</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <kbd class="px-2 py-1 bg-white/10 rounded font-mono text-white min-w-[32px] text-center">Del</kbd>
+                            <span class="text-white/70">Delete</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <kbd class="px-2 py-1 bg-white/10 rounded font-mono text-white min-w-[32px] text-center">+/-</kbd>
+                            <span class="text-white/70">Zoom In/Out</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <kbd class="px-2 py-1 bg-white/10 rounded font-mono text-white min-w-[32px] text-center">0</kbd>
+                            <span class="text-white/70">Fit to Screen</span>
+                        </div>
+                    </div>
+                    <p class="mt-4 text-xs text-white/50">Pro tip: Keep your left hand on the keyboard for tool switching while your right hand clicks!</p>
+                </div>
+            </div>
+
+            <!-- Scale & Calibration -->
+            <div class="glass rounded-xl overflow-hidden">
+                <button onclick="toggleGuide('guide-scale')" class="w-full p-5 flex items-center justify-between hover:bg-white/5 transition-all">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 bg-red-500/20 rounded-lg flex items-center justify-center text-xl">📏</div>
+                        <h4 class="font-semibold text-white">Scale & Calibration</h4>
+                    </div>
+                    <span id="guide-scale-icon" class="text-white/50 transition-transform">▼</span>
+                </button>
+                <div id="guide-scale" class="hidden px-5 pb-5 space-y-4 text-sm text-white/80 border-t border-white/10">
+                    <div class="pt-4">
+                        <h5 class="font-semibold text-red-400 mb-2">📋 Using Scale Presets</h5>
+                        <p class="text-white/60 mb-2">If you know your drawing's scale (check the title block), use presets:</p>
+                        <div class="grid grid-cols-2 gap-2 text-xs text-white/60">
+                            <div>• 1/8" = 1'-0" (floor plans)</div>
+                            <div>• 1/4" = 1'-0" (standard)</div>
+                            <div>• 1/2" = 1'-0" (details)</div>
+                            <div>• 1" = 10' (site plans)</div>
+                        </div>
+                    </div>
+                    <div>
+                        <h5 class="font-semibold text-red-400 mb-2">📐 Manual Calibration</h5>
+                        <ol class="list-decimal list-inside text-white/60 space-y-1">
+                            <li>Find a dimension line with a known length (e.g., "10'-0"")</li>
+                            <li>Use the Line tool to trace that dimension</li>
+                            <li>Open Calibration → Measure tab</li>
+                            <li>Enter the real distance + measured pixels</li>
+                            <li>Scale is calculated automatically!</li>
+                        </ol>
+                    </div>
+                    <div>
+                        <h5 class="font-semibold text-red-400 mb-2">🖥️ PDF DPI Settings</h5>
+                        <p class="text-white/60">If scale seems off, try adjusting PDF DPI: 72 (standard), 96 (Windows), 150 (print), 300 (high-res). Most construction PDFs are 72 or 150.</p>
+                    </div>
+                    <div>
+                        <h5 class="font-semibold text-red-400 mb-2">🔧 Troubleshooting Scale</h5>
+                        <ul class="list-disc list-inside text-white/60 space-y-1">
+                            <li>Measurements too big? Increase pixels-per-foot</li>
+                            <li>Measurements too small? Decrease pixels-per-foot</li>
+                            <li>Always verify by measuring a known dimension</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tips & Best Practices -->
+            <div class="glass rounded-xl overflow-hidden">
+                <button onclick="toggleGuide('guide-tips')" class="w-full p-5 flex items-center justify-between hover:bg-white/5 transition-all">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 bg-cyan-500/20 rounded-lg flex items-center justify-center text-xl">💡</div>
+                        <h4 class="font-semibold text-white">Tips & Best Practices</h4>
+                    </div>
+                    <span id="guide-tips-icon" class="text-white/50 transition-transform">▼</span>
+                </button>
+                <div id="guide-tips" class="hidden px-5 pb-5 space-y-4 text-sm text-white/80 border-t border-white/10">
+                    <div class="pt-4">
+                        <h5 class="font-semibold text-cyan-400 mb-2">📑 Organizing Multi-Page Drawings</h5>
+                        <p class="text-white/60">Use the page navigation panel (left side) to jump between sheets. Thumbnail previews help you find the right page fast. Scale may vary between sheets - recalibrate if needed.</p>
+                    </div>
+                    <div>
+                        <h5 class="font-semibold text-cyan-400 mb-2">⚡ Efficient Takeoff Workflow</h5>
+                        <ol class="list-decimal list-inside text-white/60 space-y-1">
+                            <li>Set scale first (always!)</li>
+                            <li>Do all measurements of one type together</li>
+                            <li>Use keyboard shortcuts - don't click tools</li>
+                            <li>Assign JOC items in batches at the end</li>
+                            <li>Review totals before exporting</li>
+                        </ol>
+                    </div>
+                    <div>
+                        <h5 class="font-semibold text-cyan-400 mb-2">🎯 Accuracy Tips</h5>
+                        <ul class="list-disc list-inside text-white/60 space-y-1">
+                            <li>Zoom in for precise clicks</li>
+                            <li>Use Snap (⚡) to connect measurements</li>
+                            <li>Double-check scale with a known dimension</li>
+                            <li>Name your spaces clearly for the proposal</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h5 class="font-semibold text-cyan-400 mb-2">📤 Preparing Your Proposal</h5>
+                        <p class="text-white/60">Before exporting: verify all measurements have JOC items assigned, check the coefficient/multiplier, review the Summary tab for totals. Export generates a clean CSV ready for your JOC proposal template.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Backend Architecture Section -->
+        <h2 class="text-xl font-semibold text-white mb-4">⚙️ Platform Architecture</h2>
+        <div class="glass rounded-2xl p-6 mb-12">
+            <p class="text-white/60 mb-6">JOCHero is built on a modern, scalable architecture designed for reliability and performance.</p>
+            
+            <!-- Architecture Diagram -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+                <!-- Frontend -->
+                <div class="bg-blue-500/10 border border-blue-500/30 rounded-xl p-5">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="w-12 h-12 bg-blue-500/20 rounded-xl flex items-center justify-center">
+                            <span class="text-2xl">🖥️</span>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-white">Frontend</h4>
+                            <p class="text-xs text-blue-300">User Interface Layer</p>
+                        </div>
+                    </div>
+                    <div class="space-y-3">
+                        <div class="flex items-center gap-3 p-2 bg-white/5 rounded-lg">
+                            <img src="https://assets.vercel.com/image/upload/v1588805858/repositories/vercel/logo.png" alt="Vercel" class="w-6 h-6 rounded">
+                            <div>
+                                <div class="text-sm font-medium text-white">Vercel</div>
+                                <div class="text-xs text-white/50">Frontend Hosting & CDN</div>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-3 p-2 bg-white/5 rounded-lg">
+                            <span class="text-xl">⚛️</span>
+                            <div>
+                                <div class="text-sm font-medium text-white">React + Vite</div>
+                                <div class="text-xs text-white/50">Takeoff App Framework</div>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-3 p-2 bg-white/5 rounded-lg">
+                            <span class="text-xl">📄</span>
+                            <div>
+                                <div class="text-sm font-medium text-white">PDF.js</div>
+                                <div class="text-xs text-white/50">Drawing Rendering</div>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-3 p-2 bg-white/5 rounded-lg">
+                            <span class="text-xl">🎨</span>
+                            <div>
+                                <div class="text-sm font-medium text-white">TailwindCSS</div>
+                                <div class="text-xs text-white/50">Styling & UI Components</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Backend -->
+                <div class="bg-purple-500/10 border border-purple-500/30 rounded-xl p-5">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="w-12 h-12 bg-purple-500/20 rounded-xl flex items-center justify-center">
+                            <span class="text-2xl">🔧</span>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-white">Backend API</h4>
+                            <p class="text-xs text-purple-300">Business Logic Layer</p>
+                        </div>
+                    </div>
+                    <div class="space-y-3">
+                        <div class="flex items-center gap-3 p-2 bg-white/5 rounded-lg">
+                            <span class="text-xl">🚂</span>
+                            <div>
+                                <div class="text-sm font-medium text-white">Railway</div>
+                                <div class="text-xs text-white/50">API Hosting & Scaling</div>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-3 p-2 bg-white/5 rounded-lg">
+                            <span class="text-xl">🟢</span>
+                            <div>
+                                <div class="text-sm font-medium text-white">Node.js + Express</div>
+                                <div class="text-xs text-white/50">API Framework</div>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-3 p-2 bg-white/5 rounded-lg">
+                            <span class="text-xl">🔐</span>
+                            <div>
+                                <div class="text-sm font-medium text-white">JWT Auth</div>
+                                <div class="text-xs text-white/50">Secure Authentication</div>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-3 p-2 bg-white/5 rounded-lg">
+                            <span class="text-xl">🔺</span>
+                            <div>
+                                <div class="text-sm font-medium text-white">Prisma ORM</div>
+                                <div class="text-xs text-white/50">Database Interface</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Data -->
+                <div class="bg-green-500/10 border border-green-500/30 rounded-xl p-5">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="w-12 h-12 bg-green-500/20 rounded-xl flex items-center justify-center">
+                            <span class="text-2xl">🗄️</span>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-white">Data Layer</h4>
+                            <p class="text-xs text-green-300">Storage & Intelligence</p>
+                        </div>
+                    </div>
+                    <div class="space-y-3">
+                        <div class="flex items-center gap-3 p-2 bg-white/5 rounded-lg">
+                            <span class="text-xl">⚡</span>
+                            <div>
+                                <div class="text-sm font-medium text-white">Supabase</div>
+                                <div class="text-xs text-white/50">PostgreSQL Database</div>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-3 p-2 bg-white/5 rounded-lg">
+                            <span class="text-xl">📚</span>
+                            <div>
+                                <div class="text-sm font-medium text-white">JOC Catalogue</div>
+                                <div class="text-xs text-white/50">65,331 Line Items</div>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-3 p-2 bg-white/5 rounded-lg">
+                            <span class="text-xl">🧠</span>
+                            <div>
+                                <div class="text-sm font-medium text-white">Training Data</div>
+                                <div class="text-xs text-white/50">ML Learning Engine</div>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-3 p-2 bg-white/5 rounded-lg">
+                            <span class="text-xl">🐙</span>
+                            <div>
+                                <div class="text-sm font-medium text-white">GitHub</div>
+                                <div class="text-xs text-white/50">Source Control & CI/CD</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- API Services -->
+            <h4 class="font-semibold text-white mb-4">🔌 API Services</h4>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="bg-white/5 rounded-lg p-4 border border-white/10">
+                    <div class="flex items-center gap-2 mb-2">
+                        <span class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
+                        <span class="font-medium text-white text-sm">Auth Service</span>
+                    </div>
+                    <p class="text-xs text-white/50">User registration, login, JWT tokens, session management</p>
+                    <div class="mt-2 text-xs font-mono text-green-400">/auth/*</div>
+                </div>
+                <div class="bg-white/5 rounded-lg p-4 border border-white/10">
+                    <div class="flex items-center gap-2 mb-2">
+                        <span class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
+                        <span class="font-medium text-white text-sm">Catalogue Service</span>
+                    </div>
+                    <p class="text-xs text-white/50">Search, browse, and filter 65K+ JOC line items</p>
+                    <div class="mt-2 text-xs font-mono text-green-400">/catalogue/*</div>
+                </div>
+                <div class="bg-white/5 rounded-lg p-4 border border-white/10">
+                    <div class="flex items-center gap-2 mb-2">
+                        <span class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
+                        <span class="font-medium text-white text-sm">Translation Service</span>
+                    </div>
+                    <p class="text-xs text-white/50">Smart matching with synonyms, quantity extraction, division hints</p>
+                    <div class="mt-2 text-xs font-mono text-green-400">/catalogue/translate</div>
+                </div>
+                <div class="bg-white/5 rounded-lg p-4 border border-white/10">
+                    <div class="flex items-center gap-2 mb-2">
+                        <span class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
+                        <span class="font-medium text-white text-sm">Training Service</span>
+                    </div>
+                    <p class="text-xs text-white/50">ML data collection, path analytics, recommendation engine</p>
+                    <div class="mt-2 text-xs font-mono text-green-400">/training/*</div>
+                </div>
+            </div>
+
+            <!-- Live Status -->
+            <div class="mt-6 flex flex-wrap items-center gap-4 text-sm">
+                <div class="flex items-center gap-2">
+                    <span class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
+                    <span class="text-white/70">All Systems Operational</span>
+                </div>
+                <a href="https://web-production-309c2.up.railway.app/health" target="_blank" class="text-blue-400 hover:text-blue-300">
+                    API Health Check →
+                </a>
+                <a href="https://web-production-309c2.up.railway.app/catalogue/stats" target="_blank" class="text-blue-400 hover:text-blue-300">
+                    Catalogue Stats →
+                </a>
+            </div>
+        </div>
+
+        <!-- Recent Activity (Placeholder) -->
+        <h2 class="text-xl font-semibold text-white mb-4">🕐 Recent Projects</h2>
+        <div class="glass rounded-2xl p-6">
+            <div id="recentProjects" class="space-y-3">
+                <!-- Populated by JS -->
+            </div>
+            <div id="noProjects" class="text-center py-8">
+                <div class="text-5xl mb-4 opacity-50">📁</div>
+                <p class="text-white/60 mb-4">No projects yet. Start your first takeoff!</p>
+                <a href="/app" class="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-all">
+                    <span>📐</span> New Project
+                </a>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-white/10 py-6 px-4">
+        <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div class="text-white/40 text-sm">
+                © 2026 JOCHero • Beta v1.0
+            </div>
+            <div class="flex items-center gap-6 text-sm">
+                <a href="/blog" class="text-white/60 hover:text-white">Blog</a>
+                <a href="#" class="text-white/60 hover:text-white">Privacy</a>
+                <a href="#" class="text-white/60 hover:text-white">Terms</a>
+                <a href="mailto:support@jochero.com" class="text-white/60 hover:text-white">Contact</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Toggle guide accordion
+        function toggleGuide(id) {
+            const content = document.getElementById(id);
+            const icon = document.getElementById(id + '-icon');
+            const isHidden = content.classList.contains('hidden');
+            
+            // Close all other guides
+            document.querySelectorAll('[id^="guide-"]:not([id$="-icon"])').forEach(el => {
+                if (el.id !== id) {
+                    el.classList.add('hidden');
+                }
+            });
+            document.querySelectorAll('[id$="-icon"]').forEach(el => {
+                if (el.id !== id + '-icon') {
+                    el.style.transform = 'rotate(0deg)';
+                }
+            });
+            
+            // Toggle clicked guide
+            if (isHidden) {
+                content.classList.remove('hidden');
+                icon.style.transform = 'rotate(180deg)';
+            } else {
+                content.classList.add('hidden');
+                icon.style.transform = 'rotate(0deg)';
+            }
+        }
+
+        // Sign out function
+        function signOut() {
+            localStorage.removeItem('jochero_token');
+            localStorage.removeItem('jochero_user');
+            localStorage.removeItem('jochero_stats');
+            localStorage.removeItem('jochero_projects');
+            window.location.href = '/auth';
+        }
+
+        // Admin dashboard - no auth redirect (bookmarked internal page)
+        const token = localStorage.getItem('jochero_token');
+        const user = localStorage.getItem('jochero_user');
+        
+        // Populate user info
+        if (user) {
+            try {
+                const userData = JSON.parse(user);
+                const displayName = userData.name || userData.email?.split('@')[0] || 'Hero';
+                document.getElementById('userName').textContent = displayName;
+                document.getElementById('userInitial').textContent = (userData.name || userData.email || 'U')[0].toUpperCase();
+                document.getElementById('userNameDropdown').textContent = displayName;
+                document.getElementById('userEmailDropdown').textContent = userData.email || '';
+            } catch (e) {}
+        }
+        
+        // Load stats from localStorage (or API in future)
+        const stats = JSON.parse(localStorage.getItem('jochero_stats') || '{}');
+        document.getElementById('projectCount').textContent = stats.projects || 0;
+        document.getElementById('translationCount').textContent = stats.translations || 0;
+        
+        // Load recent projects
+        const projects = JSON.parse(localStorage.getItem('jochero_projects') || '[]');
+        const recentContainer = document.getElementById('recentProjects');
+        const noProjectsEl = document.getElementById('noProjects');
+        
+        if (projects.length > 0) {
+            noProjectsEl.style.display = 'none';
+            projects.slice(0, 5).forEach(project => {
+                const el = document.createElement('a');
+                el.href = `/app?project=${project.id}`;
+                el.className = 'flex items-center justify-between p-3 rounded-lg hover:bg-white/5 transition-all';
+                el.innerHTML = `
+                    <div class="flex items-center gap-3">
+                        <span class="text-2xl">📄</span>
+                        <div>
+                            <div class="font-medium text-white">${project.name}</div>
+                            <div class="text-sm text-white/60">${project.measurements || 0} measurements</div>
+                        </div>
+                    </div>
+                    <div class="text-sm text-white/40">${project.date || ''}</div>
+                `;
+                recentContainer.appendChild(el);
+            });
+        }
+        
+        // Animated counter for JOC Line Items
+        function animateCounter(element, target) {
+            const duration = 2000; // 2 seconds
+            const start = 0;
+            const startTime = performance.now();
+            
+            function easeOutQuart(x) {
+                return 1 - Math.pow(1 - x, 4);
+            }
+            
+            function update(currentTime) {
+                const elapsed = currentTime - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                const easedProgress = easeOutQuart(progress);
+                const current = Math.floor(start + (target - start) * easedProgress);
+                
+                element.textContent = current.toLocaleString();
+                
+                if (progress < 1) {
+                    requestAnimationFrame(update);
+                }
+            }
+            
+            requestAnimationFrame(update);
+        }
+        
+        // Start counter animation when page loads
+        const counters = document.querySelectorAll('.counter');
+        counters.forEach(counter => {
+            const target = parseInt(counter.dataset.target);
+            setTimeout(() => animateCounter(counter, target), 500);
+        });
+    </script>
+</body>
+</html>
