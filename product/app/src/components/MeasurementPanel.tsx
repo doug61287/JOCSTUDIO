@@ -139,7 +139,7 @@ export function MeasurementPanel() {
   };
 
   return (
-    <div className="w-96 bg-gray-900/80 backdrop-blur border-l border-white/10 flex flex-col">
+    <div className="w-96 flex-shrink-0 bg-gray-900/80 backdrop-blur border-l border-white/10 flex flex-col">
       {/* Header with Tabs */}
       <div className="border-b border-white/10">
         <div className="flex">

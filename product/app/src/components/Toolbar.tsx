@@ -40,7 +40,7 @@ export function Toolbar({ onCalibrate }: ToolbarProps) {
   }
 
   return (
-    <div className="h-14 bg-gray-900/80 backdrop-blur border-b border-white/10 flex items-center px-4 gap-3">
+    <div className="h-14 bg-gray-900/80 backdrop-blur border-b border-white/10 flex items-center px-4 gap-3 flex-shrink-0 overflow-x-auto">
       {/* Logo & Project Name */}
       <div className="flex items-center gap-3 pr-4 border-r border-white/10">
         <span className="text-xl">📐</span>

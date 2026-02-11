@@ -154,10 +154,10 @@ function App() {
       <Toolbar onCalibrate={() => setShowCalibration(true)} />
 
       {/* Main Content */}
-      <div className="flex-1 flex overflow-hidden bg-gray-900">
+      <div className="flex-1 flex overflow-hidden bg-gray-900 min-h-0">
         {/* PDF Viewer */}
         <div
-          className="flex-1 relative"
+          className="flex-1 min-w-0 relative"
           onDrop={handleDrop}
           onDragOver={(e) => e.preventDefault()}
         >
