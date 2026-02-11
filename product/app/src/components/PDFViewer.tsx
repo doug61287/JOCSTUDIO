@@ -93,7 +93,8 @@ export function PDFViewer() {
   }, [project?.pdfUrl, thumbSize]);
 
   // Maximum render scale to prevent canvas size issues (lowered for large arch drawings)
-  const MAX_RENDER_SCALE = 1.5;
+  // Large format drawings (36x48") at 150 DPI = 5400x7200px, at 1.0x already ~39MP
+  const MAX_RENDER_SCALE = 1.0;
   const [cssScale, setCssScale] = useState(1);
   
   // Store scroll ratios to preserve position during zoom
