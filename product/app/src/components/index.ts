@@ -6,3 +6,4 @@ export { DropZone } from './DropZone';
 export { CalibrationDialog } from './CalibrationDialog';
 export { TranslationMachine } from './TranslationMachine';
 export { GuidedAssistant } from './GuidedAssistant';
+export { RecommendationsPanel } from './RecommendationsPanel';

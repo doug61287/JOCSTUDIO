@@ -4,6 +4,7 @@
  */
 
 import React, { useState, useEffect } from 'react';
+import { RecommendationsPanel } from '../components/RecommendationsPanel';
 
 const API_URL = 'https://web-production-309c2.up.railway.app';
 
@@ -256,6 +257,9 @@ export function InsightsDashboard() {
                 <span>{displayStats.totalSelections} / 50 for initial training</span>
               </div>
             </div>
+
+            {/* AI Recommendations */}
+            <RecommendationsPanel />
           </div>
         )}
 
