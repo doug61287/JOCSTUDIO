@@ -3,8 +3,8 @@ import * as pdfjsLib from 'pdfjs-dist';
 import { useProjectStore } from '../stores/projectStore';
 import { MeasurementCanvas } from './MeasurementCanvas';
 
-// Set worker path - using unpkg which has the correct version
-pdfjsLib.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@4.0.379/build/pdf.worker.min.mjs`;
+// Set worker path - using unpkg, version must match installed pdfjs-dist
+pdfjsLib.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@4.10.38/build/pdf.worker.min.mjs`;
 
 export function PDFViewer() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
