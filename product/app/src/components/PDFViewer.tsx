@@ -202,6 +202,15 @@ export function PDFViewer() {
     setPanStart(null);
   }, []);
 
+  // Ctrl + Mouse Wheel zoom
+  const handleWheel = useCallback((e: React.WheelEvent) => {
+    if (e.ctrlKey || e.metaKey) {
+      e.preventDefault();
+      const delta = e.deltaY > 0 ? -0.1 : 0.1;
+      setZoom(Math.min(5, Math.max(0.1, zoom + delta)));
+    }
+  }, [zoom, setZoom]);
+
   const cycleThumbnailSize = () => {
     const sizes: ThumbnailSize[] = ['small', 'medium', 'large'];
     const currentIndex = sizes.indexOf(thumbSize);
@@ -301,6 +310,7 @@ export function PDFViewer() {
           onMouseMove={handlePanMove}
           onMouseUp={handlePanEnd}
           onMouseLeave={handlePanEnd}
+          onWheel={handleWheel}
         >
           <div className="min-h-full flex items-start justify-center">
             <div className="pdf-container inline-block relative shadow-2xl overflow-hidden bg-white">
