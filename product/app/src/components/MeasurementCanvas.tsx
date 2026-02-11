@@ -51,10 +51,16 @@ export function MeasurementCanvas({ width, height }: MeasurementCanvasProps) {
   // Draw all measurements and snap indicators
   const draw = useCallback(() => {
     const canvas = canvasRef.current;
-    if (!canvas || !project) return;
+    if (!canvas || !project || width <= 0 || height <= 0) return;
     
     const ctx = canvas.getContext('2d')!;
     ctx.clearRect(0, 0, width, height);
+    
+    // Clip to canvas bounds
+    ctx.save();
+    ctx.beginPath();
+    ctx.rect(0, 0, width, height);
+    ctx.clip();
     
     // Draw existing measurements
     project.measurements.forEach((m) => {
@@ -299,6 +305,9 @@ export function MeasurementCanvas({ width, height }: MeasurementCanvasProps) {
       ctx.textAlign = 'left';
       ctx.fillText(`⚡ ${snapResult.snapPoint.type}`, sp.x + 12, sp.y - 12);
     }
+    
+    // Restore canvas state (remove clipping)
+    ctx.restore();
   }, [project, selectedMeasurement, tempPoints, mousePos, activeTool, width, height, snapResult, showSnapIndicator, getSnappedPoint]);
 
   useEffect(() => {

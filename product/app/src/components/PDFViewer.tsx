@@ -200,9 +200,11 @@ export function PDFViewer() {
         className="flex-1 overflow-auto p-6"
       >
         <div className="min-h-full flex items-start justify-center">
-          <div className="pdf-container inline-block relative shadow-2xl">
-            <canvas ref={canvasRef} className="pdf-canvas rounded-lg" />
-            <MeasurementCanvas width={dimensions.width} height={dimensions.height} />
+          <div className="pdf-container inline-block relative shadow-2xl overflow-hidden rounded-lg">
+            <canvas ref={canvasRef} className="pdf-canvas" />
+            {dimensions.width > 0 && dimensions.height > 0 && (
+              <MeasurementCanvas width={dimensions.width} height={dimensions.height} />
+            )}
           </div>
         </div>
       </div>
