@@ -445,7 +445,7 @@ export function MeasurementPanel() {
       {/* Guided Assistant Modal */}
       {showAssistant && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
-          <div className="w-full max-w-2xl h-[80vh] max-h-[700px]">
+          <div className="w-full max-w-4xl h-[85vh] max-h-[800px]">
             <GuidedAssistant
               measurementId={showAssistant.id}
               measurementType={showAssistant.type as 'line' | 'count' | 'area' | 'space'}

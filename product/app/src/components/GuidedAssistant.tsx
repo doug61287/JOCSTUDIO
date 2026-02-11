@@ -272,51 +272,65 @@ export function GuidedAssistant({ onSelect, onClose, measurementLabel }: GuidedA
         )}
         
         {/* Options grid */}
-        <div className={`grid gap-2 ${isRoot ? 'grid-cols-2 sm:grid-cols-3' : 'grid-cols-1'}`}>
+        <div className={`grid gap-3 ${isRoot ? 'grid-cols-2 sm:grid-cols-3 lg:grid-cols-4' : 'grid-cols-1'}`}>
           {children.map((child) => (
             <button
               key={child.id}
               onClick={() => handleSelect(child)}
-              className={`p-3 rounded-lg text-left transition-all ${
+              className={`p-3 rounded-xl text-left transition-all ${
                 child.isItem
                   ? 'bg-green-500/10 border border-green-500/30 hover:bg-green-500/20'
-                  : 'bg-white/5 border border-white/10 hover:bg-white/10 hover:border-white/20'
+                  : 'bg-white/5 border border-white/10 hover:bg-white/10 hover:border-blue-500/50 hover:scale-[1.02]'
               }`}
+              title={getNodeDisplayName(child)}
             >
-              <div className="flex items-start gap-3">
-                {isRoot && (
-                  <span className="text-2xl">{getDivisionEmoji(child.code)}</span>
-                )}
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-start gap-2">
-                    <span className={`font-medium leading-tight ${child.isItem ? 'text-green-400' : 'text-white'}`}>
-                      {getNodeDisplayName(child)}
-                    </span>
-                    {child.isItem && (
-                      <span className="text-green-400 flex-shrink-0">✓</span>
-                    )}
+              {isRoot ? (
+                /* Division cards - compact vertical layout */
+                <div className="text-center">
+                  <span className="text-3xl block mb-2">{getDivisionEmoji(child.code)}</span>
+                  <div className="font-medium text-white text-sm leading-tight mb-1">
+                    {getNodeDisplayName(child)}
                   </div>
-                  
-                  <div className="flex items-center gap-2 mt-1">
-                    <span className="text-xs font-mono text-white/40">{child.code}</span>
-                    {child.itemCount && !child.isItem && (
-                      <span className="text-xs text-white/40">
-                        • {child.itemCount.toLocaleString()} items
-                      </span>
-                    )}
-                    {child.isItem && child.unit && (
-                      <>
-                        <span className="text-xs text-white/40">• {child.unit}</span>
-                        <span className="text-xs text-green-400">${child.unitCost?.toFixed(2)}</span>
-                      </>
-                    )}
+                  <div className="text-xs text-white/40">
+                    <span className="font-mono">{child.code}</span>
+                    <span className="mx-1">•</span>
+                    <span>{child.itemCount?.toLocaleString()}</span>
                   </div>
                 </div>
-                
-                {!child.isItem && (
-                  <span className="text-white/30">→</span>
-                )}
-              </div>
+              ) : (
+                /* Non-root items - horizontal layout */
+                <div className="flex items-start gap-3">
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-start gap-2">
+                      <span className={`font-medium leading-tight ${child.isItem ? 'text-green-400' : 'text-white'}`}>
+                        {getNodeDisplayName(child)}
+                      </span>
+                      {child.isItem && (
+                        <span className="text-green-400 flex-shrink-0">✓</span>
+                      )}
+                    </div>
+                    
+                    <div className="flex items-center gap-2 mt-1 flex-wrap">
+                      <span className="text-xs font-mono text-white/40">{child.code}</span>
+                      {child.itemCount && !child.isItem && (
+                        <span className="text-xs text-white/40">
+                          • {child.itemCount.toLocaleString()} items
+                        </span>
+                      )}
+                      {child.isItem && child.unit && (
+                        <>
+                          <span className="text-xs text-white/40">• {child.unit}</span>
+                          <span className="text-xs text-green-400 font-medium">${child.unitCost?.toFixed(2)}</span>
+                        </>
+                      )}
+                    </div>
+                  </div>
+                  
+                  {!child.isItem && (
+                    <span className="text-white/30 text-lg">→</span>
+                  )}
+                </div>
+              )}
             </button>
           ))}
         </div>
