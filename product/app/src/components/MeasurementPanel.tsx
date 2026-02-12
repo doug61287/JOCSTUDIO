@@ -3,6 +3,7 @@ import { useProjectStore } from '../stores/projectStore';
 import { searchJOCItems } from '../data/jocCatalogue';
 import { GuidedAssistant } from './GuidedAssistant';
 import { FormattingPanel } from './FormattingPanel';
+import { FlagsPanel } from './FlagsPanel';
 import type { JOCItem, Measurement, MeasurementGroup } from '../types';
 import { formatMeasurement, generateId } from '../utils/geometry';
 
@@ -33,7 +34,7 @@ export function MeasurementPanel() {
   const [filterQuery, setFilterQuery] = useState('');
   const [showJOCSearch, setShowJOCSearch] = useState<string | null>(null);
   const [showAssistant, setShowAssistant] = useState<Measurement | null>(null);
-  const [activeTab, setActiveTab] = useState<'measurements' | 'groups' | 'summary'>('measurements');
+  const [activeTab, setActiveTab] = useState<'measurements' | 'groups' | 'flags' | 'summary'>('measurements');
   const [expandedGroups, setExpandedGroups] = useState<Set<string>>(new Set(['ungrouped']));
   const [groupPickerOpen, setGroupPickerOpen] = useState<string | null>(null);
   const [newGroupName, setNewGroupName] = useState('');
@@ -429,13 +430,27 @@ export function MeasurementPanel() {
             📁 Groups
           </button>
           <button
+            onClick={() => setActiveTab('flags')}
+            className={`flex-1 px-3 py-3 text-sm font-medium transition-all relative
+              ${activeTab === 'flags' 
+                ? 'text-white border-b-2 border-red-500' 
+                : 'text-white/60 hover:text-white'}`}
+          >
+            🚩 Flags
+            {(project.flags?.filter(f => f.status === 'open').length || 0) > 0 && (
+              <span className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-[10px] rounded-full flex items-center justify-center">
+                {project.flags?.filter(f => f.status === 'open').length}
+              </span>
+            )}
+          </button>
+          <button
             onClick={() => setActiveTab('summary')}
             className={`flex-1 px-3 py-3 text-sm font-medium transition-all
               ${activeTab === 'summary' 
                 ? 'text-white border-b-2 border-blue-500' 
                 : 'text-white/60 hover:text-white'}`}
           >
-            📊 Summary
+            📊 Takeoff
           </button>
         </div>
         
@@ -683,6 +698,10 @@ export function MeasurementPanel() {
               </div>
             )}
           </div>
+        )}
+
+        {activeTab === 'flags' && (
+          <FlagsPanel />
         )}
 
         {activeTab === 'summary' && (

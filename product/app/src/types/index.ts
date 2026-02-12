@@ -23,6 +23,7 @@ export interface Measurement {
   color: string;
   groupId?: string; // Reference to parent group
   style?: MeasurementStyle; // Formatting options
+  flagId?: string; // Link to a flag if this measurement has one
   // Space-specific fields
   spaceName?: string;
   perimeter?: number; // LF for spaces
@@ -46,6 +47,41 @@ export interface MeasurementGroup {
   expanded: boolean;
   order: number;
 }
+
+// Flag types - "Flag, don't assume!"
+export type FlagType = 'assumption' | 'question' | 'rfi' | 'discrepancy' | 'missing' | 'verify';
+
+export interface Flag {
+  id: string;
+  type: FlagType;
+  title: string;
+  description?: string;
+  measurementId?: string; // Link to specific measurement
+  pageNumber?: number; // Drawing page reference
+  status: 'open' | 'resolved' | 'deferred';
+  priority: 'low' | 'medium' | 'high';
+  createdAt: Date;
+  resolvedAt?: Date;
+  resolution?: string;
+}
+
+export const FLAG_COLORS: Record<FlagType, string> = {
+  assumption: '#f59e0b', // amber
+  question: '#3b82f6',   // blue
+  rfi: '#8b5cf6',        // purple
+  discrepancy: '#ef4444', // red
+  missing: '#ec4899',    // pink
+  verify: '#06b6d4',     // cyan
+};
+
+export const FLAG_ICONS: Record<FlagType, string> = {
+  assumption: '⚠️',
+  question: '❓',
+  rfi: '📋',
+  discrepancy: '🔴',
+  missing: '❌',
+  verify: '🔍',
+};
 
 export interface SpaceFinish {
   id: string;
@@ -73,6 +109,7 @@ export interface Project {
   scale: number; // pixels per foot
   measurements: Measurement[];
   groups: MeasurementGroup[];
+  flags: Flag[]; // "Flag, don't assume!"
   coefficient: number;
   createdAt: Date;
 }

@@ -10,3 +10,4 @@ export { GuidedAssistant } from './GuidedAssistant';
 export { RecommendationsPanel } from './RecommendationsPanel';
 export { ActiveItemPicker } from './ActiveItemPicker';
 export { FormattingPanel, QuickFormatBar } from './FormattingPanel';
+export { FlagsPanel } from './FlagsPanel';

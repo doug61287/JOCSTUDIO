@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import type { Project, Measurement, MeasurementGroup, Tool, JOCItem } from '../types';
+import type { Project, Measurement, MeasurementGroup, Tool, JOCItem, Flag } from '../types';
 
 interface ProjectState {
   project: Project | null;
@@ -30,6 +30,12 @@ interface ProjectState {
   updateGroup: (id: string, updates: Partial<MeasurementGroup>) => void;
   deleteGroup: (id: string) => void;
   assignToGroup: (measurementId: string, groupId: string | undefined) => void;
+  // Flag actions - "Flag, don't assume!"
+  addFlag: (flag: Flag) => void;
+  updateFlag: (id: string, updates: Partial<Flag>) => void;
+  deleteFlag: (id: string) => void;
+  resolveFlag: (id: string, resolution: string) => void;
+  flagMeasurement: (measurementId: string, flag: Flag) => void;
 }
 
 export const useProjectStore = create<ProjectState>((set) => ({
@@ -39,6 +45,7 @@ export const useProjectStore = create<ProjectState>((set) => ({
     scale: 10, // 10 pixels = 1 foot default
     measurements: [],
     groups: [],
+    flags: [], // "Flag, don't assume!"
     coefficient: 1.0,
     createdAt: new Date(),
   },
@@ -139,6 +146,53 @@ export const useProjectStore = create<ProjectState>((set) => ({
       ...state.project,
       measurements: state.project.measurements.map((m) =>
         m.id === measurementId ? { ...m, groupId } : m
+      )
+    } : null
+  })),
+
+  // Flag management - "Flag, don't assume!"
+  addFlag: (flag) => set((state) => ({
+    project: state.project ? {
+      ...state.project,
+      flags: [...(state.project.flags || []), flag]
+    } : null
+  })),
+
+  updateFlag: (id, updates) => set((state) => ({
+    project: state.project ? {
+      ...state.project,
+      flags: (state.project.flags || []).map((f) =>
+        f.id === id ? { ...f, ...updates } : f
+      )
+    } : null
+  })),
+
+  deleteFlag: (id) => set((state) => ({
+    project: state.project ? {
+      ...state.project,
+      flags: (state.project.flags || []).filter((f) => f.id !== id),
+      // Remove flag reference from measurements
+      measurements: state.project.measurements.map((m) =>
+        m.flagId === id ? { ...m, flagId: undefined } : m
+      )
+    } : null
+  })),
+
+  resolveFlag: (id, resolution) => set((state) => ({
+    project: state.project ? {
+      ...state.project,
+      flags: (state.project.flags || []).map((f) =>
+        f.id === id ? { ...f, status: 'resolved' as const, resolution, resolvedAt: new Date() } : f
+      )
+    } : null
+  })),
+
+  flagMeasurement: (measurementId, flag) => set((state) => ({
+    project: state.project ? {
+      ...state.project,
+      flags: [...(state.project.flags || []), flag],
+      measurements: state.project.measurements.map((m) =>
+        m.id === measurementId ? { ...m, flagId: flag.id } : m
       )
     } : null
   })),
