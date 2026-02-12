@@ -92,6 +92,10 @@ interface AssemblyConfig {
 // These define what items belong together
 // ============================================
 
+// ============================================
+// REAL H+H CTC CODES - Updated 2026-02-12
+// ============================================
+
 const ASSEMBLY_CONFIGS: AssemblyConfig[] = [
   {
     id: 'concrete-slab-4',
@@ -101,60 +105,53 @@ const ASSEMBLY_CONFIGS: AssemblyConfig[] = [
     items: [
       {
         id: 'concrete-4',
-        jocItem: { taskCode: '03300000-0010', description: 'Cast-In-Place Concrete, 4" Slab on Grade', unit: 'SF', unitCost: 12.50 },
+        // REAL: 03311300-0035 @ $206.97/CY - need to convert SF to CY
+        // 4" slab: 1 SF = 0.333 CF = 0.0123 CY, so 81 SF = 1 CY
+        jocItem: { taskCode: '03311300-0035', description: 'Up To 6", By Direct Chute, Place 3,000 PSI Concrete Slab On Grade', unit: 'CY', unitCost: 206.97 },
         category: 'primary',
-        quantityFactor: 1.0,
+        quantityFactor: 0.0123, // SF to CY conversion for 4" slab
+        note: 'Auto-converts: 81 SF = 1 CY',
       },
       {
         id: 'edge-form',
-        jocItem: { taskCode: '03110000-0010', description: 'Edge Formwork for Slab on Grade', unit: 'LF', unitCost: 8.50 },
+        // REAL: 03111300-0009 @ $7.68/LF
+        jocItem: { taskCode: '03111300-0009', description: 'Up To 6" High Slab Edge and Block-Out Wood Formwork', unit: 'LF', unitCost: 7.68 },
         category: 'typical',
         quantityFactor: 1.0,
         needsInput: 'perimeter',
         inputUnit: 'LF',
-        note: 'Enter perimeter length (typically included)',
+        note: 'Enter perimeter length',
       },
       {
         id: 'wwf',
-        jocItem: { taskCode: '03210000-0010', description: 'Welded Wire Fabric Reinforcement, 6x6-W1.4xW1.4', unit: 'SF', unitCost: 2.50 },
-        category: 'typical',
-        quantityFactor: 1.0,
-      },
-      {
-        id: 'vapor-barrier',
-        jocItem: { taskCode: '07260000-0010', description: 'Vapor Barrier, 10 mil Polyethylene', unit: 'SF', unitCost: 0.80 },
+        // REAL: 03221100-0002 @ $1.27/SF
+        jocItem: { taskCode: '03221100-0002', description: '6" x 6" x #10, 21 LB/CSF, Plain Welded Wire Fabric Reinforcing (W1.4 x W1.4)', unit: 'SF', unitCost: 1.27 },
         category: 'typical',
         quantityFactor: 1.0,
       },
       {
         id: 'broom-finish',
-        jocItem: { taskCode: '03350000-0010', description: 'Broom Finish, Concrete Flatwork', unit: 'SF', unitCost: 1.00 },
+        // REAL: 03351300-0004 @ $1.87/SF
+        jocItem: { taskCode: '03351300-0004', description: 'Broom, Concrete Floor Finish', unit: 'SF', unitCost: 1.87 },
         category: 'typical',
         quantityFactor: 1.0,
       },
       {
         id: 'curing',
-        jocItem: { taskCode: '03390000-0010', description: 'Curing Compound, Concrete', unit: 'SF', unitCost: 0.50 },
-        category: 'optional',
+        // REAL: 03391300-0002 @ $0.44/SF
+        jocItem: { taskCode: '03391300-0002', description: 'Water Based Curing, Sealing, Hardening And Dustproofing Compound', unit: 'SF', unitCost: 0.44 },
+        category: 'typical',
         quantityFactor: 1.0,
       },
       {
-        id: 'control-joints',
-        jocItem: { taskCode: '03150000-0010', description: 'Control Joint Sawcuts', unit: 'LF', unitCost: 4.25 },
+        id: 'saw-cut',
+        // REAL: 02411913-0007 @ $4.50/LF
+        jocItem: { taskCode: '02411913-0007', description: 'Welded Wire Reinforced Concrete Slab Up To 4" Depth, Saw Cut', unit: 'LF', unitCost: 4.50 },
         category: 'optional',
         quantityFactor: 1.0,
         needsInput: 'custom',
         inputUnit: 'LF',
-        note: 'Typically every 10-12 ft',
-      },
-      {
-        id: 'rebar',
-        jocItem: { taskCode: '03210000-0020', description: 'Reinforcing Steel, #4 Bars', unit: 'LF', unitCost: 3.75 },
-        category: 'optional',
-        quantityFactor: 1.0,
-        needsInput: 'custom',
-        inputUnit: 'LF',
-        note: 'Additional rebar as needed',
+        note: 'Control joints - typically every 10-12 ft',
       },
     ],
   },
@@ -166,45 +163,43 @@ const ASSEMBLY_CONFIGS: AssemblyConfig[] = [
     items: [
       {
         id: 'concrete-6',
-        jocItem: { taskCode: '03300000-0020', description: 'Cast-In-Place Concrete, 6" Slab on Grade', unit: 'SF', unitCost: 15.75 },
+        // REAL: 03311300-0036 @ $193.11/CY for >6" slabs
+        // 6" slab: 1 SF = 0.5 CF = 0.0185 CY, so 54 SF = 1 CY
+        jocItem: { taskCode: '03311300-0036', description: '>6", By Direct Chute, Place 3,000 PSI Concrete Slab On Grade', unit: 'CY', unitCost: 193.11 },
         category: 'primary',
-        quantityFactor: 1.0,
+        quantityFactor: 0.0185, // SF to CY conversion for 6" slab
+        note: 'Auto-converts: 54 SF = 1 CY',
       },
       {
         id: 'edge-form',
-        jocItem: { taskCode: '03110000-0020', description: 'Edge Formwork for Slab on Grade, 6"', unit: 'LF', unitCost: 10.25 },
+        // REAL: 03111300-0010 @ $10.93/LF for >6" to 12" high
+        jocItem: { taskCode: '03111300-0010', description: '>6" To 12" High Slab Edge and Block-Out Wood Formwork', unit: 'LF', unitCost: 10.93 },
         category: 'typical',
         quantityFactor: 1.0,
         needsInput: 'perimeter',
         inputUnit: 'LF',
-        note: 'Enter perimeter length (typically included)',
+        note: 'Enter perimeter length',
       },
       {
         id: 'wwf',
-        jocItem: { taskCode: '03210000-0010', description: 'Welded Wire Fabric Reinforcement, 6x6-W1.4xW1.4', unit: 'SF', unitCost: 2.50 },
-        category: 'typical',
-        quantityFactor: 1.0,
-      },
-      {
-        id: 'vapor-barrier',
-        jocItem: { taskCode: '07260000-0010', description: 'Vapor Barrier, 10 mil Polyethylene', unit: 'SF', unitCost: 0.80 },
+        // REAL: 03221100-0003 @ $1.45/SF - heavier gauge for 6" slab
+        jocItem: { taskCode: '03221100-0003', description: '6" x 6" x #8, 30 LB/CSF, Plain Welded Wire Fabric Reinforcing (W2.1 x W2.1)', unit: 'SF', unitCost: 1.45 },
         category: 'typical',
         quantityFactor: 1.0,
       },
       {
         id: 'broom-finish',
-        jocItem: { taskCode: '03350000-0010', description: 'Broom Finish, Concrete Flatwork', unit: 'SF', unitCost: 1.00 },
+        // REAL: 03351300-0004 @ $1.87/SF
+        jocItem: { taskCode: '03351300-0004', description: 'Broom, Concrete Floor Finish', unit: 'SF', unitCost: 1.87 },
         category: 'typical',
         quantityFactor: 1.0,
       },
       {
-        id: 'rebar',
-        jocItem: { taskCode: '03210000-0030', description: 'Reinforcing Steel, #5 Bars', unit: 'LF', unitCost: 4.50 },
-        category: 'optional',
+        id: 'curing',
+        // REAL: 03391300-0002 @ $0.44/SF
+        jocItem: { taskCode: '03391300-0002', description: 'Water Based Curing, Sealing, Hardening And Dustproofing Compound', unit: 'SF', unitCost: 0.44 },
+        category: 'typical',
         quantityFactor: 1.0,
-        needsInput: 'custom',
-        inputUnit: 'LF',
-        note: 'Additional rebar as needed',
       },
     ],
   },
@@ -216,19 +211,33 @@ const ASSEMBLY_CONFIGS: AssemblyConfig[] = [
     items: [
       {
         id: 'sidewalk',
-        jocItem: { taskCode: '03300000-0030', description: 'Concrete Sidewalk, 4" Thick', unit: 'SF', unitCost: 11.25 },
+        // REAL: Uses same concrete placement as 4" slab
+        jocItem: { taskCode: '03311300-0035', description: 'Up To 6", By Direct Chute, Place 3,000 PSI Concrete Slab On Grade', unit: 'CY', unitCost: 206.97 },
         category: 'primary',
-        quantityFactor: 1.0,
+        quantityFactor: 0.0123, // 4" thick - 81 SF = 1 CY
+        note: 'Auto-converts: 81 SF = 1 CY',
       },
       {
-        id: 'base',
-        jocItem: { taskCode: '31230000-0010', description: 'Aggregate Base Course, 4"', unit: 'SF', unitCost: 2.85 },
+        id: 'edge-form',
+        // REAL: 03111300-0009 @ $7.68/LF
+        jocItem: { taskCode: '03111300-0009', description: 'Up To 6" High Slab Edge and Block-Out Wood Formwork', unit: 'LF', unitCost: 7.68 },
+        category: 'typical',
+        quantityFactor: 1.0,
+        needsInput: 'perimeter',
+        inputUnit: 'LF',
+        note: 'Perimeter of sidewalk',
+      },
+      {
+        id: 'broom-finish',
+        // REAL: 03351300-0004 @ $1.87/SF
+        jocItem: { taskCode: '03351300-0004', description: 'Broom, Concrete Floor Finish', unit: 'SF', unitCost: 1.87 },
         category: 'typical',
         quantityFactor: 1.0,
       },
       {
-        id: 'broom-finish',
-        jocItem: { taskCode: '03350000-0010', description: 'Broom Finish, Concrete Flatwork', unit: 'SF', unitCost: 1.00 },
+        id: 'curing',
+        // REAL: 03391300-0002 @ $0.44/SF
+        jocItem: { taskCode: '03391300-0002', description: 'Water Based Curing, Sealing, Hardening And Dustproofing Compound', unit: 'SF', unitCost: 0.44 },
         category: 'typical',
         quantityFactor: 1.0,
       },
