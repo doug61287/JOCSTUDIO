@@ -1259,6 +1259,19 @@ export function MeasurementPanel() {
           onApply={(items, fittingsToCount, fittingsToFlag) => 
             handleConfiguratorApply(showConfigurator.measurement.id, items, fittingsToCount, fittingsToFlag)
           }
+          onCountNow={(items, fittingToCount) => {
+            // Apply assembly immediately and start counting the fitting
+            const measurementId = showConfigurator.measurement.id;
+            const measurement = showConfigurator.measurement;
+            
+            // Update the measurement with assembly items
+            updateMeasurement(measurementId, { jocItems: items, jocItem: undefined });
+            setExpandedItems(prev => new Set([...prev, measurementId]));
+            setShowConfigurator(null);
+            
+            // Immediately spawn the count measurement
+            handleSpawnCompanionCount(measurement, fittingToCount, items[0]?.taskCode || '');
+          }}
           onCancel={() => setShowConfigurator(null)}
         />
       )}

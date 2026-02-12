@@ -1875,13 +1875,15 @@ interface AssemblyConfiguratorProps {
   measurement: Measurement;
   matchedAssembly: AssemblyConfig;
   onApply: (items: JOCItem[], fittingsToCount?: JOCItem[], fittingsToFlag?: JOCItem[]) => void;
+  onCountNow: (items: JOCItem[], fittingToCount: JOCItem) => void; // Immediate count action
   onCancel: () => void;
 }
 
 export function AssemblyConfigurator({ 
   measurement, 
   matchedAssembly, 
-  onApply, 
+  onApply,
+  onCountNow,
   onCancel 
 }: AssemblyConfiguratorProps) {
   // Initialize items with default checked states
@@ -2186,15 +2188,14 @@ export function AssemblyConfigurator({
                           Use Estimate
                         </button>
                         <button
-                          onClick={() => setFittingMode(item.id, 'count')}
-                          className={`flex-1 flex items-center justify-center gap-1.5 px-2 py-1.5 rounded-lg text-[10px] font-medium transition-all ${
-                            mode === 'count' 
-                              ? 'bg-amber-500/20 text-amber-400 border border-amber-500/40' 
-                              : 'bg-white/5 text-white/40 border border-white/10 hover:bg-white/10'
-                          }`}
+                          onClick={() => {
+                            // Immediately apply assembly and start counting this fitting
+                            onCountNow(totals.checkedItems, item.jocItem);
+                          }}
+                          className="flex-1 flex items-center justify-center gap-1.5 px-2 py-1.5 rounded-lg text-[10px] font-medium transition-all bg-amber-500/20 text-amber-400 border border-amber-500/40 hover:bg-amber-500/30 hover:scale-105"
                         >
                           <Hash className="w-3 h-3" />
-                          Count Now
+                          Count Now →
                         </button>
                         <button
                           onClick={() => setFittingMode(item.id, 'flag')}
