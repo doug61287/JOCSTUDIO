@@ -1605,6 +1605,241 @@ const ASSEMBLY_CONFIGS: AssemblyConfig[] = [
       },
     ],
   },
+  
+  // ============================================
+  // DIVISION 21 - FIRE PROTECTION 🔥
+  // ============================================
+  {
+    id: 'fp-cpvc-pipe-3',
+    name: '3" CPVC Fire Sprinkler Pipe',
+    matchPatterns: ['3" sprinkler', '3 inch sprinkler', '3" cpvc', 'sprinkler main', '3" main', '3 inch main'],
+    measurementTypes: ['line', 'polyline'],
+    items: [
+      {
+        id: 'pipe-3',
+        // REAL: 21134100-0009 @ $28.69/LF
+        jocItem: { taskCode: '21134100-0009', description: '3" Schedule 40 Chlorinated Polyvinyl Chloride (CPVC) Fire Sprinkler Pipe', unit: 'LF', unitCost: 28.69 },
+        category: 'primary',
+        quantityFactor: 1.0,
+      },
+      {
+        id: 'elbow-90',
+        // REAL: 21134100-0017 @ $117.82/EA - 90° elbow
+        jocItem: { taskCode: '21134100-0017', description: '3" Schedule 80 CPVC 90 Degree Elbow, Fire Sprinkler Piping', unit: 'EA', unitCost: 117.82 },
+        category: 'typical',
+        quantityFactor: 0.05, // ~1 per 20 LF
+        note: 'Fitting allowance: ~1 elbow per 20 LF',
+      },
+      {
+        id: 'tee',
+        // REAL: 21134100-0033 @ $172.62/EA - tee
+        jocItem: { taskCode: '21134100-0033', description: '3" Schedule 80 CPVC Tee, Fire Sprinkler Piping', unit: 'EA', unitCost: 172.62 },
+        category: 'typical',
+        quantityFactor: 0.033, // ~1 per 30 LF
+        note: 'Fitting allowance: ~1 tee per 30 LF',
+      },
+      {
+        id: 'elbow-45',
+        // REAL: 21134100-0025 @ $113.34/EA - 45° elbow
+        jocItem: { taskCode: '21134100-0025', description: '3" Schedule 80 CPVC 45 Degree Elbow, Fire Sprinkler Piping', unit: 'EA', unitCost: 113.34 },
+        category: 'optional',
+        quantityFactor: 0.02,
+        note: 'Add for angled runs',
+      },
+      {
+        id: 'coupling',
+        // REAL: 21134100-0063 @ $47.36/EA - coupling
+        jocItem: { taskCode: '21134100-0063', description: '3" Schedule 80 CPVC Coupling, Fire Sprinkler Piping', unit: 'EA', unitCost: 47.36 },
+        category: 'optional',
+        quantityFactor: 0.05,
+        note: 'For joining pipe sections',
+      },
+    ],
+  },
+  {
+    id: 'fp-cpvc-pipe-1.5',
+    name: '1-1/2" CPVC Fire Sprinkler Pipe',
+    matchPatterns: ['1-1/2" sprinkler', '1.5 inch sprinkler', '1-1/2" cpvc', '1-1/2" branch', 'branch line'],
+    measurementTypes: ['line', 'polyline'],
+    items: [
+      {
+        id: 'pipe-1.5',
+        // REAL: 21134100-0006 @ $12.70/LF
+        jocItem: { taskCode: '21134100-0006', description: '1-1/2" Schedule 40 Chlorinated Polyvinyl Chloride (CPVC) Fire Sprinkler Pipe', unit: 'LF', unitCost: 12.70 },
+        category: 'primary',
+        quantityFactor: 1.0,
+      },
+      {
+        id: 'elbow-90',
+        // REAL: 21134100-0014 @ $69.89/EA
+        jocItem: { taskCode: '21134100-0014', description: '1-1/2" Schedule 80 CPVC 90 Degree Elbow, Fire Sprinkler Piping', unit: 'EA', unitCost: 69.89 },
+        category: 'typical',
+        quantityFactor: 0.1, // ~1 per 10 LF
+        note: 'Fitting allowance',
+      },
+      {
+        id: 'tee',
+        // REAL: 21134100-0030 @ $105.00/EA
+        jocItem: { taskCode: '21134100-0030', description: '1-1/2" Schedule 80 CPVC Tee, Fire Sprinkler Piping', unit: 'EA', unitCost: 105.00 },
+        category: 'typical',
+        quantityFactor: 0.05,
+        note: 'For branch takeoffs',
+      },
+    ],
+  },
+  {
+    id: 'fp-cpvc-pipe-1.25',
+    name: '1-1/4" CPVC Fire Sprinkler Pipe',
+    matchPatterns: ['1-1/4" sprinkler', '1.25 inch sprinkler', '1-1/4" cpvc', '1-1/4" branch'],
+    measurementTypes: ['line', 'polyline'],
+    items: [
+      {
+        id: 'pipe-1.25',
+        // REAL: 21134100-0005 @ $10.58/LF
+        jocItem: { taskCode: '21134100-0005', description: '1-1/4" Schedule 40 Chlorinated Polyvinyl Chloride (CPVC) Fire Sprinkler Pipe', unit: 'LF', unitCost: 10.58 },
+        category: 'primary',
+        quantityFactor: 1.0,
+      },
+      {
+        id: 'elbow-90',
+        // REAL: 21134100-0013 @ $61.71/EA
+        jocItem: { taskCode: '21134100-0013', description: '1-1/4" Schedule 40 CPVC 90 Degree Elbow, Fire Sprinkler Piping', unit: 'EA', unitCost: 61.71 },
+        category: 'typical',
+        quantityFactor: 0.1,
+        note: 'Fitting allowance',
+      },
+    ],
+  },
+  {
+    id: 'fp-head-pendent',
+    name: 'Pendent Sprinkler Head',
+    matchPatterns: ['pendent head', 'pendant head', 'pendent sprinkler', 'pendant sprinkler', 'ceiling head', 'drop head'],
+    measurementTypes: ['count'],
+    items: [
+      {
+        id: 'head-pendent',
+        // REAL: 21131300-0074 @ $101.97/EA
+        jocItem: { taskCode: '21131300-0074', description: '1/2" NPT Thread, 1/2" Orifice, K=5.6, Pendent Brass Wet Pipe Sprinkler Head', unit: 'EA', unitCost: 101.97 },
+        category: 'primary',
+        quantityFactor: 1.0,
+      },
+      {
+        id: 'escutcheon',
+        // REAL: 21131300-0211 @ $18.53/EA
+        jocItem: { taskCode: '21131300-0211', description: '2-7/8" Diameter x 1-1/8" Depth, Two Piece, 1/2" NPT Escutcheon, Chrome', unit: 'EA', unitCost: 18.53 },
+        category: 'typical',
+        quantityFactor: 1.0,
+        note: 'Cover plate for ceiling penetration',
+      },
+      {
+        id: 'head-guard',
+        // Optional - head guard for exposed areas
+        jocItem: { taskCode: '21131300-0280', description: 'Sprinkler Head Guard, Wire Cage', unit: 'EA', unitCost: 35.00 },
+        category: 'optional',
+        quantityFactor: 1.0,
+        note: 'For mechanical rooms, warehouses',
+      },
+    ],
+  },
+  {
+    id: 'fp-head-upright',
+    name: 'Upright Sprinkler Head',
+    matchPatterns: ['upright head', 'upright sprinkler', 'standing head'],
+    measurementTypes: ['count'],
+    items: [
+      {
+        id: 'head-upright',
+        // REAL: 21131300-0026 @ $101.97/EA
+        jocItem: { taskCode: '21131300-0026', description: '1/2" NPT Thread, 1/2" Orifice, K=5.6, Upright Brass Wet Pipe Sprinkler Head', unit: 'EA', unitCost: 101.97 },
+        category: 'primary',
+        quantityFactor: 1.0,
+      },
+      {
+        id: 'escutcheon',
+        // REAL: 21131300-0210 @ $25.94/EA
+        jocItem: { taskCode: '21131300-0210', description: '2-7/8" Diameter x 1-1/8" Depth, Two Piece, 1/2" NPT Escutcheon, Brass', unit: 'EA', unitCost: 25.94 },
+        category: 'typical',
+        quantityFactor: 1.0,
+        note: 'Cover plate',
+      },
+    ],
+  },
+  {
+    id: 'fp-head-sidewall',
+    name: 'Sidewall Sprinkler Head',
+    matchPatterns: ['sidewall head', 'sidewall sprinkler', 'wall mount head', 'horizontal head'],
+    measurementTypes: ['count'],
+    items: [
+      {
+        id: 'head-sidewall',
+        // REAL: 21131300-0122 @ $119.55/EA
+        jocItem: { taskCode: '21131300-0122', description: '1/2" NPT Thread, 1/2" Orifice, K=5.6, Sidewall Brass Wet Pipe Sprinkler Head', unit: 'EA', unitCost: 119.55 },
+        category: 'primary',
+        quantityFactor: 1.0,
+      },
+      {
+        id: 'escutcheon',
+        // REAL: 21131300-0211 @ $18.53/EA
+        jocItem: { taskCode: '21131300-0211', description: '2-7/8" Diameter x 1-1/8" Depth, Two Piece, 1/2" NPT Escutcheon, Chrome', unit: 'EA', unitCost: 18.53 },
+        category: 'typical',
+        quantityFactor: 1.0,
+      },
+    ],
+  },
+  {
+    id: 'fp-fdc',
+    name: 'Fire Department Connection (FDC)',
+    matchPatterns: ['fdc', 'siamese', 'fire department connection', 'standpipe connection'],
+    measurementTypes: ['count'],
+    items: [
+      {
+        id: 'siamese',
+        // REAL: 21111900-0002 @ $1,198.63/EA
+        jocItem: { taskCode: '21111900-0002', description: '4" x 2-1/2" x 2-1/2" Siamese Connection, Polished Brass', unit: 'EA', unitCost: 1198.63 },
+        category: 'primary',
+        quantityFactor: 1.0,
+      },
+      {
+        id: 'signage',
+        // FDC sign
+        jocItem: { taskCode: '10141300-0050', description: 'FDC Sign, Aluminum, Reflective', unit: 'EA', unitCost: 45.00 },
+        category: 'typical',
+        quantityFactor: 1.0,
+        note: 'Required signage',
+      },
+    ],
+  },
+  {
+    id: 'fp-flow-switch',
+    name: 'Flow Switch',
+    matchPatterns: ['flow switch', 'flow detector', 'riser flow', 'water flow'],
+    measurementTypes: ['count'],
+    items: [
+      {
+        id: 'flow-switch',
+        // REAL: 21122900-0004 @ $1,560.46/EA
+        jocItem: { taskCode: '21122900-0004', description: 'Fire Riser Flow Switch (National Fire Protection Association 13)', unit: 'EA', unitCost: 1560.46 },
+        category: 'primary',
+        quantityFactor: 1.0,
+      },
+    ],
+  },
+  {
+    id: 'fp-relocate-head',
+    name: 'Relocate Sprinkler Head',
+    matchPatterns: ['relocate head', 'move head', 'head relocation', 'relocate sprinkler'],
+    measurementTypes: ['count'],
+    items: [
+      {
+        id: 'relocate',
+        // REAL: 21011091-0002 @ $751.19/EA
+        jocItem: { taskCode: '21011091-0002', description: 'Relocate 1 Existing Sprinkler Head And Branch Piping', unit: 'EA', unitCost: 751.19 },
+        category: 'primary',
+        quantityFactor: 1.0,
+        note: 'Includes branch piping modification',
+      },
+    ],
+  },
 ];
 
 // ============================================
