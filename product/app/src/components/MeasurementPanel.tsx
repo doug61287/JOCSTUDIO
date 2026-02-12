@@ -130,9 +130,9 @@ export function MeasurementPanel() {
     return items.reduce((sum, item) => sum + (m.value * item.unitCost), 0);
   };
 
-  // Group measurements
+  // Group measurements with parent/child relationships
   const groupedMeasurements = useMemo(() => {
-    if (!project) return { ungrouped: [], byGroup: {} as Record<string, Measurement[]> };
+    if (!project) return { ungrouped: [], byGroup: {} as Record<string, Measurement[]>, childrenByParent: {} as Record<string, Measurement[]> };
     
     const filtered = project.measurements.filter(m => 
       !filterQuery || 
@@ -140,10 +140,27 @@ export function MeasurementPanel() {
       m.type.includes(filterQuery.toLowerCase())
     );
     
+    // Build parent/child map
+    const childrenByParent: Record<string, Measurement[]> = {};
+    const childIds = new Set<string>();
+    
+    filtered.forEach((m) => {
+      if (m.parentMeasurementId) {
+        if (!childrenByParent[m.parentMeasurementId]) {
+          childrenByParent[m.parentMeasurementId] = [];
+        }
+        childrenByParent[m.parentMeasurementId].push(m);
+        childIds.add(m.id);
+      }
+    });
+    
+    // Filter out children from main list (they'll be shown under their parent)
+    const topLevel = filtered.filter(m => !childIds.has(m.id));
+    
     const ungrouped: Measurement[] = [];
     const byGroup: Record<string, Measurement[]> = {};
     
-    filtered.forEach((m) => {
+    topLevel.forEach((m) => {
       if (m.groupId) {
         if (!byGroup[m.groupId]) byGroup[m.groupId] = [];
         byGroup[m.groupId].push(m);
@@ -152,7 +169,7 @@ export function MeasurementPanel() {
       }
     });
     
-    return { ungrouped, byGroup };
+    return { ungrouped, byGroup, childrenByParent };
   }, [project, filterQuery]);
 
   // Line item totals for summary
@@ -288,20 +305,45 @@ export function MeasurementPanel() {
     const parentTaskCode = mainItem?.jocItem.taskCode || '';
     
     // Find child measurements that were spawned for counting fittings
+    // Check both taskCode AND fitting type keywords (elbow, tee, etc.)
+    const children = project?.measurements.filter(m => 
+      m.parentMeasurementId === measurement.id && 
+      m.type === 'count' && 
+      m.value > 0 // Has been counted
+    ) || [];
+    
     const countedFittingCodes = new Set(
-      project?.measurements
-        .filter(m => 
-          m.parentMeasurementId === measurement.id && 
-          m.type === 'count' && 
-          m.value > 0 // Has been counted
-        )
-        .flatMap(m => m.jocItems?.map(i => i.taskCode) || [])
+      children.flatMap(m => m.jocItems?.map(i => i.taskCode) || [])
+    );
+    
+    // Also check by fitting type in name (in case taskCode doesn't match exactly)
+    const countedFittingTypes = new Set(
+      children.map(m => {
+        const name = (m.name || '').toLowerCase();
+        if (name.includes('elbow')) return 'elbow';
+        if (name.includes('tee')) return 'tee';
+        if (name.includes('coupling')) return 'coupling';
+        if (name.includes('reducer')) return 'reducer';
+        return null;
+      }).filter(Boolean)
     );
     
     // Return items with quantityFactor < 1, excluding already-counted ones
     return assembly.items
       .filter(item => item.quantityFactor < 1.0)
-      .filter(item => !countedFittingCodes.has(item.jocItem.taskCode)) // Exclude counted
+      .filter(item => {
+        // Skip if taskCode matches
+        if (countedFittingCodes.has(item.jocItem.taskCode)) return false;
+        
+        // Skip if fitting type matches
+        const desc = item.jocItem.description.toLowerCase();
+        if (countedFittingTypes.has('elbow') && desc.includes('elbow')) return false;
+        if (countedFittingTypes.has('tee') && desc.includes('tee')) return false;
+        if (countedFittingTypes.has('coupling') && desc.includes('coupling')) return false;
+        if (countedFittingTypes.has('reducer') && desc.includes('reducer')) return false;
+        
+        return true;
+      })
       .map(item => ({
         jocItem: item.jocItem,
         parentTaskCode,
@@ -990,6 +1032,64 @@ export function MeasurementPanel() {
             >
               Cancel
             </button>
+          </div>
+        )}
+        
+        {/* 👶 CHILD MEASUREMENTS - Fittings nested under parent pipe */}
+        {isExpanded && groupedMeasurements.childrenByParent[m.id]?.length > 0 && (
+          <div className="border-t border-cyan-500/20 bg-cyan-500/5">
+            <div className="px-3 py-1.5 pl-10">
+              <span className="text-[10px] text-cyan-400 font-medium uppercase tracking-wider flex items-center gap-1">
+                <Link2 className="w-3 h-3" /> Counted Fittings
+              </span>
+            </div>
+            {groupedMeasurements.childrenByParent[m.id].map((child) => {
+              const childJocItems = getJocItems(child);
+              const childTotal = childJocItems.reduce((sum, item) => sum + (child.value * item.unitCost), 0);
+              
+              return (
+                <div 
+                  key={child.id}
+                  className={`flex items-center gap-2 px-3 py-2 pl-10 cursor-pointer transition-colors border-t border-white/[0.04] ${
+                    child.id === selectedMeasurement ? 'bg-cyan-500/10' : 'hover:bg-white/[0.02]'
+                  }`}
+                  onClick={() => selectMeasurement(child.id)}
+                >
+                  {/* Child type icon */}
+                  <div 
+                    className="w-5 h-5 rounded flex items-center justify-center flex-shrink-0"
+                    style={{ backgroundColor: child.color + '30', color: child.color }}
+                  >
+                    <Hash className="w-3 h-3" />
+                  </div>
+                  
+                  {/* Child name */}
+                  <span className="flex-1 text-xs text-white/70 truncate">
+                    {getMeasurementName(child)}
+                  </span>
+                  
+                  {/* Value */}
+                  <span className="text-xs text-white/50 tabular-nums">
+                    {child.value} {child.unit}
+                  </span>
+                  
+                  {/* Cost */}
+                  {childTotal > 0 && (
+                    <span className="text-xs text-emerald-400/80 font-medium tabular-nums w-14 text-right">
+                      ${childTotal.toFixed(0)}
+                    </span>
+                  )}
+                  
+                  {/* Delete */}
+                  <button
+                    onClick={(e) => { e.stopPropagation(); deleteMeasurement(child.id); }}
+                    className="w-5 h-5 flex items-center justify-center rounded opacity-0 group-hover:opacity-100 text-white/30 hover:text-red-400 transition-all"
+                  >
+                    <X className="w-3 h-3" />
+                  </button>
+                </div>
+              );
+            })}
           </div>
         )}
       </div>
