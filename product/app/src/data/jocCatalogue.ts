@@ -331,10 +331,13 @@ export function searchJOCItems(query: string, limit: number = 20): JOCItem[] {
     const expandedMatches = expandedWords.filter(word => desc.includes(word));
     score += expandedMatches.length * 15;
     
-    // Skip if no matches at all (unless division match)
-    if (score === 0 || (score === 50 && expandedMatches.length === 0)) {
+    // MUST have at least one keyword match to be considered
+    const hasAnyMatch = originalMatches.length > 0 || expandedMatches.length > 0;
+    
+    // Skip if no matches at all OR negative score (pipe size mismatch)
+    if (!hasAnyMatch || score <= 0 || (score === 50 && expandedMatches.length === 0)) {
       // For division-only matches, require at least something relevant
-      if (divisionCode && taskCode.startsWith(divisionCode)) {
+      if (divisionCode && taskCode.startsWith(divisionCode) && score >= 0) {
         // Include division items but with lower score
         score = 25;
       } else {
