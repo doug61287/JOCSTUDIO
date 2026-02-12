@@ -10,7 +10,7 @@ import type { Assembly } from '../types';
 import { GuidedAssistant } from './GuidedAssistant';
 import { FormattingPanel } from './FormattingPanel';
 import { FlagsPanel } from './FlagsPanel';
-import type { JOCItem, Measurement, MeasurementGroup } from '../types';
+import type { JOCItem, Measurement, MeasurementGroup, Flag as FlagType } from '../types';
 import { formatMeasurement, generateId } from '../utils/geometry';
 import {
   Ruler,
@@ -72,6 +72,7 @@ export function MeasurementPanel() {
     setActiveTool,
     toggleComplexityFactor,
     updateComplexityMultiplier,
+    flagMeasurement,
   } = useProjectStore();
   
   const [searchQuery, setSearchQuery] = useState('');
@@ -342,6 +343,67 @@ export function MeasurementPanel() {
     
     // Auto-hide prompt after 5 seconds
     setTimeout(() => setCountingPrompt(null), 5000);
+  };
+
+  /**
+   * Save all companion items for later - creates placeholder measurements with flags
+   * "I'll count these fittings later"
+   */
+  const handleSaveCompanionsForLater = (parentMeasurement: Measurement) => {
+    const companions = getCompanionItems(parentMeasurement);
+    if (companions.length === 0) return;
+    
+    const createdIds: string[] = [];
+    
+    companions.forEach(({ jocItem, parentTaskCode }) => {
+      const newId = generateId();
+      const shortLabel = jocItem.description.split(',')[0].trim();
+      
+      // Create placeholder COUNT measurement with value=0
+      const newMeasurement: Measurement = {
+        id: newId,
+        type: 'count',
+        points: [],
+        value: 0, // Placeholder - needs hard count
+        unit: 'EA',
+        pageNumber: parentMeasurement.pageNumber,
+        name: `${shortLabel} (from ${parentMeasurement.name || 'parent'})`,
+        jocItems: [jocItem],
+        color: '#ef4444', // Red for "needs attention"
+        visible: true,
+        parentMeasurementId: parentMeasurement.id,
+        sourceAssemblyId: parentMeasurement.sourceAssemblyId,
+        companionOf: parentTaskCode,
+      };
+      
+      addMeasurement(newMeasurement);
+      createdIds.push(newId);
+      
+      // Add flag to each one
+      const flag: FlagType = {
+        id: generateId(),
+        type: 'verify',
+        title: `Hard count needed: ${shortLabel}`,
+        description: `Placeholder from ${parentMeasurement.name || 'assembly'}. Count actual fittings on drawing.`,
+        measurementId: newId,
+        pageNumber: parentMeasurement.pageNumber,
+        status: 'open',
+        priority: 'medium',
+        createdAt: new Date(),
+      };
+      
+      flagMeasurement(newId, flag);
+    });
+    
+    // Expand to show the new items
+    setExpandedItems(prev => new Set([...prev, ...createdIds]));
+    
+    // Show confirmation
+    setCountingPrompt({ 
+      itemName: `${companions.length} items saved - check Flags tab`, 
+      measurementId: createdIds[0] 
+    });
+    setTimeout(() => setCountingPrompt(null), 4000);
   };
 
   // Handle name input change with assembly suggestions
@@ -697,10 +759,22 @@ export function MeasurementPanel() {
                       </button>
                     ))}
                   </div>
-                  <p className="text-[9px] text-white/40 mt-2 flex items-center gap-1">
-                    <MousePointer2 className="w-3 h-3" />
-                    Click a button above, then click on drawing to count
-                  </p>
+                  <div className="flex items-center justify-between mt-2 pt-2 border-t border-amber-500/20">
+                    <p className="text-[9px] text-white/40 flex items-center gap-1">
+                      <MousePointer2 className="w-3 h-3" />
+                      Click to count now
+                    </p>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleSaveCompanionsForLater(m);
+                      }}
+                      className="flex items-center gap-1 px-2 py-1 text-[9px] text-white/50 hover:text-white/80 hover:bg-white/10 rounded transition-colors"
+                    >
+                      <Flag className="w-3 h-3" />
+                      Save all for later
+                    </button>
+                  </div>
                 </div>
               );
             })()}
