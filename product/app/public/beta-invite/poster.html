@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JOCHero Beta - Poster</title>
+  <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Playfair+Display:wght@700;900&family=Inter:wght@500;600&display=swap" rel="stylesheet">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600;700&display=swap');
+    
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body {
+      min-height: 100vh;
+      background: #f5f4f0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+      font-family: 'Inter', sans-serif;
+    }
+    
+    .poster {
+      width: 100%;
+      max-width: 540px;
+      aspect-ratio: 4/5;
+      background: #f8f7f4;
+      position: relative;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+      overflow: hidden;
+    }
+    
+    /* Top right script tagline */
+    .tagline {
+      position: absolute;
+      top: 30px;
+      right: 30px;
+      font-family: 'Dancing Script', cursive;
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: #dc3545;
+      text-align: right;
+      line-height: 1.3;
+      z-index: 10;
+    }
+    
+    /* Watercolor illustration area */
+    .illustration {
+      position: absolute;
+      top: 50px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 85%;
+      height: 55%;
+    }
+    
+    .illustration svg {
+      width: 100%;
+      height: 100%;
+    }
+    
+    /* Building styles */
+    .building-outline { 
+      fill: none; 
+      stroke: #4a5568; 
+      stroke-width: 1.2;
+      stroke-linecap: round;
+    }
+    .building-wash { 
+      fill: #e8e4df;
+      opacity: 0.6;
+    }
+    .brick-wash {
+      fill: #d4a574;
+      opacity: 0.4;
+    }
+    .window { 
+      fill: #8ecae6; 
+      opacity: 0.5;
+    }
+    .awning {
+      fill: #457b9d;
+      opacity: 0.7;
+    }
+    .person {
+      fill: none;
+      stroke: #4a5568;
+      stroke-width: 1;
+    }
+    .person-color {
+      opacity: 0.5;
+    }
+    .hard-hat {
+      fill: #f97316;
+    }
+    .tree {
+      fill: #22c55e;
+      opacity: 0.6;
+    }
+    
+    /* Big bold title */
+    .title {
+      position: absolute;
+      bottom: 80px;
+      left: 30px;
+      z-index: 10;
+    }
+    
+    .title h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 5.5rem;
+      font-weight: 900;
+      line-height: 0.85;
+      /* Watercolor texture effect */
+      background: linear-gradient(
+        135deg,
+        #1e3a5f 0%,
+        #2c4a6e 20%,
+        #1a365d 40%,
+        #2d4a69 60%,
+        #1e3a5f 80%,
+        #3d5a80 100%
+      );
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      filter: url(#watercolor-texture);
+    }
+    
+    /* Bottom info bar */
+    .info-bar {
+      position: absolute;
+      bottom: 25px;
+      left: 30px;
+      right: 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .info-bar span {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: #1e3a5f;
+      letter-spacing: 0.05em;
+    }
+    
+    /* SVG Filter for watercolor effect */
+    .filters {
+      position: absolute;
+      width: 0;
+      height: 0;
+    }
+  </style>
+</head>
+<body>
+  <!-- SVG Filters -->
+  <svg class="filters">
+    <defs>
+      <filter id="watercolor-texture">
+        <feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="3" result="noise"/>
+        <feDisplacementMap in="SourceGraphic" in2="noise" scale="3" xChannelSelector="R" yChannelSelector="G"/>
+      </filter>
+    </defs>
+  </svg>
+
+  <div class="poster">
+    <!-- Script tagline top right -->
+    <div class="tagline">
+      New York's First<br/>
+      Smart Takeoff Tool
+    </div>
+    
+    <!-- Watercolor NYC Hospital/Construction Scene -->
+    <div class="illustration">
+      <svg viewBox="0 0 500 320" preserveAspectRatio="xMidYMid meet">
+        <!-- Background buildings (brownstones) -->
+        <rect class="brick-wash" x="10" y="30" width="80" height="200" rx="2"/>
+        <path class="building-outline" d="M10 30 L10 230 L90 230 L90 30 Z"/>
+        <!-- Fire escape -->
+        <path class="building-outline" d="M20 60 L40 60 M20 100 L40 100 M20 140 L40 140"/>
+        <path class="building-outline" d="M30 60 L30 30"/>
+        
+        <rect class="brick-wash" x="95" y="10" width="90" height="220" rx="2"/>
+        <path class="building-outline" d="M95 10 L95 230 L185 230 L185 10 Z"/>
+        <!-- Windows -->
+        <rect class="window" x="105" y="25" width="15" height="20" rx="1"/>
+        <rect class="window" x="130" y="25" width="15" height="20" rx="1"/>
+        <rect class="window" x="155" y="25" width="15" height="20" rx="1"/>
+        <rect class="window" x="105" y="60" width="15" height="20" rx="1"/>
+        <rect class="window" x="130" y="60" width="15" height="20" rx="1"/>
+        <rect class="window" x="155" y="60" width="15" height="20" rx="1"/>
+        
+        <!-- Main building (Hospital style) -->
+        <rect class="building-wash" x="130" y="50" width="200" height="180" rx="2"/>
+        <path class="building-outline" d="M130 50 L130 230 L330 230 L330 50 Z"/>
+        
+        <!-- Hospital sign -->
+        <rect x="170" y="70" width="100" height="25" rx="4" fill="#8ecae6" opacity="0.6"/>
+        <path class="building-outline" d="M170 70 L170 95 L270 95 L270 70 Z"/>
+        
+        <!-- Big windows -->
+        <rect class="window" x="145" y="110" width="35" height="45" rx="2"/>
+        <rect class="window" x="195" y="110" width="35" height="45" rx="2"/>
+        <rect class="window" x="245" y="110" width="35" height="45" rx="2"/>
+        <rect class="window" x="295" y="110" width="25" height="45" rx="2"/>
+        
+        <!-- Awning -->
+        <path class="awning" d="M140 175 L140 185 L180 185 L180 175 Z"/>
+        <path class="awning" d="M185 175 L185 185 L225 185 L225 175 Z"/>
+        <path class="awning" d="M230 175 L230 185 L270 185 L270 175 Z"/>
+        <path class="building-outline" d="M140 175 L140 185 L270 185 L270 175"/>
+        
+        <!-- Store front details -->
+        <rect class="window" x="145" y="190" width="30" height="35" rx="2"/>
+        <rect class="window" x="195" y="190" width="30" height="35" rx="2"/>
+        <rect class="window" x="245" y="190" width="30" height="35" rx="2"/>
+        
+        <!-- Right building -->
+        <rect class="brick-wash" x="340" y="40" width="70" height="190" rx="2"/>
+        <path class="building-outline" d="M340 40 L340 230 L410 230 L410 40 Z"/>
+        <rect class="window" x="350" y="55" width="12" height="16" rx="1"/>
+        <rect class="window" x="370" y="55" width="12" height="16" rx="1"/>
+        <rect class="window" x="390" y="55" width="12" height="16" rx="1"/>
+        
+        <!-- Far right building -->
+        <rect class="brick-wash" x="415" y="60" width="55" height="170" rx="2"/>
+        <path class="building-outline" d="M415 60 L415 230 L470 230 L470 60 Z"/>
+        
+        <!-- Tree -->
+        <ellipse class="tree" cx="440" cy="200" rx="25" ry="30"/>
+        <path class="building-outline" d="M440 230 L440 210"/>
+        
+        <!-- People in line (construction workers) -->
+        <g transform="translate(280, 200)">
+          <!-- Person 1 with hard hat -->
+          <circle class="hard-hat" cx="5" cy="8" r="5"/>
+          <path class="building-outline" d="M5 13 L5 30 M0 20 L10 20"/>
+          
+          <!-- Person 2 -->
+          <circle cx="25" cy="10" r="4" fill="#f4a261" opacity="0.6"/>
+          <path class="building-outline" d="M25 14 L25 30 M20 22 L30 22"/>
+          
+          <!-- Person 3 with hard hat -->
+          <circle class="hard-hat" cx="45" cy="8" r="5"/>
+          <path class="building-outline" d="M45 13 L45 30 M40 20 L50 20"/>
+          
+          <!-- Person 4 -->
+          <circle cx="65" cy="10" r="4" fill="#8ecae6" opacity="0.6"/>
+          <path class="building-outline" d="M65 14 L65 30 M60 22 L70 22"/>
+          
+          <!-- Person 5 with hard hat -->
+          <circle class="hard-hat" cx="85" cy="8" r="5"/>
+          <path class="building-outline" d="M85 13 L85 30 M80 20 L90 20"/>
+          
+          <!-- More people fading -->
+          <circle cx="105" cy="12" r="3" fill="#94a3b8" opacity="0.4"/>
+          <circle cx="120" cy="12" r="3" fill="#94a3b8" opacity="0.3"/>
+          <circle cx="135" cy="12" r="3" fill="#94a3b8" opacity="0.2"/>
+        </g>
+        
+        <!-- Street line -->
+        <path class="building-outline" d="M0 230 L500 230" stroke-width="0.8"/>
+        
+        <!-- Sidewalk texture -->
+        <path d="M0 232 L500 232" stroke="#d4d4d4" stroke-width="0.5"/>
+      </svg>
+    </div>
+    
+    <!-- Big bold title -->
+    <div class="title">
+      <h1>JOC<br/>Hero</h1>
+    </div>
+    
+    <!-- Bottom info -->
+    <div class="info-bar">
+      <span>BETA 2026</span>
+      <span>JOCHERO.COM</span>
+    </div>
+  </div>
+</body>
+</html>

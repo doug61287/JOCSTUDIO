@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JOCHero Beta Invite</title>
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      min-height: 100vh;
+      background: linear-gradient(135deg, #fef9f3 0%, #fdf6ed 50%, #f9f1e6 100%);
+      font-family: 'Inter', sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+    }
+    
+    .invite-card {
+      max-width: 480px;
+      background: white;
+      border-radius: 24px;
+      box-shadow: 
+        0 4px 6px rgba(0,0,0,0.02),
+        0 12px 24px rgba(0,0,0,0.04),
+        0 24px 48px rgba(0,0,0,0.06);
+      overflow: hidden;
+      position: relative;
+    }
+    
+    /* Watercolor-style top border */
+    .invite-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 8px;
+      background: linear-gradient(90deg, 
+        #e8847c 0%, 
+        #f4a261 20%, 
+        #e9c46a 40%,
+        #8ecae6 60%,
+        #457b9d 80%,
+        #e8847c 100%
+      );
+      filter: blur(1px);
+    }
+    
+    .hero-section {
+      padding: 3rem 2.5rem 2rem;
+      text-align: center;
+      background: linear-gradient(180deg, rgba(248,244,240,0.5) 0%, transparent 100%);
+    }
+    
+    .badge {
+      display: inline-block;
+      background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+      color: white;
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 0.4rem 1rem;
+      border-radius: 100px;
+      margin-bottom: 1.5rem;
+    }
+    
+    .logo {
+      font-family: 'Caveat', cursive;
+      font-size: 3.5rem;
+      font-weight: 700;
+      color: #1a1a2e;
+      line-height: 1;
+      margin-bottom: 0.5rem;
+    }
+    
+    .logo span {
+      color: #f97316;
+    }
+    
+    .tagline {
+      font-family: 'Caveat', cursive;
+      font-size: 1.4rem;
+      color: #64748b;
+      margin-bottom: 1.5rem;
+    }
+    
+    /* Illustration placeholder - NYC skyline sketch */
+    .illustration {
+      width: 100%;
+      height: 180px;
+      background: linear-gradient(180deg, #fef9f3 0%, #e8e4df 100%);
+      position: relative;
+      overflow: hidden;
+      border-top: 1px solid rgba(0,0,0,0.05);
+      border-bottom: 1px solid rgba(0,0,0,0.05);
+    }
+    
+    .illustration svg {
+      width: 100%;
+      height: 100%;
+    }
+    
+    .details {
+      padding: 2rem 2.5rem;
+    }
+    
+    .detail-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    
+    .detail-icon {
+      width: 40px;
+      height: 40px;
+      background: linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      flex-shrink: 0;
+    }
+    
+    .detail-content h3 {
+      font-family: 'Caveat', cursive;
+      font-size: 1.3rem;
+      color: #1a1a2e;
+      margin-bottom: 0.25rem;
+    }
+    
+    .detail-content p {
+      font-size: 0.9rem;
+      color: #64748b;
+      line-height: 1.5;
+    }
+    
+    .cta-section {
+      padding: 0 2.5rem 2.5rem;
+    }
+    
+    .cta-button {
+      display: block;
+      width: 100%;
+      padding: 1rem 2rem;
+      background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+      color: white;
+      font-size: 1rem;
+      font-weight: 600;
+      text-align: center;
+      text-decoration: none;
+      border-radius: 12px;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 12px rgba(249, 115, 22, 0.3);
+    }
+    
+    .cta-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(249, 115, 22, 0.4);
+    }
+    
+    .footer-note {
+      text-align: center;
+      padding: 1.5rem 2.5rem;
+      background: #fafaf9;
+      border-top: 1px solid rgba(0,0,0,0.05);
+    }
+    
+    .footer-note p {
+      font-family: 'Caveat', cursive;
+      font-size: 1.1rem;
+      color: #64748b;
+    }
+    
+    .spots {
+      display: inline-block;
+      background: #fef3c7;
+      color: #b45309;
+      padding: 0.2rem 0.6rem;
+      border-radius: 6px;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.75rem;
+      font-weight: 600;
+      margin-top: 0.5rem;
+    }
+    
+    /* NYC Skyline SVG Styles */
+    .building { fill: none; stroke: #94a3b8; stroke-width: 1.5; }
+    .building-fill { fill: #f1f5f9; }
+    .window { fill: #94a3b8; }
+    .crane { stroke: #f97316; stroke-width: 1.5; fill: none; }
+    .hard-hat { fill: #f97316; }
+  </style>
+</head>
+<body>
+  <div class="invite-card">
+    <div class="hero-section">
+      <div class="badge">🏗️ Beta Access</div>
+      <h1 class="logo">JOC<span>Hero</span></h1>
+      <p class="tagline">Making NYC Construction Heroes</p>
+    </div>
+    
+    <!-- NYC Construction Skyline Illustration -->
+    <div class="illustration">
+      <svg viewBox="0 0 480 180" preserveAspectRatio="xMidYMax slice">
+        <!-- Background buildings -->
+        <rect class="building-fill" x="20" y="60" width="45" height="120" rx="2"/>
+        <rect class="building" x="20" y="60" width="45" height="120" rx="2"/>
+        <rect class="window" x="28" y="70" width="6" height="8" rx="1"/>
+        <rect class="window" x="38" y="70" width="6" height="8" rx="1"/>
+        <rect class="window" x="50" y="70" width="6" height="8" rx="1"/>
+        <rect class="window" x="28" y="85" width="6" height="8" rx="1"/>
+        <rect class="window" x="38" y="85" width="6" height="8" rx="1"/>
+        <rect class="window" x="50" y="85" width="6" height="8" rx="1"/>
+        
+        <rect class="building-fill" x="75" y="40" width="55" height="140" rx="2"/>
+        <rect class="building" x="75" y="40" width="55" height="140" rx="2"/>
+        <rect class="window" x="83" y="50" width="8" height="10" rx="1"/>
+        <rect class="window" x="97" y="50" width="8" height="10" rx="1"/>
+        <rect class="window" x="111" y="50" width="8" height="10" rx="1"/>
+        
+        <!-- Main building with crane -->
+        <rect class="building-fill" x="150" y="20" width="80" height="160" rx="2"/>
+        <rect class="building" x="150" y="20" width="80" height="160" rx="2"/>
+        
+        <!-- Crane -->
+        <line class="crane" x1="190" y1="20" x2="190" y2="-10"/>
+        <line class="crane" x1="190" y1="-10" x2="260" y2="-10"/>
+        <line class="crane" x1="260" y1="-10" x2="260" y2="5"/>
+        <line class="crane" x1="190" y1="-10" x2="160" y2="-10"/>
+        <rect class="hard-hat" x="255" y="5" width="10" height="8" rx="2"/>
+        
+        <!-- More buildings -->
+        <rect class="building-fill" x="250" y="50" width="50" height="130" rx="2"/>
+        <rect class="building" x="250" y="50" width="50" height="130" rx="2"/>
+        
+        <rect class="building-fill" x="310" y="70" width="40" height="110" rx="2"/>
+        <rect class="building" x="310" y="70" width="40" height="110" rx="2"/>
+        
+        <rect class="building-fill" x="360" y="45" width="60" height="135" rx="2"/>
+        <rect class="building" x="360" y="45" width="60" height="135" rx="2"/>
+        
+        <rect class="building-fill" x="430" y="80" width="40" height="100" rx="2"/>
+        <rect class="building" x="430" y="80" width="40" height="100" rx="2"/>
+        
+        <!-- Construction workers silhouette -->
+        <circle class="hard-hat" cx="175" cy="145" r="6"/>
+        <circle class="hard-hat" cx="205" cy="140" r="6"/>
+      </svg>
+    </div>
+    
+    <div class="details">
+      <div class="detail-row">
+        <div class="detail-icon">📐</div>
+        <div class="detail-content">
+          <h3>Takeoff in Minutes, Not Hours</h3>
+          <p>AI-powered measurement tools that understand JOC pricing. Draw, name, done.</p>
+        </div>
+      </div>
+      
+      <div class="detail-row">
+        <div class="detail-icon">🏥</div>
+        <div class="detail-content">
+          <h3>Built for NYC Health + Hospitals</h3>
+          <p>65,000+ H+H CTC items. Real task codes, real prices, real assemblies.</p>
+        </div>
+      </div>
+      
+      <div class="detail-row">
+        <div class="detail-icon">🦸</div>
+        <div class="detail-content">
+          <h3>Make Your Estimators Heroes</h3>
+          <p>Less busywork, more building. Give your team superpowers.</p>
+        </div>
+      </div>
+    </div>
+    
+    <div class="cta-section">
+      <a href="https://jochero.com/app" class="cta-button">
+        Join the Beta →
+      </a>
+    </div>
+    
+    <div class="footer-note">
+      <p>You've been personally invited to test JOCHero</p>
+      <span class="spots">🎯 Limited to 25 beta testers</span>
+    </div>
+  </div>
+</body>
+</html>
