@@ -43,7 +43,8 @@ export function MeasurementCanvas({ width, height, pageNumber }: MeasurementCanv
   const { 
     project, 
     activeTool, 
-    addMeasurement, 
+    addMeasurement,
+    updateMeasurement,
     selectedMeasurement,
     selectMeasurement,
     activeJOCItem,
@@ -728,24 +729,38 @@ export function MeasurementCanvas({ width, height, pageNumber }: MeasurementCanv
     }
     
     if (activeTool === 'count') {
-      const measurement: Measurement = {
-        id: generateId(),
-        type: 'count',
-        points: [point],
-        value: 1,
-        unit: 'EA',
-        pageNumber,
-        color: activeJOCItem ? getMeasurementColor('count') : COLORS.warning,
-        jocItem: activeJOCItem || undefined,
-        groupId: activeGroupId || undefined,
-      };
-      addMeasurement(measurement);
+      // Check if there's a selected count measurement to add to
+      const selectedCount = selectedMeasurement 
+        ? project?.measurements.find(m => m.id === selectedMeasurement && m.type === 'count')
+        : null;
+      
+      if (selectedCount) {
+        // Add to existing count - increment value and add point
+        updateMeasurement(selectedCount.id, {
+          points: [...selectedCount.points, point],
+          value: selectedCount.value + 1,
+        });
+      } else {
+        // Create new count measurement
+        const measurement: Measurement = {
+          id: generateId(),
+          type: 'count',
+          points: [point],
+          value: 1,
+          unit: 'EA',
+          pageNumber,
+          color: activeJOCItem ? getMeasurementColor('count') : COLORS.warning,
+          jocItem: activeJOCItem || undefined,
+          groupId: activeGroupId || undefined,
+        };
+        addMeasurement(measurement);
+      }
     }
     
     if (activeTool === 'area' || activeTool === 'space') {
       setTempPoints([...tempPoints, point]);
     }
-  }, [activeTool, tempPoints, project, addMeasurement, selectMeasurement, getSnappedPoint, activeJOCItem, activeGroupId, pageNumber]);
+  }, [activeTool, tempPoints, project, addMeasurement, updateMeasurement, selectedMeasurement, selectMeasurement, getSnappedPoint, activeJOCItem, activeGroupId, pageNumber]);
 
   const handleDoubleClick = useCallback(() => {
     if (activeTool === 'polyline' && tempPoints.length >= 2) {
