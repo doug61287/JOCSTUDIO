@@ -340,6 +340,11 @@ export function MeasurementPanel() {
   const handleExport = () => {
     if (!project) return;
     
+    // Calculate complexity info
+    const complexityMultiplier = calculateComplexityMultiplier(project.complexityFactors || []);
+    const activeComplexityFactors = (project.complexityFactors || []).filter(f => f.enabled);
+    const subtotalAfterComplexity = totals.subtotal * complexityMultiplier;
+    
     const lines = [
       'JOC Code,Description,Quantity,Unit,Unit Price,Extended Price',
       ...lineItemTotals.map(({ item, quantity }) => 
@@ -347,9 +352,22 @@ export function MeasurementPanel() {
       ),
       '',
       `,,,,Subtotal,${totals.subtotal.toFixed(2)}`,
+    ];
+    
+    // Add complexity factors "below the line" if any are active
+    if (activeComplexityFactors.length > 0) {
+      lines.push(`,,,,--- Complexity Factors ---,`);
+      activeComplexityFactors.forEach(f => {
+        const amount = totals.subtotal * ((f.multiplier - 1) * 100) / 100;
+        lines.push(`,,"${f.name}",,${((f.multiplier - 1) * 100).toFixed(0)}%,${amount.toFixed(2)}`);
+      });
+      lines.push(`,,,,Complexity Subtotal,${subtotalAfterComplexity.toFixed(2)}`);
+    }
+    
+    lines.push(
       `,,,,Coefficient,${project.coefficient}`,
       `,,,,TOTAL,${totals.total.toFixed(2)}`,
-    ];
+    );
     
     const csv = lines.join('\n');
     const blob = new Blob([csv], { type: 'text/csv' });

@@ -7,7 +7,7 @@ import { MeasurementPanel } from './components/MeasurementPanel';
 import { DropZone } from './components/DropZone';
 import { CalibrationDialog } from './components/CalibrationDialog';
 import { TranslationMachine } from './components/TranslationMachine';
-import { ActiveItemPicker } from './components/ActiveItemPicker';
+// import { ActiveItemPicker } from './components/ActiveItemPicker'; // Removed - was hovering over screen
 import { SchedulePanel } from './components/SchedulePanel';
 
 function App() {
@@ -181,11 +181,7 @@ function App() {
           onDragOver={(e) => e.preventDefault()}
         >
           {project?.pdfUrl ? (
-            <>
-              <PDFViewer />
-              {/* Sticky Item Picker - shows when measurement tools are active */}
-              <ActiveItemPicker />
-            </>
+            <PDFViewer />
           ) : (
             <DropZone onFileSelect={handleFileSelect} />
           )}
