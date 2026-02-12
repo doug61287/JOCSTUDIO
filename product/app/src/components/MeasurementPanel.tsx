@@ -305,8 +305,26 @@ export function MeasurementPanel() {
     // Generate new measurement ID
     const newId = generateId();
     
-    // Get a short label from the item description
-    const shortLabel = companionItem.description.split(',')[0].trim();
+    // Extract clean short name from description
+    // "3" Schedule 80 CPVC 90 Degree Elbow, Fire Sprinkler Piping" → "3" Elbow"
+    const desc = companionItem.description;
+    const sizeMatch = desc.match(/^(\d+(?:-\d+\/\d+)?["']?)/); // Get pipe size like "3"" or "1-1/2""
+    const size = sizeMatch ? sizeMatch[1] : '';
+    
+    // Extract fitting type
+    let fittingType = 'Fitting';
+    if (/elbow/i.test(desc)) fittingType = 'Elbow';
+    else if (/tee/i.test(desc)) fittingType = 'Tee';
+    else if (/coupling/i.test(desc)) fittingType = 'Coupling';
+    else if (/reducer/i.test(desc)) fittingType = 'Reducer';
+    else if (/cap/i.test(desc)) fittingType = 'Cap';
+    else if (/union/i.test(desc)) fittingType = 'Union';
+    else if (/flange/i.test(desc)) fittingType = 'Flange';
+    else if (/valve/i.test(desc)) fittingType = 'Valve';
+    else if (/hanger/i.test(desc)) fittingType = 'Hanger';
+    else if (/escutcheon/i.test(desc)) fittingType = 'Escutcheon';
+    
+    const shortLabel = size ? `${size} ${fittingType}` : fittingType;
     
     // Create a new COUNT measurement linked to the parent
     const newMeasurement: Measurement = {
@@ -316,7 +334,7 @@ export function MeasurementPanel() {
       value: 0,
       unit: 'EA',
       pageNumber: parentMeasurement.pageNumber,
-      name: `${shortLabel} (from ${parentMeasurement.name || 'parent'})`,
+      name: shortLabel, // Clean short name like "3" Elbow"
       jocItems: [companionItem],
       color: '#f59e0b', // Amber for companion counts
       visible: true,
@@ -338,11 +356,11 @@ export function MeasurementPanel() {
     // Expand it to show the JOC item
     setExpandedItems(prev => new Set([...prev, newId]));
     
-    // Show counting prompt
+    // Show counting prompt with clear name
     setCountingPrompt({ itemName: shortLabel, measurementId: newId });
     
-    // Auto-hide prompt after 5 seconds
-    setTimeout(() => setCountingPrompt(null), 5000);
+    // Auto-hide prompt after 8 seconds (longer to give time to start counting)
+    setTimeout(() => setCountingPrompt(null), 8000);
   };
 
   /**

@@ -1978,12 +1978,16 @@ export function AssemblyConfigurator({
     setSearchResults([]);
   };
 
-  const primaryItems = items.filter(i => i.category === 'primary');
-  const typicalItems = items.filter(i => i.category === 'typical');
-  const optionalItems = items.filter(i => i.category === 'optional');
+  // Identify fittings FIRST - items with quantityFactor < 1 (estimated ratios like "1 elbow per 20 LF")
+  const fittingItemIds = new Set(
+    items.filter(i => i.quantityFactor > 0 && i.quantityFactor < 1).map(i => i.id)
+  );
+  const fittingItems = items.filter(i => fittingItemIds.has(i.id) && i.checked);
   
-  // Identify fittings - items with quantityFactor < 1 (estimated ratios like "1 elbow per 20 LF")
-  const fittingItems = items.filter(i => i.quantityFactor > 0 && i.quantityFactor < 1 && i.checked);
+  // Filter out fittings from other sections to avoid duplication
+  const primaryItems = items.filter(i => i.category === 'primary' && !fittingItemIds.has(i.id));
+  const typicalItems = items.filter(i => i.category === 'typical' && !fittingItemIds.has(i.id));
+  const optionalItems = items.filter(i => i.category === 'optional' && !fittingItemIds.has(i.id));
   
   const setFittingMode = (itemId: string, mode: 'estimate' | 'count' | 'flag') => {
     setFittingModes(prev => ({ ...prev, [itemId]: mode }));
