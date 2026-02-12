@@ -20,9 +20,115 @@ export {
 // Stats
 console.log(`JOC Catalogue loaded: ${jocCatalogue.length.toLocaleString()} items`);
 
+// ============================================
+// KEYWORD EXPANSION & SYNONYMS
+// Maps common search terms to catalogue terminology
+// ============================================
+
+const KEYWORD_SYNONYMS: Record<string, string[]> = {
+  // Masonry terms
+  'masonry': ['concrete block', 'cmu', 'brick', 'block wall', 'mortar'],
+  'cmu': ['concrete block', 'block'],
+  'block': ['concrete block', 'cmu'],
+  'brick': ['face brick', 'common brick', 'clay brick'],
+  
+  // Drywall/Gypsum terms  
+  'drywall': ['gypsum', 'gypsum board', 'sheetrock', 'gyp bd'],
+  'sheetrock': ['gypsum', 'gypsum board', 'drywall'],
+  'gyp': ['gypsum'],
+  
+  // Flooring terms
+  'vct': ['vinyl composition tile', 'vinyl tile'],
+  'lvt': ['luxury vinyl', 'vinyl plank'],
+  'carpet': ['carpet tile', 'broadloom'],
+  'terrazzo': ['epoxy terrazzo', 'cementitious terrazzo'],
+  
+  // Ceiling terms
+  'act': ['acoustic ceiling', 'ceiling tile', 'suspended ceiling'],
+  'drop ceiling': ['suspended ceiling', 'acoustic', 'ceiling tile'],
+  
+  // Door terms
+  'hm': ['hollow metal', 'steel door'],
+  'hollow metal': ['hm door', 'steel door', 'metal door'],
+  
+  // Paint terms
+  'paint': ['coating', 'finish', 'primer'],
+  'epoxy': ['epoxy coating', 'epoxy paint', 'epoxy floor'],
+  
+  // MEP terms
+  'hvac': ['mechanical', 'ductwork', 'air handling'],
+  'electrical': ['power', 'lighting', 'receptacle', 'outlet'],
+  'plumbing': ['piping', 'fixture', 'lavatory', 'water'],
+  
+  // Demo terms
+  'demo': ['demolition', 'removal', 'remove'],
+  'demolition': ['demo', 'removal', 'selective demolition'],
+  
+  // General terms
+  'storefront': ['aluminum storefront', 'storefront framing', 'glazing'],
+  'window': ['glazing', 'glass', 'window frame'],
+  'door': ['door frame', 'hardware', 'closer'],
+  'insulation': ['thermal', 'fiberglass', 'rigid insulation'],
+};
+
+// Division code mappings for category searches
+const DIVISION_KEYWORDS: Record<string, string> = {
+  'masonry': '04',
+  'concrete': '03',
+  'metals': '05',
+  'steel': '05',
+  'wood': '06',
+  'carpentry': '06',
+  'thermal': '07',
+  'roofing': '07',
+  'waterproofing': '07',
+  'doors': '08',
+  'windows': '08',
+  'openings': '08',
+  'finishes': '09',
+  'drywall': '09',
+  'flooring': '09',
+  'painting': '09',
+  'specialties': '10',
+  'equipment': '11',
+  'furnishings': '12',
+  'fire suppression': '21',
+  'sprinkler': '21',
+  'plumbing': '22',
+  'hvac': '23',
+  'mechanical': '23',
+  'electrical': '26',
+  'communications': '27',
+  'security': '28',
+};
+
+/**
+ * Expand search terms with synonyms
+ */
+function expandKeywords(words: string[]): string[] {
+  const expanded = new Set(words);
+  
+  for (const word of words) {
+    const synonyms = KEYWORD_SYNONYMS[word];
+    if (synonyms) {
+      synonyms.forEach(s => {
+        // Add individual words from multi-word synonyms
+        s.split(/\s+/).forEach(w => expanded.add(w));
+      });
+    }
+  }
+  
+  return Array.from(expanded);
+}
+
 /**
  * Search JOC catalogue by task code or description keywords
  * Optimized for 65k items - limits results and uses early termination
+ * 
+ * Now with:
+ * - Keyword expansion (masonry → concrete block, cmu, etc.)
+ * - Division-aware search (masonry → Division 04)
+ * - Flexible matching (any expanded keyword, not all required)
  */
 export function searchJOCItems(query: string, limit: number = 20): JOCItem[] {
   if (!query.trim() || query.length < 2) return [];
@@ -43,46 +149,77 @@ export function searchJOCItems(query: string, limit: number = 20): JOCItem[] {
   }
   
   // Search by description keywords
-  const words = q.split(/\s+/).filter(w => w.length >= 2);
-  if (words.length === 0) return [];
+  const originalWords = q.split(/\s+/).filter(w => w.length >= 2);
+  if (originalWords.length === 0) return [];
+  
+  // Expand keywords with synonyms
+  const expandedWords = expandKeywords(originalWords);
+  
+  // Check if this is a division-level search
+  const divisionCode = DIVISION_KEYWORDS[q] || DIVISION_KEYWORDS[originalWords[0]];
   
   // Score-based search for better relevance
   const scored: { item: JOCItem; score: number }[] = [];
   
   for (const item of jocCatalogue) {
     const desc = item.description.toLowerCase();
-    
-    // Check if all words match
-    const allMatch = words.every(word => desc.includes(word));
-    if (!allMatch) continue;
-    
-    // Calculate relevance score
+    const taskCode = item.taskCode;
     let score = 0;
     
-    // Exact phrase match = highest score
-    if (desc.includes(q)) {
-      score += 100;
-    }
-    
-    // Starts with first word = high score
-    if (desc.startsWith(words[0])) {
+    // Division match - boost items from the relevant division
+    if (divisionCode && taskCode.startsWith(divisionCode)) {
       score += 50;
     }
     
+    // Check original word matches (highest priority)
+    const originalMatches = originalWords.filter(word => desc.includes(word));
+    if (originalMatches.length === originalWords.length) {
+      score += 100; // All original words match
+    } else if (originalMatches.length > 0) {
+      score += originalMatches.length * 30; // Partial original match
+    }
+    
+    // Check expanded word matches
+    const expandedMatches = expandedWords.filter(word => desc.includes(word));
+    score += expandedMatches.length * 15;
+    
+    // Skip if no matches at all (unless division match)
+    if (score === 0 || (score === 50 && expandedMatches.length === 0)) {
+      // For division-only matches, require at least something relevant
+      if (divisionCode && taskCode.startsWith(divisionCode)) {
+        // Include division items but with lower score
+        score = 25;
+      } else {
+        continue;
+      }
+    }
+    
+    // Exact phrase match = highest score
+    if (desc.includes(q)) {
+      score += 80;
+    }
+    
+    // Starts with first word = high score
+    if (desc.startsWith(originalWords[0]) || desc.startsWith(expandedWords[0])) {
+      score += 40;
+    }
+    
     // Word appears early in description = higher score
-    const firstWordPos = desc.indexOf(words[0]);
-    score += Math.max(0, 30 - firstWordPos);
+    const firstWordPos = desc.indexOf(originalWords[0]);
+    if (firstWordPos >= 0) {
+      score += Math.max(0, 25 - firstWordPos / 2);
+    }
     
     // Shorter descriptions = often more specific/relevant
-    score += Math.max(0, 20 - desc.length / 10);
+    score += Math.max(0, 15 - desc.length / 15);
     
     // Higher unit cost = often main items (not accessories)
-    score += Math.min(10, item.unitCost / 100);
+    score += Math.min(8, item.unitCost / 100);
     
     scored.push({ item, score });
     
     // Early termination - if we have enough high-scoring results, stop
-    if (scored.length >= limit * 3) break;
+    if (scored.length >= limit * 5) break;
   }
   
   // Sort by score and return top results
