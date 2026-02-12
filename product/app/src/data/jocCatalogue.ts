@@ -275,18 +275,28 @@ export function searchJOCItems(query: string, limit: number = 20): JOCItem[] {
   }
   
   // Search by description keywords
-  const originalWords = q.split(/\s+/).filter(w => w.length >= 2);
+  let originalWords = q.split(/\s+/).filter(w => w.length >= 2);
   if (originalWords.length === 0) return [];
+  
+  // Extract pipe size if present (for pipe/fitting searches)
+  const pipeSize = extractPipeSize(q);
+  const normalizedPipeSize = pipeSize ? normalizePipeSize(pipeSize) : null;
+  
+  // If we detected a pipe size, remove size-related words like "inch", "in" 
+  // since H+H uses "3"" format not "3 inch"
+  if (normalizedPipeSize) {
+    originalWords = originalWords.filter(w => !['inch', 'in'].includes(w.toLowerCase()));
+    // If only "inch" was left, use the pipe size as a search term instead
+    if (originalWords.length === 0) {
+      originalWords = ['pipe']; // Default to pipe search
+    }
+  }
   
   // Expand keywords with synonyms
   const expandedWords = expandKeywords(originalWords);
   
   // Check if this is a division-level search
   const divisionCode = DIVISION_KEYWORDS[q] || DIVISION_KEYWORDS[originalWords[0]];
-  
-  // Extract pipe size if present (for pipe/fitting searches)
-  const pipeSize = extractPipeSize(q);
-  const normalizedPipeSize = pipeSize ? normalizePipeSize(pipeSize) : null;
   
   // Score-based search for better relevance
   const scored: { item: JOCItem; score: number }[] = [];

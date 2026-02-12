@@ -159,5 +159,6 @@ export type AssemblyCategory =
   | 'plumbing'
   | 'electrical'
   | 'hvac'
+  | 'fire-protection'
   | 'general'
   | 'custom';

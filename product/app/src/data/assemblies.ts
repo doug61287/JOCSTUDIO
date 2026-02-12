@@ -836,6 +836,270 @@ export const ASSEMBLY_LIBRARY: Assembly[] = [
       },
     ],
   },
+  
+  // ============================================
+  // DIVISION 21 - FIRE PROTECTION 🔥
+  // ============================================
+  
+  // --- SPRINKLER PIPE ASSEMBLIES (per LF, includes fittings allowance) ---
+  {
+    id: 'fp-pipe-3',
+    name: '3" Sprinkler Main',
+    description: '3" CPVC fire sprinkler main with fittings allowance',
+    category: 'fire-protection',
+    keywords: ['3 inch', '3"', 'sprinkler', 'main', 'pipe', 'cpvc', 'fire', 'fp'],
+    applicableTo: ['line'],
+    createdBy: 'system',
+    items: [
+      {
+        jocItem: {
+          taskCode: '21134100-0009',
+          description: '3" Schedule 40 Chlorinated Polyvinyl Chloride (CPVC) Fire Sprinkler Pipe',
+          unit: 'LF',
+          unitCost: 28.69,
+        },
+        quantityFactor: 1.0,
+      },
+      {
+        jocItem: {
+          taskCode: '21134100-0017',
+          description: '3" Schedule 80 CPVC 90 Degree Elbow, Fire Sprinkler Piping',
+          unit: 'EA',
+          unitCost: 117.82,
+        },
+        quantityFactor: 0.05, // 1 elbow per 20 LF average
+        notes: 'Fitting allowance: 1 elbow per 20 LF',
+      },
+      {
+        jocItem: {
+          taskCode: '21134100-0033',
+          description: '3" Schedule 80 CPVC Tee, Fire Sprinkler Piping',
+          unit: 'EA',
+          unitCost: 172.62,
+        },
+        quantityFactor: 0.033, // 1 tee per 30 LF average
+        notes: 'Fitting allowance: 1 tee per 30 LF',
+      },
+    ],
+  },
+  {
+    id: 'fp-pipe-1.5',
+    name: '1-1/2" Sprinkler Branch',
+    description: '1-1/2" CPVC fire sprinkler branch line with fittings',
+    category: 'fire-protection',
+    keywords: ['1-1/2', '1.5 inch', 'sprinkler', 'branch', 'pipe', 'cpvc', 'fire', 'fp'],
+    applicableTo: ['line'],
+    createdBy: 'system',
+    items: [
+      {
+        jocItem: {
+          taskCode: '21134100-0006',
+          description: '1-1/2" Schedule 40 Chlorinated Polyvinyl Chloride (CPVC) Fire Sprinkler Pipe',
+          unit: 'LF',
+          unitCost: 12.70,
+        },
+        quantityFactor: 1.0,
+      },
+      {
+        jocItem: {
+          taskCode: '21134100-0014',
+          description: '1-1/2" Schedule 80 CPVC 90 Degree Elbow, Fire Sprinkler Piping',
+          unit: 'EA',
+          unitCost: 69.89,
+        },
+        quantityFactor: 0.1, // 1 elbow per 10 LF average
+        notes: 'Fitting allowance',
+      },
+    ],
+  },
+  {
+    id: 'fp-pipe-1.25',
+    name: '1-1/4" Sprinkler Branch',
+    description: '1-1/4" CPVC fire sprinkler branch line with fittings',
+    category: 'fire-protection',
+    keywords: ['1-1/4', '1.25 inch', 'sprinkler', 'branch', 'pipe', 'cpvc', 'fire', 'fp'],
+    applicableTo: ['line'],
+    createdBy: 'system',
+    items: [
+      {
+        jocItem: {
+          taskCode: '21134100-0005',
+          description: '1-1/4" Schedule 40 Chlorinated Polyvinyl Chloride (CPVC) Fire Sprinkler Pipe',
+          unit: 'LF',
+          unitCost: 10.58,
+        },
+        quantityFactor: 1.0,
+      },
+      {
+        jocItem: {
+          taskCode: '21134100-0013',
+          description: '1-1/4" Schedule 40 CPVC 90 Degree Elbow, Fire Sprinkler Piping',
+          unit: 'EA',
+          unitCost: 61.71,
+        },
+        quantityFactor: 0.1,
+        notes: 'Fitting allowance',
+      },
+    ],
+  },
+  
+  // --- SPRINKLER HEAD ASSEMBLIES (per EA, includes escutcheon) ---
+  {
+    id: 'fp-head-pendent',
+    name: 'Pendent Sprinkler Head',
+    description: 'Pendent (ceiling) sprinkler head with escutcheon',
+    category: 'fire-protection',
+    keywords: ['sprinkler head', 'pendent', 'pendant', 'head', 'ceiling', 'drop'],
+    applicableTo: ['count'],
+    createdBy: 'system',
+    items: [
+      {
+        jocItem: {
+          taskCode: '21131300-0074',
+          description: '1/2" NPT Thread, 1/2" Orifice, K=5.6, Pendent Brass Wet Pipe Sprinkler Head',
+          unit: 'EA',
+          unitCost: 101.97,
+        },
+        quantityFactor: 1.0,
+      },
+      {
+        jocItem: {
+          taskCode: '21131300-0211',
+          description: '2-7/8" Diameter x 1-1/8" Depth, Two Piece, 1/2" NPT Escutcheon, Chrome',
+          unit: 'EA',
+          unitCost: 18.53,
+        },
+        quantityFactor: 1.0,
+        notes: 'Escutcheon plate',
+      },
+    ],
+  },
+  {
+    id: 'fp-head-upright',
+    name: 'Upright Sprinkler Head',
+    description: 'Upright sprinkler head with escutcheon',
+    category: 'fire-protection',
+    keywords: ['sprinkler head', 'upright', 'head', 'standing'],
+    applicableTo: ['count'],
+    createdBy: 'system',
+    items: [
+      {
+        jocItem: {
+          taskCode: '21131300-0026',
+          description: '1/2" NPT Thread, 1/2" Orifice, K=5.6, Upright Brass Wet Pipe Sprinkler Head',
+          unit: 'EA',
+          unitCost: 101.97,
+        },
+        quantityFactor: 1.0,
+      },
+      {
+        jocItem: {
+          taskCode: '21131300-0210',
+          description: '2-7/8" Diameter x 1-1/8" Depth, Two Piece, 1/2" NPT Escutcheon, Brass',
+          unit: 'EA',
+          unitCost: 25.94,
+        },
+        quantityFactor: 1.0,
+        notes: 'Escutcheon plate',
+      },
+    ],
+  },
+  {
+    id: 'fp-head-sidewall',
+    name: 'Sidewall Sprinkler Head',
+    description: 'Sidewall sprinkler head with escutcheon',
+    category: 'fire-protection',
+    keywords: ['sprinkler head', 'sidewall', 'wall mount', 'horizontal'],
+    applicableTo: ['count'],
+    createdBy: 'system',
+    items: [
+      {
+        jocItem: {
+          taskCode: '21131300-0122',
+          description: '1/2" NPT Thread, 1/2" Orifice, K=5.6, Sidewall Brass Wet Pipe Sprinkler Head',
+          unit: 'EA',
+          unitCost: 119.55,
+        },
+        quantityFactor: 1.0,
+      },
+      {
+        jocItem: {
+          taskCode: '21131300-0211',
+          description: '2-7/8" Diameter x 1-1/8" Depth, Two Piece, 1/2" NPT Escutcheon, Chrome',
+          unit: 'EA',
+          unitCost: 18.53,
+        },
+        quantityFactor: 1.0,
+        notes: 'Escutcheon plate',
+      },
+    ],
+  },
+  
+  // --- SPRINKLER HEAD RELOCATION ---
+  {
+    id: 'fp-relocate-head',
+    name: 'Relocate Sprinkler Head',
+    description: 'Relocate existing sprinkler head and branch piping',
+    category: 'fire-protection',
+    keywords: ['relocate', 'move', 'sprinkler', 'head', 'modify', 'existing'],
+    applicableTo: ['count'],
+    createdBy: 'system',
+    items: [
+      {
+        jocItem: {
+          taskCode: '21011091-0002',
+          description: 'Relocate 1 Existing Sprinkler Head And Branch Piping',
+          unit: 'EA',
+          unitCost: 751.19,
+        },
+        quantityFactor: 1.0,
+      },
+    ],
+  },
+  
+  // --- FIRE DEPARTMENT CONNECTION ---
+  {
+    id: 'fp-fdc',
+    name: 'Fire Department Connection',
+    description: 'Siamese FDC connection, polished brass',
+    category: 'fire-protection',
+    keywords: ['fdc', 'siamese', 'fire department', 'connection', 'standpipe'],
+    applicableTo: ['count'],
+    createdBy: 'system',
+    items: [
+      {
+        jocItem: {
+          taskCode: '21111900-0002',
+          description: '4" x 2-1/2" x 2-1/2" Siamese Connection, Polished Brass',
+          unit: 'EA',
+          unitCost: 1198.63,
+        },
+        quantityFactor: 1.0,
+      },
+    ],
+  },
+  
+  // --- FLOW SWITCH ---
+  {
+    id: 'fp-flow-switch',
+    name: 'Flow Switch',
+    description: 'Fire riser flow switch (NFPA 13)',
+    category: 'fire-protection',
+    keywords: ['flow switch', 'flow', 'detector', 'alarm', 'riser'],
+    applicableTo: ['count'],
+    createdBy: 'system',
+    items: [
+      {
+        jocItem: {
+          taskCode: '21122900-0004',
+          description: 'Fire Riser Flow Switch (National Fire Protection Association 13)',
+          unit: 'EA',
+          unitCost: 1560.46,
+        },
+        quantityFactor: 1.0,
+      },
+    ],
+  },
 ];
 
 // ============================================
@@ -896,6 +1160,34 @@ const ASSEMBLY_PATTERNS: { pattern: RegExp; assemblyIds: string[]; boost: number
   // Door patterns
   { pattern: /\b(hollow\s*metal|hm)\s*door/i, assemblyIds: ['door-install-hollow'], boost: 90 },
   { pattern: /\bdoor\s*(demo|remove)/i, assemblyIds: ['door-demo'], boost: 90 },
+  
+  // ============================================
+  // DIVISION 21 - FIRE PROTECTION PATTERNS 🔥
+  // ============================================
+  
+  // Sprinkler pipe by size
+  { pattern: /\b(3|three)[\s"']*(?:inch|in|")?\s*(sprinkler|cpvc|fire)\s*(pipe|main)?/i, assemblyIds: ['fp-pipe-3'], boost: 100 },
+  { pattern: /\b(1-?1\/2|one\s*and\s*a\s*half)[\s"']*(?:inch|in|")?\s*(sprinkler|cpvc|branch)/i, assemblyIds: ['fp-pipe-1.5'], boost: 100 },
+  { pattern: /\b(1-?1\/4|one\s*and\s*a\s*quarter)[\s"']*(?:inch|in|")?\s*(sprinkler|cpvc|branch)/i, assemblyIds: ['fp-pipe-1.25'], boost: 100 },
+  { pattern: /\bsprinkler\s*(main|riser)/i, assemblyIds: ['fp-pipe-3'], boost: 80 },
+  { pattern: /\bbranch\s*(line|pipe)/i, assemblyIds: ['fp-pipe-1.5', 'fp-pipe-1.25'], boost: 75 },
+  
+  // Sprinkler heads by type
+  { pattern: /\b(pendent|pendant)\s*(sprinkler\s*)?(head)?/i, assemblyIds: ['fp-head-pendent'], boost: 95 },
+  { pattern: /\bupright\s*(sprinkler\s*)?(head)?/i, assemblyIds: ['fp-head-upright'], boost: 95 },
+  { pattern: /\bsidewall\s*(sprinkler\s*)?(head)?/i, assemblyIds: ['fp-head-sidewall'], boost: 95 },
+  { pattern: /\bsprinkler\s*head/i, assemblyIds: ['fp-head-pendent', 'fp-head-upright', 'fp-head-sidewall'], boost: 80 },
+  
+  // Head relocation
+  { pattern: /\b(relocate|move)\s*(sprinkler\s*)?(head)?/i, assemblyIds: ['fp-relocate-head'], boost: 90 },
+  { pattern: /\bhead\s*relocation/i, assemblyIds: ['fp-relocate-head'], boost: 90 },
+  
+  // Fire department connection
+  { pattern: /\b(fdc|siamese)/i, assemblyIds: ['fp-fdc'], boost: 95 },
+  { pattern: /\bfire\s*department\s*connection/i, assemblyIds: ['fp-fdc'], boost: 90 },
+  
+  // Flow switch
+  { pattern: /\bflow\s*(switch|detector)/i, assemblyIds: ['fp-flow-switch'], boost: 90 },
 ];
 
 // ============================================
