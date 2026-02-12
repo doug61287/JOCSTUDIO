@@ -1,7 +1,7 @@
 import { useState, useMemo, useRef } from 'react';
 import { useProjectStore } from '../stores/projectStore';
 import { searchJOCItems, jocCatalogue, findTierFamily, hasTierVariants, type TierFamily, type QuantityTier } from '../data/jocCatalogue';
-import { searchAssemblies, calculateAssemblyCost } from '../data/assemblies';
+import { searchAssemblies, calculateAssemblyCost, getAssemblyById } from '../data/assemblies';
 import { AssemblyConfigurator, findMatchingAssembly, type AssemblyConfig } from './AssemblyConfigurator';
 import { TierSelector } from './TierSelector';
 import { ComplexityPanel, ComplexitySummary } from './ComplexityPanel';
@@ -38,6 +38,8 @@ import {
   Layers,
   Tag,
   AlertTriangle,
+  MousePointer2,
+  Link2,
 } from 'lucide-react';
 
 // Group colors
@@ -62,10 +64,12 @@ export function MeasurementPanel() {
     selectMeasurement,
     deleteMeasurement,
     updateMeasurement,
+    addMeasurement,
     setCoefficient,
     addGroup,
     setActiveJOCItem,
     activeJOCItem,
+    setActiveTool,
     toggleComplexityFactor,
     updateComplexityMultiplier,
   } = useProjectStore();
@@ -247,17 +251,88 @@ export function MeasurementPanel() {
       // Note: quantityFactor is applied at calculation time, not stored
     }));
     
-    // Update measurement with assembly name and JOC items
+    // Update measurement with assembly name, JOC items, AND assembly ID for companion tracking
     updateMeasurement(measurementId, { 
       name: assembly.name,
       jocItems: jocItems,
       jocItem: undefined,
+      sourceAssemblyId: assembly.id, // Track which assembly was applied
     });
     
     // Expand the item to show the added JOC items
     setExpandedItems(prev => new Set([...prev, measurementId]));
     setEditingName(null);
     setAssemblySuggestions([]);
+  };
+
+  // ============================================
+  // 🔗 CONTEXTUAL CONTINUATION - Spawn companion measurement
+  // ============================================
+  
+  /**
+   * Get companion items for a measurement based on its source assembly
+   * Companion items are those with quantityFactor < 1 (fittings, accessories)
+   */
+  const getCompanionItems = (measurement: Measurement): { jocItem: JOCItem; parentTaskCode: string; label: string }[] => {
+    if (!measurement.sourceAssemblyId) return [];
+    
+    const assembly = getAssemblyById(measurement.sourceAssemblyId);
+    if (!assembly) return [];
+    
+    // Find the "main" item (quantityFactor = 1.0) to use as parent reference
+    const mainItem = assembly.items.find(i => i.quantityFactor === 1.0);
+    const parentTaskCode = mainItem?.jocItem.taskCode || '';
+    
+    // Return items with quantityFactor < 1 (fittings, accessories, etc.)
+    return assembly.items
+      .filter(item => item.quantityFactor < 1.0)
+      .map(item => ({
+        jocItem: item.jocItem,
+        parentTaskCode,
+        label: item.jocItem.description.split(',')[0].trim(),
+      }));
+  };
+
+  /**
+   * Spawn a new COUNT measurement for a companion item
+   * Links back to the parent measurement for context
+   */
+  const handleSpawnCompanionCount = (parentMeasurement: Measurement, companionItem: JOCItem, parentTaskCode: string) => {
+    // Generate new measurement ID
+    const newId = generateId();
+    
+    // Get a short label from the item description
+    const shortLabel = companionItem.description.split(',')[0].trim();
+    
+    // Create a new COUNT measurement linked to the parent
+    const newMeasurement: Measurement = {
+      id: newId,
+      type: 'count',
+      points: [], // User will click to place counts
+      value: 0,
+      unit: 'EA',
+      pageNumber: parentMeasurement.pageNumber,
+      name: `${shortLabel} (from ${parentMeasurement.name || 'parent'})`,
+      jocItems: [companionItem],
+      color: '#f59e0b', // Amber for companion counts
+      visible: true,
+      // Link back to parent
+      parentMeasurementId: parentMeasurement.id,
+      sourceAssemblyId: parentMeasurement.sourceAssemblyId,
+      companionOf: parentTaskCode,
+    };
+    
+    // Add the measurement
+    addMeasurement(newMeasurement);
+    
+    // Switch to count tool
+    setActiveTool('count');
+    
+    // Select the new measurement
+    selectMeasurement(newId);
+    
+    // Expand it to show the JOC item
+    setExpandedItems(prev => new Set([...prev, newId]));
   };
 
   // Handle name input change with assembly suggestions
@@ -411,10 +486,16 @@ export function MeasurementPanel() {
           
           {/* Type Icon + Color */}
           <div 
-            className="w-6 h-6 rounded flex items-center justify-center flex-shrink-0"
+            className="w-6 h-6 rounded flex items-center justify-center flex-shrink-0 relative"
             style={{ backgroundColor: m.color + '30', color: m.color }}
           >
             {TYPE_ICONS[m.type]}
+            {/* Chain link indicator for companion measurements */}
+            {m.parentMeasurementId && (
+              <div className="absolute -top-1 -right-1 w-3 h-3 bg-amber-500 rounded-full flex items-center justify-center">
+                <Link2 className="w-2 h-2 text-black" />
+              </div>
+            )}
           </div>
           
           {/* Name */}
@@ -577,6 +658,42 @@ export function MeasurementPanel() {
                 </button>
               </div>
             ))}
+            
+            {/* 🔗 COMPANION ITEMS - Click to start count takeoff! */}
+            {(() => {
+              const companions = getCompanionItems(m);
+              if (companions.length === 0) return null;
+              
+              return (
+                <div className="border-t border-amber-500/20 bg-amber-500/5 px-3 py-2">
+                  <div className="flex items-center gap-1.5 mb-2">
+                    <MousePointer2 className="w-3 h-3 text-amber-400" />
+                    <span className="text-[10px] text-amber-400 font-medium uppercase tracking-wider">
+                      Continue Takeoff
+                    </span>
+                  </div>
+                  <div className="flex flex-wrap gap-1.5">
+                    {companions.map(({ jocItem, parentTaskCode, label }) => (
+                      <button
+                        key={jocItem.taskCode}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleSpawnCompanionCount(m, jocItem, parentTaskCode);
+                        }}
+                        className="flex items-center gap-1.5 px-2 py-1 bg-amber-500/20 hover:bg-amber-500/30 text-amber-200 rounded text-[10px] font-medium transition-colors group"
+                      >
+                        <Hash className="w-2.5 h-2.5 text-amber-400 group-hover:scale-110 transition-transform" />
+                        <span>{label}</span>
+                        <span className="text-amber-400/70">${jocItem.unitCost.toFixed(0)}/EA</span>
+                      </button>
+                    ))}
+                  </div>
+                  <p className="text-[9px] text-white/30 mt-1.5 ml-4">
+                    Click to count these fittings on the drawing
+                  </p>
+                </div>
+              );
+            })()}
             
             {/* Add JOC Item Button */}
             <button

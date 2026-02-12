@@ -32,6 +32,10 @@ export interface Measurement {
   spaceName?: string;
   perimeter?: number; // LF for spaces
   finishes?: SpaceFinish[];
+  // Assembly chain tracking - "Contextual Continuation"
+  parentMeasurementId?: string; // Links back to parent measurement (e.g., pipe run)
+  sourceAssemblyId?: string; // The assembly this measurement was derived from
+  companionOf?: string; // Task code of the "parent" item (e.g., "3" pipe" → elbow is companion of pipe)
 }
 
 // Default formatting style
