@@ -14,3 +14,4 @@ export { FlagsPanel } from './FlagsPanel';
 export { SchedulePanel } from './SchedulePanel';
 export { TierSelector, TierBadge } from './TierSelector';
 export { HeightSelector, HeightBadge } from './HeightSelector';
+export { ComplexityPanel, ComplexitySummary } from './ComplexityPanel';

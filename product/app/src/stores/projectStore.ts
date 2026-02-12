@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import type { Project, Measurement, MeasurementGroup, Tool, JOCItem, Flag } from '../types';
+import { DEFAULT_COMPLEXITY_FACTORS } from '../utils/complexityFactors';
 
 interface ProjectState {
   project: Project | null;
@@ -36,6 +37,9 @@ interface ProjectState {
   deleteFlag: (id: string) => void;
   resolveFlag: (id: string, resolution: string) => void;
   flagMeasurement: (measurementId: string, flag: Flag) => void;
+  // Complexity factor actions - "Handle separately at the end"
+  toggleComplexityFactor: (factorId: string) => void;
+  updateComplexityMultiplier: (factorId: string, multiplier: number) => void;
 }
 
 // Auto-load test drawing in dev mode
@@ -51,6 +55,7 @@ export const useProjectStore = create<ProjectState>((set) => ({
     groups: [],
     flags: [],
     coefficient: 1.0,
+    complexityFactors: DEFAULT_COMPLEXITY_FACTORS.map(f => ({ ...f })),
     createdAt: new Date(),
   },
   activeTool: 'select',
@@ -197,6 +202,25 @@ export const useProjectStore = create<ProjectState>((set) => ({
       flags: [...(state.project.flags || []), flag],
       measurements: state.project.measurements.map((m) =>
         m.id === measurementId ? { ...m, flagId: flag.id } : m
+      )
+    } : null
+  })),
+
+  // Complexity factor actions - "Handle separately at the end"
+  toggleComplexityFactor: (factorId) => set((state) => ({
+    project: state.project ? {
+      ...state.project,
+      complexityFactors: (state.project.complexityFactors || []).map((f) =>
+        f.id === factorId ? { ...f, enabled: !f.enabled } : f
+      )
+    } : null
+  })),
+
+  updateComplexityMultiplier: (factorId, multiplier) => set((state) => ({
+    project: state.project ? {
+      ...state.project,
+      complexityFactors: (state.project.complexityFactors || []).map((f) =>
+        f.id === factorId ? { ...f, multiplier } : f
       )
     } : null
   })),

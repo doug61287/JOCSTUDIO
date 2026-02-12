@@ -4,6 +4,8 @@ import { searchJOCItems, jocCatalogue, findTierFamily, hasTierVariants, type Tie
 import { searchAssemblies, calculateAssemblyCost } from '../data/assemblies';
 import { AssemblyConfigurator, findMatchingAssembly, type AssemblyConfig } from './AssemblyConfigurator';
 import { TierSelector } from './TierSelector';
+import { ComplexityPanel, ComplexitySummary } from './ComplexityPanel';
+import { calculateComplexityMultiplier } from '../utils/complexityFactors';
 import type { Assembly } from '../types';
 import { GuidedAssistant } from './GuidedAssistant';
 import { FormattingPanel } from './FormattingPanel';
@@ -68,7 +70,9 @@ export function MeasurementPanel() {
     deleteGroup,
     assignToGroup,
     setActiveJOCItem,
-    activeJOCItem
+    activeJOCItem,
+    toggleComplexityFactor,
+    updateComplexityMultiplier,
   } = useProjectStore();
   
   const [searchQuery, setSearchQuery] = useState('');
@@ -89,6 +93,7 @@ export function MeasurementPanel() {
     quantity: number;
     selectedTier?: QuantityTier;
   } | null>(null);
+  const [showComplexityPanel, setShowComplexityPanel] = useState(false);
   const nameInputRef = useRef<HTMLInputElement>(null);
 
   const searchResults = useMemo(() => {
@@ -174,15 +179,21 @@ export function MeasurementPanel() {
   }, [project]);
 
   const totals = useMemo(() => {
-    if (!project) return { subtotal: 0, total: 0 };
+    if (!project) return { subtotal: 0, complexityAmount: 0, total: 0 };
     
     const subtotal = lineItemTotals.reduce((sum, { item, quantity }) => 
       sum + (quantity * item.unitCost), 0
     );
     
+    // Calculate complexity multiplier
+    const complexityMultiplier = calculateComplexityMultiplier(project.complexityFactors || []);
+    const complexityAmount = subtotal * (complexityMultiplier - 1);
+    const afterComplexity = subtotal + complexityAmount;
+    
     return {
       subtotal,
-      total: subtotal * project.coefficient,
+      complexityAmount,
+      total: afterComplexity * project.coefficient,
     };
   }, [lineItemTotals, project]);
 
@@ -841,8 +852,16 @@ export function MeasurementPanel() {
             <span className="text-white/50">Subtotal</span>
             <span className="tabular-nums">${totals.subtotal.toLocaleString(undefined, { minimumFractionDigits: 2 })}</span>
           </div>
+          
+          {/* Complexity Factors Summary */}
+          <ComplexitySummary
+            factors={project.complexityFactors || []}
+            subtotal={totals.subtotal}
+            onClick={() => setShowComplexityPanel(true)}
+          />
+          
           <div className="flex items-center justify-between text-xs">
-            <span className="text-white/50">Coefficient</span>
+            <span className="text-white/50">Location Coefficient</span>
             <input
               type="number"
               value={project.coefficient}
@@ -928,6 +947,28 @@ export function MeasurementPanel() {
                   onConfirm={handleTierConfirm}
                 />
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Complexity Factors Panel - "Handle separately at the end" */}
+      {showComplexityPanel && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
+          <div className="w-full max-w-lg max-h-[85vh] overflow-auto">
+            <div className="relative">
+              <button
+                onClick={() => setShowComplexityPanel(false)}
+                className="absolute -top-2 -right-2 w-8 h-8 bg-gray-800 rounded-full flex items-center justify-center hover:bg-gray-700 text-white/60 hover:text-white z-10 border border-white/10"
+              >
+                <X className="w-4 h-4" />
+              </button>
+              <ComplexityPanel
+                factors={project.complexityFactors || []}
+                subtotal={totals.subtotal}
+                onToggleFactor={toggleComplexityFactor}
+                onUpdateMultiplier={updateComplexityMultiplier}
+              />
             </div>
           </div>
         </div>

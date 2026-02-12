@@ -105,6 +105,9 @@ export interface JOCItem {
   division?: string;     // CSI division (optional)
 }
 
+// Import complexity factor type
+import type { ComplexityFactor } from '../utils/complexityFactors';
+
 export interface Project {
   id: string;
   name: string;
@@ -115,6 +118,7 @@ export interface Project {
   groups: MeasurementGroup[];
   flags: Flag[]; // "Flag, don't assume!"
   coefficient: number;
+  complexityFactors?: ComplexityFactor[]; // "Handle separately at the end"
   createdAt: Date;
 }
 
