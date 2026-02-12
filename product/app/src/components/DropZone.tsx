@@ -6,7 +6,24 @@ interface DropZoneProps {
 
 export function DropZone({ onFileSelect }: DropZoneProps) {
   const [isDragging, setIsDragging] = useState(false);
+  const [loadingDemo, setLoadingDemo] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Load the demo drawing (Bellevue ED Ambulance Bay)
+  const handleLoadDemo = useCallback(async () => {
+    setLoadingDemo(true);
+    try {
+      const response = await fetch('/test-drawing.pdf');
+      const blob = await response.blob();
+      const file = new File([blob], 'Bellevue-ED-Ambulance-Bay.pdf', { type: 'application/pdf' });
+      onFileSelect(file);
+    } catch (error) {
+      console.error('Failed to load demo:', error);
+      alert('Failed to load demo drawing');
+    } finally {
+      setLoadingDemo(false);
+    }
+  }, [onFileSelect]);
 
   const handleDragOver = useCallback((e: React.DragEvent) => {
     e.preventDefault();
@@ -57,9 +74,19 @@ export function DropZone({ onFileSelect }: DropZoneProps) {
           <p className="text-white/60 mb-6">
             Drag & drop a PDF file here, or click to browse
           </p>
-          <button className="btn btn-primary">
-            Choose PDF File
-          </button>
+          <div className="flex flex-col gap-3 items-center">
+            <button className="btn btn-primary">
+              Choose PDF File
+            </button>
+            <span className="text-white/40 text-sm">or</span>
+            <button 
+              onClick={(e) => { e.stopPropagation(); handleLoadDemo(); }}
+              disabled={loadingDemo}
+              className="px-6 py-2.5 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-black font-semibold rounded-lg transition-all disabled:opacity-50"
+            >
+              {loadingDemo ? '⏳ Loading...' : '🏥 Load Demo: Bellevue ED'}
+            </button>
+          </div>
           <p className="text-sm text-white/40 mt-4">
             Supported: PDF files up to 50MB
           </p>
