@@ -75,7 +75,7 @@ const KEYWORD_SYNONYMS: Record<string, string[]> = {
   
   // Sprinkler heads - including common misspellings
   'sprinkler head': ['sprinkler head', 'wet pipe sprinkler head'],
-  'head': ['sprinkler head'],
+  // Removed 'head': ['sprinkler head'] - too generic, matches traffic signals etc.
   'pendant': ['pendent'],  // Common misspelling → H+H spelling
   'pendant head': ['pendent', 'sprinkler head'],
   'upright head': ['upright', 'sprinkler head'],
@@ -97,8 +97,9 @@ const KEYWORD_SYNONYMS: Record<string, string[]> = {
   'check valve': ['alarm check valve', 'check valve'],
   'flow switch': ['flow detector', 'water flow'],
   'tamper switch': ['tamper', 'supervisory'],
-  'fdc': ['siamese connection', 'fire department connection'],
+  'fdc': ['siamese'],  // Just 'siamese' - don't expand to 'fire' which matches 'fired'
   'siamese': ['siamese connection'],
+  'fire department connection': ['siamese'],
   
   // Kitchen/specialty systems
   'ansul': ['kitchen fire suppression', 'wet chemical'],
@@ -321,21 +322,35 @@ export function searchJOCItems(query: string, limit: number = 20): JOCItem[] {
     
     // Check original word matches (highest priority)
     const originalMatches = originalWords.filter(word => desc.includes(word));
+    
+    // For multi-word queries, REQUIRE all words to match (or use expanded synonyms)
+    const isMultiWord = originalWords.length >= 2;
+    
     if (originalMatches.length === originalWords.length) {
-      score += 100; // All original words match
+      score += 150; // All original words match - big boost
     } else if (originalMatches.length > 0) {
-      score += originalMatches.length * 30; // Partial original match
+      if (isMultiWord) {
+        // Partial match on multi-word query - check if synonyms fill the gap
+        // Much lower score for partial matches
+        score += originalMatches.length * 10;
+      } else {
+        score += originalMatches.length * 30;
+      }
     }
     
-    // Check expanded word matches
+    // Check expanded word matches (synonyms)
     const expandedMatches = expandedWords.filter(word => desc.includes(word));
-    score += expandedMatches.length * 15;
+    const expandedOnlyMatches = expandedMatches.filter(w => !originalWords.includes(w));
+    score += expandedOnlyMatches.length * 20;
     
-    // MUST have at least one keyword match to be considered
-    const hasAnyMatch = originalMatches.length > 0 || expandedMatches.length > 0;
+    // For multi-word queries, require MOST words to match
+    const totalMatches = new Set([...originalMatches, ...expandedMatches]).size;
+    const hasGoodMatch = isMultiWord 
+      ? (originalMatches.length === originalWords.length || totalMatches >= originalWords.length)
+      : (originalMatches.length > 0 || expandedMatches.length > 0);
     
-    // Skip if no matches at all OR negative score (pipe size mismatch)
-    if (!hasAnyMatch || score <= 0 || (score === 50 && expandedMatches.length === 0)) {
+    // Skip if not a good match OR negative score
+    if (!hasGoodMatch || score <= 0 || (score === 50 && expandedMatches.length === 0)) {
       // For division-only matches, require at least something relevant
       if (divisionCode && taskCode.startsWith(divisionCode) && score >= 0) {
         // Include division items but with lower score
