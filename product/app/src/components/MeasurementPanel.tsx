@@ -615,8 +615,8 @@ export function MeasurementPanel() {
         
         const shortLabel = size ? `${size} ${typeName}` : fitting.description.split(',')[0].trim();
         
-        // Calculate estimated quantity
-        const estimatedQty = Math.round(measurement.value * quantityFactor);
+        // Calculate estimated quantity - ALWAYS round UP (can't have 0.5 fittings!)
+        const estimatedQty = Math.ceil(measurement.value * quantityFactor);
         
         const newMeasurement: Measurement = {
           id: newId,
@@ -1041,12 +1041,13 @@ export function MeasurementPanel() {
           </div>
         )}
         
-        {/* 👶 CHILD MEASUREMENTS - Only show ACTUALLY COUNTED fittings (value > 0) */}
+        {/* 👶 CHILD MEASUREMENTS - Fittings nested under parent */}
         {isExpanded && (() => {
-          const countedChildren = (groupedMeasurements.childrenByParent[m.id] || [])
-            .filter(child => child.value > 0); // Only show if actually counted!
+          const childMeasurements = groupedMeasurements.childrenByParent[m.id] || [];
           
-          if (countedChildren.length === 0) return null;
+          if (childMeasurements.length === 0) return null;
+          
+          const countedChildren = childMeasurements; // Show ALL children, not just counted
           
           return (
             <div className="border-t border-cyan-500/20 bg-cyan-500/5">
@@ -1062,7 +1063,7 @@ export function MeasurementPanel() {
               return (
                 <div 
                   key={child.id}
-                  className={`flex items-center gap-2 px-3 py-2 pl-10 cursor-pointer transition-colors border-t border-white/[0.04] ${
+                  className={`group flex items-center gap-2 px-3 py-2 pl-10 cursor-pointer transition-colors border-t border-white/[0.04] ${
                     child.id === selectedMeasurement ? 'bg-cyan-500/10' : 'hover:bg-white/[0.02]'
                   }`}
                   onClick={() => selectMeasurement(child.id)}
@@ -1091,6 +1092,21 @@ export function MeasurementPanel() {
                       ${childTotal.toFixed(0)}
                     </span>
                   )}
+                  
+                  {/* Hard Count Button - Click to start counting on canvas */}
+                  <button
+                    onClick={(e) => { 
+                      e.stopPropagation(); 
+                      selectMeasurement(child.id);
+                      setActiveTool('count');
+                      // Reset value to 0 when starting hard count
+                      updateMeasurement(child.id, { value: 0 });
+                    }}
+                    className="w-6 h-6 flex items-center justify-center rounded bg-amber-500/20 text-amber-400 hover:bg-amber-500/30 opacity-0 group-hover:opacity-100 transition-all"
+                    title="Hard count: click on drawing to count"
+                  >
+                    <MousePointer2 className="w-3 h-3" />
+                  </button>
                   
                   {/* Delete */}
                   <button
