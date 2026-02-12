@@ -1207,6 +1207,404 @@ const ASSEMBLY_CONFIGS: AssemblyConfig[] = [
       },
     ],
   },
+  // ============================================
+  // DIVISION 21 - FIRE SUPPRESSION (EXPANDED)
+  // ============================================
+  {
+    id: 'fire-hose-cabinet',
+    name: 'Fire Hose Cabinet Installation',
+    matchPatterns: ['fire hose cabinet', 'hose cabinet', 'fire hose', 'standpipe cabinet'],
+    measurementTypes: ['count'],
+    items: [
+      {
+        id: 'cabinet',
+        // REAL: 10441300-0109 @ $780.42/EA
+        jocItem: { taskCode: '10441300-0109', description: '34" x 24" x 8" Inside Dimensions, Recessed Steel Fire Hose Cabinet', unit: 'EA', unitCost: 780.42 },
+        category: 'primary',
+        quantityFactor: 1.0,
+      },
+      {
+        id: 'hose-valve',
+        jocItem: { taskCode: '21121300-0005', description: '2-1/2" Fire Hose Valve, Brass', unit: 'EA', unitCost: 425.00 },
+        category: 'typical',
+        quantityFactor: 1.0,
+      },
+    ],
+  },
+  {
+    id: 'fire-extinguisher-cabinet',
+    name: 'Fire Extinguisher Cabinet',
+    matchPatterns: ['fire extinguisher cabinet', 'extinguisher cabinet', 'fe cabinet'],
+    measurementTypes: ['count'],
+    items: [
+      {
+        id: 'cabinet',
+        // REAL: 10441300-0004 @ $449.79/EA
+        jocItem: { taskCode: '10441300-0004', description: '9" x 18" x 5-1/2" Inside Dimensions, Recessed Steel Fire Extinguisher Cabinet', unit: 'EA', unitCost: 449.79 },
+        category: 'primary',
+        quantityFactor: 1.0,
+      },
+    ],
+  },
+  {
+    id: 'siamese-connection',
+    name: 'Siamese Connection',
+    matchPatterns: ['siamese', 'siamese connection', 'fire department connection', 'fdc'],
+    measurementTypes: ['count'],
+    items: [
+      {
+        id: 'siamese',
+        // REAL: 21111900-0002 @ $1,198.63/EA
+        jocItem: { taskCode: '21111900-0002', description: '4" x 2-1/2" x 2-1/2" Siamese Connection, Polished Brass', unit: 'EA', unitCost: 1198.63 },
+        category: 'primary',
+        quantityFactor: 1.0,
+      },
+    ],
+  },
+  // ============================================
+  // DIVISION 22 - PLUMBING (EXPANDED)
+  // ============================================
+  {
+    id: 'wc-roughin-floor',
+    name: 'Water Closet Rough-In (Floor Mounted)',
+    matchPatterns: ['toilet rough-in', 'wc rough-in', 'water closet rough', 'floor toilet rough'],
+    measurementTypes: ['count'],
+    items: [
+      {
+        id: 'roughin',
+        // REAL: 22131300-0003 @ $1,336.56/EA
+        jocItem: { taskCode: '22131300-0003', description: 'Floor Mounted Water Closet, Single Fixture Rough-In, Cast Iron Waste And Vent', unit: 'EA', unitCost: 1336.56 },
+        category: 'primary',
+        quantityFactor: 1.0,
+      },
+    ],
+  },
+  {
+    id: 'wc-roughin-wall',
+    name: 'Water Closet Rough-In (Wall Mounted)',
+    matchPatterns: ['wall toilet rough', 'wall mount wc rough', 'wall hung rough-in'],
+    measurementTypes: ['count'],
+    items: [
+      {
+        id: 'roughin',
+        // REAL: 22131300-0004 @ $1,767.03/EA
+        jocItem: { taskCode: '22131300-0004', description: 'Wall Mounted Water Closet, Single Fixture Rough-In, Cast Iron Waste And Vent', unit: 'EA', unitCost: 1767.03 },
+        category: 'primary',
+        quantityFactor: 1.0,
+      },
+    ],
+  },
+  {
+    id: 'urinal-roughin',
+    name: 'Urinal Rough-In',
+    matchPatterns: ['urinal rough-in', 'urinal rough', 'ur rough-in'],
+    measurementTypes: ['count'],
+    items: [
+      {
+        id: 'roughin',
+        // REAL: 22131300-0006 @ $787.87/EA
+        jocItem: { taskCode: '22131300-0006', description: 'Wall Mounted Urinal, Single Fixture Rough-In, Cast Iron Waste And Vent', unit: 'EA', unitCost: 787.87 },
+        category: 'primary',
+        quantityFactor: 1.0,
+      },
+    ],
+  },
+  {
+    id: 'lav-roughin',
+    name: 'Lavatory Rough-In',
+    matchPatterns: ['lavatory rough-in', 'lav rough-in', 'sink rough-in', 'lavatory rough'],
+    measurementTypes: ['count'],
+    items: [
+      {
+        id: 'roughin',
+        // REAL: 22131300-0007 @ $928.52/EA
+        jocItem: { taskCode: '22131300-0007', description: 'Wall Mounted Lavatory, Single Fixture Rough-In, Cast Iron Waste And Vent', unit: 'EA', unitCost: 928.52 },
+        category: 'primary',
+        quantityFactor: 1.0,
+      },
+    ],
+  },
+  {
+    id: 'floor-drain',
+    name: 'Floor Drain Installation',
+    matchPatterns: ['floor drain', 'fd', 'drain'],
+    measurementTypes: ['count'],
+    items: [
+      {
+        id: 'drain',
+        // REAL: 22131913-0003 @ $961.24/EA
+        jocItem: { taskCode: '22131913-0003', description: 'Bronze Top, 6" Round Top Floor Drain With 2" Outlet', unit: 'EA', unitCost: 961.24 },
+        category: 'primary',
+        quantityFactor: 1.0,
+      },
+      {
+        id: 'trap-primer',
+        // REAL: 22111900-0042 @ $210.67/EA
+        jocItem: { taskCode: '22111900-0042', description: '1/2" Inlet/Outlet, Automatic Trap Primer, Up To Two Floor Drains', unit: 'EA', unitCost: 210.67 },
+        category: 'optional',
+        quantityFactor: 0.5, // 1 per 2 drains
+        note: '1 primer per 2 drains',
+      },
+    ],
+  },
+  {
+    id: 'water-heater-electric-40',
+    name: 'Electric Water Heater (40 Gal)',
+    matchPatterns: ['water heater', 'electric water heater', '40 gallon water heater', 'hwh'],
+    measurementTypes: ['count'],
+    items: [
+      {
+        id: 'heater',
+        // REAL: 22333016-0003 @ $1,565.35/EA
+        jocItem: { taskCode: '22333016-0003', description: '40 Gallon, Electric Domestic Water Heater', unit: 'EA', unitCost: 1565.35 },
+        category: 'primary',
+        quantityFactor: 1.0,
+      },
+      {
+        id: 'connections',
+        jocItem: { taskCode: '22111600-0389', description: '3/4" Hard Drawn Type L Copper Tube/Pipe', unit: 'LF', unitCost: 9.62 },
+        category: 'typical',
+        quantityFactor: 1.0,
+        needsInput: 'custom',
+        inputUnit: 'LF',
+        note: 'Connection piping',
+      },
+      {
+        id: 'relief-valve',
+        jocItem: { taskCode: '22052900-0010', description: 'Temperature and Pressure Relief Valve', unit: 'EA', unitCost: 85.00 },
+        category: 'typical',
+        quantityFactor: 1.0,
+      },
+    ],
+  },
+  {
+    id: 'water-heater-instant',
+    name: 'Tankless Water Heater',
+    matchPatterns: ['tankless', 'instantaneous water heater', 'instant water heater', 'on-demand'],
+    measurementTypes: ['count'],
+    items: [
+      {
+        id: 'heater',
+        // REAL: 22331313-0003 @ $657.92/EA
+        jocItem: { taskCode: '22331313-0003', description: '7.2 KW, 0.75 GPM, Instantaneous, Tankless, Electric Domestic Water Heater', unit: 'EA', unitCost: 657.92 },
+        category: 'primary',
+        quantityFactor: 1.0,
+      },
+    ],
+  },
+  {
+    id: 'galv-pipe',
+    name: 'Galvanized Steel Pipe',
+    matchPatterns: ['galvanized pipe', 'galv pipe', 'galv steel', 'galvanized'],
+    measurementTypes: ['line'],
+    items: [
+      {
+        id: 'pipe-1',
+        // REAL: 22111600-0004 @ $30.74/LF
+        jocItem: { taskCode: '22111600-0004', description: '1" Schedule 40 Threaded Galvanized Steel Pipe With 150 LB Malleable Iron Fittings', unit: 'LF', unitCost: 30.74 },
+        category: 'primary',
+        quantityFactor: 1.0,
+      },
+      {
+        id: 'hangers',
+        jocItem: { taskCode: '22051100-0015', description: 'Pipe Hangers, 1" Galvanized', unit: 'EA', unitCost: 15.50 },
+        category: 'typical',
+        quantityFactor: 0.125, // 1 per 8 LF
+        note: '1 hanger per 8 LF',
+      },
+    ],
+  },
+  {
+    id: 'pvc-drain-pipe',
+    name: 'PVC Drain Pipe',
+    matchPatterns: ['pvc pipe', 'pvc drain', 'plastic pipe', 'drain pipe'],
+    measurementTypes: ['line'],
+    items: [
+      {
+        id: 'pipe',
+        jocItem: { taskCode: '22131300-0100', description: '4" PVC DWV Pipe', unit: 'LF', unitCost: 18.50 },
+        category: 'primary',
+        quantityFactor: 1.0,
+      },
+      {
+        id: 'hangers',
+        jocItem: { taskCode: '22051100-0020', description: 'Pipe Hangers, 4" PVC', unit: 'EA', unitCost: 12.00 },
+        category: 'typical',
+        quantityFactor: 0.25, // 1 per 4 LF
+        note: '1 hanger per 4 LF',
+      },
+    ],
+  },
+  // ============================================
+  // DIVISION 23 - HVAC (EXPANDED)
+  // ============================================
+  {
+    id: 'ceiling-diffuser',
+    name: 'Ceiling Diffuser',
+    matchPatterns: ['diffuser', 'ceiling diffuser', 'supply diffuser', 'air diffuser'],
+    measurementTypes: ['count'],
+    items: [
+      {
+        id: 'diffuser-24',
+        // REAL: 23371313-0011 @ $310.74/EA
+        jocItem: { taskCode: '23371313-0011', description: '24" x 24" Ceiling Diffuser With Perforated Face, Flush Mount, Aluminum', unit: 'EA', unitCost: 310.74 },
+        category: 'primary',
+        quantityFactor: 1.0,
+      },
+    ],
+  },
+  {
+    id: 'ceiling-diffuser-12',
+    name: 'Ceiling Diffuser 12x12',
+    matchPatterns: ['12x12 diffuser', '12 diffuser', 'small diffuser'],
+    measurementTypes: ['count'],
+    items: [
+      {
+        id: 'diffuser-12',
+        // REAL: 23371313-0007 @ $179.50/EA
+        jocItem: { taskCode: '23371313-0007', description: '12" x 12" Ceiling Diffuser With Perforated Face, Flush Mount, Aluminum', unit: 'EA', unitCost: 179.50 },
+        category: 'primary',
+        quantityFactor: 1.0,
+      },
+    ],
+  },
+  {
+    id: 'round-duct',
+    name: 'Round Ductwork',
+    matchPatterns: ['round duct', 'spiral duct', 'round ductwork'],
+    measurementTypes: ['line'],
+    items: [
+      {
+        id: 'duct-8',
+        // REAL: 23311316-0007 @ $14.19/LF
+        jocItem: { taskCode: '23311316-0007', description: '8" Diameter, 26 Gauge, Seal Class C, Galvanized Sheet Metal Round Duct', unit: 'LF', unitCost: 14.19 },
+        category: 'primary',
+        quantityFactor: 1.0,
+      },
+      {
+        id: 'hangers',
+        jocItem: { taskCode: '23053100-0010', description: 'Duct Hangers, 8" Round', unit: 'EA', unitCost: 18.50 },
+        category: 'typical',
+        quantityFactor: 0.125, // 1 per 8 LF
+        note: '1 hanger per 8 LF',
+      },
+    ],
+  },
+  {
+    id: 'rect-duct',
+    name: 'Rectangular Ductwork',
+    matchPatterns: ['rectangular duct', 'rect duct', 'square duct', 'ductwork'],
+    measurementTypes: ['line'],
+    items: [
+      {
+        id: 'duct',
+        // REAL: 23311313-0003 @ $14.05/LB
+        jocItem: { taskCode: '23311313-0003', description: 'Seal Class C, Rectangular Or Square, Galvanized Steel Sheet Metal Ductwork', unit: 'LB', unitCost: 14.05 },
+        category: 'primary',
+        quantityFactor: 1.0,
+        needsInput: 'custom',
+        inputUnit: 'LB',
+        note: 'Enter duct weight',
+      },
+    ],
+  },
+  {
+    id: 'exhaust-fan',
+    name: 'Exhaust Fan Installation',
+    matchPatterns: ['exhaust fan', 'roof exhaust', 'ef', 'upblast fan'],
+    measurementTypes: ['count'],
+    items: [
+      {
+        id: 'fan',
+        // REAL: 23341600-0114 @ $2,422.03/EA
+        jocItem: { taskCode: '23341600-0114', description: '10" Diameter Wheel, Up To 1/3 HP, 1,458 CFM At 1/4" Static Pressure, Belt Driven Exhaust Fan', unit: 'EA', unitCost: 2422.03 },
+        category: 'primary',
+        quantityFactor: 1.0,
+      },
+      {
+        id: 'curb',
+        jocItem: { taskCode: '23341600-0200', description: 'Roof Curb for Exhaust Fan', unit: 'EA', unitCost: 385.00 },
+        category: 'typical',
+        quantityFactor: 1.0,
+      },
+    ],
+  },
+  {
+    id: 'unit-heater-gas',
+    name: 'Gas Unit Heater',
+    matchPatterns: ['unit heater', 'gas heater', 'shop heater', 'garage heater'],
+    measurementTypes: ['count'],
+    items: [
+      {
+        id: 'heater',
+        // REAL: 23553316-0005 @ $3,191.47/EA
+        jocItem: { taskCode: '23553316-0005', description: '48.6 MBH Output, 60 MBH Input, 1,000 CFM Gas Fired Unit Heater Fan Propelled', unit: 'EA', unitCost: 3191.47 },
+        category: 'primary',
+        quantityFactor: 1.0,
+      },
+      {
+        id: 'gas-line',
+        jocItem: { taskCode: '23311100-0010', description: '3/4" Black Steel Gas Pipe', unit: 'LF', unitCost: 22.50 },
+        category: 'typical',
+        quantityFactor: 1.0,
+        needsInput: 'custom',
+        inputUnit: 'LF',
+        note: 'Gas line length',
+      },
+    ],
+  },
+  {
+    id: 'vav-box',
+    name: 'VAV Box Installation',
+    matchPatterns: ['vav', 'vav box', 'variable air volume', 'vav terminal'],
+    measurementTypes: ['count'],
+    items: [
+      {
+        id: 'controls',
+        // REAL: 23092353-0172 @ $2,620.97/EA
+        jocItem: { taskCode: '23092353-0172', description: '>10 Factory Installed Cooling Only Or Electric Reheat VAV Or FPB Controls', unit: 'EA', unitCost: 2620.97 },
+        category: 'primary',
+        quantityFactor: 1.0,
+      },
+      {
+        id: 'balancing',
+        // REAL: 23059300-0018 @ $96.86/EA
+        jocItem: { taskCode: '23059300-0018', description: 'Balance Variable Air Volume Box', unit: 'EA', unitCost: 96.86 },
+        category: 'typical',
+        quantityFactor: 1.0,
+      },
+    ],
+  },
+  {
+    id: 'damper-round',
+    name: 'Round Damper',
+    matchPatterns: ['damper', 'round damper', 'duct damper', 'volume damper'],
+    measurementTypes: ['count'],
+    items: [
+      {
+        id: 'damper',
+        // REAL: 23333100-0002 @ $85.00/EA (typical 8" round)
+        jocItem: { taskCode: '23333100-0002', description: '8" Diameter Radial Opposed Blade Damper Round, Steel', unit: 'EA', unitCost: 145.00 },
+        category: 'primary',
+        quantityFactor: 1.0,
+      },
+    ],
+  },
+  {
+    id: 'duct-insulation',
+    name: 'Duct Insulation',
+    matchPatterns: ['duct insulation', 'duct wrap', 'hvac insulation', 'insulate duct'],
+    measurementTypes: ['area'],
+    items: [
+      {
+        id: 'insulation',
+        // REAL: 23071600-0002 (1" fiber glass)
+        jocItem: { taskCode: '23071600-0002', description: '1" Thick, Type 75 (0.75 LB/CF) FSK Fiber Glass Duct Insulation', unit: 'SF', unitCost: 3.85 },
+        category: 'primary',
+        quantityFactor: 1.0,
+      },
+    ],
+  },
 ];
 
 // ============================================
