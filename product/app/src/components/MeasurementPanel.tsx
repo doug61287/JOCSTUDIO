@@ -191,42 +191,19 @@ export function MeasurementPanel() {
       }
     });
     
-    // Filter out children from main list (they'll be shown under their parent)
-    // VERY AGGRESSIVE: Hide ALL count measurements that could be fittings
-    const fittingKeywords = ['elbow', 'tee', 'coupling', 'reducer', 'cap', 'union', 'flange', 'valve', 'hanger', 'escutcheon', 'fitting', 'cpvc', 'schedule'];
-    
+    // NUCLEAR OPTION: Hide ALL count measurements from top level
+    // They will ONLY appear as children under their parent pipe in "Counted Fittings"
     const topLevel = filtered.filter(m => {
       // Always hide explicit children
       if (childIds.has(m.id)) return false;
       
-      // Hide ANY count measurement that has a parentMeasurementId
-      if (m.parentMeasurementId) {
-        return false; // It's a child, don't show at top level
-      }
+      // Hide ANY measurement with parentMeasurementId
+      if (m.parentMeasurementId) return false;
       
-      // VERY AGGRESSIVE: Hide ALL count measurements that look like pipe fittings
-      // They should only appear as children under their parent pipe
+      // NUCLEAR: Hide ALL count measurements from top level
+      // In the fire protection workflow, counts are always fittings that belong under a pipe
       if (m.type === 'count') {
-        const name = (m.name || '').toLowerCase();
-        const jocDesc = m.jocItems?.[0]?.description?.toLowerCase() || '';
-        const taskCode = m.jocItems?.[0]?.taskCode || '';
-        const combined = name + ' ' + jocDesc + ' ' + taskCode;
-        
-        // Check for fitting keywords
-        const isFitting = fittingKeywords.some(kw => combined.includes(kw));
-        if (isFitting) {
-          return false; // Hide fitting counts
-        }
-        
-        // Also hide 0 EA counts (placeholders)
-        if (m.value === 0) {
-          return false;
-        }
-        
-        // Also hide counts that start with a pipe size pattern (e.g., "3"", "1-1/2"")
-        if (/^\d+["'-]/.test(m.name || '')) {
-          return false;
-        }
+        return false;
       }
       
       return true;
