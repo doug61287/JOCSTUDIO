@@ -62,13 +62,8 @@ export function MeasurementPanel() {
     selectMeasurement,
     deleteMeasurement,
     updateMeasurement,
-    assignJOCItem,
     setCoefficient,
-    addMeasurement,
     addGroup,
-    updateGroup,
-    deleteGroup,
-    assignToGroup,
     setActiveJOCItem,
     activeJOCItem,
     toggleComplexityFactor,
@@ -824,7 +819,7 @@ export function MeasurementPanel() {
                 <p className="text-white/50 text-xs">No JOC items assigned</p>
               </div>
             ) : (
-              lineItemTotals.map(({ item, quantity, measurements }) => (
+              lineItemTotals.map(({ item, quantity }) => (
                 <div key={item.taskCode} className="p-2 rounded-lg border border-white/[0.06] bg-white/[0.02]">
                   <div className="flex items-start gap-2">
                     <span className="text-[10px] font-mono text-white/40">{item.taskCode.slice(0, 14)}</span>

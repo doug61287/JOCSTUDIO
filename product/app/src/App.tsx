@@ -29,6 +29,7 @@ function App() {
       unit: item.unit,
       label: item.description,
       color: '#22c55e',
+      pageNumber: 1,
       jocItem: {
         taskCode: item.taskCode,
         description: item.description,

@@ -18,7 +18,7 @@ import {
   type SnapSettings,
   type SnapResult
 } from '../utils/snapEngine';
-import { Magnet, CircleDot, Diamond, X, Perpendicular } from 'lucide-react';
+import { Magnet, CircleDot, Diamond, X } from 'lucide-react';
 
 interface MeasurementCanvasProps {
   width: number;
