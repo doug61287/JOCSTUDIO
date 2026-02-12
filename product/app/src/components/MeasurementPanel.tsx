@@ -638,10 +638,10 @@ export function MeasurementPanel() {
               );
             })}
 
-            {/* Ungrouped */}
+            {/* Ungrouped - WARNING: These won't appear in Takeoff! */}
             {groupedMeasurements.ungrouped.length > 0 && (
               <div 
-                className={`bg-white/5 rounded-xl overflow-hidden transition-all
+                className={`bg-amber-500/10 border border-amber-500/30 rounded-xl overflow-hidden transition-all
                   ${dragOverGroup === 'ungrouped' ? 'ring-2 ring-white/30' : ''}`}
                 onDragOver={(e) => handleDragOver(e, 'ungrouped')}
                 onDragLeave={handleDragLeave}
@@ -652,9 +652,9 @@ export function MeasurementPanel() {
                   className="w-full flex items-center justify-between p-3 hover:bg-white/5"
                 >
                   <div className="flex items-center gap-2">
-                    <span className="text-white/40">📍</span>
-                    <span className="font-medium text-white/60">Ungrouped</span>
-                    <span className="text-xs bg-white/10 px-2 py-0.5 rounded-full">
+                    <span className="text-amber-400">⚠️</span>
+                    <span className="font-medium text-amber-400">No JOC Item</span>
+                    <span className="text-xs bg-amber-500/20 text-amber-300 px-2 py-0.5 rounded-full">
                       {groupedMeasurements.ungrouped.length}
                     </span>
                   </div>
@@ -662,6 +662,9 @@ export function MeasurementPanel() {
                     {expandedGroups.has('ungrouped') ? '▼' : '▶'}
                   </span>
                 </button>
+                <div className="px-3 pb-2 text-xs text-amber-400/70">
+                  Assign a JOC item to include in Takeoff
+                </div>
                 
                 {expandedGroups.has('ungrouped') && (
                   <div className="border-t border-white/5">

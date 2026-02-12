@@ -760,8 +760,14 @@ export function MeasurementCanvas({ width, height }: MeasurementCanvasProps) {
       setTempPoints([...tempPoints, point]);
     }
     
-    // Count: each click adds a marker (auto-assigns active JOC item if set)
+    // Count: each click adds a marker (REQUIRES active JOC item for takeoff)
     if (activeTool === 'count') {
+      // Warn if no JOC item selected - counts won't appear in takeoff!
+      if (!activeJOCItem) {
+        // Still allow the count, but show a warning indicator
+        console.warn('Count created without JOC item - will not appear in Takeoff summary');
+      }
+      
       // Auto-save after each click (Kreo-style: each click = 1 count item)
       const measurement: Measurement = {
         id: generateId(),
@@ -769,7 +775,7 @@ export function MeasurementCanvas({ width, height }: MeasurementCanvasProps) {
         points: [point],
         value: 1,
         unit: 'EA',
-        color: getMeasurementColor('count'),
+        color: activeJOCItem ? getMeasurementColor('count') : '#6b7280', // Gray if no JOC item
         // Auto-assign active JOC item and group (sticky selection!)
         jocItem: activeJOCItem || undefined,
         groupId: activeGroupId || undefined,
