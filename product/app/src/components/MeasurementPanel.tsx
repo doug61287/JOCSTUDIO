@@ -192,8 +192,8 @@ export function MeasurementPanel() {
     });
     
     // Filter out children from main list (they'll be shown under their parent)
-    // AGGRESSIVE: Hide ALL count measurements that look like fittings from top level
-    const fittingKeywords = ['elbow', 'tee', 'coupling', 'reducer', 'cap', 'union', 'flange', 'valve', 'hanger', 'escutcheon'];
+    // VERY AGGRESSIVE: Hide ALL count measurements that could be fittings
+    const fittingKeywords = ['elbow', 'tee', 'coupling', 'reducer', 'cap', 'union', 'flange', 'valve', 'hanger', 'escutcheon', 'fitting', 'cpvc', 'schedule'];
     
     const topLevel = filtered.filter(m => {
       // Always hide explicit children
@@ -204,14 +204,28 @@ export function MeasurementPanel() {
         return false; // It's a child, don't show at top level
       }
       
-      // AGGRESSIVE: Hide ALL count measurements that look like fittings
+      // VERY AGGRESSIVE: Hide ALL count measurements that look like pipe fittings
       // They should only appear as children under their parent pipe
       if (m.type === 'count') {
         const name = (m.name || '').toLowerCase();
         const jocDesc = m.jocItems?.[0]?.description?.toLowerCase() || '';
-        const isFitting = fittingKeywords.some(kw => name.includes(kw) || jocDesc.includes(kw));
+        const taskCode = m.jocItems?.[0]?.taskCode || '';
+        const combined = name + ' ' + jocDesc + ' ' + taskCode;
+        
+        // Check for fitting keywords
+        const isFitting = fittingKeywords.some(kw => combined.includes(kw));
         if (isFitting) {
-          return false; // Hide fitting counts - they belong under their parent
+          return false; // Hide fitting counts
+        }
+        
+        // Also hide 0 EA counts (placeholders)
+        if (m.value === 0) {
+          return false;
+        }
+        
+        // Also hide counts that start with a pipe size pattern (e.g., "3"", "1-1/2"")
+        if (/^\d+["'-]/.test(m.name || '')) {
+          return false;
         }
       }
       
