@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JOC Brain - Interactive Catalog Visualization</title>
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body {
+      background: linear-gradient(135deg, #0f0f1a 0%, #1a1a2e 50%, #0f0f1a 100%);
+      font-family: 'Inter', -apple-system, sans-serif;
+      color: white;
+      overflow: hidden;
+    }
+    
+    #header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      padding: 20px 30px;
+      background: linear-gradient(180deg, rgba(15,15,26,0.95) 0%, transparent 100%);
+      z-index: 100;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    #header h1 {
+      font-size: 24px;
+      font-weight: 700;
+      background: linear-gradient(135deg, #f59e0b, #ef4444);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    
+    #header .stats {
+      display: flex;
+      gap: 30px;
+    }
+    
+    #header .stat {
+      text-align: center;
+    }
+    
+    #header .stat-value {
+      font-size: 28px;
+      font-weight: 700;
+      color: #10b981;
+    }
+    
+    #header .stat-label {
+      font-size: 11px;
+      color: rgba(255,255,255,0.5);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    
+    #graph {
+      width: 100vw;
+      height: 100vh;
+    }
+    
+    #tooltip {
+      position: fixed;
+      padding: 12px 16px;
+      background: rgba(0,0,0,0.9);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 8px;
+      font-size: 12px;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.2s;
+      max-width: 300px;
+      z-index: 1000;
+    }
+    
+    #tooltip.visible { opacity: 1; }
+    
+    #tooltip h3 {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 6px;
+      color: #f59e0b;
+    }
+    
+    #tooltip p {
+      color: rgba(255,255,255,0.7);
+      line-height: 1.4;
+    }
+    
+    #tooltip .tag {
+      display: inline-block;
+      padding: 2px 8px;
+      background: rgba(16,185,129,0.2);
+      color: #10b981;
+      border-radius: 4px;
+      font-size: 10px;
+      margin-top: 8px;
+    }
+    
+    #legend {
+      position: fixed;
+      bottom: 20px;
+      left: 20px;
+      background: rgba(0,0,0,0.7);
+      padding: 16px;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+    
+    #legend h4 {
+      font-size: 12px;
+      color: rgba(255,255,255,0.5);
+      margin-bottom: 12px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 8px;
+      font-size: 12px;
+    }
+    
+    .legend-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+    }
+    
+    #controls {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      display: flex;
+      gap: 10px;
+    }
+    
+    #controls button {
+      padding: 10px 20px;
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.2);
+      color: white;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 12px;
+      transition: all 0.2s;
+    }
+    
+    #controls button:hover {
+      background: rgba(255,255,255,0.2);
+    }
+    
+    #controls button.active {
+      background: #f59e0b;
+      border-color: #f59e0b;
+      color: black;
+    }
+    
+    .node text {
+      font-size: 10px;
+      fill: rgba(255,255,255,0.8);
+      pointer-events: none;
+    }
+    
+    .link {
+      stroke-opacity: 0.4;
+    }
+  </style>
+</head>
+<body>
+  <div id="header">
+    <h1>🧠 JOC Brain</h1>
+    <div class="stats">
+      <div class="stat">
+        <div class="stat-value">65,331</div>
+        <div class="stat-label">Total Items</div>
+      </div>
+      <div class="stat">
+        <div class="stat-value">7,940</div>
+        <div class="stat-label">With Multipliers</div>
+      </div>
+      <div class="stat">
+        <div class="stat-value">32</div>
+        <div class="stat-label">Assemblies</div>
+      </div>
+      <div class="stat">
+        <div class="stat-value">43</div>
+        <div class="stat-label">Divisions</div>
+      </div>
+    </div>
+  </div>
+  
+  <div id="graph"></div>
+  
+  <div id="tooltip"></div>
+  
+  <div id="legend">
+    <h4>Node Types</h4>
+    <div class="legend-item">
+      <div class="legend-dot" style="background: #f59e0b;"></div>
+      <span>Division</span>
+    </div>
+    <div class="legend-item">
+      <div class="legend-dot" style="background: #3b82f6;"></div>
+      <span>Assembly</span>
+    </div>
+    <div class="legend-item">
+      <div class="legend-dot" style="background: #10b981;"></div>
+      <span>JOC Item</span>
+    </div>
+    <div class="legend-item">
+      <div class="legend-dot" style="background: #06b6d4;"></div>
+      <span>With Multiplier</span>
+    </div>
+    <div class="legend-item">
+      <div class="legend-dot" style="background: #8b5cf6;"></div>
+      <span>Fitting/Companion</span>
+    </div>
+  </div>
+  
+  <div id="controls">
+    <button id="btn-all" class="active">All</button>
+    <button id="btn-div21">Div 21 Fire</button>
+    <button id="btn-div22">Div 22 Plumbing</button>
+    <button id="btn-assemblies">Assemblies Only</button>
+  </div>
+
+  <script>
+    // ============================================
+    // JOC BRAIN DATA
+    // ============================================
+    
+    const divisions = [
+      { id: 'div-03', name: 'Concrete', code: '03', items: 2847, color: '#6b7280' },
+      { id: 'div-04', name: 'Masonry', code: '04', items: 1523, color: '#78716c' },
+      { id: 'div-09', name: 'Finishes', code: '09', items: 8234, color: '#ec4899' },
+      { id: 'div-21', name: 'Fire Suppression', code: '21', items: 3892, color: '#ef4444' },
+      { id: 'div-22', name: 'Plumbing', code: '22', items: 5621, color: '#3b82f6' },
+      { id: 'div-23', name: 'HVAC', code: '23', items: 7823, color: '#06b6d4' },
+      { id: 'div-26', name: 'Electrical', code: '26', items: 9234, color: '#f59e0b' },
+    ];
+    
+    const assemblies = [
+      // Division 21 - Fire Protection
+      { id: 'asm-fp-pipe-3', name: '3" CPVC Fire Pipe', division: 'div-21', items: 5, hasFittings: true },
+      { id: 'asm-fp-pipe-1.5', name: '1-1/2" CPVC Fire Pipe', division: 'div-21', items: 4, hasFittings: true },
+      { id: 'asm-fp-head-pendent', name: 'Pendent Sprinkler Head', division: 'div-21', items: 3, hasMultiplier: true },
+      { id: 'asm-fp-head-upright', name: 'Upright Sprinkler Head', division: 'div-21', items: 3, hasMultiplier: true },
+      { id: 'asm-fp-head-sidewall', name: 'Sidewall Sprinkler Head', division: 'div-21', items: 3, hasMultiplier: true },
+      { id: 'asm-fp-fdc', name: 'Fire Dept Connection', division: 'div-21', items: 2 },
+      { id: 'asm-fp-flow-switch', name: 'Flow Switch', division: 'div-21', items: 1 },
+      
+      // Division 22 - Plumbing
+      { id: 'asm-plumb-lav', name: 'Lavatory Install', division: 'div-22', items: 5 },
+      { id: 'asm-plumb-wc', name: 'Water Closet Rough-In', division: 'div-22', items: 4 },
+      { id: 'asm-plumb-copper', name: 'Copper Water Line', division: 'div-22', items: 4, hasFittings: true },
+      { id: 'asm-plumb-drain', name: 'Floor Drain', division: 'div-22', items: 2 },
+      
+      // Division 09 - Finishes
+      { id: 'asm-vct', name: 'VCT Flooring', division: 'div-09', items: 5 },
+      { id: 'asm-carpet', name: 'Carpet Tile', division: 'div-09', items: 4 },
+      { id: 'asm-epoxy', name: 'Epoxy Flooring', division: 'div-09', items: 6 },
+      { id: 'asm-act', name: 'ACT Ceiling', division: 'div-09', items: 2 },
+      
+      // Division 03 - Concrete
+      { id: 'asm-slab-4', name: '4" Concrete Slab', division: 'div-03', items: 6 },
+      { id: 'asm-slab-6', name: '6" Concrete Slab', division: 'div-03', items: 5 },
+      { id: 'asm-sidewalk', name: 'Concrete Sidewalk', division: 'div-03', items: 4 },
+    ];
+    
+    const jocItems = [
+      // Fire Protection Items
+      { id: 'joc-21131300-0074', name: 'Pendent Head, Brass', code: '21131300-0074', assembly: 'asm-fp-head-pendent', hasMultiplier: true, price: 101.97 },
+      { id: 'joc-21131300-0026', name: 'Upright Head, Brass', code: '21131300-0026', assembly: 'asm-fp-head-upright', hasMultiplier: true, price: 101.97 },
+      { id: 'joc-21131300-0122', name: 'Sidewall Head, Brass', code: '21131300-0122', assembly: 'asm-fp-head-sidewall', hasMultiplier: true, price: 119.55 },
+      { id: 'joc-21131300-0211', name: 'Escutcheon, Chrome', code: '21131300-0211', assembly: 'asm-fp-head-pendent', isFitting: true, price: 18.53 },
+      { id: 'joc-21134100-0009', name: '3" CPVC Pipe', code: '21134100-0009', assembly: 'asm-fp-pipe-3', price: 28.69 },
+      { id: 'joc-21134100-0017', name: '3" 90° Elbow', code: '21134100-0017', assembly: 'asm-fp-pipe-3', isFitting: true, price: 117.82 },
+      { id: 'joc-21134100-0033', name: '3" Tee', code: '21134100-0033', assembly: 'asm-fp-pipe-3', isFitting: true, price: 172.62 },
+      { id: 'joc-21111900-0002', name: 'Siamese Connection', code: '21111900-0002', assembly: 'asm-fp-fdc', price: 1198.63 },
+      { id: 'joc-21122900-0004', name: 'Flow Switch', code: '21122900-0004', assembly: 'asm-fp-flow-switch', price: 1560.46 },
+      
+      // Plumbing Items
+      { id: 'joc-22413900-0009', name: 'Lav Faucet', code: '22413900-0009', assembly: 'asm-plumb-lav', price: 203.97 },
+      { id: 'joc-22014081-0018', name: 'Sink Trap', code: '22014081-0018', assembly: 'asm-plumb-lav', price: 54.81 },
+      { id: 'joc-22111600-0389', name: '3/4" Copper Pipe', code: '22111600-0389', assembly: 'asm-plumb-copper', price: 9.62 },
+      { id: 'joc-22131913-0003', name: '6" Floor Drain', code: '22131913-0003', assembly: 'asm-plumb-drain', price: 961.24 },
+      
+      // Finishes Items
+      { id: 'joc-09651000-0010', name: 'VCT Tile', code: '09651000-0010', assembly: 'asm-vct', hasMultiplier: true, price: 4.85 },
+      { id: 'joc-09681300-0010', name: 'Carpet Tile', code: '09681300-0010', assembly: 'asm-carpet', hasMultiplier: true, price: 6.25 },
+      { id: 'joc-09671000-0020', name: 'Epoxy Base Coat', code: '09671000-0020', assembly: 'asm-epoxy', price: 5.75 },
+      
+      // Concrete Items
+      { id: 'joc-03311300-0035', name: 'Concrete 3000 PSI', code: '03311300-0035', assembly: 'asm-slab-4', price: 206.97 },
+      { id: 'joc-03221100-0002', name: 'WWF Reinforcing', code: '03221100-0002', assembly: 'asm-slab-4', price: 1.27 },
+    ];
+    
+    // ============================================
+    // BUILD GRAPH DATA
+    // ============================================
+    
+    function buildGraphData(filter = 'all') {
+      const nodes = [];
+      const links = [];
+      
+      // Filter divisions
+      let filteredDivisions = divisions;
+      if (filter === 'div21') filteredDivisions = divisions.filter(d => d.code === '21');
+      if (filter === 'div22') filteredDivisions = divisions.filter(d => d.code === '22');
+      if (filter === 'assemblies') filteredDivisions = [];
+      
+      // Add division nodes
+      filteredDivisions.forEach(div => {
+        nodes.push({
+          id: div.id,
+          name: div.name,
+          type: 'division',
+          color: div.color,
+          size: 40,
+          items: div.items
+        });
+      });
+      
+      // Filter assemblies
+      let filteredAssemblies = assemblies;
+      if (filter === 'div21') filteredAssemblies = assemblies.filter(a => a.division === 'div-21');
+      if (filter === 'div22') filteredAssemblies = assemblies.filter(a => a.division === 'div-22');
+      
+      // Add assembly nodes
+      filteredAssemblies.forEach(asm => {
+        nodes.push({
+          id: asm.id,
+          name: asm.name,
+          type: 'assembly',
+          color: '#3b82f6',
+          size: 25,
+          items: asm.items,
+          hasFittings: asm.hasFittings,
+          hasMultiplier: asm.hasMultiplier
+        });
+        
+        // Link to division
+        if (filter !== 'assemblies') {
+          const divNode = nodes.find(n => n.id === asm.division);
+          if (divNode) {
+            links.push({
+              source: asm.division,
+              target: asm.id,
+              strength: 0.3
+            });
+          }
+        }
+      });
+      
+      // Filter JOC items
+      let filteredItems = jocItems;
+      if (filter === 'div21') filteredItems = jocItems.filter(i => i.code.startsWith('21'));
+      if (filter === 'div22') filteredItems = jocItems.filter(i => i.code.startsWith('22'));
+      
+      // Add JOC item nodes
+      filteredItems.forEach(item => {
+        let color = '#10b981';
+        if (item.hasMultiplier) color = '#06b6d4';
+        if (item.isFitting) color = '#8b5cf6';
+        
+        nodes.push({
+          id: item.id,
+          name: item.name,
+          type: 'item',
+          color: color,
+          size: 12,
+          code: item.code,
+          price: item.price,
+          hasMultiplier: item.hasMultiplier,
+          isFitting: item.isFitting
+        });
+        
+        // Link to assembly
+        if (item.assembly) {
+          const asmNode = nodes.find(n => n.id === item.assembly);
+          if (asmNode) {
+            links.push({
+              source: item.assembly,
+              target: item.id,
+              strength: 0.5
+            });
+          }
+        }
+      });
+      
+      return { nodes, links };
+    }
+    
+    // ============================================
+    // D3 FORCE GRAPH
+    // ============================================
+    
+    const width = window.innerWidth;
+    const height = window.innerHeight;
+    
+    const svg = d3.select('#graph')
+      .append('svg')
+      .attr('width', width)
+      .attr('height', height);
+    
+    // Add zoom behavior
+    const g = svg.append('g');
+    
+    svg.call(d3.zoom()
+      .scaleExtent([0.1, 4])
+      .on('zoom', (event) => {
+        g.attr('transform', event.transform);
+      }));
+    
+    const tooltip = d3.select('#tooltip');
+    
+    let simulation;
+    let linkElements;
+    let nodeElements;
+    
+    function renderGraph(filter = 'all') {
+      const { nodes, links } = buildGraphData(filter);
+      
+      // Clear previous
+      g.selectAll('*').remove();
+      
+      // Create simulation
+      simulation = d3.forceSimulation(nodes)
+        .force('link', d3.forceLink(links).id(d => d.id).distance(80).strength(d => d.strength || 0.3))
+        .force('charge', d3.forceManyBody().strength(-200))
+        .force('center', d3.forceCenter(width / 2, height / 2))
+        .force('collision', d3.forceCollide().radius(d => d.size + 10));
+      
+      // Draw links
+      linkElements = g.append('g')
+        .selectAll('line')
+        .data(links)
+        .enter()
+        .append('line')
+        .attr('class', 'link')
+        .attr('stroke', '#ffffff')
+        .attr('stroke-width', 1);
+      
+      // Draw nodes
+      nodeElements = g.append('g')
+        .selectAll('g')
+        .data(nodes)
+        .enter()
+        .append('g')
+        .attr('class', 'node')
+        .call(d3.drag()
+          .on('start', dragstarted)
+          .on('drag', dragged)
+          .on('end', dragended));
+      
+      // Node circles
+      nodeElements.append('circle')
+        .attr('r', d => d.size)
+        .attr('fill', d => d.color)
+        .attr('stroke', '#ffffff')
+        .attr('stroke-width', d => d.type === 'division' ? 3 : 1)
+        .attr('stroke-opacity', 0.3)
+        .style('cursor', 'pointer')
+        .on('mouseover', showTooltip)
+        .on('mouseout', hideTooltip);
+      
+      // Node labels for larger nodes
+      nodeElements.filter(d => d.type !== 'item')
+        .append('text')
+        .attr('dy', d => d.size + 15)
+        .attr('text-anchor', 'middle')
+        .text(d => d.name);
+      
+      // Multiplier indicator
+      nodeElements.filter(d => d.hasMultiplier)
+        .append('circle')
+        .attr('r', 5)
+        .attr('cx', d => d.size - 3)
+        .attr('cy', d => -d.size + 3)
+        .attr('fill', '#f59e0b');
+      
+      // Fitting indicator
+      nodeElements.filter(d => d.isFitting)
+        .append('circle')
+        .attr('r', 4)
+        .attr('cx', d => d.size - 2)
+        .attr('cy', d => -d.size + 2)
+        .attr('fill', '#8b5cf6');
+      
+      // Update positions
+      simulation.on('tick', () => {
+        linkElements
+          .attr('x1', d => d.source.x)
+          .attr('y1', d => d.source.y)
+          .attr('x2', d => d.target.x)
+          .attr('y2', d => d.target.y);
+        
+        nodeElements.attr('transform', d => `translate(${d.x},${d.y})`);
+      });
+    }
+    
+    function showTooltip(event, d) {
+      let content = `<h3>${d.name}</h3>`;
+      
+      if (d.type === 'division') {
+        content += `<p>Division ${d.id.replace('div-', '')}<br>${d.items.toLocaleString()} items</p>`;
+      } else if (d.type === 'assembly') {
+        content += `<p>Assembly with ${d.items} items</p>`;
+        if (d.hasFittings) content += `<span class="tag">Has Fittings</span> `;
+        if (d.hasMultiplier) content += `<span class="tag">Has Multipliers</span>`;
+      } else {
+        content += `<p>${d.code}<br>$${d.price?.toFixed(2) || '—'}</p>`;
+        if (d.hasMultiplier) content += `<span class="tag">Qty Multiplier</span> `;
+        if (d.isFitting) content += `<span class="tag">Fitting</span>`;
+      }
+      
+      tooltip.html(content)
+        .style('left', (event.pageX + 15) + 'px')
+        .style('top', (event.pageY - 10) + 'px')
+        .classed('visible', true);
+    }
+    
+    function hideTooltip() {
+      tooltip.classed('visible', false);
+    }
+    
+    function dragstarted(event) {
+      if (!event.active) simulation.alphaTarget(0.3).restart();
+      event.subject.fx = event.subject.x;
+      event.subject.fy = event.subject.y;
+    }
+    
+    function dragged(event) {
+      event.subject.fx = event.x;
+      event.subject.fy = event.y;
+    }
+    
+    function dragended(event) {
+      if (!event.active) simulation.alphaTarget(0);
+      event.subject.fx = null;
+      event.subject.fy = null;
+    }
+    
+    // ============================================
+    // CONTROLS
+    // ============================================
+    
+    document.getElementById('btn-all').addEventListener('click', () => {
+      setActiveButton('btn-all');
+      renderGraph('all');
+    });
+    
+    document.getElementById('btn-div21').addEventListener('click', () => {
+      setActiveButton('btn-div21');
+      renderGraph('div21');
+    });
+    
+    document.getElementById('btn-div22').addEventListener('click', () => {
+      setActiveButton('btn-div22');
+      renderGraph('div22');
+    });
+    
+    document.getElementById('btn-assemblies').addEventListener('click', () => {
+      setActiveButton('btn-assemblies');
+      renderGraph('assemblies');
+    });
+    
+    function setActiveButton(id) {
+      document.querySelectorAll('#controls button').forEach(b => b.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+    }
+    
+    // Initial render
+    renderGraph('all');
+    
+    // Handle resize
+    window.addEventListener('resize', () => {
+      svg.attr('width', window.innerWidth).attr('height', window.innerHeight);
+    });
+  </script>
+</body>
+</html>
