@@ -8,11 +8,13 @@ import { DropZone } from './components/DropZone';
 import { CalibrationDialog } from './components/CalibrationDialog';
 import { TranslationMachine } from './components/TranslationMachine';
 import { ActiveItemPicker } from './components/ActiveItemPicker';
+import { SchedulePanel } from './components/SchedulePanel';
 
 function App() {
   const { project, setPdfUrl, setProject, addMeasurement } = useProjectStore();
   const [showCalibration, setShowCalibration] = useState(false);
   const [showTranslator, setShowTranslator] = useState(false);
+  const [showSchedules, setShowSchedules] = useState(false);
   const [darkMode, setDarkMode] = useState(true);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -85,6 +87,21 @@ function App() {
             <div className="hidden sm:block text-sm text-white/60 max-w-[200px] truncate">
               {project?.name}
             </div>
+          )}
+          
+          {/* Schedule Extraction Button */}
+          {project?.pdfUrl && (
+            <button
+              onClick={() => setShowSchedules(!showSchedules)}
+              className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm transition-all ${
+                showSchedules 
+                  ? 'bg-purple-500 text-white' 
+                  : 'bg-purple-500/20 text-purple-400 hover:bg-purple-500/30'
+              }`}
+            >
+              <span>📋</span>
+              <span className="hidden sm:inline">Schedules</span>
+            </button>
           )}
           
           {/* Translation Machine Button */}
@@ -211,6 +228,24 @@ function App() {
               onSelectItem={handleJocItemSelect}
               className="shadow-2xl"
             />
+          </div>
+        </div>
+      )}
+
+      {/* Schedule Extraction Panel */}
+      {showSchedules && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+          <div className="relative w-full max-w-4xl mx-4 h-[80vh]">
+            <button
+              onClick={() => setShowSchedules(false)}
+              className="absolute -top-12 right-0 px-3 py-1 text-white/60 hover:text-white text-sm flex items-center gap-1"
+            >
+              <span>ESC to close</span>
+              <span className="text-lg">✕</span>
+            </button>
+            <div className="h-full rounded-xl overflow-hidden shadow-2xl">
+              <SchedulePanel />
+            </div>
           </div>
         </div>
       )}
