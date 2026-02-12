@@ -62,13 +62,23 @@ Location: `src/data/jocCatalogue.ts`
 
 ## Phase 3: Assemblies with Companion Items
 
+There are **TWO** assembly systems to update:
+
+### A. Simple Assemblies (`src/data/assemblies.ts`)
+Used for quick suggestions in the measurement panel dropdown.
+
+### B. Full Assembly Configurator (`src/components/AssemblyConfigurator.tsx`)
+Shows the rich UI with checkboxes, categories, and search.
+
+---
+
 ### Step 3.1: Identify Common Workflows
 What does an estimator typically price together?
 - Pipe + fittings + hangers
 - Fixture + trim + connection
 - Demo + disposal + patching
 
-### Step 3.2: Create Assembly Structure
+### Step 3.2: Create Simple Assembly (assemblies.ts)
 Location: `src/data/assemblies.ts`
 
 ```typescript
@@ -78,7 +88,7 @@ Location: `src/data/assemblies.ts`
   description: 'Detailed description with scope',
   category: 'category-name',        // Must be in AssemblyCategory type
   keywords: ['search', 'terms'],    // For matching
-  applicableTo: ['line'|'count'|'area'], // Measurement types
+  applicableTo: ['line', 'polyline', 'count', 'area'], // Measurement types
   createdBy: 'system',
   items: [
     {
@@ -91,28 +101,69 @@ Location: `src/data/assemblies.ts`
       quantityFactor: 1.0,          // 1.0 = same as measurement
       notes: 'Optional explanation',
     },
-    // Companion items with factors
+  ],
+}
+```
+
+### Step 3.3: Create Full Configurator Assembly (AssemblyConfigurator.tsx)
+Location: `src/components/AssemblyConfigurator.tsx` → `ASSEMBLY_CONFIGS` array
+
+```typescript
+{
+  id: 'div-XX-item-name',
+  name: 'User-Friendly Name',
+  matchPatterns: ['pattern 1', 'pattern 2'],  // Triggers configurator
+  measurementTypes: ['line', 'polyline', 'count', 'area'],
+  items: [
     {
+      id: 'primary-item',
+      jocItem: { taskCode: 'XX', description: '...', unit: 'XX', unitCost: XX },
+      category: 'primary',        // Always included, can't uncheck
+      quantityFactor: 1.0,
+    },
+    {
+      id: 'typical-item',
       jocItem: { ... },
-      quantityFactor: 0.05,         // e.g., 1 fitting per 20 LF
-      notes: 'Fitting allowance: 1 per 20 LF',
+      category: 'typical',        // Pre-checked, recommended
+      quantityFactor: 0.05,
+      note: 'Fitting allowance: 1 per 20 LF',
+    },
+    {
+      id: 'optional-item',
+      jocItem: { ... },
+      category: 'optional',       // Unchecked, available to add
+      quantityFactor: 0.02,
+      note: 'Add for special conditions',
     },
   ],
 }
 ```
 
-### Step 3.3: Add Pattern Matching
+### Item Categories Explained
+| Category | Behavior | Example |
+|----------|----------|---------|
+| `primary` | Always included, cannot uncheck | Main pipe, fixture |
+| `typical` | Pre-checked, can uncheck | Fittings, escutcheons |
+| `optional` | Unchecked, can add | Guards, special fittings |
+
+### Step 3.4: Add Pattern Matching (assemblies.ts)
 ```typescript
 // In ASSEMBLY_PATTERNS array
 { pattern: /\bsearch pattern/i, assemblyIds: ['assembly-id'], boost: 90 },
 ```
 
-### Step 3.4: Add Category to Types (if new)
+### Step 3.5: Add Category to Types (if new)
 Location: `src/types/index.ts`
 ```typescript
 export type AssemblyCategory = 
   | 'existing-categories'
   | 'new-category';  // Add new category
+```
+
+### Step 3.6: Update applicableTo Types (if needed)
+Ensure measurement types are in the Assembly type:
+```typescript
+applicableTo: ('line' | 'polyline' | 'area' | 'count' | 'space')[];
 ```
 
 ---
@@ -203,11 +254,25 @@ cat nyc-hh-ctc-full.json | jq '[.[] | select(.taskCode | startswith("XXXXXXXX"))
 
 ## Files Modified Per Division
 
-1. `src/data/jocCatalogue.ts` - Synonyms and division keywords
-2. `src/data/assemblies.ts` - Assemblies and patterns
-3. `src/types/index.ts` - Category types (if new)
-4. `src/data/DIVISION-MAPPING-NOTES.md` - Cross-references
-5. `src/data/division{XX}-mapping.ts` - Optional detailed mapping file
+| File | What to Add |
+|------|-------------|
+| `src/data/jocCatalogue.ts` | KEYWORD_SYNONYMS + DIVISION_KEYWORDS |
+| `src/data/assemblies.ts` | ASSEMBLY_LIBRARY + ASSEMBLY_PATTERNS |
+| `src/components/AssemblyConfigurator.tsx` | ASSEMBLY_CONFIGS (full UI) |
+| `src/types/index.ts` | AssemblyCategory (if new category) |
+| `src/data/DIVISION-MAPPING-NOTES.md` | Cross-division notes |
+| `src/data/division{XX}-mapping.ts` | Optional detailed reference |
+
+### Checklist Per Division
+- [ ] Add synonyms to `KEYWORD_SYNONYMS`
+- [ ] Add division to `DIVISION_KEYWORDS`  
+- [ ] Add assemblies to `ASSEMBLY_LIBRARY`
+- [ ] Add patterns to `ASSEMBLY_PATTERNS`
+- [ ] Add configs to `ASSEMBLY_CONFIGS` (AssemblyConfigurator.tsx)
+- [ ] Add category to `AssemblyCategory` type (if new)
+- [ ] Test search with all synonym variations
+- [ ] Test assembly configurator triggers
+- [ ] Verify item descriptions not truncated
 
 ---
 
