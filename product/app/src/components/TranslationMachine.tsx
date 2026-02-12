@@ -1,12 +1,15 @@
 /**
  * Translation Machine - The core of JOCHero
  * Plain English → JOC Line Items
+ * 
+ * Now uses LOCAL search with Division 21 synonyms!
  */
 
 import { useState, useCallback, useRef, useEffect } from 'react';
 import debounce from 'lodash.debounce';
+import { searchJOCItems, jocCatalogue } from '../data/jocCatalogue';
 
-const API_URL = 'https://web-production-309c2.up.railway.app';
+const API_URL = 'https://web-production-309c2.up.railway.app'; // Fallback only
 
 interface JOCItem {
   taskCode: string;
@@ -17,18 +20,7 @@ interface JOCItem {
   matchedKeywords?: string[];
 }
 
-interface SearchResult {
-  items: JOCItem[];
-  total: number;
-  query: string;
-  took: number;
-}
-
-interface TranslateResult {
-  items: JOCItem[];
-  keywords: string[];
-  took: number;
-}
+// SearchResult and TranslateResult removed - now using local search
 
 interface DivisionInfo {
   code: string;
@@ -67,7 +59,7 @@ export function TranslationMachine({ onSelectItem, className = '' }: Translation
       .catch(err => console.error('Failed to load divisions:', err));
   }, []);
 
-  // Debounced search/translate
+  // Debounced search/translate - NOW USES LOCAL SEARCH WITH SYNONYMS
   const performSearch = useCallback(
     debounce(async (q: string, currentMode: Mode) => {
       if (!q.trim()) {
@@ -81,62 +73,59 @@ export function TranslationMachine({ onSelectItem, className = '' }: Translation
       setError(null);
 
       try {
-        let endpoint: string;
-        let options: RequestInit = {};
-
-        if (currentMode === 'translate') {
-          endpoint = `${API_URL}/catalogue/translate`;
-          options = {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ description: q, limit: 20 }),
-          };
+        const startTime = performance.now();
+        
+        // Use LOCAL search with Division 21 synonyms
+        let searchResults: JOCItem[];
+        
+        if (selectedDivision) {
+          // Filter by division if selected
+          const divisionItems = jocCatalogue.filter(item => 
+            item.taskCode.startsWith(selectedDivision)
+          );
+          // Simple search within division
+          const queryLower = q.toLowerCase();
+          searchResults = divisionItems
+            .filter(item => item.description.toLowerCase().includes(queryLower))
+            .slice(0, 50);
         } else {
-          const params = new URLSearchParams({ q, limit: '50' });
-          if (selectedDivision) params.set('division', selectedDivision);
-          endpoint = `${API_URL}/catalogue/search?${params}`;
+          // Full search with synonyms and pipe size detection
+          searchResults = searchJOCItems(q, 50);
         }
-
-        const res = await fetch(endpoint, options);
-        const data = await res.json();
-
-        if (data.success) {
-          // Sort helper - sequential by task code (e.g., 08121313-0013)
-          const sortByTaskCode = (items: JOCItem[]) => {
-            return [...items].sort((a, b) => {
-              const [prefixA, itemA] = a.taskCode.split('-');
-              const [prefixB, itemB] = b.taskCode.split('-');
-              
-              // Compare prefix first
-              if (prefixA !== prefixB) {
-                return prefixA.localeCompare(prefixB);
-              }
-              
-              // Same prefix - compare item numbers numerically
-              const numA = parseInt(itemA || '0', 10);
-              const numB = parseInt(itemB || '0', 10);
-              return numA - numB;
-            });
-          };
-          
-          if (currentMode === 'translate') {
-            const result = data.data as TranslateResult;
-            // Keep translate results in score order (relevance)
-            setResults(result.items);
-            setKeywords(result.keywords);
-            setStats({ total: result.items.length, took: result.took });
-          } else {
-            const result = data.data as SearchResult;
-            // Sort search results by task code sequentially
-            setResults(sortByTaskCode(result.items));
-            setKeywords([]);
-            setStats({ total: result.total, took: result.took });
-          }
+        
+        const took = Math.round(performance.now() - startTime);
+        
+        // Sort helper - sequential by task code
+        const sortByTaskCode = (items: JOCItem[]) => {
+          return [...items].sort((a, b) => {
+            const [prefixA, itemA] = a.taskCode.split('-');
+            const [prefixB, itemB] = b.taskCode.split('-');
+            
+            if (prefixA !== prefixB) {
+              return prefixA.localeCompare(prefixB);
+            }
+            
+            const numA = parseInt(itemA || '0', 10);
+            const numB = parseInt(itemB || '0', 10);
+            return numA - numB;
+          });
+        };
+        
+        if (currentMode === 'translate') {
+          // Keep results in relevance order for translate mode
+          setResults(searchResults);
+          // Extract keywords from query for display
+          const queryWords = q.toLowerCase().split(/\s+/).filter(w => w.length >= 2);
+          setKeywords(queryWords);
+          setStats({ total: searchResults.length, took });
         } else {
-          setError(data.error?.message || 'Search failed');
+          // Sort by task code for browse mode
+          setResults(sortByTaskCode(searchResults));
+          setKeywords([]);
+          setStats({ total: searchResults.length, took });
         }
       } catch (err) {
-        setError('Failed to connect to API');
+        setError('Search failed');
         console.error(err);
       } finally {
         setLoading(false);
