@@ -580,98 +580,65 @@ export function MeasurementPanel() {
     setEditingName(null);
   };
   
-  // Handle configurator apply
+  // Handle configurator apply - SIMPLIFIED: fittings auto-create with estimates
   const handleConfiguratorApply = (
     measurementId: string, 
     jocItems: JOCItem[], 
-    fittingsToCount?: JOCItem[], 
-    fittingsToFlag?: JOCItem[]
+    fittingsWithEstimates?: { item: JOCItem; quantityFactor: number }[]
   ) => {
     const measurement = project?.measurements.find(m => m.id === measurementId);
     if (!measurement) return;
     
-    updateMeasurement(measurementId, { jocItems, jocItem: undefined });
+    // Get assembly name from showConfigurator (it has the matched assembly)
+    const assemblyName = showConfigurator?.assembly.name || measurement.name;
+    const assemblyId = showConfigurator?.assembly.id;
+    
+    updateMeasurement(measurementId, { 
+      jocItems, 
+      jocItem: undefined,
+      name: assemblyName,
+      sourceAssemblyId: assemblyId,
+    });
     setExpandedItems(prev => new Set([...prev, measurementId]));
     setShowConfigurator(null);
     
-    // Handle fittings to count - spawn count measurements and start counting
-    if (fittingsToCount && fittingsToCount.length > 0) {
-      // Start counting the first one, queue the rest
-      const firstFitting = fittingsToCount[0];
-      handleSpawnCompanionCount(measurement, firstFitting, jocItems[0]?.taskCode || '');
-      
-      // If there are more, flag them for later with note to count
-      fittingsToCount.slice(1).forEach(fitting => {
+    // Auto-create child measurements for fittings with pre-populated estimated values
+    if (fittingsWithEstimates && fittingsWithEstimates.length > 0) {
+      fittingsWithEstimates.forEach(({ item: fitting, quantityFactor }) => {
         const newId = generateId();
-        const shortLabel = fitting.description.split(',')[0].trim();
+        
+        // Extract clean name: get size + fitting type from description
+        // e.g., "3" Schedule 80 CPVC 90 Degree Elbow, Fire Sprinkler Piping" → "3" Elbow"
+        const desc = fitting.description;
+        const sizeMatch = desc.match(/^(\d+(?:-\d+\/\d+)?["']?)/);
+        const size = sizeMatch ? sizeMatch[1] : '';
+        
+        // Find fitting type keyword
+        const fittingTypes = ['elbow', 'tee', 'coupling', 'reducer', 'cap', 'union', 'flange', 'escutcheon', 'hanger'];
+        const lowerDesc = desc.toLowerCase();
+        const fittingType = fittingTypes.find(t => lowerDesc.includes(t));
+        const typeName = fittingType ? fittingType.charAt(0).toUpperCase() + fittingType.slice(1) : 'Fitting';
+        
+        const shortLabel = size ? `${size} ${typeName}` : fitting.description.split(',')[0].trim();
+        
+        // Calculate estimated quantity
+        const estimatedQty = Math.round(measurement.value * quantityFactor);
         
         const newMeasurement: Measurement = {
           id: newId,
           type: 'count',
           points: [],
-          value: 0,
+          value: estimatedQty, // Pre-populated with estimate!
           unit: 'EA',
           pageNumber: measurement.pageNumber,
-          name: `${shortLabel} (from ${measurement.name || 'assembly'})`,
+          name: shortLabel,
           jocItems: [fitting],
-          color: '#f59e0b',
+          color: '#06b6d4', // Cyan for fittings
           visible: true,
           parentMeasurementId: measurementId,
         };
         
         addMeasurement(newMeasurement);
-        
-        const flag: FlagType = {
-          id: generateId(),
-          type: 'verify',
-          title: `Count needed: ${shortLabel}`,
-          description: `Count on drawing after finishing current item.`,
-          measurementId: newId,
-          pageNumber: measurement.pageNumber,
-          status: 'open',
-          priority: 'medium',
-          createdAt: new Date(),
-        };
-        
-        flagMeasurement(newId, flag);
-      });
-    }
-    
-    // Handle fittings to flag - create placeholders with flags
-    if (fittingsToFlag && fittingsToFlag.length > 0) {
-      fittingsToFlag.forEach(fitting => {
-        const newId = generateId();
-        const shortLabel = fitting.description.split(',')[0].trim();
-        
-        const newMeasurement: Measurement = {
-          id: newId,
-          type: 'count',
-          points: [],
-          value: 0,
-          unit: 'EA',
-          pageNumber: measurement.pageNumber,
-          name: `${shortLabel} (from ${measurement.name || 'assembly'})`,
-          jocItems: [fitting],
-          color: '#ef4444',
-          visible: true,
-          parentMeasurementId: measurementId,
-        };
-        
-        addMeasurement(newMeasurement);
-        
-        const flag: FlagType = {
-          id: generateId(),
-          type: 'verify',
-          title: `Hard count needed: ${shortLabel}`,
-          description: `Placeholder from ${measurement.name || 'assembly'}. Count actual fittings on drawing.`,
-          measurementId: newId,
-          pageNumber: measurement.pageNumber,
-          status: 'open',
-          priority: 'medium',
-          createdAt: new Date(),
-        };
-        
-        flagMeasurement(newId, flag);
       });
     }
   };
@@ -1441,22 +1408,9 @@ export function MeasurementPanel() {
         <AssemblyConfigurator
           measurement={showConfigurator.measurement}
           matchedAssembly={showConfigurator.assembly}
-          onApply={(items, fittingsToCount, fittingsToFlag) => 
-            handleConfiguratorApply(showConfigurator.measurement.id, items, fittingsToCount, fittingsToFlag)
+          onApply={(items, fittingsWithEstimates) => 
+            handleConfiguratorApply(showConfigurator.measurement.id, items, fittingsWithEstimates)
           }
-          onCountNow={(items, fittingToCount) => {
-            // Apply assembly immediately and start counting the fitting
-            const measurementId = showConfigurator.measurement.id;
-            const measurement = showConfigurator.measurement;
-            
-            // Update the measurement with assembly items
-            updateMeasurement(measurementId, { jocItems: items, jocItem: undefined });
-            setExpandedItems(prev => new Set([...prev, measurementId]));
-            setShowConfigurator(null);
-            
-            // Immediately spawn the count measurement
-            handleSpawnCompanionCount(measurement, fittingToCount, items[0]?.taskCode || '');
-          }}
           onCancel={() => setShowConfigurator(null)}
         />
       )}

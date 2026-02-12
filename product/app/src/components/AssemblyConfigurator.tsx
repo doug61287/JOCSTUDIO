@@ -14,9 +14,6 @@ import {
   Calculator,
   ArrowUpFromLine,
   AlertTriangle,
-  MousePointer2,
-  Hash,
-  Flag,
 } from 'lucide-react';
 
 // ============================================
@@ -1874,8 +1871,7 @@ export function findMatchingAssembly(input: string, measurementType: string): As
 interface AssemblyConfiguratorProps {
   measurement: Measurement;
   matchedAssembly: AssemblyConfig;
-  onApply: (items: JOCItem[], fittingsToCount?: JOCItem[], fittingsToFlag?: JOCItem[]) => void;
-  onCountNow: (items: JOCItem[], fittingToCount: JOCItem) => void; // Immediate count action
+  onApply: (items: JOCItem[], fittingsWithEstimates?: { item: JOCItem; quantityFactor: number }[]) => void;
   onCancel: () => void;
 }
 
@@ -1883,7 +1879,6 @@ export function AssemblyConfigurator({
   measurement, 
   matchedAssembly, 
   onApply,
-  onCountNow,
   onCancel 
 }: AssemblyConfiguratorProps) {
   // Initialize items with default checked states
@@ -1900,9 +1895,6 @@ export function AssemblyConfigurator({
   const [searchResults, setSearchResults] = useState<JOCItem[]>([]);
   const [showHeightSelector, setShowHeightSelector] = useState(false);
   const [pendingItems, setPendingItems] = useState<JOCItem[]>([]);
-  
-  // Track fittings - items user wants to count vs estimate
-  const [fittingModes, setFittingModes] = useState<Record<string, 'estimate' | 'count' | 'flag'>>({});
 
   // Calculate totals - EXCLUDE FITTINGS (they're counted separately)
   const totals = useMemo(() => {
@@ -1981,20 +1973,17 @@ export function AssemblyConfigurator({
     setSearchResults([]);
   };
 
-  // Identify fittings FIRST - items with quantityFactor < 1 (estimated ratios like "1 elbow per 20 LF")
+  // Identify fittings - items with quantityFactor < 1 (estimated ratios like "1 elbow per 20 LF")
+  // These auto-create as children when assembly is applied
   const fittingItemIds = new Set(
     items.filter(i => i.quantityFactor > 0 && i.quantityFactor < 1).map(i => i.id)
   );
   const fittingItems = items.filter(i => fittingItemIds.has(i.id) && i.checked);
   
-  // Filter out fittings from other sections to avoid duplication
+  // Filter out fittings from other sections (they're handled automatically)
   const primaryItems = items.filter(i => i.category === 'primary' && !fittingItemIds.has(i.id));
   const typicalItems = items.filter(i => i.category === 'typical' && !fittingItemIds.has(i.id));
   const optionalItems = items.filter(i => i.category === 'optional' && !fittingItemIds.has(i.id));
-  
-  const setFittingMode = (itemId: string, mode: 'estimate' | 'count' | 'flag') => {
-    setFittingModes(prev => ({ ...prev, [itemId]: mode }));
-  };
 
   // Check if any items have height variants
   const itemsWithHeightOptions = useMemo(() => 
@@ -2006,19 +1995,17 @@ export function AssemblyConfigurator({
 
   // Handle Apply click - check for height variants first
   const handleApplyClick = () => {
-    // Separate fittings by mode
-    const fittingsToCount = fittingItems
-      .filter(i => fittingModes[i.id] === 'count')
-      .map(i => i.jocItem);
-    const fittingsToFlag = fittingItems
-      .filter(i => fittingModes[i.id] === 'flag')
-      .map(i => i.jocItem);
+    // Gather fittings with their quantity factors for auto-creation
+    const fittingsWithEstimates = fittingItems.map(i => ({
+      item: i.jocItem,
+      quantityFactor: i.quantityFactor,
+    }));
     
     if (hasHeightOptions) {
       setPendingItems(totals.checkedItems);
       setShowHeightSelector(true);
     } else {
-      onApply(totals.checkedItems, fittingsToCount, fittingsToFlag);
+      onApply(totals.checkedItems, fittingsWithEstimates);
     }
   };
 
@@ -2032,16 +2019,14 @@ export function AssemblyConfigurator({
       return adjusted || item;
     });
     
-    // Get fittings selections
-    const fittingsToCount = fittingItems
-      .filter(i => fittingModes[i.id] === 'count')
-      .map(i => i.jocItem);
-    const fittingsToFlag = fittingItems
-      .filter(i => fittingModes[i.id] === 'flag')
-      .map(i => i.jocItem);
+    // Gather fittings with their quantity factors for auto-creation
+    const fittingsWithEstimates = fittingItems.map(i => ({
+      item: i.jocItem,
+      quantityFactor: i.quantityFactor,
+    }));
     
     setShowHeightSelector(false);
-    onApply(finalItems, fittingsToCount, fittingsToFlag);
+    onApply(finalItems, fittingsWithEstimates);
   };
 
   // Show HeightSelector if needed
@@ -2150,72 +2135,22 @@ export function AssemblyConfigurator({
             </div>
           )}
 
-          {/* 🔧 FITTINGS SECTION - Count or Estimate */}
+          {/* Fittings Info (auto-created as children) */}
           {fittingItems.length > 0 && (
-            <div className="border border-amber-500/30 rounded-xl overflow-hidden">
-              <div className="p-3 bg-amber-500/10 border-b border-amber-500/20">
-                <h3 className="text-xs font-semibold text-amber-400 uppercase tracking-wider flex items-center gap-2">
-                  <MousePointer2 className="w-3 h-3" /> Fittings &amp; Accessories
-                </h3>
-                <p className="text-[10px] text-white/50 mt-1">
-                  Choose: use estimate, count on drawing, or flag for later
-                </p>
-              </div>
-              <div className="p-3 space-y-3">
+            <div className="p-3 bg-amber-500/10 border border-amber-500/30 rounded-xl">
+              <h3 className="text-xs font-semibold text-amber-400 uppercase tracking-wider flex items-center gap-2 mb-2">
+                <Sparkles className="w-3 h-3" /> Fittings (Auto-Added)
+              </h3>
+              <p className="text-[10px] text-white/50 mb-2">
+                These will be created with estimated quantities. Refine counts by clicking on them after.
+              </p>
+              <div className="space-y-1">
                 {fittingItems.map(item => {
-                  const mode = fittingModes[item.id] || 'estimate';
                   const estQty = (measurement.value * item.quantityFactor).toFixed(1);
-                  
                   return (
-                    <div key={item.id} className="p-3 bg-white/5 rounded-lg">
-                      <div className="flex items-start justify-between gap-2 mb-2">
-                        <div className="flex-1 min-w-0">
-                          <p className="text-sm text-white/80">{item.jocItem.description.split(',')[0]}</p>
-                          <p className="text-[10px] text-white/40 mt-0.5">
-                            Est: ~{estQty} {item.jocItem.unit} @ ${item.jocItem.unitCost.toFixed(2)} 
-                            {item.note && <span className="text-white/30"> • {item.note}</span>}
-                          </p>
-                        </div>
-                        <p className="text-sm text-amber-400/80 font-medium">
-                          ${(measurement.value * item.quantityFactor * item.jocItem.unitCost).toFixed(0)}
-                        </p>
-                      </div>
-                      
-                      {/* Mode Toggle Buttons */}
-                      <div className="flex gap-2">
-                        <button
-                          onClick={() => setFittingMode(item.id, 'estimate')}
-                          className={`flex-1 flex items-center justify-center gap-1.5 px-2 py-1.5 rounded-lg text-[10px] font-medium transition-all ${
-                            mode === 'estimate' 
-                              ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/40' 
-                              : 'bg-white/5 text-white/40 border border-white/10 hover:bg-white/10'
-                          }`}
-                        >
-                          <Sparkles className="w-3 h-3" />
-                          Use Estimate
-                        </button>
-                        <button
-                          onClick={() => {
-                            // Immediately apply assembly and start counting this fitting
-                            onCountNow(totals.checkedItems, item.jocItem);
-                          }}
-                          className="flex-1 flex items-center justify-center gap-1.5 px-2 py-1.5 rounded-lg text-[10px] font-medium transition-all bg-amber-500/20 text-amber-400 border border-amber-500/40 hover:bg-amber-500/30 hover:scale-105"
-                        >
-                          <Hash className="w-3 h-3" />
-                          Count Now →
-                        </button>
-                        <button
-                          onClick={() => setFittingMode(item.id, 'flag')}
-                          className={`flex-1 flex items-center justify-center gap-1.5 px-2 py-1.5 rounded-lg text-[10px] font-medium transition-all ${
-                            mode === 'flag' 
-                              ? 'bg-red-500/20 text-red-400 border border-red-500/40' 
-                              : 'bg-white/5 text-white/40 border border-white/10 hover:bg-white/10'
-                          }`}
-                        >
-                          <Flag className="w-3 h-3" />
-                          Later
-                        </button>
-                      </div>
+                    <div key={item.id} className="flex items-center justify-between text-xs">
+                      <span className="text-white/70">{item.jocItem.description.split(',')[0]}</span>
+                      <span className="text-amber-400/80">~{estQty} {item.jocItem.unit}</span>
                     </div>
                   );
                 })}
