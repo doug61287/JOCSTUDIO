@@ -477,47 +477,456 @@ export const ASSEMBLY_LIBRARY: Assembly[] = [
       },
     ],
   },
+
+  // ============================================
+  // MASONRY - CMU / BLOCK WALLS
+  // ============================================
+  {
+    id: 'cmu-wall-8',
+    name: 'CMU Wall 8"',
+    description: '8" concrete block wall with reinforcing and grout',
+    category: 'general',
+    keywords: ['cmu', 'block', 'masonry', 'concrete block', '8 inch', '8"', 'block wall', 'unit masonry'],
+    applicableTo: ['area'],
+    createdBy: 'system',
+    items: [
+      {
+        jocItem: {
+          taskCode: '04222313-0006',
+          description: '8" x 8" x 16", Cored, Lightweight, Concrete Block',
+          unit: 'SF',
+          unitCost: 18.38,
+        },
+        quantityFactor: 1.0,
+      },
+      {
+        jocItem: {
+          taskCode: '04050519-0012',
+          description: 'Mortar for Concrete Block, Type S',
+          unit: 'SF',
+          unitCost: 1.85,
+        },
+        quantityFactor: 1.0,
+        notes: 'Mortar included',
+      },
+      {
+        jocItem: {
+          taskCode: '04052113-0006',
+          description: 'Horizontal Joint Reinforcing, 8" Wall',
+          unit: 'LF',
+          unitCost: 1.25,
+        },
+        quantityFactor: 0.75, // ~1 LF per 1.33 SF
+        notes: 'Every other course',
+      },
+    ],
+  },
+  {
+    id: 'cmu-wall-6',
+    name: 'CMU Wall 6"',
+    description: '6" concrete block wall with reinforcing',
+    category: 'general',
+    keywords: ['cmu', 'block', 'masonry', 'concrete block', '6 inch', '6"', 'block wall'],
+    applicableTo: ['area'],
+    createdBy: 'system',
+    items: [
+      {
+        jocItem: {
+          taskCode: '04222313-0005',
+          description: '6" x 8" x 16", Cored, Lightweight, Concrete Block',
+          unit: 'SF',
+          unitCost: 16.99,
+        },
+        quantityFactor: 1.0,
+      },
+      {
+        jocItem: {
+          taskCode: '04050519-0012',
+          description: 'Mortar for Concrete Block, Type S',
+          unit: 'SF',
+          unitCost: 1.85,
+        },
+        quantityFactor: 1.0,
+      },
+    ],
+  },
+  {
+    id: 'cmu-wall-4',
+    name: 'CMU Wall 4"',
+    description: '4" concrete block wall (partition)',
+    category: 'general',
+    keywords: ['cmu', 'block', 'masonry', 'concrete block', '4 inch', '4"', 'partition', 'block wall'],
+    applicableTo: ['area'],
+    createdBy: 'system',
+    items: [
+      {
+        jocItem: {
+          taskCode: '04222313-0004',
+          description: '4" x 8" x 16", Cored, Lightweight, Concrete Block',
+          unit: 'SF',
+          unitCost: 15.29,
+        },
+        quantityFactor: 1.0,
+      },
+    ],
+  },
+  {
+    id: 'cmu-wall-12',
+    name: 'CMU Wall 12"',
+    description: '12" concrete block wall (structural)',
+    category: 'general',
+    keywords: ['cmu', 'block', 'masonry', 'concrete block', '12 inch', '12"', 'structural', 'block wall'],
+    applicableTo: ['area'],
+    createdBy: 'system',
+    items: [
+      {
+        jocItem: {
+          taskCode: '04222313-0008',
+          description: '12" x 8" x 16", Cored, Lightweight, Concrete Block',
+          unit: 'SF',
+          unitCost: 23.82,
+        },
+        quantityFactor: 1.0,
+      },
+      {
+        jocItem: {
+          taskCode: '04050519-0012',
+          description: 'Mortar for Concrete Block, Type S',
+          unit: 'SF',
+          unitCost: 1.85,
+        },
+        quantityFactor: 1.0,
+      },
+      {
+        jocItem: {
+          taskCode: '04052113-0008',
+          description: 'Horizontal Joint Reinforcing, 12" Wall',
+          unit: 'LF',
+          unitCost: 1.45,
+        },
+        quantityFactor: 0.75,
+      },
+    ],
+  },
+  {
+    id: 'cmu-demo',
+    name: 'CMU Demo',
+    description: 'Demolish concrete block wall',
+    category: 'demolition',
+    keywords: ['cmu', 'block', 'demo', 'demolition', 'masonry', 'remove', 'tear out'],
+    applicableTo: ['area'],
+    createdBy: 'system',
+    items: [
+      {
+        jocItem: {
+          taskCode: '02411900-0180',
+          description: 'Selective Demolition, Concrete Block Wall',
+          unit: 'SF',
+          unitCost: 4.85,
+        },
+        quantityFactor: 1.0,
+      },
+    ],
+  },
+
+  // ============================================
+  // STOREFRONT / GLAZING
+  // ============================================
+  {
+    id: 'storefront-standard',
+    name: 'Aluminum Storefront',
+    description: 'Standard aluminum storefront system with glazing',
+    category: 'general',
+    keywords: ['storefront', 'aluminum', 'glazing', 'glass', 'curtain wall', 'window wall'],
+    applicableTo: ['area'],
+    createdBy: 'system',
+    items: [
+      {
+        jocItem: {
+          taskCode: '08431300-0002',
+          description: 'Aluminum Storefront Framing Assembly',
+          unit: 'SF',
+          unitCost: 64.28,
+        },
+        quantityFactor: 1.0,
+      },
+      {
+        jocItem: {
+          taskCode: '08800000-0030',
+          description: '1" Insulated Glass Unit, Clear',
+          unit: 'SF',
+          unitCost: 42.75,
+        },
+        quantityFactor: 0.85, // Account for frame area
+        notes: '~85% glass area',
+      },
+    ],
+  },
+  {
+    id: 'storefront-door',
+    name: 'Storefront Door',
+    description: 'Aluminum storefront entrance door',
+    category: 'doors',
+    keywords: ['storefront', 'door', 'entrance', 'aluminum', 'glass door'],
+    applicableTo: ['count'],
+    createdBy: 'system',
+    items: [
+      {
+        jocItem: {
+          taskCode: '08110000-0010',
+          description: '3\'-0" x 7\'-0" Aluminum Storefront Door, Single',
+          unit: 'EA',
+          unitCost: 2850.00,
+        },
+        quantityFactor: 1.0,
+      },
+      {
+        jocItem: {
+          taskCode: '08710000-0050',
+          description: 'Door Hardware Set, Storefront',
+          unit: 'SET',
+          unitCost: 485.00,
+        },
+        quantityFactor: 1.0,
+      },
+    ],
+  },
+
+  // ============================================
+  // CONCRETE FLATWORK
+  // ============================================
+  {
+    id: 'concrete-slab-4',
+    name: 'Concrete Slab 4"',
+    description: '4" concrete slab on grade with reinforcing',
+    category: 'general',
+    keywords: ['concrete', 'slab', '4 inch', '4"', 'slab on grade', 'sog', 'flatwork'],
+    applicableTo: ['area'],
+    createdBy: 'system',
+    items: [
+      {
+        jocItem: {
+          taskCode: '03300000-0010',
+          description: 'Cast-In-Place Concrete, 4" Slab on Grade',
+          unit: 'SF',
+          unitCost: 12.50,
+        },
+        quantityFactor: 1.0,
+      },
+      {
+        jocItem: {
+          taskCode: '03210000-0010',
+          description: 'Welded Wire Fabric Reinforcement, 6x6-W1.4xW1.4',
+          unit: 'SF',
+          unitCost: 2.50,
+        },
+        quantityFactor: 1.0,
+      },
+    ],
+  },
+  {
+    id: 'concrete-slab-6',
+    name: 'Concrete Slab 6"',
+    description: '6" concrete slab on grade with reinforcing',
+    category: 'general',
+    keywords: ['concrete', 'slab', '6 inch', '6"', 'slab on grade', 'heavy duty'],
+    applicableTo: ['area'],
+    createdBy: 'system',
+    items: [
+      {
+        jocItem: {
+          taskCode: '03300000-0020',
+          description: 'Cast-In-Place Concrete, 6" Slab on Grade',
+          unit: 'SF',
+          unitCost: 15.75,
+        },
+        quantityFactor: 1.0,
+      },
+      {
+        jocItem: {
+          taskCode: '03210000-0010',
+          description: 'Welded Wire Fabric Reinforcement, 6x6-W1.4xW1.4',
+          unit: 'SF',
+          unitCost: 2.50,
+        },
+        quantityFactor: 1.0,
+      },
+    ],
+  },
+  {
+    id: 'sidewalk',
+    name: 'Concrete Sidewalk',
+    description: 'Concrete sidewalk with base',
+    category: 'general',
+    keywords: ['sidewalk', 'walkway', 'concrete walk', 'exterior concrete', 'path'],
+    applicableTo: ['area'],
+    createdBy: 'system',
+    items: [
+      {
+        jocItem: {
+          taskCode: '03300000-0030',
+          description: 'Concrete Sidewalk, 4" Thick',
+          unit: 'SF',
+          unitCost: 11.25,
+        },
+        quantityFactor: 1.0,
+      },
+    ],
+  },
+];
+
+// ============================================
+// SMART MATCHING - The Magic! ✨
+// ============================================
+
+// Pattern-based assembly suggestions
+const ASSEMBLY_PATTERNS: { pattern: RegExp; assemblyIds: string[]; boost: number }[] = [
+  // CMU/Block patterns
+  { pattern: /\b(8|eight)[\s"']*(?:inch|in)?\s*(cmu|block|masonry)/i, assemblyIds: ['cmu-wall-8'], boost: 100 },
+  { pattern: /\b(6|six)[\s"']*(?:inch|in)?\s*(cmu|block|masonry)/i, assemblyIds: ['cmu-wall-6'], boost: 100 },
+  { pattern: /\b(4|four)[\s"']*(?:inch|in)?\s*(cmu|block|masonry)/i, assemblyIds: ['cmu-wall-4'], boost: 100 },
+  { pattern: /\b(12|twelve)[\s"']*(?:inch|in)?\s*(cmu|block|masonry)/i, assemblyIds: ['cmu-wall-12'], boost: 100 },
+  { pattern: /\b(cmu|block)\s*(wall|partition)/i, assemblyIds: ['cmu-wall-8', 'cmu-wall-6'], boost: 80 },
+  { pattern: /\bmasonry\s*(wall|partition)/i, assemblyIds: ['cmu-wall-8', 'cmu-wall-6'], boost: 70 },
+  { pattern: /\b(cmu|block|masonry)\s*(demo|demolition)/i, assemblyIds: ['cmu-demo'], boost: 90 },
+  
+  // Storefront patterns
+  { pattern: /\bstorefront/i, assemblyIds: ['storefront-standard', 'storefront-door'], boost: 90 },
+  { pattern: /\baluminum\s*(storefront|glazing)/i, assemblyIds: ['storefront-standard'], boost: 85 },
+  { pattern: /\b(entrance|entry)\s*door/i, assemblyIds: ['storefront-door', 'door-install-hollow'], boost: 70 },
+  
+  // Concrete patterns
+  { pattern: /\b(4|four)[\s"']*(?:inch|in)?\s*(concrete|slab)/i, assemblyIds: ['concrete-slab-4'], boost: 90 },
+  { pattern: /\b(6|six)[\s"']*(?:inch|in)?\s*(concrete|slab)/i, assemblyIds: ['concrete-slab-6'], boost: 90 },
+  { pattern: /\bslab\s*on\s*grade/i, assemblyIds: ['concrete-slab-4', 'concrete-slab-6'], boost: 80 },
+  { pattern: /\bsidewalk/i, assemblyIds: ['sidewalk'], boost: 95 },
+  
+  // Drywall patterns
+  { pattern: /\b(wall|drywall|gypsum)\s*(patch|repair)/i, assemblyIds: ['wall-patch-small'], boost: 90 },
+  { pattern: /\bnew\s*(drywall|gypsum|wall)/i, assemblyIds: ['new-gypsum-wall'], boost: 85 },
+  { pattern: /\b(drywall|gypsum|wall)\s*demo/i, assemblyIds: ['wall-demo-full'], boost: 90 },
+  
+  // Ceiling patterns
+  { pattern: /\b(act|acoustic|drop)\s*ceiling/i, assemblyIds: ['act-ceiling-new', 'act-ceiling-replace'], boost: 90 },
+  { pattern: /\bceiling\s*(tile|replace)/i, assemblyIds: ['act-ceiling-replace'], boost: 85 },
+  
+  // Flooring patterns
+  { pattern: /\bvct\s*(floor|tile)?/i, assemblyIds: ['vct-flooring'], boost: 95 },
+  { pattern: /\bcarpet\s*(tile)?/i, assemblyIds: ['carpet-tile'], boost: 90 },
+  { pattern: /\brubber\s*base/i, assemblyIds: ['rubber-base'], boost: 95 },
+  
+  // Paint patterns
+  { pattern: /\bpaint\s*(wall|interior)/i, assemblyIds: ['paint-walls'], boost: 85 },
+  { pattern: /\bpaint\s*ceiling/i, assemblyIds: ['paint-ceiling'], boost: 90 },
+  
+  // MEP patterns
+  { pattern: /\b(outlet|receptacle|plug)/i, assemblyIds: ['outlet-install'], boost: 90 },
+  { pattern: /\b(light|troffer|led)\s*(fixture)?/i, assemblyIds: ['light-fixture-2x4'], boost: 80 },
+  { pattern: /\b(sink|lavatory|lav)/i, assemblyIds: ['sink-install'], boost: 85 },
+  
+  // Door patterns
+  { pattern: /\b(hollow\s*metal|hm)\s*door/i, assemblyIds: ['door-install-hollow'], boost: 90 },
+  { pattern: /\bdoor\s*(demo|remove)/i, assemblyIds: ['door-demo'], boost: 90 },
 ];
 
 // ============================================
 // SEARCH / MATCHING FUNCTIONS
 // ============================================
 
-// Find assemblies matching a search query
+/**
+ * Smart Assembly Search - The Magic! ✨
+ * 
+ * Uses pattern matching to understand what you're measuring:
+ * - "8 inch block wall" → CMU Wall 8"
+ * - "storefront" → Aluminum Storefront + Storefront Door
+ * - "wall patch" → Wall Patch assembly
+ */
 export function searchAssemblies(query: string, measurementType?: string): Assembly[] {
   if (!query || query.length < 2) return [];
   
-  const q = query.toLowerCase();
+  const q = query.toLowerCase().trim();
   const words = q.split(/\s+/).filter(w => w.length > 1);
   
-  return ASSEMBLY_LIBRARY
-    .filter(assembly => {
-      // Filter by measurement type if specified
-      if (measurementType && !assembly.applicableTo.includes(measurementType as any)) {
-        return false;
-      }
-      
-      // Check name match
-      if (assembly.name.toLowerCase().includes(q)) return true;
-      
-      // Check keyword matches
-      const keywordMatches = words.filter(word => 
-        assembly.keywords.some(kw => kw.includes(word) || word.includes(kw))
-      );
-      
-      // Require at least 1 keyword match for multi-word queries
-      return keywordMatches.length >= Math.min(words.length, 1);
+  // Score each assembly
+  const scored: { assembly: Assembly; score: number }[] = [];
+  
+  // First, check pattern matches (highest priority)
+  const patternMatches = new Set<string>();
+  for (const { pattern, assemblyIds, boost } of ASSEMBLY_PATTERNS) {
+    if (pattern.test(query)) {
+      assemblyIds.forEach(id => {
+        patternMatches.add(id);
+        const assembly = ASSEMBLY_LIBRARY.find(a => a.id === id);
+        if (assembly) {
+          // Check measurement type compatibility
+          if (measurementType && !assembly.applicableTo.includes(measurementType as any)) {
+            return;
+          }
+          scored.push({ assembly, score: boost + 50 }); // Pattern matches get big boost
+        }
+      });
+    }
+  }
+  
+  // Then check regular keyword/name matches
+  for (const assembly of ASSEMBLY_LIBRARY) {
+    // Skip if already added via pattern match
+    if (patternMatches.has(assembly.id)) continue;
+    
+    // Filter by measurement type if specified
+    if (measurementType && !assembly.applicableTo.includes(measurementType as any)) {
+      continue;
+    }
+    
+    let score = 0;
+    
+    // Exact name match = high score
+    if (assembly.name.toLowerCase().includes(q)) {
+      score += 80;
+    }
+    
+    // Name starts with query
+    if (assembly.name.toLowerCase().startsWith(q)) {
+      score += 40;
+    }
+    
+    // Check keyword matches
+    const keywordMatches = words.filter(word => 
+      assembly.keywords.some(kw => kw.includes(word) || word.includes(kw))
+    );
+    
+    // More keyword matches = higher score
+    score += keywordMatches.length * 25;
+    
+    // All words match keywords = bonus
+    if (keywordMatches.length === words.length && words.length > 0) {
+      score += 30;
+    }
+    
+    // Description match
+    if (assembly.description?.toLowerCase().includes(q)) {
+      score += 15;
+    }
+    
+    // Usage count bonus
+    score += Math.min(10, (assembly.usageCount || 0) / 5);
+    
+    if (score > 0) {
+      scored.push({ assembly, score });
+    }
+  }
+  
+  // Sort by score and dedupe
+  const seen = new Set<string>();
+  return scored
+    .sort((a, b) => b.score - a.score)
+    .filter(({ assembly }) => {
+      if (seen.has(assembly.id)) return false;
+      seen.add(assembly.id);
+      return true;
     })
-    .sort((a, b) => {
-      // Exact name match first
-      const aExact = a.name.toLowerCase().includes(q) ? 0 : 1;
-      const bExact = b.name.toLowerCase().includes(q) ? 0 : 1;
-      if (aExact !== bExact) return aExact - bExact;
-      
-      // Then by usage count
-      return (b.usageCount || 0) - (a.usageCount || 0);
-    })
-    .slice(0, 6);
+    .slice(0, 8)
+    .map(s => s.assembly);
 }
 
 // Get assembly by ID
