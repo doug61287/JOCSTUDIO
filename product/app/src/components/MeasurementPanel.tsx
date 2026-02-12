@@ -191,21 +191,15 @@ export function MeasurementPanel() {
       }
     });
     
-    // NUCLEAR OPTION: Hide ALL count measurements from top level
-    // They will ONLY appear as children under their parent pipe in "Counted Fittings"
+    // Filter for top-level display: hide children, keep standalone items
     const topLevel = filtered.filter(m => {
-      // Always hide explicit children
+      // Always hide explicit children (found in childrenByParent)
       if (childIds.has(m.id)) return false;
       
-      // Hide ANY measurement with parentMeasurementId
+      // Hide ANY measurement with parentMeasurementId (it's a child)
       if (m.parentMeasurementId) return false;
       
-      // NUCLEAR: Hide ALL count measurements from top level
-      // In the fire protection workflow, counts are always fittings that belong under a pipe
-      if (m.type === 'count') {
-        return false;
-      }
-      
+      // Allow everything else (including standalone counts without parents)
       return true;
     });
     
@@ -1217,7 +1211,7 @@ export function MeasurementPanel() {
       <div className="flex-1 overflow-auto">
         {activeTab === 'measurements' && (
           <div>
-            {project.measurements.length === 0 ? (
+            {groupedMeasurements.ungrouped.length === 0 ? (
               <div className="text-center py-12">
                 <div className="w-12 h-12 mx-auto mb-3 rounded-xl bg-white/[0.03] flex items-center justify-center">
                   <Ruler className="w-6 h-6 text-white/20" />
@@ -1226,7 +1220,7 @@ export function MeasurementPanel() {
                 <p className="text-white/30 text-[10px] mt-1">Select a tool and click on the drawing</p>
               </div>
             ) : (
-              project.measurements.map(renderMeasurementRow)
+              groupedMeasurements.ungrouped.map(renderMeasurementRow)
             )}
           </div>
         )}
