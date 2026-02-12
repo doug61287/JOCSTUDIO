@@ -622,18 +622,28 @@ export function MeasurementPanel() {
                 onClick={(e) => e.stopPropagation()}
               />
             </div>
-            <div className="max-h-40 overflow-auto space-y-0.5">
+            <div className="max-h-64 overflow-auto">
               {searchResults.map((item) => {
                 const hasTiers = hasTierVariants(item);
+                // Get division name from task code prefix
+                const divisionCode = item.taskCode.slice(0, 2);
+                const divisionNames: Record<string, string> = {
+                  '01': 'General', '02': 'Sitework', '03': 'Concrete', '04': 'Masonry',
+                  '05': 'Metals', '06': 'Wood', '07': 'Thermal', '08': 'Openings',
+                  '09': 'Finishes', '10': 'Specialties', '11': 'Equipment', '12': 'Furnishings',
+                  '21': 'Fire Protection', '22': 'Plumbing', '23': 'HVAC', '26': 'Electrical',
+                };
+                const divisionName = divisionNames[divisionCode] || `Div ${divisionCode}`;
                 return (
                   <button
                     key={item.taskCode}
                     onClick={(e) => { e.stopPropagation(); handleAddJocItem(m.id, item); }}
-                    className="w-full text-left p-2 rounded hover:bg-white/10 text-xs transition-colors"
+                    className="w-full text-left p-2 rounded hover:bg-white/10 text-xs transition-colors border-b border-white/[0.04] last:border-0"
                   >
                     <div className="flex items-center justify-between gap-2">
                       <div className="flex items-center gap-1.5">
-                        <span className="text-white/50 font-mono">{item.taskCode.slice(0, 14)}</span>
+                        <span className="px-1.5 py-0.5 bg-white/10 rounded text-[9px] text-white/60">{divisionName}</span>
+                        <span className="text-white/40 font-mono text-[10px]">{item.taskCode}</span>
                         {hasTiers && (
                           <span className="flex items-center gap-0.5 px-1.5 py-0.5 bg-amber-500/20 text-amber-400 rounded text-[9px] font-medium">
                             <Layers className="w-2.5 h-2.5" />
@@ -641,9 +651,9 @@ export function MeasurementPanel() {
                           </span>
                         )}
                       </div>
-                      <span className="text-emerald-400">${item.unitCost.toFixed(2)}/{item.unit}</span>
+                      <span className="text-emerald-400 font-medium">${item.unitCost.toFixed(2)}/{item.unit}</span>
                     </div>
-                    <p className="truncate text-white/70 mt-0.5">{item.description}</p>
+                    <p className="text-white/80 mt-1 text-[11px] leading-relaxed">{item.description}</p>
                   </button>
                 );
               })}
