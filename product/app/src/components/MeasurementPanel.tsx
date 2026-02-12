@@ -247,10 +247,12 @@ export function MeasurementPanel() {
     if (!measurement) return;
     
     // Convert assembly items to JOC items
-    const jocItems: JOCItem[] = assembly.items.map(item => ({
-      ...item.jocItem,
-      // Note: quantityFactor is applied at calculation time, not stored
-    }));
+    // EXCLUDE FITTINGS (quantityFactor < 1) - they go in "Continue Takeoff" instead
+    const jocItems: JOCItem[] = assembly.items
+      .filter(item => item.quantityFactor >= 1.0) // Only primary items, not fittings
+      .map(item => ({
+        ...item.jocItem,
+      }));
     
     // Update measurement with assembly name, JOC items, AND assembly ID for companion tracking
     updateMeasurement(measurementId, { 

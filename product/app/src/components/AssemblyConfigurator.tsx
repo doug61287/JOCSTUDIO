@@ -1904,7 +1904,7 @@ export function AssemblyConfigurator({
   // Track fittings - items user wants to count vs estimate
   const [fittingModes, setFittingModes] = useState<Record<string, 'estimate' | 'count' | 'flag'>>({});
 
-  // Calculate totals
+  // Calculate totals - EXCLUDE FITTINGS (they're counted separately)
   const totals = useMemo(() => {
     let subtotal = 0;
     const checkedItems: JOCItem[] = [];
@@ -1912,6 +1912,9 @@ export function AssemblyConfigurator({
     
     items.forEach(item => {
       if (!item.checked) return;
+      
+      // SKIP FITTINGS - they go through "Continue Takeoff" workflow, not here
+      if (item.quantityFactor > 0 && item.quantityFactor < 1) return;
       
       let qty = measurement.value * item.quantityFactor;
       
