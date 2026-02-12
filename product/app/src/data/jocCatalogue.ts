@@ -60,6 +60,66 @@ const KEYWORD_SYNONYMS: Record<string, string[]> = {
   'electrical': ['power', 'lighting', 'receptacle', 'outlet'],
   'plumbing': ['piping', 'fixture', 'lavatory', 'water'],
   
+  // ============================================
+  // DIVISION 21 - FIRE PROTECTION SYNONYMS
+  // ============================================
+  
+  // Sprinkler pipe - natural language to catalogue terminology
+  'sprinkler pipe': ['cpvc', 'fire sprinkler pipe', 'chlorinated polyvinyl'],
+  'fp pipe': ['cpvc', 'fire sprinkler pipe'],
+  'fire pipe': ['cpvc', 'fire sprinkler pipe'],
+  'sprinkler main': ['cpvc', 'fire sprinkler pipe'],
+  'branch pipe': ['cpvc', 'fire sprinkler pipe'],
+  'branch line': ['cpvc', 'fire sprinkler pipe'],
+  'cpvc': ['chlorinated polyvinyl chloride', 'fire sprinkler pipe'],
+  
+  // Sprinkler heads - including common misspellings
+  'sprinkler head': ['sprinkler head', 'wet pipe sprinkler head'],
+  'head': ['sprinkler head'],
+  'pendant': ['pendent'],  // Common misspelling → H+H spelling
+  'pendant head': ['pendent', 'sprinkler head'],
+  'upright head': ['upright', 'sprinkler head'],
+  'sidewall head': ['sidewall', 'sprinkler head'],
+  'concealed head': ['concealed', 'sprinkler head'],
+  'qr head': ['quick response'],
+  'quick response head': ['quick response', 'sprinkler head'],
+  
+  // System types
+  'wet pipe': ['wet-pipe', 'wet pipe'],
+  'wet system': ['wet-pipe', 'wet pipe'],
+  'dry pipe': ['dry-pipe', 'dry pipe'],
+  'dry system': ['dry-pipe', 'dry pipe'],
+  'preaction': ['preaction', 'pre-action'],
+  'pre-action': ['preaction'],
+  
+  // Valves and components
+  'alarm check': ['alarm check valve'],
+  'check valve': ['alarm check valve', 'check valve'],
+  'flow switch': ['flow detector', 'water flow'],
+  'tamper switch': ['tamper', 'supervisory'],
+  'fdc': ['siamese connection', 'fire department connection'],
+  'siamese': ['siamese connection'],
+  
+  // Kitchen/specialty systems
+  'ansul': ['kitchen fire suppression', 'wet chemical'],
+  'kitchen hood': ['kitchen fire suppression', 'wet chemical'],
+  'kitchen suppression': ['kitchen fire suppression', 'wet chemical'],
+  'clean agent': ['sapphire', 'novec', 'fm-200'],
+  'sapphire': ['clean agent', 'sapphire'],
+  'fm200': ['fm-200', 'clean agent'],
+  'fm-200': ['fm-200', 'clean agent'],
+  
+  // Relocation/modification
+  'relocate head': ['relocate', 'sprinkler head', 'branch piping'],
+  'move head': ['relocate', 'sprinkler head'],
+  'head relocation': ['relocate', 'sprinkler head'],
+  'purge': ['purge liquid system'],
+  'drain system': ['purge liquid system'],
+  
+  // Fire pumps
+  'fire pump': ['fire pump', 'electric-drive', 'diesel'],
+  'jockey pump': ['jockey pump', 'pressure maintenance'],
+  
   // Demo terms
   'demo': ['demolition', 'removal', 'remove'],
   'demolition': ['demo', 'removal', 'selective demolition'],
@@ -94,6 +154,16 @@ const DIVISION_KEYWORDS: Record<string, string> = {
   'furnishings': '12',
   'fire suppression': '21',
   'sprinkler': '21',
+  'fire protection': '21',
+  'fp': '21',
+  'sprinkler pipe': '21',
+  'sprinkler head': '21',
+  'cpvc': '21',
+  'wet pipe': '21',
+  'dry pipe': '21',
+  'ansul': '21',
+  'kitchen suppression': '21',
+  'fire pump': '21',
   'plumbing': '22',
   'hvac': '23',
   'mechanical': '23',
@@ -119,6 +189,61 @@ function expandKeywords(words: string[]): string[] {
   }
   
   return Array.from(expanded);
+}
+
+/**
+ * Extract pipe size from query (for Division 21/22 searches)
+ * "3 inch sprinkler pipe" → "3""
+ * "1-1/2 sprinkler" → "1-1/2""
+ * "3/4" cpvc" → "3/4""
+ */
+function extractPipeSize(query: string): string | null {
+  const q = query.toLowerCase();
+  
+  // Order matters - check compound fractions FIRST
+  const patterns = [
+    // Compound sizes: 1-1/2, 2-1/2, 1 1/2, etc.
+    /(\d+)[-\s](\d+\/\d+)\s*(?:"|"|inch|in\b|pipe)?/,
+    // Simple fractions: 3/4, 1/2
+    /(\d+\/\d+)\s*(?:"|"|inch|in\b)?/,
+    // Whole numbers: 3", 3 inch, 4-inch (but NOT when part of a compound)
+    /(?<!\d[-\s])(\d+)\s*(?:"|"|inch|-inch|in\b)/,
+  ];
+  
+  for (const pattern of patterns) {
+    const match = q.match(pattern);
+    if (match) {
+      // Handle compound fraction: "1-1/2" format
+      if (match[2]) {
+        return `${match[1]}-${match[2]}"`;
+      }
+      return `${match[1]}"`;
+    }
+  }
+  
+  return null;
+}
+
+/**
+ * Normalize pipe size to H+H catalogue format
+ */
+function normalizePipeSize(size: string): string {
+  // Convert "1.5" → "1-1/2", "2.5" → "2-1/2", etc.
+  const decimalMap: Record<string, string> = {
+    '0.5': '1/2',
+    '0.75': '3/4',
+    '1.25': '1-1/4',
+    '1.5': '1-1/2',
+    '2.5': '2-1/2',
+  };
+  
+  for (const [decimal, fraction] of Object.entries(decimalMap)) {
+    if (size.includes(decimal)) {
+      return size.replace(decimal, fraction);
+    }
+  }
+  
+  return size;
 }
 
 /**
@@ -158,6 +283,10 @@ export function searchJOCItems(query: string, limit: number = 20): JOCItem[] {
   // Check if this is a division-level search
   const divisionCode = DIVISION_KEYWORDS[q] || DIVISION_KEYWORDS[originalWords[0]];
   
+  // Extract pipe size if present (for pipe/fitting searches)
+  const pipeSize = extractPipeSize(q);
+  const normalizedPipeSize = pipeSize ? normalizePipeSize(pipeSize) : null;
+  
   // Score-based search for better relevance
   const scored: { item: JOCItem; score: number }[] = [];
   
@@ -169,6 +298,25 @@ export function searchJOCItems(query: string, limit: number = 20): JOCItem[] {
     // Division match - boost items from the relevant division
     if (divisionCode && taskCode.startsWith(divisionCode)) {
       score += 50;
+    }
+    
+    // Pipe size match - HUGE boost for exact size match
+    if (normalizedPipeSize) {
+      // Remove the trailing quote for matching
+      const sizeWithoutQuote = normalizedPipeSize.replace('"', '');
+      
+      // Must match size at START of description (e.g., "3" Schedule" not "33"")
+      // or after a comma/space with specific format
+      const startsWithSize = desc.startsWith(sizeWithoutQuote + '"') || 
+                             desc.startsWith(sizeWithoutQuote + ' ');
+      const hasExactSize = new RegExp(`(^|[,\\s])${sizeWithoutQuote.replace(/[/-]/g, '[-/]')}"`, 'i').test(desc);
+      
+      if (startsWithSize || hasExactSize) {
+        score += 200; // Very high boost for exact size match at start
+      } else {
+        // If we're searching for a specific size but this item doesn't match, penalize heavily
+        score -= 100;
+      }
     }
     
     // Check original word matches (highest priority)
