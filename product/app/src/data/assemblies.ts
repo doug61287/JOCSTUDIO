@@ -693,32 +693,44 @@ export const ASSEMBLY_LIBRARY: Assembly[] = [
   },
 
   // ============================================
-  // CONCRETE FLATWORK
+  // CONCRETE FLATWORK - All standard thicknesses
+  // Using actual JOC catalogue items (03311300 series)
   // ============================================
   {
     id: 'concrete-slab-4',
     name: 'Concrete Slab 4"',
-    description: '4" concrete slab on grade with reinforcing',
+    description: '4" concrete slab on grade (3,000 PSI)',
     category: 'general',
-    keywords: ['concrete', 'slab', '4 inch', '4"', 'slab on grade', 'sog', 'flatwork'],
+    keywords: ['concrete', 'slab', '4 inch', '4"', 'slab on grade', 'sog', 'flatwork', 'four'],
     applicableTo: ['area'],
     createdBy: 'system',
     items: [
       {
         jocItem: {
-          taskCode: '03300000-0010',
-          description: 'Cast-In-Place Concrete, 4" Slab on Grade',
+          taskCode: '03311300-0003',
+          description: '4" 3,000 PSI Slab On Grade Concrete Slab Assembly',
           unit: 'SF',
-          unitCost: 12.50,
+          unitCost: 9.07,
         },
         quantityFactor: 1.0,
       },
+    ],
+  },
+  {
+    id: 'concrete-slab-5',
+    name: 'Concrete Slab 5"',
+    description: '5" concrete slab on grade (3,000 PSI)',
+    category: 'general',
+    keywords: ['concrete', 'slab', '5 inch', '5"', 'slab on grade', 'sog', 'five'],
+    applicableTo: ['area'],
+    createdBy: 'system',
+    items: [
       {
         jocItem: {
-          taskCode: '03210000-0010',
-          description: 'Welded Wire Fabric Reinforcement, 6x6-W1.4xW1.4',
+          taskCode: '03311300-0004',
+          description: '5" 3,000 PSI Slab On Grade Concrete Slab Assembly',
           unit: 'SF',
-          unitCost: 2.50,
+          unitCost: 9.80,
         },
         quantityFactor: 1.0,
       },
@@ -727,27 +739,78 @@ export const ASSEMBLY_LIBRARY: Assembly[] = [
   {
     id: 'concrete-slab-6',
     name: 'Concrete Slab 6"',
-    description: '6" concrete slab on grade with reinforcing',
+    description: '6" concrete slab on grade (3,000 PSI)',
     category: 'general',
-    keywords: ['concrete', 'slab', '6 inch', '6"', 'slab on grade', 'heavy duty'],
+    keywords: ['concrete', 'slab', '6 inch', '6"', 'slab on grade', 'sog', 'six'],
     applicableTo: ['area'],
     createdBy: 'system',
     items: [
       {
         jocItem: {
-          taskCode: '03300000-0020',
-          description: 'Cast-In-Place Concrete, 6" Slab on Grade',
+          taskCode: '03311300-0005',
+          description: '6" 3,000 PSI Slab On Grade Concrete Slab Assembly',
           unit: 'SF',
-          unitCost: 15.75,
+          unitCost: 10.89,
         },
         quantityFactor: 1.0,
       },
+    ],
+  },
+  {
+    id: 'concrete-slab-8',
+    name: 'Concrete Slab 8"',
+    description: '8" concrete slab on grade (3,000 PSI)',
+    category: 'general',
+    keywords: ['concrete', 'slab', '8 inch', '8"', 'slab on grade', 'sog', 'eight', 'heavy'],
+    applicableTo: ['area'],
+    createdBy: 'system',
+    items: [
       {
         jocItem: {
-          taskCode: '03210000-0010',
-          description: 'Welded Wire Fabric Reinforcement, 6x6-W1.4xW1.4',
+          taskCode: '03311300-0007',
+          description: '8" 3,000 PSI Slab On Grade Concrete Slab Assembly',
           unit: 'SF',
-          unitCost: 2.50,
+          unitCost: 12.71,
+        },
+        quantityFactor: 1.0,
+      },
+    ],
+  },
+  {
+    id: 'concrete-slab-10',
+    name: 'Concrete Slab 10"',
+    description: '10" concrete slab on grade (3,000 PSI)',
+    category: 'general',
+    keywords: ['concrete', 'slab', '10 inch', '10"', 'slab on grade', 'sog', 'ten', 'heavy duty'],
+    applicableTo: ['area'],
+    createdBy: 'system',
+    items: [
+      {
+        jocItem: {
+          taskCode: '03311300-0008',
+          description: '10" 3,000 PSI Slab On Grade Concrete Slab Assembly',
+          unit: 'SF',
+          unitCost: 14.83,
+        },
+        quantityFactor: 1.0,
+      },
+    ],
+  },
+  {
+    id: 'concrete-slab-12',
+    name: 'Concrete Slab 12"',
+    description: '12" concrete slab on grade (3,000 PSI)',
+    category: 'general',
+    keywords: ['concrete', 'slab', '12 inch', '12"', 'slab on grade', 'sog', 'twelve', 'structural'],
+    applicableTo: ['area'],
+    createdBy: 'system',
+    items: [
+      {
+        jocItem: {
+          taskCode: '03311300-0009',
+          description: '12" 3,000 PSI Slab On Grade Concrete Slab Assembly',
+          unit: 'SF',
+          unitCost: 16.58,
         },
         quantityFactor: 1.0,
       },
@@ -795,10 +858,16 @@ const ASSEMBLY_PATTERNS: { pattern: RegExp; assemblyIds: string[]; boost: number
   { pattern: /\baluminum\s*(storefront|glazing)/i, assemblyIds: ['storefront-standard'], boost: 85 },
   { pattern: /\b(entrance|entry)\s*door/i, assemblyIds: ['storefront-door', 'door-install-hollow'], boost: 70 },
   
-  // Concrete patterns
-  { pattern: /\b(4|four)[\s"']*(?:inch|in)?\s*(concrete|slab)/i, assemblyIds: ['concrete-slab-4'], boost: 90 },
-  { pattern: /\b(6|six)[\s"']*(?:inch|in)?\s*(concrete|slab)/i, assemblyIds: ['concrete-slab-6'], boost: 90 },
-  { pattern: /\bslab\s*on\s*grade/i, assemblyIds: ['concrete-slab-4', 'concrete-slab-6'], boost: 80 },
+  // Concrete patterns - ALL thicknesses (4", 5", 6", 8", 10", 12")
+  { pattern: /\b(4|four)[\s"']*(?:inch|in|")?\s*(concrete|slab)/i, assemblyIds: ['concrete-slab-4'], boost: 100 },
+  { pattern: /\b(5|five)[\s"']*(?:inch|in|")?\s*(concrete|slab)/i, assemblyIds: ['concrete-slab-5'], boost: 100 },
+  { pattern: /\b(6|six)[\s"']*(?:inch|in|")?\s*(concrete|slab)/i, assemblyIds: ['concrete-slab-6'], boost: 100 },
+  { pattern: /\b(8|eight)[\s"']*(?:inch|in|")?\s*(concrete|slab)/i, assemblyIds: ['concrete-slab-8'], boost: 100 },
+  { pattern: /\b(10|ten)[\s"']*(?:inch|in|")?\s*(concrete|slab)/i, assemblyIds: ['concrete-slab-10'], boost: 100 },
+  { pattern: /\b(12|twelve)[\s"']*(?:inch|in|")?\s*(concrete|slab)/i, assemblyIds: ['concrete-slab-12'], boost: 100 },
+  // Also match "concrete slab X"" or "slab X""
+  { pattern: /(?:concrete\s*)?slab[\s,]*(\d+)[\s"']/i, assemblyIds: [], boost: 0 }, // Dynamic - handled specially
+  { pattern: /\bslab\s*on\s*grade/i, assemblyIds: ['concrete-slab-4', 'concrete-slab-6', 'concrete-slab-8'], boost: 70 },
   { pattern: /\bsidewalk/i, assemblyIds: ['sidewalk'], boost: 95 },
   
   // Drywall patterns
@@ -833,13 +902,56 @@ const ASSEMBLY_PATTERNS: { pattern: RegExp; assemblyIds: string[]; boost: number
 // SEARCH / MATCHING FUNCTIONS
 // ============================================
 
+// Number word to digit mapping
+const NUMBER_WORDS: Record<string, string> = {
+  'four': '4', 'five': '5', 'six': '6', 'seven': '7', 'eight': '8',
+  'ten': '10', 'twelve': '12',
+};
+
+/**
+ * Extract thickness/dimension from query
+ * "8" concrete slab" → "8"
+ * "eight inch block" → "8"
+ * "12 inch slab" → "12"
+ */
+function extractThickness(query: string): string | null {
+  // Match patterns like: 8", 8 inch, 8in, eight, etc.
+  const patterns = [
+    /\b(\d+)[\s"']*(?:inch|in|")?/i,                    // "8", "8 inch", "8""
+    /\b(four|five|six|seven|eight|ten|twelve)\b/i,      // number words
+  ];
+  
+  for (const pattern of patterns) {
+    const match = query.match(pattern);
+    if (match) {
+      const value = match[1].toLowerCase();
+      return NUMBER_WORDS[value] || value;
+    }
+  }
+  return null;
+}
+
+/**
+ * Check if query mentions concrete/slab
+ */
+function isConcreteSlab(query: string): boolean {
+  return /\b(concrete|slab|sog)\b/i.test(query);
+}
+
+/**
+ * Check if query mentions CMU/block/masonry
+ */
+function isCMUBlock(query: string): boolean {
+  return /\b(cmu|block|masonry)\b/i.test(query);
+}
+
 /**
  * Smart Assembly Search - The Magic! ✨
  * 
  * Uses pattern matching to understand what you're measuring:
+ * - "8" concrete slab" → Concrete Slab 8"
  * - "8 inch block wall" → CMU Wall 8"
  * - "storefront" → Aluminum Storefront + Storefront Door
- * - "wall patch" → Wall Patch assembly
  */
 export function searchAssemblies(query: string, measurementType?: string): Assembly[] {
   if (!query || query.length < 2) return [];
@@ -850,10 +962,36 @@ export function searchAssemblies(query: string, measurementType?: string): Assem
   // Score each assembly
   const scored: { assembly: Assembly; score: number }[] = [];
   
-  // First, check pattern matches (highest priority)
+  // SMART THICKNESS MATCHING - Extract dimension and match to correct assembly
+  const thickness = extractThickness(query);
+  if (thickness) {
+    // Concrete slab with specific thickness
+    if (isConcreteSlab(query)) {
+      const slabId = `concrete-slab-${thickness}`;
+      const slabAssembly = ASSEMBLY_LIBRARY.find(a => a.id === slabId);
+      if (slabAssembly) {
+        if (!measurementType || slabAssembly.applicableTo.includes(measurementType as any)) {
+          scored.push({ assembly: slabAssembly, score: 200 }); // Exact thickness match = highest score
+        }
+      }
+    }
+    
+    // CMU/Block wall with specific thickness
+    if (isCMUBlock(query)) {
+      const cmuId = `cmu-wall-${thickness}`;
+      const cmuAssembly = ASSEMBLY_LIBRARY.find(a => a.id === cmuId);
+      if (cmuAssembly) {
+        if (!measurementType || cmuAssembly.applicableTo.includes(measurementType as any)) {
+          scored.push({ assembly: cmuAssembly, score: 200 }); // Exact thickness match = highest score
+        }
+      }
+    }
+  }
+  
+  // Check pattern matches (high priority)
   const patternMatches = new Set<string>();
   for (const { pattern, assemblyIds, boost } of ASSEMBLY_PATTERNS) {
-    if (pattern.test(query)) {
+    if (pattern.test(query) && assemblyIds.length > 0) {
       assemblyIds.forEach(id => {
         patternMatches.add(id);
         const assembly = ASSEMBLY_LIBRARY.find(a => a.id === id);
@@ -862,7 +1000,10 @@ export function searchAssemblies(query: string, measurementType?: string): Assem
           if (measurementType && !assembly.applicableTo.includes(measurementType as any)) {
             return;
           }
-          scored.push({ assembly, score: boost + 50 }); // Pattern matches get big boost
+          // Don't add if we already have an exact thickness match
+          if (!scored.some(s => s.assembly.id === id)) {
+            scored.push({ assembly, score: boost + 50 });
+          }
         }
       });
     }
