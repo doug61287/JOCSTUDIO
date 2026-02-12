@@ -155,7 +155,28 @@ export function MeasurementPanel() {
     });
     
     // Filter out children from main list (they'll be shown under their parent)
-    const topLevel = filtered.filter(m => !childIds.has(m.id));
+    // Also hide count measurements that look like fittings (elbow, tee, etc.) if they have a parent
+    const fittingKeywords = ['elbow', 'tee', 'coupling', 'reducer', 'cap', 'union', 'flange', 'valve', 'hanger', 'escutcheon'];
+    
+    const topLevel = filtered.filter(m => {
+      // Always hide explicit children
+      if (childIds.has(m.id)) return false;
+      
+      // Hide fitting-type count measurements that have a parentMeasurementId
+      if (m.type === 'count' && m.parentMeasurementId) {
+        return false; // It's a child, don't show at top level
+      }
+      
+      // Hide 0 EA count measurements that look like fittings (legacy placeholders)
+      if (m.type === 'count' && m.value === 0) {
+        const name = (m.name || '').toLowerCase();
+        const jocDesc = m.jocItems?.[0]?.description?.toLowerCase() || '';
+        const isFitting = fittingKeywords.some(kw => name.includes(kw) || jocDesc.includes(kw));
+        if (isFitting) return false; // Hide 0 EA fitting placeholders
+      }
+      
+      return true;
+    });
     
     const ungrouped: Measurement[] = [];
     const byGroup: Record<string, Measurement[]> = {};
@@ -304,43 +325,53 @@ export function MeasurementPanel() {
     const mainItem = assembly.items.find(i => i.quantityFactor === 1.0);
     const parentTaskCode = mainItem?.jocItem.taskCode || '';
     
-    // Find child measurements that were spawned for counting fittings
-    // Check both taskCode AND fitting type keywords (elbow, tee, etc.)
-    const children = project?.measurements.filter(m => 
-      m.parentMeasurementId === measurement.id && 
+    // Find ALL child measurements linked to this parent (not just by parentMeasurementId)
+    // Also check by name similarity for older measurements
+    const allChildren = project?.measurements.filter(m => 
       m.type === 'count' && 
-      m.value > 0 // Has been counted
+      m.value > 0 && // Has been counted
+      (
+        m.parentMeasurementId === measurement.id || // Direct parent link
+        (m.name || '').toLowerCase().includes(measurement.name?.toLowerCase() || '____') // Name contains parent name
+      )
     ) || [];
     
-    const countedFittingCodes = new Set(
-      children.flatMap(m => m.jocItems?.map(i => i.taskCode) || [])
-    );
+    // Build set of counted fitting types from ALL children
+    const countedTypes = new Set<string>();
+    allChildren.forEach(m => {
+      const name = (m.name || '').toLowerCase();
+      const jocDesc = m.jocItems?.[0]?.description?.toLowerCase() || '';
+      const combined = name + ' ' + jocDesc;
+      
+      if (combined.includes('elbow')) countedTypes.add('elbow');
+      if (combined.includes('tee')) countedTypes.add('tee');
+      if (combined.includes('coupling')) countedTypes.add('coupling');
+      if (combined.includes('reducer')) countedTypes.add('reducer');
+      if (combined.includes('cap')) countedTypes.add('cap');
+      if (combined.includes('union')) countedTypes.add('union');
+      if (combined.includes('flange')) countedTypes.add('flange');
+      if (combined.includes('valve')) countedTypes.add('valve');
+      if (combined.includes('hanger')) countedTypes.add('hanger');
+      if (combined.includes('escutcheon')) countedTypes.add('escutcheon');
+    });
     
-    // Also check by fitting type in name (in case taskCode doesn't match exactly)
-    const countedFittingTypes = new Set(
-      children.map(m => {
-        const name = (m.name || '').toLowerCase();
-        if (name.includes('elbow')) return 'elbow';
-        if (name.includes('tee')) return 'tee';
-        if (name.includes('coupling')) return 'coupling';
-        if (name.includes('reducer')) return 'reducer';
-        return null;
-      }).filter(Boolean)
-    );
-    
-    // Return items with quantityFactor < 1, excluding already-counted ones
+    // Return items with quantityFactor < 1, excluding already-counted types
     return assembly.items
       .filter(item => item.quantityFactor < 1.0)
       .filter(item => {
-        // Skip if taskCode matches
-        if (countedFittingCodes.has(item.jocItem.taskCode)) return false;
-        
-        // Skip if fitting type matches
         const desc = item.jocItem.description.toLowerCase();
-        if (countedFittingTypes.has('elbow') && desc.includes('elbow')) return false;
-        if (countedFittingTypes.has('tee') && desc.includes('tee')) return false;
-        if (countedFittingTypes.has('coupling') && desc.includes('coupling')) return false;
-        if (countedFittingTypes.has('reducer') && desc.includes('reducer')) return false;
+        
+        // Skip if fitting type has been counted
+        if (countedTypes.has('elbow') && desc.includes('elbow')) return false;
+        if (countedTypes.has('tee') && desc.includes('tee')) return false;
+        if (countedTypes.has('coupling') && desc.includes('coupling')) return false;
+        if (countedTypes.has('reducer') && desc.includes('reducer')) return false;
+        if (countedTypes.has('cap') && desc.includes('cap')) return false;
+        if (countedTypes.has('union') && desc.includes('union')) return false;
+        if (countedTypes.has('flange') && desc.includes('flange')) return false;
+        if (countedTypes.has('valve') && desc.includes('valve')) return false;
+        if (countedTypes.has('hanger') && desc.includes('hanger')) return false;
+        if (countedTypes.has('escutcheon') && desc.includes('escutcheon')) return false;
         
         return true;
       })
