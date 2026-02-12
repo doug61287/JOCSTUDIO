@@ -241,8 +241,10 @@ export function MeasurementCanvas({ width, height, pageNumber }: MeasurementCanv
     ctx.rect(0, 0, width, height);
     ctx.clip();
     
-    // Draw existing measurements (filtered by current page)
-    const pageMeasurements = project.measurements.filter(m => m.pageNumber === pageNumber);
+    // Draw existing measurements (filtered by current page AND visibility)
+    const pageMeasurements = project.measurements.filter(m => 
+      m.pageNumber === pageNumber && m.visible !== false
+    );
     pageMeasurements.forEach((m) => {
       const isSelected = m.id === selectedMeasurement;
       const baseColor = m.color;
