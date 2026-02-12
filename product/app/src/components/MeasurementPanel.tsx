@@ -293,6 +293,9 @@ export function MeasurementPanel() {
       }));
   };
 
+  // State for showing count prompt
+  const [countingPrompt, setCountingPrompt] = useState<{ itemName: string; measurementId: string } | null>(null);
+
   /**
    * Spawn a new COUNT measurement for a companion item
    * Links back to the parent measurement for context
@@ -333,6 +336,12 @@ export function MeasurementPanel() {
     
     // Expand it to show the JOC item
     setExpandedItems(prev => new Set([...prev, newId]));
+    
+    // Show counting prompt
+    setCountingPrompt({ itemName: shortLabel, measurementId: newId });
+    
+    // Auto-hide prompt after 5 seconds
+    setTimeout(() => setCountingPrompt(null), 5000);
   };
 
   // Handle name input change with assembly suggestions
@@ -680,16 +689,17 @@ export function MeasurementPanel() {
                           e.stopPropagation();
                           handleSpawnCompanionCount(m, jocItem, parentTaskCode);
                         }}
-                        className="flex items-center gap-1.5 px-2 py-1 bg-amber-500/20 hover:bg-amber-500/30 text-amber-200 rounded text-[10px] font-medium transition-colors group"
+                        className="flex items-center gap-1.5 px-2.5 py-1.5 bg-amber-500/20 hover:bg-amber-500/40 text-amber-200 rounded-lg text-[11px] font-medium transition-all hover:scale-105 border border-amber-500/30 hover:border-amber-500/60 group"
                       >
-                        <Hash className="w-2.5 h-2.5 text-amber-400 group-hover:scale-110 transition-transform" />
+                        <span className="px-1.5 py-0.5 bg-amber-500/30 rounded text-[9px] text-amber-300 uppercase tracking-wider">Count</span>
                         <span>{label}</span>
-                        <span className="text-amber-400/70">${jocItem.unitCost.toFixed(0)}/EA</span>
+                        <span className="text-amber-400/60 text-[10px]">${jocItem.unitCost.toFixed(0)}</span>
                       </button>
                     ))}
                   </div>
-                  <p className="text-[9px] text-white/30 mt-1.5 ml-4">
-                    Click to count these fittings on the drawing
+                  <p className="text-[9px] text-white/40 mt-2 flex items-center gap-1">
+                    <MousePointer2 className="w-3 h-3" />
+                    Click a button above, then click on drawing to count
                   </p>
                 </div>
               );
@@ -840,6 +850,33 @@ export function MeasurementPanel() {
           </div>
         </div>
       </div>
+
+      {/* 🎯 COUNT MODE PROMPT - Shows when starting companion count */}
+      {countingPrompt && (
+        <div className="mx-3 mt-2 p-3 bg-amber-500/20 border border-amber-500/40 rounded-lg animate-pulse">
+          <div className="flex items-center justify-between gap-2">
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 rounded-full bg-amber-500 flex items-center justify-center">
+                <Hash className="w-4 h-4 text-black" />
+              </div>
+              <div>
+                <p className="text-sm font-bold text-amber-200">
+                  Counting: {countingPrompt.itemName}
+                </p>
+                <p className="text-xs text-amber-300/80">
+                  👆 Click on the drawing to place each count
+                </p>
+              </div>
+            </div>
+            <button
+              onClick={() => setCountingPrompt(null)}
+              className="p-1.5 hover:bg-white/10 rounded text-white/60 hover:text-white"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Active JOC Item */}
       {activeJOCItem && (
