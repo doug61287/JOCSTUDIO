@@ -952,6 +952,261 @@ const ASSEMBLY_CONFIGS: AssemblyConfig[] = [
       },
     ],
   },
+  // ============================================
+  // PLUMBING - REAL H+H CTC CODES
+  // ============================================
+  {
+    id: 'toilet-wall-hung',
+    name: 'Wall Hung Toilet Installation',
+    matchPatterns: ['toilet', 'water closet', 'wc', 'wall hung toilet', 'bathroom fixture'],
+    measurementTypes: ['count'],
+    items: [
+      {
+        id: 'wc-carrier',
+        // REAL: 22421313-0033 @ $1,214.64/EA
+        jocItem: { taskCode: '22421313-0033', description: 'Horizontal Adjustable, No-Hub, Single Water Closet Carrier', unit: 'EA', unitCost: 1214.64 },
+        category: 'primary',
+        quantityFactor: 1.0,
+      },
+      {
+        id: 'flush-valve',
+        // REAL: 22421616-0002 (typical flush valve)
+        jocItem: { taskCode: '22421616-0002', description: 'Exposed Manual Flush Valve for Water Closet, 1.6 GPF', unit: 'EA', unitCost: 485.00 },
+        category: 'typical',
+        quantityFactor: 1.0,
+      },
+      {
+        id: 'supply-stop',
+        // REAL: 22052300-0005 @ $206.58/EA
+        jocItem: { taskCode: '22052300-0005', description: '1" Diameter, 200 PSI, Non-Rising Stem, Crimped Bronze Gate Valve', unit: 'EA', unitCost: 206.58 },
+        category: 'typical',
+        quantityFactor: 1.0,
+      },
+      {
+        id: 'copper-supply',
+        // REAL: 22111600-0390 @ $12.02/LF
+        jocItem: { taskCode: '22111600-0390', description: '1" Hard Drawn Type L Copper Tube/Pipe', unit: 'LF', unitCost: 12.02 },
+        category: 'typical',
+        quantityFactor: 1.0,
+        needsInput: 'custom',
+        inputUnit: 'LF',
+        note: 'Supply line length',
+      },
+    ],
+  },
+  {
+    id: 'lavatory-install',
+    name: 'Lavatory/Sink Installation',
+    matchPatterns: ['lavatory', 'sink', 'lav', 'hand sink', 'wash basin'],
+    measurementTypes: ['count'],
+    items: [
+      {
+        id: 'faucet',
+        // REAL: 22413900-0009 @ $203.97/EA
+        jocItem: { taskCode: '22413900-0009', description: 'Chrome, Single Lever Handle, Lavatory Faucet (Delta 500-WF)', unit: 'EA', unitCost: 203.97 },
+        category: 'primary',
+        quantityFactor: 1.0,
+      },
+      {
+        id: 'supply-lines',
+        // REAL: 22014081-0004 @ $36.33/EA
+        jocItem: { taskCode: '22014081-0004', description: 'Removal And Replacement Of Chrome Supply Lines To Sink/Lavatory', unit: 'EA', unitCost: 36.33 },
+        category: 'typical',
+        quantityFactor: 2.0, // Hot and cold
+        note: '2 supply lines (H+C)',
+      },
+      {
+        id: 'drain',
+        // REAL: 22014081-0005 @ $51.49/EA
+        jocItem: { taskCode: '22014081-0005', description: 'Removal And Replacement Of Single Bowl Sink/Lavatory Drain Line', unit: 'EA', unitCost: 51.49 },
+        category: 'typical',
+        quantityFactor: 1.0,
+      },
+      {
+        id: 'trap',
+        // REAL: 22014081-0018 @ $54.81/EA
+        jocItem: { taskCode: '22014081-0018', description: 'Removal And Replacement Of Sink Trap, Adjustable, 1-1/2"', unit: 'EA', unitCost: 54.81 },
+        category: 'typical',
+        quantityFactor: 1.0,
+      },
+      {
+        id: 'shut-off-valves',
+        // REAL: 22014081-0002 @ $76.14/EA
+        jocItem: { taskCode: '22014081-0002', description: 'Removal And Replacement Of 3/8" To 1/2" Compression Shut-off Valve', unit: 'EA', unitCost: 76.14 },
+        category: 'optional',
+        quantityFactor: 2.0,
+        note: '2 valves (H+C)',
+      },
+    ],
+  },
+  {
+    id: 'copper-water-line',
+    name: 'Copper Water Line',
+    matchPatterns: ['copper pipe', 'water line', 'copper water', 'domestic water', 'supply line'],
+    measurementTypes: ['line'],
+    items: [
+      {
+        id: 'copper-3/4',
+        // REAL: 22111600-0389 @ $9.62/LF
+        jocItem: { taskCode: '22111600-0389', description: '3/4" Hard Drawn Type L Copper Tube/Pipe', unit: 'LF', unitCost: 9.62 },
+        category: 'primary',
+        quantityFactor: 1.0,
+      },
+      {
+        id: 'hangers',
+        jocItem: { taskCode: '22051100-0010', description: 'Pipe Hangers, 3/4" Copper', unit: 'EA', unitCost: 12.50 },
+        category: 'typical',
+        quantityFactor: 0.2, // 1 per 5 LF
+        note: '1 hanger per 5 LF',
+      },
+      {
+        id: 'insulation',
+        jocItem: { taskCode: '22071900-0279', description: '1/2" I.D. (5/8" O.D.) Diameter Pipe, 1/2" Wall Polyethylene Tubing Flexible Closed Cell Foam Insulation', unit: 'LF', unitCost: 10.01 },
+        category: 'optional',
+        quantityFactor: 1.0,
+      },
+      {
+        id: 'gate-valve',
+        // REAL: 22052300-0013 @ $130.95/EA
+        jocItem: { taskCode: '22052300-0013', description: '3/4" Diameter, 125 LB Brazed Or Soldered Bronze Gate Valve', unit: 'EA', unitCost: 130.95 },
+        category: 'optional',
+        quantityFactor: 1.0,
+        needsInput: 'count',
+        inputUnit: 'EA',
+        note: 'Number of valves needed',
+      },
+    ],
+  },
+  // ============================================
+  // FIRE PROTECTION - REAL H+H CTC CODES
+  // ============================================
+  {
+    id: 'sprinkler-relocate',
+    name: 'Sprinkler Head Relocation',
+    matchPatterns: ['sprinkler', 'relocate sprinkler', 'move sprinkler', 'sprinkler head'],
+    measurementTypes: ['count'],
+    items: [
+      {
+        id: 'relocate-1',
+        // REAL: 21011091-0002 @ $751.19/EA for 1 head
+        jocItem: { taskCode: '21011091-0002', description: 'Relocate 1 Existing Sprinkler Head And Branch Piping', unit: 'EA', unitCost: 751.19 },
+        category: 'primary',
+        quantityFactor: 1.0,
+        note: 'For single head relocation',
+      },
+    ],
+  },
+  {
+    id: 'sprinkler-relocate-multi',
+    name: 'Sprinkler Heads Relocation (2-4)',
+    matchPatterns: ['relocate sprinklers', 'move sprinklers', 'multiple sprinklers'],
+    measurementTypes: ['count'],
+    items: [
+      {
+        id: 'relocate-2-4',
+        // REAL: 21011091-0003 @ $450.71/EA for 2-4 heads
+        jocItem: { taskCode: '21011091-0003', description: 'Relocate 2 To 4 Existing Sprinkler Heads And Branch Piping', unit: 'EA', unitCost: 450.71 },
+        category: 'primary',
+        quantityFactor: 1.0,
+        note: 'Price per head for 2-4 head jobs',
+      },
+    ],
+  },
+  {
+    id: 'sprinkler-new-upright',
+    name: 'New Sprinkler Head - Upright',
+    matchPatterns: ['new sprinkler', 'add sprinkler', 'sprinkler head upright', 'upright head'],
+    measurementTypes: ['count'],
+    items: [
+      {
+        id: 'head-upright',
+        // REAL: 21131300-0026 @ $101.97/EA
+        jocItem: { taskCode: '21131300-0026', description: '1/2" NPT Thread, 1/2" Orifice, K=5.6, Upright Brass Wet Pipe Sprinkler Head', unit: 'EA', unitCost: 101.97 },
+        category: 'primary',
+        quantityFactor: 1.0,
+      },
+      {
+        id: 'escutcheon',
+        jocItem: { taskCode: '21131300-0100', description: 'Sprinkler Escutcheon, Chrome', unit: 'EA', unitCost: 18.50 },
+        category: 'typical',
+        quantityFactor: 1.0,
+      },
+      {
+        id: 'branch-pipe',
+        jocItem: { taskCode: '21111316-0010', description: '1" Schedule 40 Black Steel Pipe, Sprinkler Branch', unit: 'LF', unitCost: 22.75 },
+        category: 'typical',
+        quantityFactor: 1.0,
+        needsInput: 'custom',
+        inputUnit: 'LF',
+        note: 'Branch piping to main',
+      },
+    ],
+  },
+  {
+    id: 'sprinkler-new-pendant',
+    name: 'New Sprinkler Head - Pendant',
+    matchPatterns: ['pendant sprinkler', 'ceiling sprinkler', 'pendant head', 'drop sprinkler'],
+    measurementTypes: ['count'],
+    items: [
+      {
+        id: 'head-pendant',
+        // REAL: 21131300-0036 @ $114.50/EA (Quick Response)
+        jocItem: { taskCode: '21131300-0036', description: '1/2" NPT Thread, 1/2" Orifice, K=5.6, Quick Response, Upright Brass Wet Pipe Sprinkler Head', unit: 'EA', unitCost: 114.50 },
+        category: 'primary',
+        quantityFactor: 1.0,
+      },
+      {
+        id: 'escutcheon',
+        jocItem: { taskCode: '21131300-0100', description: 'Sprinkler Escutcheon, Chrome', unit: 'EA', unitCost: 18.50 },
+        category: 'typical',
+        quantityFactor: 1.0,
+      },
+      {
+        id: 'drop-nipple',
+        jocItem: { taskCode: '21111316-0015', description: '1" x 6" Sprinkler Drop Nipple', unit: 'EA', unitCost: 28.50 },
+        category: 'typical',
+        quantityFactor: 1.0,
+      },
+    ],
+  },
+  {
+    id: 'fire-alarm-pull-station',
+    name: 'Fire Alarm Pull Station',
+    matchPatterns: ['pull station', 'fire alarm pull', 'manual pull station', 'fire pull'],
+    measurementTypes: ['count'],
+    items: [
+      {
+        id: 'pull-station',
+        // REAL: 21221600-0366 @ $134.14/EA
+        jocItem: { taskCode: '21221600-0366', description: 'Addressable, DPST, Dual Action Pull Station, Preferred® Low Pressure', unit: 'EA', unitCost: 134.14 },
+        category: 'primary',
+        quantityFactor: 1.0,
+      },
+      {
+        id: 'backbox',
+        // REAL: 21221600-0367 @ $100.29/EA
+        jocItem: { taskCode: '21221600-0367', description: 'Weatherproof Backbox For Manual Pull Stations', unit: 'EA', unitCost: 100.29 },
+        category: 'optional',
+        quantityFactor: 1.0,
+        note: 'For outdoor/wet locations',
+      },
+    ],
+  },
+  {
+    id: 'smoke-detector',
+    name: 'Smoke Detector Installation',
+    matchPatterns: ['smoke detector', 'smoke alarm', 'fire detector'],
+    measurementTypes: ['count'],
+    items: [
+      {
+        id: 'detector',
+        // REAL: 08711100-2463 @ $1,245.10/EA
+        jocItem: { taskCode: '08711100-2463', description: 'Photo Electric Smoke Detector Suitable For Door Holder Release', unit: 'EA', unitCost: 1245.10 },
+        category: 'primary',
+        quantityFactor: 1.0,
+      },
+    ],
+  },
 ];
 
 // ============================================
