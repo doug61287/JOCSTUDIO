@@ -462,10 +462,99 @@ export function MeasurementPanel() {
   };
   
   // Handle configurator apply
-  const handleConfiguratorApply = (measurementId: string, jocItems: JOCItem[]) => {
+  const handleConfiguratorApply = (
+    measurementId: string, 
+    jocItems: JOCItem[], 
+    fittingsToCount?: JOCItem[], 
+    fittingsToFlag?: JOCItem[]
+  ) => {
+    const measurement = project?.measurements.find(m => m.id === measurementId);
+    if (!measurement) return;
+    
     updateMeasurement(measurementId, { jocItems, jocItem: undefined });
     setExpandedItems(prev => new Set([...prev, measurementId]));
     setShowConfigurator(null);
+    
+    // Handle fittings to count - spawn count measurements and start counting
+    if (fittingsToCount && fittingsToCount.length > 0) {
+      // Start counting the first one, queue the rest
+      const firstFitting = fittingsToCount[0];
+      handleSpawnCompanionCount(measurement, firstFitting, jocItems[0]?.taskCode || '');
+      
+      // If there are more, flag them for later with note to count
+      fittingsToCount.slice(1).forEach(fitting => {
+        const newId = generateId();
+        const shortLabel = fitting.description.split(',')[0].trim();
+        
+        const newMeasurement: Measurement = {
+          id: newId,
+          type: 'count',
+          points: [],
+          value: 0,
+          unit: 'EA',
+          pageNumber: measurement.pageNumber,
+          name: `${shortLabel} (from ${measurement.name || 'assembly'})`,
+          jocItems: [fitting],
+          color: '#f59e0b',
+          visible: true,
+          parentMeasurementId: measurementId,
+        };
+        
+        addMeasurement(newMeasurement);
+        
+        const flag: FlagType = {
+          id: generateId(),
+          type: 'verify',
+          title: `Count needed: ${shortLabel}`,
+          description: `Count on drawing after finishing current item.`,
+          measurementId: newId,
+          pageNumber: measurement.pageNumber,
+          status: 'open',
+          priority: 'medium',
+          createdAt: new Date(),
+        };
+        
+        flagMeasurement(newId, flag);
+      });
+    }
+    
+    // Handle fittings to flag - create placeholders with flags
+    if (fittingsToFlag && fittingsToFlag.length > 0) {
+      fittingsToFlag.forEach(fitting => {
+        const newId = generateId();
+        const shortLabel = fitting.description.split(',')[0].trim();
+        
+        const newMeasurement: Measurement = {
+          id: newId,
+          type: 'count',
+          points: [],
+          value: 0,
+          unit: 'EA',
+          pageNumber: measurement.pageNumber,
+          name: `${shortLabel} (from ${measurement.name || 'assembly'})`,
+          jocItems: [fitting],
+          color: '#ef4444',
+          visible: true,
+          parentMeasurementId: measurementId,
+        };
+        
+        addMeasurement(newMeasurement);
+        
+        const flag: FlagType = {
+          id: generateId(),
+          type: 'verify',
+          title: `Hard count needed: ${shortLabel}`,
+          description: `Placeholder from ${measurement.name || 'assembly'}. Count actual fittings on drawing.`,
+          measurementId: newId,
+          pageNumber: measurement.pageNumber,
+          status: 'open',
+          priority: 'medium',
+          createdAt: new Date(),
+        };
+        
+        flagMeasurement(newId, flag);
+      });
+    }
   };
 
   const handleCreateGroup = () => {
@@ -1167,7 +1256,9 @@ export function MeasurementPanel() {
         <AssemblyConfigurator
           measurement={showConfigurator.measurement}
           matchedAssembly={showConfigurator.assembly}
-          onApply={(items) => handleConfiguratorApply(showConfigurator.measurement.id, items)}
+          onApply={(items, fittingsToCount, fittingsToFlag) => 
+            handleConfiguratorApply(showConfigurator.measurement.id, items, fittingsToCount, fittingsToFlag)
+          }
           onCancel={() => setShowConfigurator(null)}
         />
       )}
