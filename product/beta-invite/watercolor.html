@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JOCHero Beta Invite - Watercolor</title>
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;600;700&family=Playfair+Display:wght@400;600&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body {
+      min-height: 100vh;
+      /* Paper texture feel */
+      background: 
+        radial-gradient(ellipse at 20% 30%, rgba(232, 132, 124, 0.08) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 20%, rgba(138, 202, 230, 0.08) 0%, transparent 50%),
+        radial-gradient(ellipse at 60% 80%, rgba(244, 162, 97, 0.06) 0%, transparent 50%),
+        #fdfcfa;
+      font-family: 'Inter', sans-serif;
+      padding: 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .card {
+      max-width: 500px;
+      background: white;
+      border-radius: 4px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+      padding: 0;
+      position: relative;
+      /* Rough paper edge effect */
+      border: 1px solid #e8e4df;
+    }
+    
+    /* Watercolor wash at top */
+    .watercolor-header {
+      height: 200px;
+      background: 
+        radial-gradient(ellipse at 10% 50%, rgba(232, 132, 124, 0.4) 0%, transparent 60%),
+        radial-gradient(ellipse at 30% 30%, rgba(244, 162, 97, 0.35) 0%, transparent 50%),
+        radial-gradient(ellipse at 70% 60%, rgba(138, 202, 230, 0.4) 0%, transparent 55%),
+        radial-gradient(ellipse at 90% 40%, rgba(69, 123, 157, 0.25) 0%, transparent 50%),
+        linear-gradient(180deg, #fef9f3 0%, #fff 100%);
+      border-radius: 4px 4px 0 0;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .hero-content {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 2rem;
+      text-align: center;
+    }
+    
+    .logo {
+      font-family: 'Caveat', cursive;
+      font-size: 4rem;
+      font-weight: 700;
+      color: #1a1a2e;
+      text-shadow: 2px 2px 0 rgba(255,255,255,0.8);
+    }
+    
+    .logo span {
+      color: #e8847c;
+    }
+    
+    .handwritten-tagline {
+      font-family: 'Caveat', cursive;
+      font-size: 1.5rem;
+      color: #457b9d;
+      transform: rotate(-2deg);
+      margin-top: -0.5rem;
+    }
+    
+    .content {
+      padding: 2rem 2.5rem;
+    }
+    
+    .invitation-text {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.1rem;
+      color: #334155;
+      line-height: 1.7;
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    
+    .handwritten-note {
+      font-family: 'Caveat', cursive;
+      font-size: 1.3rem;
+      color: #64748b;
+      text-align: center;
+      padding: 1.5rem;
+      background: linear-gradient(135deg, rgba(254,249,243,0.8) 0%, rgba(255,255,255,0.5) 100%);
+      border-radius: 8px;
+      border: 1px dashed #d4c5b5;
+      margin-bottom: 2rem;
+    }
+    
+    .features {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+    
+    .feature {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 0.75rem;
+      background: #fafaf9;
+      border-radius: 8px;
+      border-left: 3px solid;
+    }
+    
+    .feature:nth-child(1) { border-color: #e8847c; }
+    .feature:nth-child(2) { border-color: #f4a261; }
+    .feature:nth-child(3) { border-color: #8ecae6; }
+    
+    .feature-icon {
+      font-size: 1.5rem;
+    }
+    
+    .feature-text {
+      font-family: 'Caveat', cursive;
+      font-size: 1.2rem;
+      color: #334155;
+    }
+    
+    .cta-wrapper {
+      text-align: center;
+      padding: 1.5rem;
+      background: linear-gradient(180deg, transparent 0%, rgba(254,249,243,0.5) 100%);
+      border-radius: 0 0 4px 4px;
+    }
+    
+    .cta-button {
+      display: inline-block;
+      padding: 1rem 2.5rem;
+      background: linear-gradient(135deg, #e8847c 0%, #d4726a 100%);
+      color: white;
+      font-family: 'Caveat', cursive;
+      font-size: 1.4rem;
+      font-weight: 600;
+      text-decoration: none;
+      border-radius: 50px;
+      box-shadow: 0 4px 15px rgba(232, 132, 124, 0.4);
+      transition: all 0.3s ease;
+    }
+    
+    .cta-button:hover {
+      transform: translateY(-2px) rotate(1deg);
+      box-shadow: 0 6px 20px rgba(232, 132, 124, 0.5);
+    }
+    
+    .footer {
+      text-align: center;
+      padding: 1.5rem;
+      border-top: 1px solid #e8e4df;
+    }
+    
+    .schedule {
+      font-family: 'Caveat', cursive;
+      font-size: 1.2rem;
+      color: #457b9d;
+      line-height: 1.8;
+    }
+    
+    .schedule strong {
+      color: #1a1a2e;
+    }
+    
+    /* Decorative elements */
+    .corner-flourish {
+      position: absolute;
+      width: 60px;
+      height: 60px;
+      opacity: 0.3;
+    }
+    
+    .corner-flourish.top-right {
+      top: 10px;
+      right: 10px;
+      border-top: 2px solid #8ecae6;
+      border-right: 2px solid #8ecae6;
+    }
+    
+    .corner-flourish.bottom-left {
+      bottom: 10px;
+      left: 10px;
+      border-bottom: 2px solid #e8847c;
+      border-left: 2px solid #e8847c;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="corner-flourish top-right"></div>
+    <div class="corner-flourish bottom-left"></div>
+    
+    <div class="watercolor-header">
+      <div class="hero-content">
+        <h1 class="logo">JOC<span>Hero</span></h1>
+        <p class="handwritten-tagline">New York's First Smart Takeoff Tool</p>
+      </div>
+    </div>
+    
+    <div class="content">
+      <p class="invitation-text">
+        You've been selected to join an exclusive group of NYC construction professionals 
+        testing the future of JOC estimating.
+      </p>
+      
+      <div class="handwritten-note">
+        "Type what you're building. Get the codes you need.<br/>
+        It's that simple." ✨
+      </div>
+      
+      <div class="features">
+        <div class="feature">
+          <span class="feature-icon">📐</span>
+          <span class="feature-text">Draw measurements directly on plans</span>
+        </div>
+        <div class="feature">
+          <span class="feature-icon">🏥</span>
+          <span class="feature-text">65,000+ H+H CTC items built-in</span>
+        </div>
+        <div class="feature">
+          <span class="feature-icon">⚡</span>
+          <span class="feature-text">Smart assemblies for common work</span>
+        </div>
+      </div>
+    </div>
+    
+    <div class="cta-wrapper">
+      <a href="https://jochero.com/app" class="cta-button">
+        Start Building →
+      </a>
+    </div>
+    
+    <div class="footer">
+      <div class="schedule">
+        <strong>Beta Launch:</strong> February 2026<br/>
+        <strong>Access:</strong> Immediate<br/>
+        <strong>Spots:</strong> Limited to 25 testers
+      </div>
+    </div>
+  </div>
+</body>
+</html>
