@@ -6,6 +6,7 @@ import { AssemblyConfigurator, findMatchingAssembly, type AssemblyConfig } from 
 import { TierSelector } from './TierSelector';
 import { ComplexityPanel, ComplexitySummary } from './ComplexityPanel';
 import { calculateComplexityMultiplier } from '../utils/complexityFactors';
+import { hasAddDeductTiers, calculateAdjustedPrice } from '../utils/quantityTiers';
 import type { Assembly } from '../types';
 import { GuidedAssistant } from './GuidedAssistant';
 import { FormattingPanel } from './FormattingPanel';
@@ -40,6 +41,7 @@ import {
   AlertTriangle,
   MousePointer2,
   Link2,
+  TrendingDown,
 } from 'lucide-react';
 
 // Group colors
@@ -915,22 +917,53 @@ export function MeasurementPanel() {
         {/* Expanded JOC Items */}
         {isExpanded && (
           <div className="bg-white/[0.01] border-t border-white/[0.04]">
-            {jocItems.map((item) => (
-              <div 
-                key={item.taskCode}
-                className="flex items-center gap-2 px-3 py-1.5 pl-14 text-xs hover:bg-white/[0.02] group"
-              >
-                <span className="text-white/40 font-mono text-[10px]">{item.taskCode.slice(0, 11)}</span>
-                <span className="flex-1 truncate text-white/70">{getCleanItemName(item.description)}</span>
-                <span className="text-emerald-400/70 tabular-nums">${(m.value * item.unitCost).toFixed(0)}</span>
-                <button
-                  onClick={() => handleRemoveJocItem(m.id, item.taskCode)}
-                  className="w-5 h-5 flex items-center justify-center rounded opacity-0 group-hover:opacity-100 text-white/30 hover:text-red-400 transition-all"
+            {jocItems.map((item) => {
+              // Check for quantity multipliers
+              const hasMultiplier = hasAddDeductTiers(item.taskCode);
+              const multiplierInfo = hasMultiplier 
+                ? calculateAdjustedPrice(item.unitCost, item.taskCode, m.value)
+                : null;
+              const effectivePrice = multiplierInfo?.adjustedPrice || item.unitCost;
+              const savings = multiplierInfo && multiplierInfo.adjustment < 0 
+                ? Math.abs(multiplierInfo.adjustment) * m.value 
+                : 0;
+              
+              return (
+                <div 
+                  key={item.taskCode}
+                  className="px-3 py-1.5 pl-14 text-xs hover:bg-white/[0.02] group"
                 >
-                  <X className="w-3 h-3" />
-                </button>
-              </div>
-            ))}
+                  <div className="flex items-center gap-2">
+                    <span className="text-white/40 font-mono text-[10px]">{item.taskCode.slice(0, 11)}</span>
+                    <span className="flex-1 truncate text-white/70">{getCleanItemName(item.description)}</span>
+                    <span className="text-emerald-400/70 tabular-nums">${(m.value * effectivePrice).toFixed(0)}</span>
+                    <button
+                      onClick={() => handleRemoveJocItem(m.id, item.taskCode)}
+                      className="w-5 h-5 flex items-center justify-center rounded opacity-0 group-hover:opacity-100 text-white/30 hover:text-red-400 transition-all"
+                    >
+                      <X className="w-3 h-3" />
+                    </button>
+                  </div>
+                  {/* Multiplier indicator */}
+                  {hasMultiplier && multiplierInfo && multiplierInfo.adjustment !== 0 && (
+                    <div className="flex items-center gap-1.5 mt-1 ml-16">
+                      <TrendingDown className="w-3 h-3 text-cyan-400" />
+                      <span className="text-[10px] text-cyan-400">
+                        Multiplier: {multiplierInfo.tierLabel}
+                      </span>
+                      <span className="text-[10px] text-cyan-400/70">
+                        ({multiplierInfo.adjustment >= 0 ? '+' : ''}${multiplierInfo.adjustment.toFixed(2)}/ea)
+                      </span>
+                      {savings > 0 && (
+                        <span className="text-[10px] text-emerald-400 font-medium">
+                          Saved ${savings.toFixed(0)}!
+                        </span>
+                      )}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
             
             {/* 🔗 COMPANION ITEMS - Click to start count takeoff! */}
             {/* ONLY show for PIPE measurements (line/polyline), not for counts */}
