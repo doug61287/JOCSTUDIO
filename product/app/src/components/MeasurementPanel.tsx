@@ -143,7 +143,9 @@ export function MeasurementPanel() {
     // Build parent/child map
     const childrenByParent: Record<string, Measurement[]> = {};
     const childIds = new Set<string>();
+    const fittingKeywordsForLookup = ['elbow', 'tee', 'coupling', 'reducer', 'cap', 'union', 'flange', 'valve', 'hanger', 'escutcheon'];
     
+    // First pass: find measurements with explicit parentMeasurementId
     filtered.forEach((m) => {
       if (m.parentMeasurementId) {
         if (!childrenByParent[m.parentMeasurementId]) {
@@ -154,25 +156,63 @@ export function MeasurementPanel() {
       }
     });
     
+    // Second pass: find fitting counts and match them to potential parent pipes by size
+    // This catches fittings that weren't properly linked
+    const pipeMeasurements = filtered.filter(m => 
+      (m.type === 'line' || m.type === 'polyline') && m.sourceAssemblyId
+    );
+    
+    filtered.forEach((m) => {
+      if (m.type !== 'count' || childIds.has(m.id)) return;
+      
+      const name = (m.name || '').toLowerCase();
+      const jocDesc = m.jocItems?.[0]?.description?.toLowerCase() || '';
+      const isFitting = fittingKeywordsForLookup.some(kw => name.includes(kw) || jocDesc.includes(kw));
+      
+      if (isFitting && m.value > 0) {
+        // Extract size from name (e.g., "3"" from "3" Elbow")
+        const sizeMatch = (m.name || '').match(/^(\d+(?:["-]?\d*\/?\d*)?["']?)/);
+        const fittingSize = sizeMatch ? sizeMatch[1].replace(/["']/g, '') : '';
+        
+        // Find a pipe measurement with matching size
+        const matchingPipe = pipeMeasurements.find(pipe => {
+          const pipeName = (pipe.name || '').toLowerCase();
+          const pipeSize = pipeName.match(/^(\d+)/)?.[1] || '';
+          return pipeSize === fittingSize || pipeName.includes(fittingSize);
+        });
+        
+        if (matchingPipe && !childrenByParent[matchingPipe.id]?.some(c => c.id === m.id)) {
+          if (!childrenByParent[matchingPipe.id]) {
+            childrenByParent[matchingPipe.id] = [];
+          }
+          childrenByParent[matchingPipe.id].push(m);
+          childIds.add(m.id);
+        }
+      }
+    });
+    
     // Filter out children from main list (they'll be shown under their parent)
-    // Also hide count measurements that look like fittings (elbow, tee, etc.) if they have a parent
+    // AGGRESSIVE: Hide ALL count measurements that look like fittings from top level
     const fittingKeywords = ['elbow', 'tee', 'coupling', 'reducer', 'cap', 'union', 'flange', 'valve', 'hanger', 'escutcheon'];
     
     const topLevel = filtered.filter(m => {
       // Always hide explicit children
       if (childIds.has(m.id)) return false;
       
-      // Hide fitting-type count measurements that have a parentMeasurementId
-      if (m.type === 'count' && m.parentMeasurementId) {
+      // Hide ANY count measurement that has a parentMeasurementId
+      if (m.parentMeasurementId) {
         return false; // It's a child, don't show at top level
       }
       
-      // Hide 0 EA count measurements that look like fittings (legacy placeholders)
-      if (m.type === 'count' && m.value === 0) {
+      // AGGRESSIVE: Hide ALL count measurements that look like fittings
+      // They should only appear as children under their parent pipe
+      if (m.type === 'count') {
         const name = (m.name || '').toLowerCase();
         const jocDesc = m.jocItems?.[0]?.description?.toLowerCase() || '';
         const isFitting = fittingKeywords.some(kw => name.includes(kw) || jocDesc.includes(kw));
-        if (isFitting) return false; // Hide 0 EA fitting placeholders
+        if (isFitting) {
+          return false; // Hide fitting counts - they belong under their parent
+        }
       }
       
       return true;
