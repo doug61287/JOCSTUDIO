@@ -25,6 +25,38 @@ console.log(`JOC Catalogue loaded: ${jocCatalogue.length.toLocaleString()} items
 // Maps common search terms to catalogue terminology
 // ============================================
 
+// ============================================
+// PRODUCT VS SERVICE DISAMBIGUATION
+// When searching for products (sprinkler head, valve, etc.), 
+// boost actual product items and de-boost service items (relocate, demo, etc.)
+// ============================================
+const PRODUCT_SEARCH_BOOSTS: Record<string, { boost: string[]; deBoost: string[] }> = {
+  'sprinkler head': { 
+    boost: ['21131300'],  // Actual sprinkler head products
+    deBoost: ['21011091', '21011092'] // Relocate/modify services
+  },
+  'head': { 
+    boost: ['21131300'],
+    deBoost: ['21011091']
+  },
+  'escutcheon': { 
+    boost: ['21131300'],  // Escutcheons are in same range as heads
+    deBoost: []
+  },
+  'valve': {
+    boost: ['21052', '22052', '23052'],  // Valve products
+    deBoost: ['21011', '22011']  // Service items
+  },
+  'pipe': {
+    boost: ['21111', '21134', '22111', '23311'],  // Actual pipe products
+    deBoost: ['21011', '22011']  // Service items
+  },
+  'elbow': { boost: ['21134'], deBoost: [] },
+  'tee': { boost: ['21134'], deBoost: [] },
+  'coupling': { boost: ['21134'], deBoost: [] },
+  'fitting': { boost: ['21134'], deBoost: [] },
+};
+
 const KEYWORD_SYNONYMS: Record<string, string[]> = {
   // Masonry terms
   'masonry': ['concrete block', 'cmu', 'brick', 'block wall', 'mortar'],
@@ -110,10 +142,11 @@ const KEYWORD_SYNONYMS: Record<string, string[]> = {
   'fm200': ['fm-200', 'clean agent'],
   'fm-200': ['fm-200', 'clean agent'],
   
-  // Relocation/modification
+  // Relocation/modification - EXPLICIT search terms for relocate items
   'relocate head': ['relocate', 'sprinkler head', 'branch piping'],
   'move head': ['relocate', 'sprinkler head'],
   'head relocation': ['relocate', 'sprinkler head'],
+  'relocate sprinkler': ['relocate', 'sprinkler head'],
   'purge': ['purge liquid system'],
   'drain system': ['purge liquid system'],
   
@@ -309,6 +342,21 @@ export function searchJOCItems(query: string, limit: number = 20): JOCItem[] {
     // Division match - boost items from the relevant division
     if (divisionCode && taskCode.startsWith(divisionCode)) {
       score += 50;
+    }
+    
+    // PRODUCT VS SERVICE DISAMBIGUATION
+    // When searching for "sprinkler head", boost actual products, de-boost relocate items
+    for (const [searchTerm, { boost, deBoost }] of Object.entries(PRODUCT_SEARCH_BOOSTS)) {
+      if (q.includes(searchTerm) || originalWords.some(w => w === searchTerm)) {
+        // Boost actual product items
+        if (boost.some(prefix => taskCode.startsWith(prefix))) {
+          score += 150; // Big boost for product items
+        }
+        // De-boost service items (relocate, demo, etc.)
+        if (deBoost.some(prefix => taskCode.startsWith(prefix))) {
+          score -= 100; // Penalty for service items when searching for products
+        }
+      }
     }
     
     // Pipe size match - HUGE boost for exact size match
