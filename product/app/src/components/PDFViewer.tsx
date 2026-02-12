@@ -432,7 +432,7 @@ export function PDFViewer() {
                   }}
                 />
                 {dimensions.width > 0 && dimensions.height > 0 && (
-                  <MeasurementCanvas width={dimensions.width} height={dimensions.height} />
+                  <MeasurementCanvas width={dimensions.width} height={dimensions.height} pageNumber={pageNum} />
                 )}
               </div>
             </div>

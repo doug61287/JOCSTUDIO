@@ -38,14 +38,18 @@ interface ProjectState {
   flagMeasurement: (measurementId: string, flag: Flag) => void;
 }
 
+// Auto-load test drawing in dev mode
+const DEV_TEST_PDF = import.meta.env.DEV ? '/test-drawing.pdf' : undefined;
+
 export const useProjectStore = create<ProjectState>((set) => ({
   project: {
     id: 'demo',
-    name: 'New Project',
-    scale: 10, // 10 pixels = 1 foot default
+    name: 'Bellevue ED Ambulance Bay',
+    pdfUrl: DEV_TEST_PDF,
+    scale: 18, // 1/4" = 1'-0" at 72 DPI ≈ 18 px/ft (adjust via calibration)
     measurements: [],
     groups: [],
-    flags: [], // "Flag, don't assume!"
+    flags: [],
     coefficient: 1.0,
     createdAt: new Date(),
   },

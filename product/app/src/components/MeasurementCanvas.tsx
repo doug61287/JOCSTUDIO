@@ -18,13 +18,27 @@ import {
   type SnapSettings,
   type SnapResult
 } from '../utils/snapEngine';
+import { Magnet, CircleDot, Diamond, X, Perpendicular } from 'lucide-react';
 
 interface MeasurementCanvasProps {
   width: number;
   height: number;
+  pageNumber: number;
 }
 
-export function MeasurementCanvas({ width, height }: MeasurementCanvasProps) {
+// Design tokens - matching our new UI
+const COLORS = {
+  line: '#3b82f6',      // Blue
+  polyline: '#8b5cf6',  // Purple
+  count: '#f59e0b',     // Amber
+  area: '#10b981',      // Emerald
+  space: '#ec4899',     // Pink
+  selected: '#fbbf24',  // Yellow/Gold
+  cost: '#22c55e',      // Green
+  warning: '#6b7280',   // Gray
+};
+
+export function MeasurementCanvas({ width, height, pageNumber }: MeasurementCanvasProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const { 
     project, 
@@ -40,7 +54,6 @@ export function MeasurementCanvas({ width, height }: MeasurementCanvasProps) {
   const [mousePos, setMousePos] = useState<Point | null>(null);
   const [snapResult, setSnapResult] = useState<SnapResult | null>(null);
   const [snapSettings, setSnapSettings] = useState<SnapSettings>(DEFAULT_SNAP_SETTINGS);
-  const [showSnapIndicator] = useState(true);
 
   // Get snapped position for current mouse position
   const getSnappedPoint = useCallback((rawPoint: Point): Point => {
@@ -53,10 +66,10 @@ export function MeasurementCanvas({ width, height }: MeasurementCanvasProps) {
   }, [project, snapSettings, tempPoints]);
 
   // ============================================
-  // KREO-STYLE DRAWING HELPERS
+  // DRAWING HELPERS - Clean, Modern Style
   // ============================================
   
-  // Draw a rounded rectangle (pill badge)
+  // Draw a rounded rectangle
   const drawRoundedRect = (
     ctx: CanvasRenderingContext2D, 
     x: number, y: number, 
@@ -76,30 +89,34 @@ export function MeasurementCanvas({ width, height }: MeasurementCanvasProps) {
     ctx.closePath();
   };
 
-  // Draw a Kreo-style pill badge with text
-  const drawPillBadge = (
+  // Clean pill badge - modern flat design
+  const drawBadge = (
     ctx: CanvasRenderingContext2D,
     x: number, y: number,
     text: string,
     bgColor: string,
     textColor: string = 'white',
-    fontSize: number = 12
+    fontSize: number = 12,
+    align: 'left' | 'center' = 'left'
   ) => {
-    ctx.font = `bold ${fontSize}px -apple-system, BlinkMacSystemFont, sans-serif`;
+    ctx.font = `600 ${fontSize}px Inter, -apple-system, BlinkMacSystemFont, sans-serif`;
     const metrics = ctx.measureText(text);
-    const padding = 8;
-    const height = fontSize + 8;
-    const width = metrics.width + padding * 2;
-    const radius = height / 2;
+    const paddingX = 10;
+    const paddingY = 6;
+    const height = fontSize + paddingY * 2;
+    const width = metrics.width + paddingX * 2;
+    const radius = 6;
     
-    // Shadow
-    ctx.shadowColor = 'rgba(0,0,0,0.3)';
-    ctx.shadowBlur = 4;
+    const drawX = align === 'center' ? x - width / 2 : x;
+    
+    // Subtle shadow
+    ctx.shadowColor = 'rgba(0,0,0,0.25)';
+    ctx.shadowBlur = 8;
     ctx.shadowOffsetY = 2;
     
     // Background
     ctx.fillStyle = bgColor;
-    drawRoundedRect(ctx, x, y - height/2, width, height, radius);
+    drawRoundedRect(ctx, drawX, y - height/2, width, height, radius);
     ctx.fill();
     
     // Reset shadow
@@ -111,91 +128,106 @@ export function MeasurementCanvas({ width, height }: MeasurementCanvasProps) {
     ctx.fillStyle = textColor;
     ctx.textAlign = 'left';
     ctx.textBaseline = 'middle';
-    ctx.fillText(text, x + padding, y);
+    ctx.fillText(text, drawX + paddingX, y);
     
     return width;
   };
 
-  // Draw a pin-style marker (Kreo count style)
-  const drawPinMarker = (
+  // Modern count marker - clean circle with number
+  const drawCountMarker = (
     ctx: CanvasRenderingContext2D,
     x: number, y: number,
     color: string,
     label: string,
     isSelected: boolean
   ) => {
-    const size = 18;
-    const pinHeight = 8;
+    const size = 24;
     
     // Shadow
-    ctx.shadowColor = 'rgba(0,0,0,0.4)';
-    ctx.shadowBlur = 6;
-    ctx.shadowOffsetY = 3;
+    ctx.shadowColor = 'rgba(0,0,0,0.3)';
+    ctx.shadowBlur = 8;
+    ctx.shadowOffsetY = 2;
     
-    // Pin body (circle)
+    // Circle
     ctx.beginPath();
-    ctx.arc(x, y - pinHeight, size/2, 0, Math.PI * 2);
-    
-    // Create gradient
-    const gradient = ctx.createRadialGradient(x - 3, y - pinHeight - 3, 0, x, y - pinHeight, size/2);
-    gradient.addColorStop(0, lightenColor(color, 30));
-    gradient.addColorStop(1, color);
-    ctx.fillStyle = gradient;
-    ctx.fill();
-    
-    // Border
-    ctx.strokeStyle = isSelected ? '#FFD700' : darkenColor(color, 20);
-    ctx.lineWidth = isSelected ? 3 : 2;
-    ctx.stroke();
-    
-    // Pin point (triangle)
-    ctx.beginPath();
-    ctx.moveTo(x - 5, y - pinHeight + 6);
-    ctx.lineTo(x, y);
-    ctx.lineTo(x + 5, y - pinHeight + 6);
+    ctx.arc(x, y, size/2, 0, Math.PI * 2);
     ctx.fillStyle = color;
     ctx.fill();
+    
+    // Selection ring
+    if (isSelected) {
+      ctx.strokeStyle = COLORS.selected;
+      ctx.lineWidth = 3;
+      ctx.stroke();
+    }
     
     // Reset shadow
     ctx.shadowColor = 'transparent';
     ctx.shadowBlur = 0;
     ctx.shadowOffsetY = 0;
     
+    // Inner border
+    ctx.beginPath();
+    ctx.arc(x, y, size/2 - 2, 0, Math.PI * 2);
+    ctx.strokeStyle = 'rgba(255,255,255,0.3)';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+    
     // Label
-    ctx.font = 'bold 11px -apple-system, BlinkMacSystemFont, sans-serif';
+    ctx.font = '700 11px Inter, -apple-system, sans-serif';
     ctx.fillStyle = 'white';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
-    ctx.fillText(label, x, y - pinHeight);
+    ctx.fillText(label, x, y);
   };
 
-  // Helper to lighten a hex color
-  const lightenColor = (hex: string, percent: number): string => {
-    const num = parseInt(hex.replace('#', ''), 16);
-    const amt = Math.round(2.55 * percent);
-    const R = Math.min(255, (num >> 16) + amt);
-    const G = Math.min(255, ((num >> 8) & 0x00FF) + amt);
-    const B = Math.min(255, (num & 0x0000FF) + amt);
-    return `rgb(${R},${G},${B})`;
-  };
-
-  // Helper to darken a hex color
-  const darkenColor = (hex: string, percent: number): string => {
-    const num = parseInt(hex.replace('#', ''), 16);
-    const amt = Math.round(2.55 * percent);
-    const R = Math.max(0, (num >> 16) - amt);
-    const G = Math.max(0, ((num >> 8) & 0x00FF) - amt);
-    const B = Math.max(0, (num & 0x0000FF) - amt);
-    return `rgb(${R},${G},${B})`;
+  // Modern endpoint dot
+  const drawEndpoint = (
+    ctx: CanvasRenderingContext2D,
+    x: number, y: number,
+    color: string,
+    isSelected: boolean,
+    size: number = 8
+  ) => {
+    // Outer ring
+    ctx.beginPath();
+    ctx.arc(x, y, size, 0, Math.PI * 2);
+    ctx.fillStyle = color;
+    ctx.fill();
+    
+    if (isSelected) {
+      ctx.strokeStyle = COLORS.selected;
+      ctx.lineWidth = 2;
+      ctx.stroke();
+    } else {
+      ctx.strokeStyle = 'white';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+    }
+    
+    // Inner dot
+    ctx.beginPath();
+    ctx.arc(x, y, 3, 0, Math.PI * 2);
+    ctx.fillStyle = 'white';
+    ctx.fill();
   };
 
   // Get short name for JOC item
   const getShortItemName = (desc: string, maxLen: number = 20): string => {
     const firstPart = desc.split(',')[0].trim();
-    return firstPart.length > maxLen ? firstPart.slice(0, maxLen) + '...' : firstPart;
+    return firstPart.length > maxLen ? firstPart.slice(0, maxLen) + '…' : firstPart;
   };
 
-  // Draw all measurements and snap indicators
+  // Get line dash pattern
+  const getLineDash = (lineStyle: string): number[] => {
+    switch (lineStyle) {
+      case 'dashed': return [12, 6];
+      case 'dotted': return [4, 4];
+      default: return [];
+    }
+  };
+
+  // Draw all measurements
   const draw = useCallback(() => {
     const canvas = canvasRef.current;
     if (!canvas || !project || width <= 0 || height <= 0) return;
@@ -203,44 +235,30 @@ export function MeasurementCanvas({ width, height }: MeasurementCanvasProps) {
     const ctx = canvas.getContext('2d')!;
     ctx.clearRect(0, 0, width, height);
     
-    // Clip to canvas bounds
     ctx.save();
     ctx.beginPath();
     ctx.rect(0, 0, width, height);
     ctx.clip();
     
-    // Draw existing measurements
-    project.measurements.forEach((m) => {
+    // Draw existing measurements (filtered by current page)
+    const pageMeasurements = project.measurements.filter(m => m.pageNumber === pageNumber);
+    pageMeasurements.forEach((m) => {
       const isSelected = m.id === selectedMeasurement;
       const baseColor = m.color;
       const style: MeasurementStyle = m.style || DEFAULT_STYLE;
       
-      // Get line dash pattern from style
-      const getLineDash = (lineStyle: string): number[] => {
-        switch (lineStyle) {
-          case 'dashed': return [10, 5];
-          case 'dotted': return [3, 3];
-          default: return [];
-        }
-      };
-      
       // ============================================
-      // LINE MEASUREMENTS - Kreo Style
+      // LINE MEASUREMENTS
       // ============================================
       if (m.type === 'line' && m.points.length >= 2) {
         const [p1, p2] = m.points;
         
-        // Line with rounded caps
         ctx.lineCap = 'round';
         ctx.lineJoin = 'round';
         
-        // Shadow for depth
-        ctx.shadowColor = 'rgba(0,0,0,0.2)';
-        ctx.shadowBlur = 3;
-        ctx.shadowOffsetY = 1;
-        
-        ctx.strokeStyle = isSelected ? '#FFD700' : baseColor;
-        ctx.lineWidth = isSelected ? style.lineWidth + 1 : style.lineWidth;
+        // Line
+        ctx.strokeStyle = isSelected ? COLORS.selected : baseColor;
+        ctx.lineWidth = isSelected ? style.lineWidth + 2 : style.lineWidth;
         ctx.setLineDash(getLineDash(style.lineStyle));
         ctx.beginPath();
         ctx.moveTo(p1.x, p1.y);
@@ -248,58 +266,43 @@ export function MeasurementCanvas({ width, height }: MeasurementCanvasProps) {
         ctx.stroke();
         ctx.setLineDash([]);
         
-        ctx.shadowColor = 'transparent';
+        // Endpoints
+        drawEndpoint(ctx, p1.x, p1.y, baseColor, isSelected);
+        drawEndpoint(ctx, p2.x, p2.y, baseColor, isSelected);
         
-        // Endpoint markers with gradient
-        [p1, p2].forEach((p) => {
-          const grad = ctx.createRadialGradient(p.x - 2, p.y - 2, 0, p.x, p.y, 7);
-          grad.addColorStop(0, lightenColor(baseColor, 40));
-          grad.addColorStop(1, baseColor);
-          
-          ctx.beginPath();
-          ctx.arc(p.x, p.y, 6, 0, Math.PI * 2);
-          ctx.fillStyle = grad;
-          ctx.fill();
-          ctx.strokeStyle = isSelected ? '#FFD700' : 'white';
-          ctx.lineWidth = 2;
-          ctx.stroke();
-        });
-        
-        // Pill badge at midpoint
+        // Labels at midpoint
         const midX = (p1.x + p2.x) / 2;
         const midY = (p1.y + p2.y) / 2;
         
-        // Show JOC item name if assigned and enabled
-        if (m.jocItem && style.showItemName) {
-          const itemName = getShortItemName(m.jocItem.description, 18);
-          drawPillBadge(ctx, midX + 12, midY - 20, itemName, 'rgba(0,0,0,0.75)', baseColor, style.fontSize - 2);
+        let badgeY = midY;
+        
+        if (style.showValue) {
+          drawBadge(ctx, midX + 16, badgeY, `${m.value.toFixed(1)} LF`, baseColor);
+          badgeY += 24;
         }
         
-        // Show cost if enabled
+        if (m.jocItem && style.showItemName) {
+          const itemName = getShortItemName(m.jocItem.description, 22);
+          drawBadge(ctx, midX + 16, badgeY, itemName, 'rgba(0,0,0,0.8)', baseColor, 11);
+          badgeY += 22;
+        }
+        
         if (m.jocItem && style.showCost) {
           const cost = (m.value * m.jocItem.unitCost).toFixed(0);
-          drawPillBadge(ctx, midX + 12, midY + 20, `$${cost}`, '#22c55e', 'white', style.fontSize - 2);
-        }
-        
-        // Length badge (if showValue enabled)
-        if (style.showValue) {
-          drawPillBadge(ctx, midX + 12, midY, `${m.value.toFixed(1)} LF`, baseColor, 'white', style.fontSize);
+          drawBadge(ctx, midX + 16, badgeY, `$${cost}`, COLORS.cost, 'white', 11);
         }
       }
       
       // ============================================
-      // POLYLINE MEASUREMENTS - Kreo Style
+      // POLYLINE MEASUREMENTS
       // ============================================
       if (m.type === 'polyline' && m.points.length >= 2) {
         ctx.lineCap = 'round';
         ctx.lineJoin = 'round';
         
-        // Shadow
-        ctx.shadowColor = 'rgba(0,0,0,0.2)';
-        ctx.shadowBlur = 3;
-        
-        ctx.strokeStyle = isSelected ? '#FFD700' : baseColor;
-        ctx.lineWidth = isSelected ? style.lineWidth + 1 : style.lineWidth;
+        // Line
+        ctx.strokeStyle = isSelected ? COLORS.selected : baseColor;
+        ctx.lineWidth = isSelected ? style.lineWidth + 2 : style.lineWidth;
         ctx.setLineDash(getLineDash(style.lineStyle));
         ctx.beginPath();
         ctx.moveTo(m.points[0].x, m.points[0].y);
@@ -307,148 +310,156 @@ export function MeasurementCanvas({ width, height }: MeasurementCanvasProps) {
         ctx.stroke();
         ctx.setLineDash([]);
         
-        ctx.shadowColor = 'transparent';
-        
-        // Vertex markers with segment lengths
+        // Vertices with segment lengths
         m.points.forEach((p, idx) => {
-          // Gradient vertex
-          const grad = ctx.createRadialGradient(p.x - 2, p.y - 2, 0, p.x, p.y, 7);
-          grad.addColorStop(0, lightenColor(baseColor, 40));
-          grad.addColorStop(1, baseColor);
+          drawEndpoint(ctx, p.x, p.y, baseColor, isSelected, 6);
           
-          ctx.beginPath();
-          ctx.arc(p.x, p.y, 6, 0, Math.PI * 2);
-          ctx.fillStyle = grad;
-          ctx.fill();
-          ctx.strokeStyle = 'white';
-          ctx.lineWidth = 2;
-          ctx.stroke();
-          
-          // Segment length (small pill)
+          // Segment length
           if (idx < m.points.length - 1 && style.showValue) {
             const nextP = m.points[idx + 1];
             const segLen = pixelsToFeet(distance(p, nextP), project.scale);
             const mx = (p.x + nextP.x) / 2;
             const my = (p.y + nextP.y) / 2;
             
-            drawPillBadge(ctx, mx - 20, my - 12, `${segLen.toFixed(1)}'`, 'rgba(0,0,0,0.6)', baseColor, style.fontSize - 2);
+            ctx.font = '600 10px Inter, -apple-system, sans-serif';
+            ctx.fillStyle = baseColor;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            
+            // Small background
+            const text = `${segLen.toFixed(1)}'`;
+            const tw = ctx.measureText(text).width;
+            ctx.fillStyle = 'rgba(0,0,0,0.7)';
+            drawRoundedRect(ctx, mx - tw/2 - 4, my - 10, tw + 8, 16, 4);
+            ctx.fill();
+            
+            ctx.fillStyle = 'white';
+            ctx.fillText(text, mx, my - 2);
           }
         });
         
         // Total badge at end
         const lastP = m.points[m.points.length - 1];
-        if (m.jocItem && style.showItemName) {
-          const itemName = getShortItemName(m.jocItem.description, 18);
-          drawPillBadge(ctx, lastP.x + 12, lastP.y - 32, itemName, 'rgba(0,0,0,0.75)', baseColor, style.fontSize - 2);
+        let badgeY = lastP.y - 8;
+        
+        if (style.showValue) {
+          drawBadge(ctx, lastP.x + 16, badgeY, `${m.value.toFixed(1)} LF`, baseColor);
+          badgeY += 24;
         }
+        
+        if (m.jocItem && style.showItemName) {
+          const itemName = getShortItemName(m.jocItem.description, 20);
+          drawBadge(ctx, lastP.x + 16, badgeY, itemName, 'rgba(0,0,0,0.8)', baseColor, 11);
+          badgeY += 22;
+        }
+        
         if (m.jocItem && style.showCost) {
           const cost = (m.value * m.jocItem.unitCost).toFixed(0);
-          drawPillBadge(ctx, lastP.x + 12, lastP.y + 12, `$${cost}`, '#22c55e', 'white', style.fontSize - 2);
-        }
-        if (style.showValue) {
-          drawPillBadge(ctx, lastP.x + 12, lastP.y - 10, `Total: ${m.value.toFixed(1)} LF`, baseColor, 'white', style.fontSize);
+          drawBadge(ctx, lastP.x + 16, badgeY, `$${cost}`, COLORS.cost, 'white', 11);
         }
       }
       
       // ============================================
-      // COUNT MEASUREMENTS - Kreo Pin Style
+      // COUNT MEASUREMENTS
       // ============================================
       if (m.type === 'count') {
         m.points.forEach((p, idx) => {
-          drawPinMarker(ctx, p.x, p.y, baseColor, String(idx + 1), isSelected);
+          drawCountMarker(ctx, p.x, p.y, baseColor, String(idx + 1), isSelected);
         });
         
-        // Item name + count badge
+        // Info badge near last point
         if (m.points.length > 0) {
           const lastP = m.points[m.points.length - 1];
+          let badgeY = lastP.y - 20;
+          
+          if (style.showValue) {
+            drawBadge(ctx, lastP.x + 20, badgeY, `${m.value} EA`, baseColor);
+            badgeY += 24;
+          }
           
           if (m.jocItem && style.showItemName) {
-            const itemName = getShortItemName(m.jocItem.description, 22);
-            drawPillBadge(ctx, lastP.x + 20, lastP.y - 35, itemName, 'rgba(0,0,0,0.8)', baseColor, style.fontSize - 1);
+            const itemName = getShortItemName(m.jocItem.description, 20);
+            drawBadge(ctx, lastP.x + 20, badgeY, itemName, 'rgba(0,0,0,0.8)', baseColor, 11);
+            badgeY += 22;
           }
+          
           if (m.jocItem && style.showCost) {
             const cost = (m.value * m.jocItem.unitCost).toFixed(0);
-            drawPillBadge(ctx, lastP.x + 20, lastP.y + 8, `$${cost}`, '#22c55e', 'white', style.fontSize - 1);
-          }
-          if (style.showValue) {
-            drawPillBadge(ctx, lastP.x + 20, lastP.y - 12, `${m.value} EA`, baseColor, 'white', style.fontSize);
+            drawBadge(ctx, lastP.x + 20, badgeY, `$${cost}`, COLORS.cost, 'white', 11);
           }
         }
       }
       
       // ============================================
-      // AREA MEASUREMENTS - Kreo Style
+      // AREA MEASUREMENTS
       // ============================================
       if (m.type === 'area' && m.points.length >= 3) {
-        // Semi-transparent fill
-        ctx.fillStyle = baseColor + '35';
+        // Fill
+        ctx.fillStyle = baseColor + '30';
         ctx.beginPath();
         ctx.moveTo(m.points[0].x, m.points[0].y);
         m.points.slice(1).forEach((p) => ctx.lineTo(p.x, p.y));
         ctx.closePath();
         ctx.fill();
         
-        // Border with shadow
-        ctx.shadowColor = 'rgba(0,0,0,0.2)';
-        ctx.shadowBlur = 3;
-        ctx.strokeStyle = isSelected ? '#FFD700' : baseColor;
-        ctx.lineWidth = isSelected ? style.lineWidth + 1 : style.lineWidth;
+        // Border
+        ctx.strokeStyle = isSelected ? COLORS.selected : baseColor;
+        ctx.lineWidth = isSelected ? style.lineWidth + 2 : style.lineWidth;
         ctx.setLineDash(getLineDash(style.lineStyle));
         ctx.lineCap = 'round';
         ctx.lineJoin = 'round';
         ctx.stroke();
         ctx.setLineDash([]);
-        ctx.shadowColor = 'transparent';
         
-        // Vertex markers
+        // Vertices
         m.points.forEach((p) => {
-          ctx.beginPath();
-          ctx.arc(p.x, p.y, 5, 0, Math.PI * 2);
-          ctx.fillStyle = baseColor;
-          ctx.fill();
-          ctx.strokeStyle = 'white';
-          ctx.lineWidth = 2;
-          ctx.stroke();
+          drawEndpoint(ctx, p.x, p.y, baseColor, isSelected, 5);
         });
         
         // Center badge
         const cx = m.points.reduce((sum, p) => sum + p.x, 0) / m.points.length;
         const cy = m.points.reduce((sum, p) => sum + p.y, 0) / m.points.length;
         
-        if (m.jocItem && style.showItemName) {
-          const itemName = getShortItemName(m.jocItem.description, 20);
-          drawPillBadge(ctx, cx - 50, cy - 22, itemName, 'rgba(0,0,0,0.8)', baseColor, style.fontSize - 1);
+        let badgeY = cy - 12;
+        
+        if (style.showValue) {
+          drawBadge(ctx, cx, badgeY, `${m.value.toFixed(1)} SF`, baseColor, 'white', 13, 'center');
+          badgeY += 26;
         }
+        
+        if (m.jocItem && style.showItemName) {
+          const itemName = getShortItemName(m.jocItem.description, 22);
+          drawBadge(ctx, cx, badgeY, itemName, 'rgba(0,0,0,0.8)', baseColor, 11, 'center');
+          badgeY += 22;
+        }
+        
         if (m.jocItem && style.showCost) {
           const cost = (m.value * m.jocItem.unitCost).toFixed(0);
-          drawPillBadge(ctx, cx - 30, cy + 22, `$${cost}`, '#22c55e', 'white', style.fontSize - 1);
-        }
-        if (style.showValue) {
-          drawPillBadge(ctx, cx - 30, cy, `${m.value.toFixed(1)} SF`, baseColor, 'white', style.fontSize);
+          drawBadge(ctx, cx, badgeY, `$${cost}`, COLORS.cost, 'white', 11, 'center');
         }
       }
       
       // ============================================
-      // SPACE (ROOM) MEASUREMENTS - Kreo Style
+      // SPACE (ROOM) MEASUREMENTS
       // ============================================
       if (m.type === 'space' && m.points.length >= 3) {
-        // Lighter fill for rooms
-        ctx.fillStyle = baseColor + '25';
+        // Lighter fill
+        ctx.fillStyle = baseColor + '20';
         ctx.beginPath();
         ctx.moveTo(m.points[0].x, m.points[0].y);
         m.points.slice(1).forEach((p) => ctx.lineTo(p.x, p.y));
         ctx.closePath();
         ctx.fill();
         
-        // Border (use style line settings)
-        ctx.strokeStyle = isSelected ? '#FFD700' : baseColor;
+        // Dashed border
+        ctx.strokeStyle = isSelected ? COLORS.selected : baseColor;
         ctx.lineWidth = isSelected ? style.lineWidth + 1 : style.lineWidth;
-        ctx.setLineDash(getLineDash(style.lineStyle) || [10, 5]); // Default dashed for spaces
+        ctx.setLineDash([8, 4]);
         ctx.lineCap = 'round';
         ctx.stroke();
         ctx.setLineDash([]);
         
-        // Vertex markers
+        // Small vertices
         m.points.forEach((p) => {
           ctx.beginPath();
           ctx.arc(p.x, p.y, 4, 0, Math.PI * 2);
@@ -456,25 +467,36 @@ export function MeasurementCanvas({ width, height }: MeasurementCanvasProps) {
           ctx.fill();
         });
         
-        // Room info card at centroid
+        // Room card at centroid
         const cx = m.points.reduce((sum, p) => sum + p.x, 0) / m.points.length;
         const cy = m.points.reduce((sum, p) => sum + p.y, 0) / m.points.length;
         
-        // Card background with shadow
-        ctx.shadowColor = 'rgba(0,0,0,0.4)';
-        ctx.shadowBlur = 8;
-        ctx.shadowOffsetY = 3;
+        const cardWidth = 140;
+        const cardHeight = m.jocItem && style.showCost ? 80 : 65;
         
-        const cardWidth = 130;
-        const cardHeight = style.showCost && m.jocItem ? 75 : 60;
-        ctx.fillStyle = 'rgba(0,0,0,0.85)';
-        drawRoundedRect(ctx, cx - cardWidth/2, cy - cardHeight/2, cardWidth, cardHeight, 8);
+        // Card shadow
+        ctx.shadowColor = 'rgba(0,0,0,0.4)';
+        ctx.shadowBlur = 12;
+        ctx.shadowOffsetY = 4;
+        
+        // Card background
+        ctx.fillStyle = 'rgba(15,23,42,0.95)';
+        drawRoundedRect(ctx, cx - cardWidth/2, cy - cardHeight/2, cardWidth, cardHeight, 10);
         ctx.fill();
         
+        // Selection border
+        if (isSelected) {
+          ctx.strokeStyle = COLORS.selected;
+          ctx.lineWidth = 2;
+          ctx.stroke();
+        }
+        
         ctx.shadowColor = 'transparent';
+        ctx.shadowBlur = 0;
+        ctx.shadowOffsetY = 0;
         
         // Room name
-        ctx.font = `bold ${style.fontSize + 2}px -apple-system, BlinkMacSystemFont, sans-serif`;
+        ctx.font = '700 14px Inter, -apple-system, sans-serif';
         ctx.fillStyle = baseColor;
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
@@ -482,227 +504,175 @@ export function MeasurementCanvas({ width, height }: MeasurementCanvasProps) {
         
         // Area
         if (style.showValue) {
-          ctx.font = `bold ${style.fontSize + 1}px -apple-system, BlinkMacSystemFont, sans-serif`;
+          ctx.font = '700 16px Inter, -apple-system, sans-serif';
           ctx.fillStyle = 'white';
           ctx.fillText(`${m.value.toFixed(0)} SF`, cx, cy + 2);
         }
         
         // Perimeter
-        ctx.font = `${style.fontSize - 1}px -apple-system, BlinkMacSystemFont, sans-serif`;
-        ctx.fillStyle = 'rgba(255,255,255,0.6)';
-        ctx.fillText(`${m.perimeter?.toFixed(0) || 0} LF perimeter`, cx, cy + 18);
+        ctx.font = '500 11px Inter, -apple-system, sans-serif';
+        ctx.fillStyle = 'rgba(255,255,255,0.5)';
+        ctx.fillText(`${m.perimeter?.toFixed(0) || 0} LF perimeter`, cx, cy + 20);
         
         // Cost
-        if (style.showCost && m.jocItem) {
+        if (m.jocItem && style.showCost) {
           const cost = (m.value * m.jocItem.unitCost).toFixed(0);
-          ctx.font = `bold ${style.fontSize}px -apple-system, BlinkMacSystemFont, sans-serif`;
-          ctx.fillStyle = '#22c55e';
-          ctx.fillText(`$${cost}`, cx, cy + 32);
+          ctx.font = '700 12px Inter, -apple-system, sans-serif';
+          ctx.fillStyle = COLORS.cost;
+          ctx.fillText(`$${cost}`, cx, cy + 35);
         }
       }
     });
     
-    // Draw temporary points and preview
+    // ============================================
+    // TEMPORARY DRAWING (in-progress measurements)
+    // ============================================
     if (tempPoints.length > 0 || mousePos) {
       const currentColor = getMeasurementColor(activeTool as 'line' | 'polyline' | 'count' | 'area' | 'space');
-      ctx.strokeStyle = currentColor;
-      ctx.fillStyle = currentColor + '40';
-      ctx.lineWidth = 2;
-      
-      // Get snapped mouse position
       const displayPos = mousePos ? getSnappedPoint(mousePos) : null;
       
+      // LINE preview
       if (activeTool === 'line' && tempPoints.length === 1 && displayPos) {
+        ctx.strokeStyle = currentColor;
+        ctx.lineWidth = 2;
+        ctx.setLineDash([6, 4]);
         ctx.beginPath();
         ctx.moveTo(tempPoints[0].x, tempPoints[0].y);
         ctx.lineTo(displayPos.x, displayPos.y);
         ctx.stroke();
+        ctx.setLineDash([]);
         
-        // Draw endpoint markers
-        ctx.beginPath();
-        ctx.arc(tempPoints[0].x, tempPoints[0].y, 5, 0, Math.PI * 2);
-        ctx.fill();
+        drawEndpoint(ctx, tempPoints[0].x, tempPoints[0].y, currentColor, false, 6);
         
-        // Show live measurement
+        // Live measurement
         const d = distance(tempPoints[0], displayPos);
         const feet = pixelsToFeet(d, project.scale);
-        ctx.font = 'bold 14px sans-serif';
-        ctx.fillStyle = 'white';
-        ctx.strokeStyle = 'rgba(0,0,0,0.7)';
-        ctx.lineWidth = 3;
-        ctx.strokeText(`${feet.toFixed(1)} LF`, displayPos.x + 15, displayPos.y - 15);
-        ctx.fillText(`${feet.toFixed(1)} LF`, displayPos.x + 15, displayPos.y - 15);
+        drawBadge(ctx, displayPos.x + 16, displayPos.y - 16, `${feet.toFixed(1)} LF`, currentColor);
       }
       
-      // Polyline preview
+      // POLYLINE preview
       if (activeTool === 'polyline' && tempPoints.length > 0) {
-        const polyColor = getMeasurementColor('polyline');
-        ctx.strokeStyle = polyColor;
-        ctx.lineWidth = 3;
+        ctx.strokeStyle = currentColor;
+        ctx.lineWidth = 2;
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
         
-        // Draw existing segments
         ctx.beginPath();
         ctx.moveTo(tempPoints[0].x, tempPoints[0].y);
         tempPoints.slice(1).forEach((p) => ctx.lineTo(p.x, p.y));
-        if (displayPos) ctx.lineTo(displayPos.x, displayPos.y);
+        if (displayPos) {
+          ctx.setLineDash([6, 4]);
+          ctx.lineTo(displayPos.x, displayPos.y);
+        }
         ctx.stroke();
+        ctx.setLineDash([]);
         
-        // Draw vertices
-        tempPoints.forEach((p, idx) => {
-          ctx.beginPath();
-          ctx.arc(p.x, p.y, 6, 0, Math.PI * 2);
-          ctx.fillStyle = polyColor;
-          ctx.fill();
-          ctx.strokeStyle = 'white';
-          ctx.lineWidth = 2;
-          ctx.stroke();
-          
-          // Segment length
-          if (idx < tempPoints.length - 1) {
-            const nextP = tempPoints[idx + 1];
-            const segLen = pixelsToFeet(distance(p, nextP), project.scale);
-            const midX = (p.x + nextP.x) / 2;
-            const midY = (p.y + nextP.y) / 2;
-            ctx.font = 'bold 11px sans-serif';
-            ctx.fillStyle = polyColor;
-            ctx.textAlign = 'center';
-            ctx.fillText(`${segLen.toFixed(1)}'`, midX, midY - 8);
-          }
+        // Vertices
+        tempPoints.forEach((p) => {
+          drawEndpoint(ctx, p.x, p.y, currentColor, false, 5);
         });
         
-        // Current segment length preview
-        if (displayPos && tempPoints.length > 0) {
-          const lastP = tempPoints[tempPoints.length - 1];
-          const currLen = pixelsToFeet(distance(lastP, displayPos), project.scale);
-          ctx.font = 'bold 11px sans-serif';
-          ctx.fillStyle = polyColor;
-          ctx.textAlign = 'center';
-          const midX = (lastP.x + displayPos.x) / 2;
-          const midY = (lastP.y + displayPos.y) / 2;
-          ctx.fillText(`${currLen.toFixed(1)}'`, midX, midY - 8);
-        }
-        
-        // Total length badge
+        // Total length
         let totalLen = calculatePolylineLength(tempPoints, project.scale);
         if (displayPos && tempPoints.length > 0) {
           totalLen += pixelsToFeet(distance(tempPoints[tempPoints.length - 1], displayPos), project.scale);
         }
         
-        const badgeX = displayPos?.x || tempPoints[tempPoints.length - 1].x;
-        const badgeY = displayPos?.y || tempPoints[tempPoints.length - 1].y;
-        const totalText = `Total: ${totalLen.toFixed(1)} LF`;
-        const textWidth = ctx.measureText(totalText).width;
+        const badgePos = displayPos || tempPoints[tempPoints.length - 1];
+        drawBadge(ctx, badgePos.x + 16, badgePos.y - 16, `${totalLen.toFixed(1)} LF`, currentColor);
         
-        ctx.fillStyle = polyColor;
-        ctx.fillRect(badgeX + 12, badgeY - 18, textWidth + 12, 22);
-        ctx.fillStyle = 'white';
+        // Hint
+        ctx.font = '500 11px Inter, -apple-system, sans-serif';
+        ctx.fillStyle = 'rgba(255,255,255,0.6)';
         ctx.textAlign = 'left';
-        ctx.font = 'bold 12px sans-serif';
-        ctx.fillText(totalText, badgeX + 18, badgeY - 3);
-        
-        // Instructions
-        ctx.font = '11px sans-serif';
-        ctx.fillStyle = 'rgba(255,255,255,0.7)';
-        ctx.textAlign = 'center';
-        ctx.fillText('Double-click to complete', badgeX, badgeY + 20);
+        ctx.fillText('Double-click to complete', badgePos.x + 16, badgePos.y + 8);
       }
       
+      // AREA/SPACE preview
       if ((activeTool === 'area' || activeTool === 'space') && tempPoints.length > 0) {
+        ctx.strokeStyle = currentColor;
+        ctx.lineWidth = 2;
+        ctx.lineCap = 'round';
+        
+        if (activeTool === 'space') ctx.setLineDash([8, 4]);
+        
         ctx.beginPath();
         ctx.moveTo(tempPoints[0].x, tempPoints[0].y);
         tempPoints.slice(1).forEach((p) => ctx.lineTo(p.x, p.y));
         if (displayPos) ctx.lineTo(displayPos.x, displayPos.y);
-        
-        if (activeTool === 'space') {
-          ctx.setLineDash([8, 4]);
-        }
         ctx.stroke();
         ctx.setLineDash([]);
         
-        // Draw vertices
         tempPoints.forEach((p) => {
-          ctx.beginPath();
-          ctx.arc(p.x, p.y, 5, 0, Math.PI * 2);
-          ctx.fillStyle = currentColor;
-          ctx.fill();
+          drawEndpoint(ctx, p.x, p.y, currentColor, false, 4);
         });
         
-        // Show "Double-click to complete" hint
         if (tempPoints.length >= 2 && displayPos) {
-          ctx.font = '12px sans-serif';
-          ctx.fillStyle = 'white';
+          ctx.font = '500 11px Inter, -apple-system, sans-serif';
+          ctx.fillStyle = 'rgba(255,255,255,0.6)';
           ctx.textAlign = 'left';
-          ctx.fillText('Double-click to complete', displayPos.x + 15, displayPos.y - 15);
+          ctx.fillText('Double-click to complete', displayPos.x + 16, displayPos.y - 12);
         }
       }
       
-      // Draw temp count points
-      if (activeTool === 'count') {
-        tempPoints.forEach((p, idx) => {
-          ctx.fillStyle = currentColor + '40';
-          ctx.strokeStyle = currentColor;
-          ctx.lineWidth = 2;
-          ctx.beginPath();
-          ctx.arc(p.x, p.y, 12, 0, Math.PI * 2);
-          ctx.fill();
-          ctx.stroke();
-          ctx.font = 'bold 12px sans-serif';
-          ctx.fillStyle = 'white';
-          ctx.textAlign = 'center';
-          ctx.textBaseline = 'middle';
-          ctx.fillText(String(idx + 1), p.x, p.y);
-        });
+      // COUNT preview - show where next marker will go
+      if (activeTool === 'count' && displayPos) {
+        ctx.globalAlpha = 0.5;
+        drawCountMarker(ctx, displayPos.x, displayPos.y, currentColor, '?', false);
+        ctx.globalAlpha = 1;
       }
     }
     
-    // Draw snap indicator
-    if (showSnapIndicator && snapResult?.snapped && snapResult.snapPoint && mousePos) {
+    // ============================================
+    // SNAP INDICATOR
+    // ============================================
+    if (snapResult?.snapped && snapResult.snapPoint && mousePos) {
       const { color } = getSnapIndicatorStyle(snapResult.snapPoint.type);
       const sp = snapResult.point;
       
-      // Draw snap crosshair
+      // Crosshair
       ctx.strokeStyle = color;
       ctx.lineWidth = 1;
       ctx.setLineDash([4, 4]);
       
-      // Horizontal line
       ctx.beginPath();
-      ctx.moveTo(sp.x - 20, sp.y);
-      ctx.lineTo(sp.x + 20, sp.y);
+      ctx.moveTo(sp.x - 16, sp.y);
+      ctx.lineTo(sp.x + 16, sp.y);
       ctx.stroke();
       
-      // Vertical line
       ctx.beginPath();
-      ctx.moveTo(sp.x, sp.y - 20);
-      ctx.lineTo(sp.x, sp.y + 20);
+      ctx.moveTo(sp.x, sp.y - 16);
+      ctx.lineTo(sp.x, sp.y + 16);
       ctx.stroke();
       
       ctx.setLineDash([]);
       
-      // Draw snap indicator circle
+      // Circle
       ctx.beginPath();
-      ctx.arc(sp.x, sp.y, 8, 0, Math.PI * 2);
+      ctx.arc(sp.x, sp.y, 6, 0, Math.PI * 2);
       ctx.strokeStyle = color;
       ctx.lineWidth = 2;
       ctx.stroke();
       
-      // Draw snap type label
-      ctx.font = 'bold 11px sans-serif';
+      // Label
+      ctx.font = '600 10px Inter, -apple-system, sans-serif';
       ctx.fillStyle = color;
       ctx.textAlign = 'left';
-      ctx.fillText(`⚡ ${snapResult.snapPoint.type}`, sp.x + 12, sp.y - 12);
+      ctx.fillText(snapResult.snapPoint.type.toUpperCase(), sp.x + 10, sp.y - 10);
     }
     
-    // Restore canvas state (remove clipping)
     ctx.restore();
-  }, [project, selectedMeasurement, tempPoints, mousePos, activeTool, width, height, snapResult, showSnapIndicator, getSnappedPoint]);
+  }, [project, selectedMeasurement, tempPoints, mousePos, activeTool, width, height, snapResult, getSnappedPoint, pageNumber]);
 
   useEffect(() => {
     draw();
   }, [draw]);
 
+  // ============================================
+  // EVENT HANDLERS
+  // ============================================
+  
   const handleClick = useCallback((e: React.MouseEvent<HTMLCanvasElement>) => {
-    // Pan and text tools don't interact with measurement canvas
     if (activeTool === 'pan' || activeTool === 'text') return;
     
     const rect = canvasRef.current!.getBoundingClientRect();
@@ -711,11 +681,9 @@ export function MeasurementCanvas({ width, height }: MeasurementCanvasProps) {
       y: e.clientY - rect.top,
     };
     
-    // Apply snap
     const point = project ? getSnappedPoint(rawPoint) : rawPoint;
     
     if (activeTool === 'select') {
-      // Check if clicked on a measurement
       const clicked = project?.measurements.find((m) => {
         if (m.type === 'count') {
           return m.points.some((p) => distance(p, point) < 15);
@@ -745,8 +713,8 @@ export function MeasurementCanvas({ width, height }: MeasurementCanvasProps) {
           points: [tempPoints[0], point],
           value: feet,
           unit: 'LF',
+          pageNumber,
           color: getMeasurementColor('line'),
-          // Auto-assign active JOC item and group (sticky selection!)
           jocItem: activeJOCItem || undefined,
           groupId: activeGroupId || undefined,
         };
@@ -755,45 +723,31 @@ export function MeasurementCanvas({ width, height }: MeasurementCanvasProps) {
       }
     }
     
-    // Polyline: add points, double-click to complete
     if (activeTool === 'polyline') {
       setTempPoints([...tempPoints, point]);
     }
     
-    // Count: each click adds a marker (REQUIRES active JOC item for takeoff)
     if (activeTool === 'count') {
-      // Warn if no JOC item selected - counts won't appear in takeoff!
-      if (!activeJOCItem) {
-        // Still allow the count, but show a warning indicator
-        console.warn('Count created without JOC item - will not appear in Takeoff summary');
-      }
-      
-      // Auto-save after each click (Kreo-style: each click = 1 count item)
       const measurement: Measurement = {
         id: generateId(),
         type: 'count',
         points: [point],
         value: 1,
         unit: 'EA',
-        color: activeJOCItem ? getMeasurementColor('count') : '#6b7280', // Gray if no JOC item
-        // Auto-assign active JOC item and group (sticky selection!)
+        pageNumber,
+        color: activeJOCItem ? getMeasurementColor('count') : COLORS.warning,
         jocItem: activeJOCItem || undefined,
         groupId: activeGroupId || undefined,
       };
       addMeasurement(measurement);
     }
     
-    if (activeTool === 'area') {
+    if (activeTool === 'area' || activeTool === 'space') {
       setTempPoints([...tempPoints, point]);
     }
-    
-    if (activeTool === 'space') {
-      setTempPoints([...tempPoints, point]);
-    }
-  }, [activeTool, tempPoints, project, addMeasurement, selectMeasurement, getSnappedPoint]);
+  }, [activeTool, tempPoints, project, addMeasurement, selectMeasurement, getSnappedPoint, activeJOCItem, activeGroupId, pageNumber]);
 
   const handleDoubleClick = useCallback(() => {
-    // Polyline: complete the multi-segment line
     if (activeTool === 'polyline' && tempPoints.length >= 2) {
       const totalLength = calculatePolylineLength(tempPoints, project!.scale);
       const measurement: Measurement = {
@@ -802,8 +756,8 @@ export function MeasurementCanvas({ width, height }: MeasurementCanvasProps) {
         points: tempPoints,
         value: totalLength,
         unit: 'LF',
+        pageNumber,
         color: getMeasurementColor('polyline'),
-        // Auto-assign active JOC item and group (sticky selection!)
         jocItem: activeJOCItem || undefined,
         groupId: activeGroupId || undefined,
       };
@@ -819,8 +773,8 @@ export function MeasurementCanvas({ width, height }: MeasurementCanvasProps) {
         points: tempPoints,
         value: area,
         unit: 'SF',
+        pageNumber,
         color: getMeasurementColor('area'),
-        // Auto-assign active JOC item and group (sticky selection!)
         jocItem: activeJOCItem || undefined,
         groupId: activeGroupId || undefined,
       };
@@ -839,11 +793,11 @@ export function MeasurementCanvas({ width, height }: MeasurementCanvasProps) {
           points: tempPoints,
           value: area,
           unit: 'SF',
+          pageNumber,
           color: getMeasurementColor('space'),
           spaceName: spaceName,
           perimeter: perimeter,
           finishes: [],
-          // Auto-assign active JOC item and group (sticky selection!)
           jocItem: activeJOCItem || undefined,
           groupId: activeGroupId || undefined,
         };
@@ -851,15 +805,14 @@ export function MeasurementCanvas({ width, height }: MeasurementCanvasProps) {
       }
       setTempPoints([]);
     }
-  }, [activeTool, tempPoints, project, addMeasurement]);
+  }, [activeTool, tempPoints, project, addMeasurement, activeJOCItem, activeGroupId, pageNumber]);
 
   const handleMouseMove = useCallback((e: React.MouseEvent<HTMLCanvasElement>) => {
     const rect = canvasRef.current!.getBoundingClientRect();
-    const rawPos = {
+    setMousePos({
       x: e.clientX - rect.left,
       y: e.clientY - rect.top,
-    };
-    setMousePos(rawPos);
+    });
   }, []);
 
   const handleKeyDown = useCallback((e: KeyboardEvent) => {
@@ -867,11 +820,7 @@ export function MeasurementCanvas({ width, height }: MeasurementCanvasProps) {
       setTempPoints([]);
       setSnapResult(null);
     }
-    // Toggle snap with 'S' when not in space tool
-    if (e.key === 's' && activeTool !== 'space') {
-      setSnapSettings(prev => ({ ...prev, enabled: !prev.enabled }));
-    }
-  }, [activeTool]);
+  }, []);
 
   useEffect(() => {
     window.addEventListener('keydown', handleKeyDown);
@@ -893,61 +842,72 @@ export function MeasurementCanvas({ width, height }: MeasurementCanvasProps) {
             : activeTool === 'pan' ? 'grab' 
             : activeTool === 'text' ? 'text' 
             : 'crosshair',
-          pointerEvents: activeTool === 'pan' ? 'none' : 'auto'  // Let pan events pass through
+          pointerEvents: activeTool === 'pan' ? 'none' : 'auto'
         }}
       />
       
-      {/* Snap Status Indicator */}
-      <div className="absolute top-2 right-2 flex items-center gap-2 text-xs">
+      {/* Snap Controls */}
+      <div className="absolute top-3 right-3 flex items-center gap-2">
         <button
           onClick={() => setSnapSettings(prev => ({ ...prev, enabled: !prev.enabled }))}
-          className={`px-2 py-1 rounded ${
-            snapSettings.enabled 
-              ? 'bg-green-600/80 text-white' 
-              : 'bg-gray-700/80 text-white/50'
-          }`}
-          title="Toggle snap (S)"
+          className={`
+            flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-medium transition-all
+            ${snapSettings.enabled 
+              ? 'bg-emerald-500/20 border border-emerald-500/30 text-emerald-400' 
+              : 'bg-white/[0.03] border border-white/[0.06] text-white/40'
+            }
+          `}
+          title="Toggle snap"
         >
-          ⚡ Snap {snapSettings.enabled ? 'ON' : 'OFF'}
+          <Magnet className="w-3.5 h-3.5" />
+          Snap
         </button>
         
         {snapSettings.enabled && (
-          <div className="flex gap-1">
+          <div className="flex items-center gap-1 bg-white/[0.03] rounded-lg p-1 border border-white/[0.06]">
             <button
               onClick={() => setSnapSettings(prev => ({ ...prev, snapToEndpoints: !prev.snapToEndpoints }))}
-              className={`w-7 h-7 rounded flex items-center justify-center ${
-                snapSettings.snapToEndpoints ? 'bg-green-600/60' : 'bg-gray-700/60'
+              className={`w-7 h-7 rounded-md flex items-center justify-center transition-all ${
+                snapSettings.snapToEndpoints 
+                  ? 'bg-emerald-500/30 text-emerald-400' 
+                  : 'text-white/30 hover:text-white/60'
               }`}
               title="Endpoints"
             >
-              ●
+              <CircleDot className="w-3.5 h-3.5" />
             </button>
             <button
               onClick={() => setSnapSettings(prev => ({ ...prev, snapToMidpoints: !prev.snapToMidpoints }))}
-              className={`w-7 h-7 rounded flex items-center justify-center ${
-                snapSettings.snapToMidpoints ? 'bg-blue-600/60' : 'bg-gray-700/60'
+              className={`w-7 h-7 rounded-md flex items-center justify-center transition-all ${
+                snapSettings.snapToMidpoints 
+                  ? 'bg-blue-500/30 text-blue-400' 
+                  : 'text-white/30 hover:text-white/60'
               }`}
               title="Midpoints"
             >
-              ◆
+              <Diamond className="w-3.5 h-3.5" />
             </button>
             <button
               onClick={() => setSnapSettings(prev => ({ ...prev, snapToIntersections: !prev.snapToIntersections }))}
-              className={`w-7 h-7 rounded flex items-center justify-center ${
-                snapSettings.snapToIntersections ? 'bg-amber-600/60' : 'bg-gray-700/60'
+              className={`w-7 h-7 rounded-md flex items-center justify-center transition-all ${
+                snapSettings.snapToIntersections 
+                  ? 'bg-amber-500/30 text-amber-400' 
+                  : 'text-white/30 hover:text-white/60'
               }`}
               title="Intersections"
             >
-              ✕
+              <X className="w-3.5 h-3.5" />
             </button>
             <button
               onClick={() => setSnapSettings(prev => ({ ...prev, snapToPerpendicular: !prev.snapToPerpendicular }))}
-              className={`w-7 h-7 rounded flex items-center justify-center ${
-                snapSettings.snapToPerpendicular ? 'bg-purple-600/60' : 'bg-gray-700/60'
+              className={`w-7 h-7 rounded-md flex items-center justify-center transition-all ${
+                snapSettings.snapToPerpendicular 
+                  ? 'bg-purple-500/30 text-purple-400' 
+                  : 'text-white/30 hover:text-white/60'
               }`}
               title="Perpendicular"
             >
-              ⊥
+              <span className="text-xs font-bold">⊥</span>
             </button>
           </div>
         )}

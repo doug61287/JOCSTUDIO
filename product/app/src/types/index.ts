@@ -18,12 +18,16 @@ export interface Measurement {
   points: Point[];
   value: number; // LF for lines, count for counts, SF for areas/spaces
   unit: string;
-  label?: string;
-  jocItem?: JOCItem;
+  pageNumber: number; // PDF page this measurement belongs to (1-indexed)
+  name?: string; // User-defined takeoff name (e.g., "Wall Demo/Patch Back")
+  label?: string; // Legacy - use name instead
+  jocItem?: JOCItem; // Legacy single item - use jocItems instead
+  jocItems?: JOCItem[]; // Multiple JOC items for this measurement
   color: string;
   groupId?: string; // Reference to parent group
   style?: MeasurementStyle; // Formatting options
   flagId?: string; // Link to a flag if this measurement has one
+  visible?: boolean; // Visibility toggle for canvas display
   // Space-specific fields
   spaceName?: string;
   perimeter?: number; // LF for spaces
@@ -115,3 +119,41 @@ export interface Project {
 }
 
 export type Tool = 'select' | 'pan' | 'text' | 'line' | 'polyline' | 'count' | 'area' | 'space' | 'calibrate';
+
+// ============================================
+// ASSEMBLY SYSTEM - The Translation Engine
+// ============================================
+
+// A single item in an assembly with quantity modifier
+export interface AssemblyItem {
+  jocItem: JOCItem;
+  quantityFactor: number; // Multiplier (1.0 = same as measurement, 2.0 = double, etc.)
+  notes?: string; // e.g., "2 coats", "both sides"
+}
+
+// A reusable assembly/recipe of JOC items
+export interface Assembly {
+  id: string;
+  name: string; // User-facing name: "Wall Patch", "Door Install"
+  description?: string;
+  category: AssemblyCategory;
+  keywords: string[]; // Search/match terms: ["wall", "patch", "drywall", "gypsum", "repair"]
+  items: AssemblyItem[];
+  applicableTo: ('line' | 'area' | 'count' | 'space')[]; // What measurement types this applies to
+  createdBy: 'system' | 'user';
+  usageCount?: number; // Track popularity
+}
+
+export type AssemblyCategory = 
+  | 'demolition'
+  | 'carpentry'
+  | 'drywall'
+  | 'flooring'
+  | 'ceiling'
+  | 'doors'
+  | 'painting'
+  | 'plumbing'
+  | 'electrical'
+  | 'hvac'
+  | 'general'
+  | 'custom';

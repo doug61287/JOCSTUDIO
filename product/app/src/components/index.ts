@@ -12,3 +12,4 @@ export { ActiveItemPicker } from './ActiveItemPicker';
 export { FormattingPanel, QuickFormatBar } from './FormattingPanel';
 export { FlagsPanel } from './FlagsPanel';
 export { SchedulePanel } from './SchedulePanel';
+export { TierSelector, TierBadge } from './TierSelector';
