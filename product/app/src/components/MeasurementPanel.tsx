@@ -273,6 +273,7 @@ export function MeasurementPanel() {
   /**
    * Get companion items for a measurement based on its source assembly
    * Companion items are those with quantityFactor < 1 (fittings, accessories)
+   * FILTERS OUT items that have already been counted (child measurement exists with value > 0)
    */
   const getCompanionItems = (measurement: Measurement): { jocItem: JOCItem; parentTaskCode: string; label: string }[] => {
     if (!measurement.sourceAssemblyId) return [];
@@ -284,9 +285,21 @@ export function MeasurementPanel() {
     const mainItem = assembly.items.find(i => i.quantityFactor === 1.0);
     const parentTaskCode = mainItem?.jocItem.taskCode || '';
     
-    // Return items with quantityFactor < 1 (fittings, accessories, etc.)
+    // Find child measurements that were spawned for counting fittings
+    const countedFittingCodes = new Set(
+      project?.measurements
+        .filter(m => 
+          m.parentMeasurementId === measurement.id && 
+          m.type === 'count' && 
+          m.value > 0 // Has been counted
+        )
+        .flatMap(m => m.jocItems?.map(i => i.taskCode) || [])
+    );
+    
+    // Return items with quantityFactor < 1, excluding already-counted ones
     return assembly.items
       .filter(item => item.quantityFactor < 1.0)
+      .filter(item => !countedFittingCodes.has(item.jocItem.taskCode)) // Exclude counted
       .map(item => ({
         jocItem: item.jocItem,
         parentTaskCode,
