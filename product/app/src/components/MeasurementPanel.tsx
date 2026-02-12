@@ -48,6 +48,39 @@ const GROUP_COLORS = [
   '#ec4899', '#06b6d4', '#84cc16', '#f97316', '#6366f1'
 ];
 
+// ============================================
+// CLEAN JOC ITEM NAME EXTRACTION
+// JOC descriptions are verbose - extract the meaningful part!
+// "1/2" NPT Thread, 1/2" Orifice, K=5.6, Sidewall Brass Wet Pipe Sprinkler Head" → "Sprinkler Head"
+// ============================================
+const ITEM_TYPES = [
+  'sprinkler head', 'escutcheon', 'elbow', 'tee', 'coupling', 'reducer', 'cap', 'union', 'flange',
+  'valve', 'pipe', 'hanger', 'fitting', 'connection', 'siamese', 'flow switch', 'detector',
+  'diffuser', 'duct', 'damper', 'fan', 'heater', 'cabinet', 'drain', 'faucet', 'trap',
+  'water closet', 'lavatory', 'urinal', 'carrier', 'flush valve', 'water heater',
+];
+
+function getCleanItemName(description: string): string {
+  const lower = description.toLowerCase();
+  
+  // Find the item type in the description
+  for (const type of ITEM_TYPES) {
+    if (lower.includes(type)) {
+      // Extract size if present at the start (e.g., "3"", "1-1/2"", "24" x 24"")
+      const sizeMatch = description.match(/^(\d+(?:-\d+\/\d+)?["']?(?:\s*x\s*\d+["']?)?)/i);
+      const size = sizeMatch ? sizeMatch[1] : '';
+      
+      // Capitalize the type
+      const cleanType = type.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+      
+      return size ? `${size} ${cleanType}` : cleanType;
+    }
+  }
+  
+  // Fallback: first comma-separated part
+  return description.split(',')[0].trim();
+}
+
 // Type icons - small
 const TYPE_ICONS: Record<string, React.ReactNode> = {
   line: <Ruler className="w-3.5 h-3.5" />,
@@ -887,8 +920,8 @@ export function MeasurementPanel() {
                 key={item.taskCode}
                 className="flex items-center gap-2 px-3 py-1.5 pl-14 text-xs hover:bg-white/[0.02] group"
               >
-                <span className="text-white/40 font-mono">{item.taskCode.slice(0, 14)}</span>
-                <span className="flex-1 truncate text-white/60">{item.description.split(',')[0]}</span>
+                <span className="text-white/40 font-mono text-[10px]">{item.taskCode.slice(0, 11)}</span>
+                <span className="flex-1 truncate text-white/70">{getCleanItemName(item.description)}</span>
                 <span className="text-emerald-400/70 tabular-nums">${(m.value * item.unitCost).toFixed(0)}</span>
                 <button
                   onClick={() => handleRemoveJocItem(m.id, item.taskCode)}
@@ -1329,8 +1362,8 @@ export function MeasurementPanel() {
               lineItemTotals.map(({ item, quantity }) => (
                 <div key={item.taskCode} className="p-2 rounded-lg border border-white/[0.06] bg-white/[0.02]">
                   <div className="flex items-start gap-2">
-                    <span className="text-[10px] font-mono text-white/40">{item.taskCode.slice(0, 14)}</span>
-                    <span className="flex-1 text-xs text-white/70 line-clamp-1">{item.description.split(',')[0]}</span>
+                    <span className="text-[10px] font-mono text-white/40">{item.taskCode.slice(0, 11)}</span>
+                    <span className="flex-1 text-xs text-white/70 line-clamp-1">{getCleanItemName(item.description)}</span>
                   </div>
                   <div className="flex justify-between mt-1 text-[10px]">
                     <span className="text-white/40">
