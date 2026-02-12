@@ -848,7 +848,7 @@ export const ASSEMBLY_LIBRARY: Assembly[] = [
     description: '3" CPVC fire sprinkler main with fittings allowance',
     category: 'fire-protection',
     keywords: ['3 inch', '3"', 'sprinkler', 'main', 'pipe', 'cpvc', 'fire', 'fp'],
-    applicableTo: ['line'],
+    applicableTo: ['line', 'polyline'],
     createdBy: 'system',
     items: [
       {
@@ -888,7 +888,7 @@ export const ASSEMBLY_LIBRARY: Assembly[] = [
     description: '1-1/2" CPVC fire sprinkler branch line with fittings',
     category: 'fire-protection',
     keywords: ['1-1/2', '1.5 inch', 'sprinkler', 'branch', 'pipe', 'cpvc', 'fire', 'fp'],
-    applicableTo: ['line'],
+    applicableTo: ['line', 'polyline'],
     createdBy: 'system',
     items: [
       {
@@ -918,7 +918,7 @@ export const ASSEMBLY_LIBRARY: Assembly[] = [
     description: '1-1/4" CPVC fire sprinkler branch line with fittings',
     category: 'fire-protection',
     keywords: ['1-1/4', '1.25 inch', 'sprinkler', 'branch', 'pipe', 'cpvc', 'fire', 'fp'],
-    applicableTo: ['line'],
+    applicableTo: ['line', 'polyline'],
     createdBy: 'system',
     items: [
       {

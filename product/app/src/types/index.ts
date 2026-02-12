@@ -143,7 +143,7 @@ export interface Assembly {
   category: AssemblyCategory;
   keywords: string[]; // Search/match terms: ["wall", "patch", "drywall", "gypsum", "repair"]
   items: AssemblyItem[];
-  applicableTo: ('line' | 'area' | 'count' | 'space')[]; // What measurement types this applies to
+  applicableTo: ('line' | 'polyline' | 'area' | 'count' | 'space')[]; // What measurement types this applies to
   createdBy: 'system' | 'user';
   usageCount?: number; // Track popularity
 }
