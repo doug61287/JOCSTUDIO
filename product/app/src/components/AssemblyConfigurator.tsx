@@ -1,16 +1,18 @@
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo } from 'react';
 import type { JOCItem, Measurement } from '../types';
-import { searchJOCItems } from '../data/jocCatalogue';
+import { searchJOCItems, jocCatalogue } from '../data/jocCatalogue';
+import { HeightSelector } from './HeightSelector';
+import { getItemsWithHeightOptions } from '../utils/heightPremiums';
 import { 
   Package, 
   Check, 
-  X, 
   AlertCircle,
   ChevronDown,
   ChevronUp,
   Search,
   Sparkles,
   Calculator,
+  ArrowUpFromLine,
 } from 'lucide-react';
 
 // ============================================
@@ -342,6 +344,8 @@ export function AssemblyConfigurator({
   const [showOptional, setShowOptional] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState<JOCItem[]>([]);
+  const [showHeightSelector, setShowHeightSelector] = useState(false);
+  const [pendingItems, setPendingItems] = useState<JOCItem[]>([]);
 
   // Calculate totals
   const totals = useMemo(() => {
@@ -402,6 +406,55 @@ export function AssemblyConfigurator({
   const primaryItems = items.filter(i => i.category === 'primary');
   const typicalItems = items.filter(i => i.category === 'typical');
   const optionalItems = items.filter(i => i.category === 'optional');
+
+  // Check if any items have height variants
+  const itemsWithHeightOptions = useMemo(() => 
+    getItemsWithHeightOptions(totals.checkedItems, jocCatalogue),
+    [totals.checkedItems]
+  );
+  
+  const hasHeightOptions = itemsWithHeightOptions.length > 0;
+
+  // Handle Apply click - check for height variants first
+  const handleApplyClick = () => {
+    if (hasHeightOptions) {
+      setPendingItems(totals.checkedItems);
+      setShowHeightSelector(true);
+    } else {
+      onApply(totals.checkedItems);
+    }
+  };
+
+  // Handle height selection confirmation
+  const handleHeightConfirm = (_ceilingHeight: number, adjustedItems: JOCItem[]) => {
+    // Replace height-tiered items with correct tier, keep others unchanged
+    const finalItems = pendingItems.map(item => {
+      const adjusted = adjustedItems.find(a => 
+        a.taskCode.replace(/-\d{4}$/, '') === item.taskCode.replace(/-\d{4}$/, '')
+      );
+      return adjusted || item;
+    });
+    
+    setShowHeightSelector(false);
+    onApply(finalItems);
+  };
+
+  // Show HeightSelector if needed
+  if (showHeightSelector && hasHeightOptions) {
+    return (
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
+        <div className="w-full max-w-lg">
+          <HeightSelector
+            families={itemsWithHeightOptions}
+            quantity={measurement.value}
+            catalogue={jocCatalogue}
+            onConfirm={handleHeightConfirm}
+            onCancel={() => setShowHeightSelector(false)}
+          />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
@@ -542,6 +595,17 @@ export function AssemblyConfigurator({
             </div>
           </div>
           
+          {/* Height Premium Indicator */}
+          {hasHeightOptions && (
+            <div className="mb-3 p-2 bg-cyan-500/10 border border-cyan-500/30 rounded-lg flex items-center gap-2">
+              <ArrowUpFromLine className="w-4 h-4 text-cyan-400" />
+              <span className="text-xs text-cyan-300">
+                {itemsWithHeightOptions.length} item{itemsWithHeightOptions.length > 1 ? 's have' : ' has'} height-based pricing. 
+                You'll select ceiling height next.
+              </span>
+            </div>
+          )}
+          
           <div className="flex gap-3">
             <button
               onClick={onCancel}
@@ -550,11 +614,20 @@ export function AssemblyConfigurator({
               Cancel
             </button>
             <button
-              onClick={() => onApply(totals.checkedItems)}
+              onClick={handleApplyClick}
               className="flex-1 py-2.5 px-4 text-sm font-semibold text-black bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 rounded-lg transition-colors flex items-center justify-center gap-2"
             >
-              <Check className="w-4 h-4" />
-              Apply {totals.checkedItems.length} Items
+              {hasHeightOptions ? (
+                <>
+                  <ArrowUpFromLine className="w-4 h-4" />
+                  Continue to Height
+                </>
+              ) : (
+                <>
+                  <Check className="w-4 h-4" />
+                  Apply {totals.checkedItems.length} Items
+                </>
+              )}
             </button>
           </div>
         </div>

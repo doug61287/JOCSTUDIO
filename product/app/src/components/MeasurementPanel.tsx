@@ -34,6 +34,8 @@ import {
   Zap,
   Package,
   Layers,
+  Tag,
+  AlertTriangle,
 } from 'lucide-react';
 
 // Group colors
