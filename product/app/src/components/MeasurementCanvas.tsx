@@ -742,8 +742,9 @@ export function MeasurementCanvas({ width, height, pageNumber }: MeasurementCanv
         });
       } else {
         // Create new count measurement
+        const newId = generateId();
         const measurement: Measurement = {
-          id: generateId(),
+          id: newId,
           type: 'count',
           points: [point],
           value: 1,
@@ -754,6 +755,8 @@ export function MeasurementCanvas({ width, height, pageNumber }: MeasurementCanv
           groupId: activeGroupId || undefined,
         };
         addMeasurement(measurement);
+        // Auto-select so next clicks continue adding to this count!
+        selectMeasurement(newId);
       }
     }
     
