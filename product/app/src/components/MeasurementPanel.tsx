@@ -455,6 +455,7 @@ export function MeasurementPanel() {
     const shortLabel = size ? `${size} ${fittingType}` : fittingType;
     
     // Create a new COUNT measurement linked to the parent
+    // NOTE: Do NOT set sourceAssemblyId - fittings shouldn't get Continue Takeoff sections
     const newMeasurement: Measurement = {
       id: newId,
       type: 'count',
@@ -466,9 +467,8 @@ export function MeasurementPanel() {
       jocItems: [companionItem],
       color: '#f59e0b', // Amber for companion counts
       visible: true,
-      // Link back to parent
+      // Link back to parent - but NOT sourceAssemblyId (fittings don't need Continue Takeoff)
       parentMeasurementId: parentMeasurement.id,
-      sourceAssemblyId: parentMeasurement.sourceAssemblyId,
       companionOf: parentTaskCode,
     };
     
@@ -948,7 +948,8 @@ export function MeasurementPanel() {
             ))}
             
             {/* 🔗 COMPANION ITEMS - Click to start count takeoff! */}
-            {(() => {
+            {/* ONLY show for PIPE measurements (line/polyline), not for counts */}
+            {(m.type === 'line' || m.type === 'polyline') && (() => {
               const companions = getCompanionItems(m);
               if (companions.length === 0) return null;
               
