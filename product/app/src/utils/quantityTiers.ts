@@ -279,3 +279,105 @@ export function calculateTierSavings(family: TierFamily, quantity: number): numb
   
   return firstCost - recommendedCost;
 }
+
+// ============================================
+// ADD/DEDUCT TIER SYSTEM (from H+H CTC PDF)
+// Single item with quantity-based price adjustments
+// ============================================
+
+export interface AddDeductTier {
+  minQty: number;
+  maxQty: number | null;  // null = open-ended (e.g., >1000)
+  operation: 'add' | 'deduct';
+  adjustment: number;  // The amount to add/deduct (negative for deduct)
+}
+
+// Import the tier map (loaded from JSON)
+import tierMapData from '../data/tier-map.json';
+const tierMap = tierMapData as Record<string, AddDeductTier[]>;
+
+/**
+ * Check if an item has add/deduct quantity tiers
+ */
+export function hasAddDeductTiers(taskCode: string): boolean {
+  return taskCode in tierMap && tierMap[taskCode].length > 0;
+}
+
+/**
+ * Get all add/deduct tiers for an item
+ */
+export function getAddDeductTiers(taskCode: string): AddDeductTier[] {
+  return tierMap[taskCode] || [];
+}
+
+/**
+ * Calculate the adjusted unit price based on quantity
+ * 
+ * Example: 21131300-0026 (Upright Brass Sprinkler Head)
+ * - Base price: $101.97 (for qty 1-25)
+ * - Qty 26-50: Deduct $3.38 → $98.59
+ * - Qty 51-100: Deduct $8.48 → $93.49
+ */
+export function calculateAdjustedPrice(
+  basePrice: number, 
+  taskCode: string, 
+  quantity: number
+): { adjustedPrice: number; adjustment: number; tierLabel: string } {
+  const tiers = getAddDeductTiers(taskCode);
+  
+  if (tiers.length === 0) {
+    return { adjustedPrice: basePrice, adjustment: 0, tierLabel: 'Base' };
+  }
+  
+  // Find the applicable tier
+  for (const tier of tiers) {
+    const inRange = quantity >= tier.minQty && 
+                   (tier.maxQty === null || quantity <= tier.maxQty);
+    
+    if (inRange) {
+      const adjustment = tier.adjustment;
+      const adjustedPrice = basePrice + adjustment;
+      const rangeLabel = tier.maxQty 
+        ? `${tier.minQty}-${tier.maxQty}`
+        : `${tier.minQty}+`;
+      
+      return { 
+        adjustedPrice, 
+        adjustment,
+        tierLabel: `Qty ${rangeLabel}` 
+      };
+    }
+  }
+  
+  // No matching tier = base price
+  return { adjustedPrice: basePrice, adjustment: 0, tierLabel: 'Base (1-25)' };
+}
+
+/**
+ * Get a summary of potential savings from quantity tiers
+ */
+export function getQuantityTierSummary(
+  taskCode: string, 
+  basePrice: number,
+  quantity: number
+): { hasTiers: boolean; currentPrice: number; savings: number; maxSavings: number } {
+  const tiers = getAddDeductTiers(taskCode);
+  
+  if (tiers.length === 0) {
+    return { hasTiers: false, currentPrice: basePrice, savings: 0, maxSavings: 0 };
+  }
+  
+  const { adjustedPrice } = calculateAdjustedPrice(basePrice, taskCode, quantity);
+  const savings = (basePrice - adjustedPrice) * quantity;
+  
+  // Calculate max possible savings (using the largest discount tier)
+  const maxDiscount = Math.max(...tiers.filter(t => t.adjustment < 0).map(t => Math.abs(t.adjustment)));
+  const maxSavings = maxDiscount * quantity;
+  
+  return { 
+    hasTiers: true, 
+    currentPrice: adjustedPrice, 
+    savings: savings > 0 ? savings : 0,
+    maxSavings 
+  };
+}
