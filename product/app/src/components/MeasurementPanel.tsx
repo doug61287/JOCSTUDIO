@@ -421,62 +421,44 @@ export function MeasurementPanel() {
   };
 
   /**
-   * Save all companion items for later - creates placeholder measurements with flags
+   * Save all companion items for later - just flags the parent measurement
+   * NO placeholder measurements created - cleaner approach!
    * "I'll count these fittings later"
    */
   const handleSaveCompanionsForLater = (parentMeasurement: Measurement) => {
     const companions = getCompanionItems(parentMeasurement);
     if (companions.length === 0) return;
     
-    const createdIds: string[] = [];
-    
-    companions.forEach(({ jocItem, parentTaskCode }) => {
-      const newId = generateId();
-      const shortLabel = jocItem.description.split(',')[0].trim();
-      
-      // Create placeholder COUNT measurement with value=0
-      const newMeasurement: Measurement = {
-        id: newId,
-        type: 'count',
-        points: [],
-        value: 0, // Placeholder - needs hard count
-        unit: 'EA',
-        pageNumber: parentMeasurement.pageNumber,
-        name: `${shortLabel} (from ${parentMeasurement.name || 'parent'})`,
-        jocItems: [jocItem],
-        color: '#ef4444', // Red for "needs attention"
-        visible: true,
-        parentMeasurementId: parentMeasurement.id,
-        sourceAssemblyId: parentMeasurement.sourceAssemblyId,
-        companionOf: parentTaskCode,
-      };
-      
-      addMeasurement(newMeasurement);
-      createdIds.push(newId);
-      
-      // Add flag to each one
-      const flag: FlagType = {
-        id: generateId(),
-        type: 'verify',
-        title: `Hard count needed: ${shortLabel}`,
-        description: `Placeholder from ${parentMeasurement.name || 'assembly'}. Count actual fittings on drawing.`,
-        measurementId: newId,
-        pageNumber: parentMeasurement.pageNumber,
-        status: 'open',
-        priority: 'medium',
-        createdAt: new Date(),
-      };
-      
-      flagMeasurement(newId, flag);
+    // Create a single flag on the PARENT measurement listing all fittings to count
+    const fittingNames = companions.map(c => {
+      const desc = c.jocItem.description;
+      const sizeMatch = desc.match(/^(\d+(?:-\d+\/\d+)?["']?)/);
+      const size = sizeMatch ? sizeMatch[1] : '';
+      let type = 'Fitting';
+      if (/elbow/i.test(desc)) type = 'Elbow';
+      else if (/tee/i.test(desc)) type = 'Tee';
+      else if (/coupling/i.test(desc)) type = 'Coupling';
+      return size ? `${size} ${type}` : type;
     });
     
-    // Expand to show the new items
-    setExpandedItems(prev => new Set([...prev, ...createdIds]));
+    const flag: FlagType = {
+      id: generateId(),
+      type: 'verify',
+      title: `Count fittings: ${fittingNames.join(', ')}`,
+      description: `Fittings for ${parentMeasurement.name || 'this pipe run'} need hard count on drawing.`,
+      measurementId: parentMeasurement.id,
+      pageNumber: parentMeasurement.pageNumber,
+      status: 'open',
+      priority: 'medium',
+      createdAt: new Date(),
+    };
+    
+    flagMeasurement(parentMeasurement.id, flag);
     
     // Show confirmation
     setCountingPrompt({ 
-      itemName: `${companions.length} items saved - check Flags tab`, 
-      measurementId: createdIds[0] 
+      itemName: `${companions.length} fittings flagged for later - check Flags tab`, 
+      measurementId: parentMeasurement.id 
     });
     setTimeout(() => setCountingPrompt(null), 4000);
   };
@@ -1035,15 +1017,21 @@ export function MeasurementPanel() {
           </div>
         )}
         
-        {/* 👶 CHILD MEASUREMENTS - Fittings nested under parent pipe */}
-        {isExpanded && groupedMeasurements.childrenByParent[m.id]?.length > 0 && (
-          <div className="border-t border-cyan-500/20 bg-cyan-500/5">
-            <div className="px-3 py-1.5 pl-10">
-              <span className="text-[10px] text-cyan-400 font-medium uppercase tracking-wider flex items-center gap-1">
-                <Link2 className="w-3 h-3" /> Counted Fittings
-              </span>
-            </div>
-            {groupedMeasurements.childrenByParent[m.id].map((child) => {
+        {/* 👶 CHILD MEASUREMENTS - Only show ACTUALLY COUNTED fittings (value > 0) */}
+        {isExpanded && (() => {
+          const countedChildren = (groupedMeasurements.childrenByParent[m.id] || [])
+            .filter(child => child.value > 0); // Only show if actually counted!
+          
+          if (countedChildren.length === 0) return null;
+          
+          return (
+            <div className="border-t border-cyan-500/20 bg-cyan-500/5">
+              <div className="px-3 py-1.5 pl-10">
+                <span className="text-[10px] text-cyan-400 font-medium uppercase tracking-wider flex items-center gap-1">
+                  <Link2 className="w-3 h-3" /> Counted Fittings
+                </span>
+              </div>
+              {countedChildren.map((child) => {
               const childJocItems = getJocItems(child);
               const childTotal = childJocItems.reduce((sum, item) => sum + (child.value * item.unitCost), 0);
               
@@ -1090,8 +1078,9 @@ export function MeasurementPanel() {
                 </div>
               );
             })}
-          </div>
-        )}
+            </div>
+          );
+        })()}
       </div>
     );
   };
