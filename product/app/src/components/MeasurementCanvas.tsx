@@ -72,15 +72,9 @@ export function MeasurementCanvas({ width, height, pageNumber }: MeasurementCanv
     if (!activeAssembly) return baseMeasurement;
     
     // Check if assembly is compatible with this measurement type
-    const measurementTypeMap: Record<string, string> = {
-      'line': 'length',
-      'polyline': 'length', 
-      'area': 'area',
-      'space': 'area',
-      'count': 'count'
-    };
-    const compatType = measurementTypeMap[baseMeasurement.type];
-    if (!activeAssembly.applicableTo.includes(compatType as any)) {
+    // Assembly.applicableTo uses: 'line', 'polyline', 'area', 'count', 'space'
+    // Measurement.type uses the same values, so check directly
+    if (!activeAssembly.applicableTo.includes(baseMeasurement.type as any)) {
       // Assembly not compatible, return without it
       return baseMeasurement;
     }
