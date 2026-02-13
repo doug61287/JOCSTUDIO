@@ -611,54 +611,148 @@
       ctx.shadowBlur = 0;
     }
     
-    // Mouse interaction
+    // Mouse interaction - hover and drag
     let hoveredNode = null;
+    let draggedNode = null;
+    let isDragging = false;
+    
+    // Find node at position (checks both items and hubs)
+    function findNodeAt(mx, my) {
+      let closest = null;
+      let closestDist = 30;
+      
+      // Check hubs first (they're larger, priority)
+      categoryHubs.forEach(hub => {
+        if (currentFilter === 'fp' && !hub.isFP) return;
+        if (currentFilter === 'plumb' && hub.isFP) return;
+        
+        const dist = Math.hypot(hub.x - mx, hub.y - my);
+        if (dist < hub.radius + 10 && dist < closestDist) {
+          closest = hub;
+          closestDist = dist;
+        }
+      });
+      
+      // Then check item nodes
+      if (!closest) {
+        nodes.forEach(node => {
+          if (currentFilter === 'fp' && !node.isFP) return;
+          if (currentFilter === 'plumb' && node.isFP) return;
+          
+          const dist = Math.hypot(node.x - mx, node.y - my);
+          if (dist < 15 && dist < closestDist) {
+            closest = node;
+            closestDist = dist;
+          }
+        });
+      }
+      
+      return closest;
+    }
+    
+    canvas.addEventListener('mousedown', (e) => {
+      const rect = canvas.getBoundingClientRect();
+      const mx = e.clientX - rect.left;
+      const my = e.clientY - rect.top;
+      
+      const node = findNodeAt(mx, my);
+      if (node) {
+        isDragging = true;
+        draggedNode = node;
+        draggedNode.fx = draggedNode.x;
+        draggedNode.fy = draggedNode.y;
+        canvas.style.cursor = 'grabbing';
+        
+        // Reheat simulation
+        if (simulation) simulation.alphaTarget(0.3).restart();
+      }
+    });
     
     canvas.addEventListener('mousemove', (e) => {
       const rect = canvas.getBoundingClientRect();
       const mx = e.clientX - rect.left;
       const my = e.clientY - rect.top;
       
-      // Find closest node
-      let closest = null;
-      let closestDist = 20; // Max distance to trigger hover
-      
-      nodes.forEach(node => {
-        if (currentFilter === 'fp' && !node.isFP) return;
-        if (currentFilter === 'plumb' && node.isFP) return;
+      if (isDragging && draggedNode) {
+        // Move the dragged node
+        draggedNode.fx = mx;
+        draggedNode.fy = my;
+        hideTooltip();
+      } else {
+        // Hover detection
+        const closest = findNodeAt(mx, my);
         
-        const dist = Math.hypot(node.x - mx, node.y - my);
-        if (dist < closestDist) {
-          closest = node;
-          closestDist = dist;
+        if (closest !== hoveredNode) {
+          hoveredNode = closest;
+          
+          if (closest) {
+            showTooltip(e, closest);
+            canvas.style.cursor = 'grab';
+          } else {
+            hideTooltip();
+            canvas.style.cursor = 'default';
+          }
         }
-      });
-      
-      if (closest !== hoveredNode) {
-        hoveredNode = closest;
         
-        if (closest) {
-          showTooltip(e, closest);
-        } else {
-          hideTooltip();
+        if (hoveredNode) {
+          tooltip.style.left = (e.clientX + 15) + 'px';
+          tooltip.style.top = (e.clientY + 15) + 'px';
         }
       }
-      
-      if (hoveredNode) {
-        tooltip.style.left = (e.clientX + 15) + 'px';
-        tooltip.style.top = (e.clientY + 15) + 'px';
+    });
+    
+    canvas.addEventListener('mouseup', () => {
+      if (isDragging && draggedNode) {
+        // Release the node (let it float back or keep pinned)
+        draggedNode.fx = null;
+        draggedNode.fy = null;
+        isDragging = false;
+        draggedNode = null;
+        canvas.style.cursor = hoveredNode ? 'grab' : 'default';
+        
+        // Cool down simulation
+        if (simulation) simulation.alphaTarget(0);
       }
+    });
+    
+    canvas.addEventListener('mouseleave', () => {
+      if (isDragging && draggedNode) {
+        draggedNode.fx = null;
+        draggedNode.fy = null;
+        isDragging = false;
+        draggedNode = null;
+      }
+      hideTooltip();
+      canvas.style.cursor = 'default';
     });
     
     function showTooltip(e, node) {
       const divName = node.isFP ? 'Fire Protection' : 'Plumbing';
       const divColor = node.isFP ? COLORS.fp : COLORS.plumb;
       
-      tooltip.innerHTML = `
-        <h3 style="color: ${divColor}">${node.description}</h3>
-        <div class="code">${node.id}</div>
-        <div class="price">$${node.unitCost.toFixed(2)} / ${node.unit}</div>
-      `;
+      if (node.isHub) {
+        // Hub tooltip
+        tooltip.innerHTML = `
+          <h3 style="color: ${divColor}">📦 Category Hub</h3>
+          <div class="code">${node.catId}-XXXX</div>
+          <div style="margin-top: 8px; color: rgba(255,255,255,0.8);">
+            <strong>${node.count}</strong> items in this category
+          </div>
+          <div style="font-size: 10px; color: rgba(255,255,255,0.5); margin-top: 6px;">
+            Drag to reorganize!
+          </div>
+        `;
+      } else {
+        // Item tooltip
+        tooltip.innerHTML = `
+          <h3 style="color: ${divColor}">${node.description}</h3>
+          <div class="code">${node.id}</div>
+          <div class="price">$${node.unitCost.toFixed(2)} / ${node.unit}</div>
+          <div style="font-size: 10px; color: rgba(255,255,255,0.5); margin-top: 6px;">
+            Drag to move
+          </div>
+        `;
+      }
       tooltip.classList.add('visible');
     }
     
