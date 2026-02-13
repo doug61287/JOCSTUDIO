@@ -413,21 +413,40 @@ export function AssemblyAssembler({
     const prefix = selectedType.taskCodePrefix;
     const searchLower = itemSearchQuery.toLowerCase();
     
-    return jocCatalogue.filter(item => {
+    let results = jocCatalogue.filter(item => {
       const code = item.taskCode;
       const desc = item.description.toLowerCase();
       
-      // Must start with the type's prefix
-      if (!code.startsWith(prefix.substring(0, 4))) return false;
+      // Must start with the full prefix (not truncated)
+      if (!code.startsWith(prefix)) return false;
       
-      // Exclude service items
+      // Exclude service items and "per head" system items
       if (desc.includes('removal') || desc.includes('relocate') || desc.includes('demo')) return false;
+      if (desc.includes('per head') || desc.includes('complete wet-pipe')) return false;
       
       // If search query, filter by it
       if (searchLower && !desc.includes(searchLower)) return false;
       
       return true;
-    }).slice(0, 30); // Limit results
+    });
+    
+    // Sort to show variety: pendent first, then sidewall, then upright, then others
+    results.sort((a, b) => {
+      const aDesc = a.description.toLowerCase();
+      const bDesc = b.description.toLowerCase();
+      
+      const getOrder = (d: string) => {
+        if (d.includes('pendent')) return 1;
+        if (d.includes('sidewall')) return 2;
+        if (d.includes('upright')) return 3;
+        if (d.includes('concealed')) return 4;
+        return 5;
+      };
+      
+      return getOrder(aDesc) - getOrder(bDesc);
+    });
+    
+    return results.slice(0, 50); // Increased limit for more variety
   }, [selectedType, itemSearchQuery]);
 
   // Build assembly
