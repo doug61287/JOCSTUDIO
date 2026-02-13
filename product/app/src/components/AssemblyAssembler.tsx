@@ -286,10 +286,22 @@ export function AssemblyAssembler({
       const size = selectedSize;
       const isFP = category === 'fire-protection';
       
+      // Build strict size patterns to avoid matching "2" in "1-1/2" or "2-1/2"
+      const sizePatterns = [
+        new RegExp(`^${size}"`, 'i'),           // Start: "2" CPVC..."
+        new RegExp(`\\s${size}"`, 'i'),         // After space
+        new RegExp(`,\\s*${size}"`, 'i'),       // After comma
+      ];
+      
+      const matchesExactSize = (desc: string): boolean => {
+        return sizePatterns.some(pattern => pattern.test(desc));
+      };
+      
       // Search for matching pipe - search broader for black steel (in Div 23)
       const matches = jocCatalogue.filter(item => {
         const code = item.taskCode;
-        const desc = item.description.toLowerCase();
+        const desc = item.description;
+        const descLower = desc.toLowerCase();
         
         // For FP, CPVC is in 21, Black Steel is in 23
         // For Plumbing, most items in 22, some in 23
@@ -299,22 +311,21 @@ export function AssemblyAssembler({
         
         if (!validDivisions.some(d => code.startsWith(d))) return false;
         
-        // Must contain size (anywhere in description)
-        const sizePattern = `${size}"`;
-        if (!desc.includes(sizePattern)) return false;
+        // Must match EXACT size (not partial like "2" in "1-1/2")
+        if (!matchesExactSize(desc)) return false;
         
         // Must be pipe (not fitting, not service)
-        if (!desc.includes('pipe')) return false;
-        if (desc.includes('removal') || desc.includes('relocate') || desc.includes('demo')) return false;
-        if (desc.includes('clamp') || desc.includes('nipple') || desc.includes('repair')) return false;
+        if (!descLower.includes('pipe')) return false;
+        if (descLower.includes('removal') || descLower.includes('relocate') || descLower.includes('demo')) return false;
+        if (descLower.includes('clamp') || descLower.includes('nipple') || descLower.includes('repair')) return false;
         
         // Must match material keywords
-        const hasKeyword = selectedMaterial.keywords.some(kw => desc.includes(kw.toLowerCase()));
+        const hasKeyword = selectedMaterial.keywords.some(kw => descLower.includes(kw.toLowerCase()));
         if (!hasKeyword) return false;
         
         // For FP, prefer items with "fire" or "sprinkler" in description
         if (isFP && selectedMaterial.id === 'cpvc') {
-          if (!desc.includes('fire') && !desc.includes('sprinkler')) return false;
+          if (!descLower.includes('fire') && !descLower.includes('sprinkler')) return false;
         }
         
         return true;
@@ -343,26 +354,39 @@ export function AssemblyAssembler({
       
       const fittingTypes = ['coupling', 'hanger', 'elbow', 'tee'];
       
+      // Build strict size patterns to avoid matching "2" in "1-1/2" or "2-1/2"
+      // We need to match exact sizes like "2"" at word boundary
+      const sizePatterns = [
+        new RegExp(`^${selectedSize}"`, 'i'),           // Start of string: "2" CPVC..."
+        new RegExp(`\\s${selectedSize}"`, 'i'),         // After space: "...Sch 80 2" CPVC..."
+        new RegExp(`,\\s*${selectedSize}"`, 'i'),       // After comma: "..., 2" Pipe"
+      ];
+      
+      const matchesExactSize = (desc: string): boolean => {
+        return sizePatterns.some(pattern => pattern.test(desc));
+      };
+      
       for (const fittingType of fittingTypes) {
         const matches = jocCatalogue.filter(item => {
-          const desc = item.description.toLowerCase();
+          const desc = item.description;
+          const descLower = desc.toLowerCase();
           const code = item.taskCode;
           
           // Must be in valid division
           if (!validDivisions.some(d => code.startsWith(d))) return false;
           
-          // Must contain size
-          if (!desc.includes(`${selectedSize}"`)) return false;
+          // Must match EXACT size (not partial like "2" in "1-1/2")
+          if (!matchesExactSize(desc)) return false;
           
           // Must match fitting type
-          if (!desc.includes(fittingType)) return false;
+          if (!descLower.includes(fittingType)) return false;
           
           // Exclude service items
-          if (desc.includes('removal') || desc.includes('relocate') || desc.includes('demo')) return false;
+          if (descLower.includes('removal') || descLower.includes('relocate') || descLower.includes('demo')) return false;
           
           // Try to match material (hangers are generic)
           if (fittingType !== 'hanger') {
-            const hasKeyword = selectedMaterial!.keywords.some(kw => desc.includes(kw.toLowerCase()));
+            const hasKeyword = selectedMaterial!.keywords.some(kw => descLower.includes(kw.toLowerCase()));
             if (!hasKeyword) return false;
           }
           

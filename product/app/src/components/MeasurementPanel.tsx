@@ -1040,9 +1040,11 @@ export function MeasurementPanel() {
                   <div className="flex items-center gap-2">
                     <span className="text-white/40 font-mono text-[10px]">{item.taskCode.slice(0, 11)}</span>
                     <span className="flex-1 truncate text-white/70">{getCleanItemName(item.description)}</span>
-                    {/* Show quantity if using factor */}
+                    {/* Show calculated quantity for fittings (uses trade factor) */}
                     {quantityFactor !== 1.0 && (
-                      <span className="text-amber-400/70 text-[10px]">×{actualQty.toFixed(1)}</span>
+                      <span className="text-amber-400/70 text-[10px]" title={`${actualQty.toFixed(2)} needed (${quantityFactor}/LF)`}>
+                        Qty {actualQty.toFixed(1)}
+                      </span>
                     )}
                     <span className="text-emerald-400/70 tabular-nums">${itemTotal.toFixed(0)}</span>
                     <button
