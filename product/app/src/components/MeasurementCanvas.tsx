@@ -101,6 +101,17 @@ export function MeasurementCanvas({ width, height, pageNumber }: MeasurementCanv
     };
   }, [activeAssembly]);
 
+  // Find existing measurement to accumulate into (same assembly, same page, compatible type)
+  const findAccumulationTarget = useCallback((_type: 'line' | 'polyline', assemblyId: string): Measurement | null => {
+    if (!project) return null;
+    
+    return project.measurements.find(m => 
+      m.assembly?.id === assemblyId &&
+      m.pageNumber === pageNumber &&
+      (m.type === 'line' || m.type === 'polyline') // Lines can accumulate into lines or polylines
+    ) || null;
+  }, [project, pageNumber]);
+
   // ============================================
   // DRAWING HELPERS - Clean, Modern Style
   // ============================================
@@ -745,6 +756,22 @@ export function MeasurementCanvas({ width, height, pageNumber }: MeasurementCanv
         const d = distance(tempPoints[0], point);
         const feet = pixelsToFeet(d, project!.scale);
         
+        // If assembly is active, try to accumulate into existing measurement
+        if (activeAssembly) {
+          const existing = findAccumulationTarget('line', activeAssembly.id);
+          if (existing) {
+            // Add to existing measurement - accumulate value and add points as a segment
+            const newPoints = [...existing.points, tempPoints[0], point];
+            updateMeasurement(existing.id, {
+              value: existing.value + feet,
+              points: newPoints, // Store all segments for potential redraw
+              type: 'polyline', // Convert to polyline to support multiple segments
+            });
+            setTempPoints([]);
+            return;
+          }
+        }
+        
         const baseMeasurement: Measurement = {
           id: generateId(),
           type: 'line',
@@ -768,17 +795,30 @@ export function MeasurementCanvas({ width, height, pageNumber }: MeasurementCanv
     }
     
     if (activeTool === 'count') {
-      // Check if there's a selected count measurement to add to
+      // First check for selected count measurement
       const selectedCount = selectedMeasurement 
         ? project?.measurements.find(m => m.id === selectedMeasurement && m.type === 'count')
         : null;
       
-      if (selectedCount) {
+      // Then check for existing count with same assembly (auto-accumulate)
+      const assemblyCount = activeAssembly 
+        ? project?.measurements.find(m => 
+            m.type === 'count' && 
+            m.assembly?.id === activeAssembly.id && 
+            m.pageNumber === pageNumber
+          )
+        : null;
+      
+      const targetCount = selectedCount || assemblyCount;
+      
+      if (targetCount) {
         // Add to existing count - increment value and add point
-        updateMeasurement(selectedCount.id, {
-          points: [...selectedCount.points, point],
-          value: selectedCount.value + 1,
+        updateMeasurement(targetCount.id, {
+          points: [...targetCount.points, point],
+          value: targetCount.value + 1,
         });
+        // Keep it selected for continued clicks
+        selectMeasurement(targetCount.id);
       } else {
         // Create new count measurement
         const newId = generateId();
@@ -804,11 +844,27 @@ export function MeasurementCanvas({ width, height, pageNumber }: MeasurementCanv
     if (activeTool === 'area' || activeTool === 'space') {
       setTempPoints([...tempPoints, point]);
     }
-  }, [activeTool, tempPoints, project, addMeasurement, updateMeasurement, selectedMeasurement, selectMeasurement, getSnappedPoint, activeJOCItem, activeGroupId, activeAssembly, pageNumber, buildMeasurementWithAssembly]);
+  }, [activeTool, tempPoints, project, addMeasurement, updateMeasurement, selectedMeasurement, selectMeasurement, getSnappedPoint, activeJOCItem, activeGroupId, activeAssembly, pageNumber, buildMeasurementWithAssembly, findAccumulationTarget]);
 
   const handleDoubleClick = useCallback(() => {
     if (activeTool === 'polyline' && tempPoints.length >= 2) {
       const totalLength = calculatePolylineLength(tempPoints, project!.scale);
+      
+      // If assembly is active, try to accumulate into existing measurement
+      if (activeAssembly) {
+        const existing = findAccumulationTarget('polyline', activeAssembly.id);
+        if (existing) {
+          // Add to existing - append points and add length
+          const newPoints = [...existing.points, ...tempPoints];
+          updateMeasurement(existing.id, {
+            value: existing.value + totalLength,
+            points: newPoints,
+          });
+          setTempPoints([]);
+          return;
+        }
+      }
+      
       const baseMeasurement: Measurement = {
         id: generateId(),
         type: 'polyline',
@@ -867,7 +923,7 @@ export function MeasurementCanvas({ width, height, pageNumber }: MeasurementCanv
       }
       setTempPoints([]);
     }
-  }, [activeTool, tempPoints, project, addMeasurement, activeJOCItem, activeGroupId, pageNumber, buildMeasurementWithAssembly]);
+  }, [activeTool, tempPoints, project, addMeasurement, updateMeasurement, activeJOCItem, activeGroupId, activeAssembly, pageNumber, buildMeasurementWithAssembly, findAccumulationTarget]);
 
   const handleMouseMove = useCallback((e: React.MouseEvent<HTMLCanvasElement>) => {
     const rect = canvasRef.current!.getBoundingClientRect();
