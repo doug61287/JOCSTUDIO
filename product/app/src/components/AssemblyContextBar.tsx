@@ -139,7 +139,7 @@ export function AssemblyContextBar({
                   <p className="text-slate-400 text-sm mb-3">No matching assemblies found.</p>
                   {searchQuery.trim().length >= 2 && (
                     <button
-                      onClick={openAssembler}
+                      onClick={() => openAssembler()}
                       className="inline-flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-amber-500 to-orange-500 
                                  hover:from-amber-400 hover:to-orange-400 text-black font-semibold rounded-lg transition-all"
                     >

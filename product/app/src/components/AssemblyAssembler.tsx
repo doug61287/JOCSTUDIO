@@ -327,7 +327,8 @@ export function AssemblyAssembler({
   }, [selectedPipeItem, selectedSize, selectedMaterial, selectedType]);
 
   // Find head/fixture items for count-type assemblies
-  const countItems = useMemo(() => {
+  // TODO: Use this in a future step for selecting specific heads/fixtures
+  const _countItems = useMemo(() => {
     if (!selectedType || selectedType.needsSize) return [];
     
     const prefix = selectedType.taskCodePrefix;
