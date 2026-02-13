@@ -1,8 +1,8 @@
 import { useState, useMemo, useEffect } from 'react';
-import { Search, ChevronDown, Package, Layers, Check, X, Wrench, Plus, User } from 'lucide-react';
+import { Search, ChevronDown, Package, Layers, Check, X, Wrench, Plus, User, Trash2, Play } from 'lucide-react';
 import { useProjectStore } from '../stores/projectStore';
 import { ASSEMBLY_LIBRARY } from '../data/assemblies';
-import { getUserAssemblies, saveUserAssembly } from '../utils/userAssemblyStore';
+import { getUserAssemblies, saveUserAssembly, deleteUserAssembly } from '../utils/userAssemblyStore';
 import { AssemblyAssembler } from './AssemblyAssembler';
 import type { Assembly, AssemblyCategory } from '../types';
 
@@ -34,7 +34,7 @@ export function AssemblyContextBar({
   const [assemblerQuery, setAssemblerQuery] = useState('');
   const [assemblerCategory, setAssemblerCategory] = useState<AssemblyCategory>('fire-protection');
   const [userAssemblies, setUserAssemblies] = useState<Assembly[]>([]);
-  const [showOnlyMine, setShowOnlyMine] = useState(false);
+  const [showLibrary, setShowLibrary] = useState(false);
 
   // Load user assemblies on mount
   useEffect(() => {
@@ -46,9 +46,9 @@ export function AssemblyContextBar({
     return [...userAssemblies, ...ASSEMBLY_LIBRARY];
   }, [userAssemblies]);
 
-  // Filter assemblies based on search, category, and user filter
+  // Filter assemblies based on search and category
   const filteredAssemblies = useMemo(() => {
-    let results = showOnlyMine ? userAssemblies : allAssemblies;
+    let results = allAssemblies;
 
     // Filter by category
     if (activeCategory !== 'all') {
@@ -65,7 +65,7 @@ export function AssemblyContextBar({
     }
 
     return results.slice(0, 20);
-  }, [searchQuery, activeCategory]);
+  }, [searchQuery, activeCategory, allAssemblies]);
 
   // Get category counts
   const categoryCounts = useMemo(() => {
@@ -201,23 +201,17 @@ export function AssemblyContextBar({
 
         {/* Category pills */}
         <div className="hidden md:flex items-center gap-1">
-          {/* My Assemblies filter - only show if user has saved assemblies */}
-          {userAssemblies.length > 0 && (
-            <button
-              onClick={() => {
-                setShowOnlyMine(!showOnlyMine);
-                setActiveCategory('all');
-                setShowDropdown(true);
-              }}
-              className={`px-3 py-1.5 rounded-full text-xs font-medium flex items-center gap-1 transition-colors
-                         ${showOnlyMine 
-                           ? 'bg-purple-500 text-white' 
-                           : 'bg-purple-500/20 text-purple-300 hover:bg-purple-500/30 border border-purple-500/30'}`}
-            >
-              <User className="w-3 h-3" />
-              My ({userAssemblies.length})
-            </button>
-          )}
+          {/* My Assemblies Library button */}
+          <button
+            onClick={() => setShowLibrary(true)}
+            className={`px-3 py-1.5 rounded-full text-xs font-medium flex items-center gap-1 transition-colors
+                       ${userAssemblies.length > 0 
+                         ? 'bg-purple-500/20 text-purple-300 hover:bg-purple-500/30 border border-purple-500/30' 
+                         : 'bg-slate-700 text-slate-400 hover:bg-slate-600'}`}
+          >
+            <User className="w-3 h-3" />
+            My {userAssemblies.length > 0 ? `(${userAssemblies.length})` : 'Library'}
+          </button>
           {CATEGORY_CONFIG.slice(0, 4).map(cat => (
             <button
               key={cat.id}
@@ -334,6 +328,159 @@ export function AssemblyContextBar({
         onSaveAndStart={handleSaveAndStart}
         initialQuery={assemblerQuery}
       />
+
+      {/* My Assembly Library Modal */}
+      {showLibrary && (
+        <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
+          <div className="bg-slate-800 rounded-2xl shadow-2xl w-full max-w-3xl max-h-[80vh] overflow-hidden flex flex-col">
+            {/* Header */}
+            <div className="px-6 py-4 border-b border-slate-700 flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-500 to-pink-600 flex items-center justify-center">
+                  <Package className="w-5 h-5 text-white" />
+                </div>
+                <div>
+                  <h2 className="text-lg font-bold text-white">My Assembly Library</h2>
+                  <p className="text-sm text-slate-400">
+                    {userAssemblies.length} saved assembl{userAssemblies.length === 1 ? 'y' : 'ies'}
+                  </p>
+                </div>
+              </div>
+              <button 
+                onClick={() => setShowLibrary(false)} 
+                className="p-2 hover:bg-slate-700 rounded-lg transition-colors"
+              >
+                <X className="w-5 h-5 text-slate-400" />
+              </button>
+            </div>
+
+            {/* Content */}
+            <div className="flex-1 overflow-y-auto p-6">
+              {userAssemblies.length === 0 ? (
+                <div className="text-center py-12">
+                  <Package className="w-16 h-16 text-slate-600 mx-auto mb-4" />
+                  <h3 className="text-lg font-medium text-slate-300 mb-2">No assemblies yet</h3>
+                  <p className="text-slate-400 text-sm mb-6">
+                    Create your first custom assembly using the Build button
+                  </p>
+                  <button
+                    onClick={() => {
+                      setShowLibrary(false);
+                      openAssembler();
+                    }}
+                    className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-amber-500 to-orange-500 
+                               hover:from-amber-400 hover:to-orange-400 text-black font-semibold rounded-lg transition-all"
+                  >
+                    <Wrench className="w-5 h-5" />
+                    Build Your First Assembly
+                  </button>
+                </div>
+              ) : (
+                <div className="space-y-6">
+                  {/* Group by category */}
+                  {CATEGORY_CONFIG.filter(cat => 
+                    userAssemblies.some(a => a.category === cat.id)
+                  ).map(cat => (
+                    <div key={cat.id}>
+                      <h3 className="flex items-center gap-2 text-sm font-medium text-slate-400 mb-3">
+                        <span className={`w-3 h-3 rounded-full ${cat.color}`} />
+                        {cat.icon} {cat.label}
+                      </h3>
+                      <div className="grid gap-2">
+                        {userAssemblies
+                          .filter(a => a.category === cat.id)
+                          .map(assembly => (
+                            <div 
+                              key={assembly.id}
+                              className="flex items-center gap-4 p-4 bg-slate-700/50 rounded-xl border border-slate-600 hover:border-slate-500 transition-colors"
+                            >
+                              <div className="flex-1 min-w-0">
+                                <div className="font-medium text-white">{assembly.name}</div>
+                                <div className="text-xs text-slate-400 mt-1">
+                                  {assembly.items.length} items · {assembly.applicableTo.join(', ')}
+                                </div>
+                                <div className="flex flex-wrap gap-1 mt-2">
+                                  {assembly.items.slice(0, 3).map((item, idx) => (
+                                    <span 
+                                      key={idx} 
+                                      className="text-xs px-2 py-0.5 bg-slate-800 rounded text-slate-400"
+                                    >
+                                      {item.jocItem.description.split(',')[0].slice(0, 30)}
+                                    </span>
+                                  ))}
+                                  {assembly.items.length > 3 && (
+                                    <span className="text-xs px-2 py-0.5 text-slate-500">
+                                      +{assembly.items.length - 3} more
+                                    </span>
+                                  )}
+                                </div>
+                              </div>
+                              <div className="flex items-center gap-2">
+                                <button
+                                  onClick={() => {
+                                    onSelectAssembly(assembly);
+                                    setShowLibrary(false);
+                                    // Set appropriate tool
+                                    const setActiveTool = useProjectStore.getState().setActiveTool;
+                                    if (assembly.applicableTo.includes('line')) {
+                                      setActiveTool('line');
+                                    } else if (assembly.applicableTo.includes('count')) {
+                                      setActiveTool('count');
+                                    }
+                                  }}
+                                  className="flex items-center gap-1 px-3 py-2 bg-green-500/20 hover:bg-green-500/30 
+                                           text-green-400 rounded-lg text-sm font-medium transition-colors"
+                                >
+                                  <Play className="w-4 h-4" />
+                                  Use
+                                </button>
+                                <button
+                                  onClick={() => {
+                                    if (confirm(`Delete "${assembly.name}"?`)) {
+                                      deleteUserAssembly(assembly.id);
+                                      setUserAssemblies(getUserAssemblies());
+                                    }
+                                  }}
+                                  className="p-2 hover:bg-red-500/20 text-slate-400 hover:text-red-400 
+                                           rounded-lg transition-colors"
+                                  title="Delete assembly"
+                                >
+                                  <Trash2 className="w-4 h-4" />
+                                </button>
+                              </div>
+                            </div>
+                          ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Footer */}
+            <div className="px-6 py-4 border-t border-slate-700 flex justify-between">
+              <button
+                onClick={() => {
+                  setShowLibrary(false);
+                  openAssembler();
+                }}
+                className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-amber-500/20 to-orange-500/20 
+                         text-amber-400 hover:from-amber-500/30 hover:to-orange-500/30 border border-amber-500/30 
+                         rounded-lg text-sm font-medium transition-colors"
+              >
+                <Plus className="w-4 h-4" />
+                Build New Assembly
+              </button>
+              <button
+                onClick={() => setShowLibrary(false)}
+                className="px-4 py-2 text-slate-400 hover:text-white transition-colors"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
