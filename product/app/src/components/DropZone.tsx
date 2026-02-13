@@ -19,9 +19,9 @@ export function DropZone({ onFileSelect }: DropZoneProps) {
       loadDemo();
       
       // Also load the PDF drawing
-      const response = await fetch('/test-drawing.pdf');
+      const response = await fetch('/demo-jacobi-fp.pdf');
       const blob = await response.blob();
-      const file = new File([blob], 'Bellevue-Hospital-ED.pdf', { type: 'application/pdf' });
+      const file = new File([blob], 'Jacobi-FP-Demo.pdf', { type: 'application/pdf' });
       onFileSelect(file);
     } catch (error) {
       console.error('Failed to load demo:', error);
