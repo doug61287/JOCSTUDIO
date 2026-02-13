@@ -1017,14 +1017,19 @@ export function MeasurementPanel() {
         {isExpanded && (
           <div className="bg-white/[0.01] border-t border-white/[0.04]">
             {jocItems.map((item) => {
-              // Check for quantity multipliers
+              // Get quantity factor from assembly item (1.0 = primary item, <1 = fitting)
+              const quantityFactor = (item as any)._quantityFactor || 1.0;
+              const actualQty = m.value * quantityFactor;
+              
+              // Check for quantity multipliers (tier pricing)
               const hasMultiplier = hasAddDeductTiers(item.taskCode);
               const multiplierInfo = hasMultiplier 
-                ? calculateAdjustedPrice(item.unitCost, item.taskCode, m.value)
+                ? calculateAdjustedPrice(item.unitCost, item.taskCode, actualQty)
                 : null;
               const effectivePrice = multiplierInfo?.adjustedPrice || item.unitCost;
+              const itemTotal = actualQty * effectivePrice;
               const savings = multiplierInfo && multiplierInfo.adjustment < 0 
-                ? Math.abs(multiplierInfo.adjustment) * m.value 
+                ? Math.abs(multiplierInfo.adjustment) * actualQty 
                 : 0;
               
               return (
@@ -1035,7 +1040,11 @@ export function MeasurementPanel() {
                   <div className="flex items-center gap-2">
                     <span className="text-white/40 font-mono text-[10px]">{item.taskCode.slice(0, 11)}</span>
                     <span className="flex-1 truncate text-white/70">{getCleanItemName(item.description)}</span>
-                    <span className="text-emerald-400/70 tabular-nums">${(m.value * effectivePrice).toFixed(0)}</span>
+                    {/* Show quantity if using factor */}
+                    {quantityFactor !== 1.0 && (
+                      <span className="text-amber-400/70 text-[10px]">×{actualQty.toFixed(1)}</span>
+                    )}
+                    <span className="text-emerald-400/70 tabular-nums">${itemTotal.toFixed(0)}</span>
                     <button
                       onClick={() => handleRemoveJocItem(m.id, item.taskCode)}
                       className="w-5 h-5 flex items-center justify-center rounded opacity-0 group-hover:opacity-100 text-white/30 hover:text-red-400 transition-all"
