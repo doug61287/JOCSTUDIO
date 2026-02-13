@@ -1,7 +1,7 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { Search, ChevronDown, Package, Layers, Check, X } from 'lucide-react';
-import { ASSEMBLY_LIBRARY, type AssemblyCategory } from '../data/assemblies';
-import type { Assembly } from '../types';
+import { ASSEMBLY_LIBRARY } from '../data/assemblies';
+import type { Assembly, AssemblyCategory } from '../types';
 
 interface AssemblyContextBarProps {
   selectedAssembly: Assembly | null;
