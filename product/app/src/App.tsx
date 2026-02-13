@@ -174,10 +174,15 @@ function App() {
 
       {/* Assembly Context Bar - "What are you measuring?" */}
       {project?.pdfUrl && (
-        <AssemblyContextBar
-          selectedAssembly={activeAssembly}
-          onSelectAssembly={setActiveAssembly}
-        />
+        <>
+          <div className="bg-red-500 text-white p-2 text-center text-sm">
+            🔧 DEBUG: Assembly bar should be below this line
+          </div>
+          <AssemblyContextBar
+            selectedAssembly={activeAssembly}
+            onSelectAssembly={setActiveAssembly}
+          />
+        </>
       )}
 
       {/* Main Content */}
