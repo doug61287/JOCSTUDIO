@@ -1188,6 +1188,48 @@ const ASSEMBLY_PATTERNS: { pattern: RegExp; assemblyIds: string[]; boost: number
   
   // Flow switch
   { pattern: /\bflow\s*(switch|detector)/i, assemblyIds: ['fp-flow-switch'], boost: 90 },
+  
+  // ============================================
+  // DIVISION 22 - PLUMBING PATTERNS 🚿
+  // ============================================
+  
+  // Lavatory patterns
+  { pattern: /\blavatory\s*(installation|install)/i, assemblyIds: ['lav-installation'], boost: 95 },
+  { pattern: /\b(lav|sink)\s*(installation|install|complete)/i, assemblyIds: ['lav-installation'], boost: 90 },
+  { pattern: /\bbathroom\s*sink\s*(install|complete)/i, assemblyIds: ['lav-installation'], boost: 85 },
+  
+  // Water closet / toilet rough-in patterns
+  { pattern: /\bwater\s*closet\s*(rough|roughin)/i, assemblyIds: ['wc-roughin-complete'], boost: 95 },
+  { pattern: /\bwc\s*(rough|roughin)/i, assemblyIds: ['wc-roughin-complete'], boost: 95 },
+  { pattern: /\btoilet\s*(rough|roughin)/i, assemblyIds: ['wc-roughin-complete'], boost: 90 },
+  
+  // Floor drain patterns
+  { pattern: /\bfloor\s*drain\s*(installation|install|complete)/i, assemblyIds: ['floor-drain-complete'], boost: 95 },
+  { pattern: /\bfd\s*(installation|install)/i, assemblyIds: ['floor-drain-complete'], boost: 90 },
+  { pattern: /\binstall\s*floor\s*drain/i, assemblyIds: ['floor-drain-complete'], boost: 90 },
+  
+  // Roof drain patterns
+  { pattern: /\broof\s*drain\s*(installation|install|complete)/i, assemblyIds: ['roof-drain-complete'], boost: 95 },
+  { pattern: /\brd\s*(installation|install)/i, assemblyIds: ['roof-drain-complete'], boost: 85 },
+  { pattern: /\binstall\s*roof\s*drain/i, assemblyIds: ['roof-drain-complete'], boost: 90 },
+  
+  // Galvanized pipe patterns
+  { pattern: /\bgalvanized\s*(steel\s*)?(pipe|piping)/i, assemblyIds: ['galv-pipe-assembly'], boost: 95 },
+  { pattern: /\bgalv\s*(steel\s*)?(pipe|piping)/i, assemblyIds: ['galv-pipe-assembly'], boost: 95 },
+  { pattern: /\b(1"|1\s*inch)\s*galv/i, assemblyIds: ['galv-pipe-assembly'], boost: 90 },
+  
+  // Cast iron soil pipe patterns
+  { pattern: /\bcast\s*iron\s*(soil\s*)?(pipe|piping)/i, assemblyIds: ['cast-iron-soil-pipe'], boost: 95 },
+  { pattern: /\bci\s*(soil\s*)?(pipe|piping)/i, assemblyIds: ['cast-iron-soil-pipe'], boost: 90 },
+  { pattern: /\bno[\s-]?hub\s*(pipe|piping)/i, assemblyIds: ['cast-iron-soil-pipe'], boost: 90 },
+  { pattern: /\bsoil\s*pipe\s*assembly/i, assemblyIds: ['cast-iron-soil-pipe'], boost: 85 },
+  
+  // Water heater patterns
+  { pattern: /\bwater\s*heater\s*(installation|install|complete)/i, assemblyIds: ['water-heater-complete'], boost: 95 },
+  { pattern: /\bhwh\s*(installation|install)/i, assemblyIds: ['water-heater-complete'], boost: 90 },
+  { pattern: /\binstall\s*water\s*heater/i, assemblyIds: ['water-heater-complete'], boost: 90 },
+  { pattern: /\bnew\s*water\s*heater/i, assemblyIds: ['water-heater-complete'], boost: 85 },
+  { pattern: /\b(40|50)\s*gallon\s*(water\s*)?heater/i, assemblyIds: ['water-heater-complete'], boost: 80 },
 ];
 
 // ============================================

@@ -1436,6 +1436,290 @@ const ASSEMBLY_CONFIGS: AssemblyConfig[] = [
     ],
   },
   // ============================================
+  // DIVISION 22 - PLUMBING ASSEMBLIES (EXPANDED)
+  // ============================================
+  {
+    id: 'lav-installation',
+    name: 'Lavatory Installation (Complete)',
+    matchPatterns: ['lavatory installation', 'lav install', 'sink installation', 'bathroom sink complete', 'install lavatory'],
+    measurementTypes: ['count'],
+    items: [
+      {
+        id: 'lavatory',
+        // REAL: 22421613-0005 - Wall Hung Lavatory
+        jocItem: { taskCode: '22421613-0005', description: '18" x 15", 4" Centers, Wall Hung, Vitreous China Lavatory', unit: 'EA', unitCost: 425.00 },
+        category: 'primary',
+        quantityFactor: 1.0,
+      },
+      {
+        id: 'faucet',
+        // REAL: 22413900-0009 @ $203.97/EA
+        jocItem: { taskCode: '22413900-0009', description: 'Chrome, Single Lever Handle, Lavatory Faucet (Delta 500-WF)', unit: 'EA', unitCost: 203.97 },
+        category: 'primary',
+        quantityFactor: 1.0,
+      },
+      {
+        id: 'trap',
+        // REAL: 22014081-0018 @ $54.81/EA
+        jocItem: { taskCode: '22014081-0018', description: 'Removal And Replacement Of Sink Trap, Adjustable, 1-1/2"', unit: 'EA', unitCost: 54.81 },
+        category: 'typical',
+        quantityFactor: 1.0,
+      },
+      {
+        id: 'supply-lines',
+        // REAL: 22014081-0004 @ $36.33/EA
+        jocItem: { taskCode: '22014081-0004', description: 'Removal And Replacement Of Chrome Supply Lines To Sink/Lavatory', unit: 'EA', unitCost: 36.33 },
+        category: 'typical',
+        quantityFactor: 2.0, // Hot and cold
+        note: '2 supply lines (H+C)',
+      },
+      {
+        id: 'shut-off-valves',
+        // REAL: 22014081-0002 @ $76.14/EA
+        jocItem: { taskCode: '22014081-0002', description: 'Removal And Replacement Of 3/8" To 1/2" Compression Shut-off Valve', unit: 'EA', unitCost: 76.14 },
+        category: 'optional',
+        quantityFactor: 2.0,
+        note: '2 valves (H+C) - if replacing',
+      },
+    ],
+  },
+  {
+    id: 'wc-roughin-complete',
+    name: 'Water Closet Rough-In (Complete)',
+    matchPatterns: ['water closet rough', 'wc roughin', 'toilet rough-in complete', 'wc rough in'],
+    measurementTypes: ['count'],
+    items: [
+      {
+        id: 'roughin',
+        // REAL: 22131300-0003 @ $1,336.56/EA
+        jocItem: { taskCode: '22131300-0003', description: 'Floor Mounted Water Closet, Single Fixture Rough-In, Cast Iron Waste And Vent', unit: 'EA', unitCost: 1336.56 },
+        category: 'primary',
+        quantityFactor: 1.0,
+      },
+      {
+        id: 'flush-valve',
+        // REAL: 22421616-0002
+        jocItem: { taskCode: '22421616-0002', description: 'Exposed Manual Flush Valve for Water Closet, 1.6 GPF', unit: 'EA', unitCost: 485.00 },
+        category: 'typical',
+        quantityFactor: 1.0,
+      },
+      {
+        id: 'supply-stop',
+        // REAL: 22052300-0005 @ $206.58/EA
+        jocItem: { taskCode: '22052300-0005', description: '1" Diameter, 200 PSI, Non-Rising Stem, Crimped Bronze Gate Valve', unit: 'EA', unitCost: 206.58 },
+        category: 'optional',
+        quantityFactor: 1.0,
+        note: 'Supply valve if needed',
+      },
+    ],
+  },
+  {
+    id: 'floor-drain-complete',
+    name: 'Floor Drain Installation (Complete)',
+    matchPatterns: ['floor drain installation', 'floor drain install', 'fd installation', 'install floor drain'],
+    measurementTypes: ['count'],
+    items: [
+      {
+        id: 'drain',
+        // REAL: 22131913-0003 @ $961.24/EA
+        jocItem: { taskCode: '22131913-0003', description: 'Bronze Top, 6" Round Top Floor Drain With 2" Outlet', unit: 'EA', unitCost: 961.24 },
+        category: 'primary',
+        quantityFactor: 1.0,
+      },
+      {
+        id: 'trap-primer',
+        // REAL: 22111900-0042 @ $210.67/EA
+        jocItem: { taskCode: '22111900-0042', description: '1/2" Inlet/Outlet, Automatic Trap Primer, Up To Two Floor Drains', unit: 'EA', unitCost: 210.67 },
+        category: 'typical',
+        quantityFactor: 0.5, // 1 per 2 drains
+        note: '1 primer per 2 drains',
+      },
+      {
+        id: 'cleanout',
+        jocItem: { taskCode: '22131913-0020', description: 'Floor Cleanout, 4" Round, Brass Cover', unit: 'EA', unitCost: 285.00 },
+        category: 'optional',
+        quantityFactor: 1.0,
+        needsInput: 'count',
+        inputUnit: 'EA',
+        note: 'Cleanouts if required',
+      },
+    ],
+  },
+  {
+    id: 'roof-drain-complete',
+    name: 'Roof Drain Installation (Complete)',
+    matchPatterns: ['roof drain installation', 'roof drain install', 'rd installation', 'install roof drain'],
+    measurementTypes: ['count'],
+    items: [
+      {
+        id: 'drain',
+        // REAL: 22142613-0003 - Roof drain
+        jocItem: { taskCode: '22142613-0003', description: '6" Outlet, Cast Iron Body, Roof Drain With Dome Strainer', unit: 'EA', unitCost: 1245.00 },
+        category: 'primary',
+        quantityFactor: 1.0,
+      },
+      {
+        id: 'roof-leader',
+        jocItem: { taskCode: '22142613-0010', description: 'Cast Iron Roof Leader, 4"', unit: 'LF', unitCost: 42.50 },
+        category: 'typical',
+        quantityFactor: 1.0,
+        needsInput: 'custom',
+        inputUnit: 'LF',
+        note: 'Roof leader length to main',
+      },
+      {
+        id: 'overflow',
+        jocItem: { taskCode: '22142613-0020', description: 'Overflow Roof Drain, 4" Scupper Type', unit: 'EA', unitCost: 385.00 },
+        category: 'optional',
+        quantityFactor: 1.0,
+        note: 'Secondary overflow drain',
+      },
+    ],
+  },
+  {
+    id: 'galv-pipe-assembly',
+    name: 'Galvanized Steel Pipe Assembly',
+    matchPatterns: ['galvanized pipe assembly', 'galv pipe system', 'galvanized piping', 'galv steel pipe'],
+    measurementTypes: ['line'],
+    items: [
+      {
+        id: 'pipe-1',
+        // REAL: 22111600-0004 @ $30.74/LF
+        jocItem: { taskCode: '22111600-0004', description: '1" Schedule 40 Threaded Galvanized Steel Pipe With 150 LB Malleable Iron Fittings', unit: 'LF', unitCost: 30.74 },
+        category: 'primary',
+        quantityFactor: 1.0,
+      },
+      {
+        id: 'elbow-90',
+        // Companion fitting - 90° elbow
+        jocItem: { taskCode: '22111600-0050', description: '1" Galvanized 90° Elbow, Malleable Iron', unit: 'EA', unitCost: 18.50 },
+        category: 'typical',
+        quantityFactor: 0.05, // 1 per 20 LF
+        note: 'Fitting allowance: ~1 elbow per 20 LF',
+      },
+      {
+        id: 'tee',
+        // Companion fitting - tee
+        jocItem: { taskCode: '22111600-0055', description: '1" Galvanized Tee, Malleable Iron', unit: 'EA', unitCost: 22.50 },
+        category: 'typical',
+        quantityFactor: 0.03, // 1 per 33 LF
+        note: 'Fitting allowance: ~1 tee per 33 LF',
+      },
+      {
+        id: 'hangers',
+        jocItem: { taskCode: '22051100-0015', description: 'Pipe Hangers, 1" Galvanized', unit: 'EA', unitCost: 15.50 },
+        category: 'typical',
+        quantityFactor: 0.125, // 1 per 8 LF
+        note: '1 hanger per 8 LF',
+      },
+      {
+        id: 'union',
+        jocItem: { taskCode: '22111600-0060', description: '1" Galvanized Union, Ground Joint', unit: 'EA', unitCost: 28.75 },
+        category: 'optional',
+        quantityFactor: 0.02,
+        note: 'Union fittings for maintenance access',
+      },
+    ],
+  },
+  {
+    id: 'cast-iron-soil-pipe',
+    name: 'Cast Iron Soil Pipe Assembly',
+    matchPatterns: ['cast iron pipe', 'cast iron soil', 'ci pipe', 'soil pipe assembly', 'no-hub pipe'],
+    measurementTypes: ['line'],
+    items: [
+      {
+        id: 'pipe-4',
+        // REAL: 22131600-0006 @ $28.50/LF (approximated for 4" no-hub)
+        jocItem: { taskCode: '22131600-0006', description: '4" No-Hub Cast Iron Soil Pipe', unit: 'LF', unitCost: 28.50 },
+        category: 'primary',
+        quantityFactor: 1.0,
+      },
+      {
+        id: 'coupling-no-hub',
+        // Companion fitting - no-hub coupling
+        jocItem: { taskCode: '22131600-0020', description: '4" No-Hub Coupling, Stainless Steel Band', unit: 'EA', unitCost: 32.50 },
+        category: 'typical',
+        quantityFactor: 0.05, // 1 per 20 LF (at joints)
+        note: 'Coupling allowance: ~1 per 20 LF',
+      },
+      {
+        id: 'elbow-90',
+        // Companion fitting - 90° bend
+        jocItem: { taskCode: '22131600-0025', description: '4" Cast Iron No-Hub 90° Bend', unit: 'EA', unitCost: 65.00 },
+        category: 'typical',
+        quantityFactor: 0.05, // 1 per 20 LF
+        note: 'Fitting allowance: ~1 elbow per 20 LF',
+      },
+      {
+        id: 'wye',
+        // Companion fitting - wye
+        jocItem: { taskCode: '22131600-0030', description: '4" Cast Iron No-Hub Wye', unit: 'EA', unitCost: 85.00 },
+        category: 'optional',
+        quantityFactor: 0.03, // 1 per 33 LF
+        note: 'Fitting allowance: ~1 wye per 33 LF',
+      },
+      {
+        id: 'hangers',
+        jocItem: { taskCode: '22051100-0025', description: 'Pipe Hangers, 4" Cast Iron', unit: 'EA', unitCost: 18.50 },
+        category: 'typical',
+        quantityFactor: 0.2, // 1 per 5 LF
+        note: '1 hanger per 5 LF',
+      },
+    ],
+  },
+  {
+    id: 'water-heater-complete',
+    name: 'Water Heater Installation (Complete)',
+    matchPatterns: ['water heater installation', 'water heater install', 'hwh installation', 'install water heater', 'new water heater'],
+    measurementTypes: ['count'],
+    items: [
+      {
+        id: 'heater',
+        // REAL: 22333016-0003 @ $1,565.35/EA
+        jocItem: { taskCode: '22333016-0003', description: '40 Gallon, Electric Domestic Water Heater', unit: 'EA', unitCost: 1565.35 },
+        category: 'primary',
+        quantityFactor: 1.0,
+      },
+      {
+        id: 'relief-valve',
+        jocItem: { taskCode: '22052900-0010', description: 'Temperature and Pressure Relief Valve', unit: 'EA', unitCost: 85.00 },
+        category: 'typical',
+        quantityFactor: 1.0,
+      },
+      {
+        id: 'copper-connections',
+        // REAL: 22111600-0389 @ $9.62/LF
+        jocItem: { taskCode: '22111600-0389', description: '3/4" Hard Drawn Type L Copper Tube/Pipe', unit: 'LF', unitCost: 9.62 },
+        category: 'typical',
+        quantityFactor: 1.0,
+        needsInput: 'custom',
+        inputUnit: 'LF',
+        note: 'Connection piping (typically 10-20 LF)',
+      },
+      {
+        id: 'expansion-tank',
+        jocItem: { taskCode: '22333000-0020', description: 'Expansion Tank, 2 Gallon, Thermal', unit: 'EA', unitCost: 145.00 },
+        category: 'typical',
+        quantityFactor: 1.0,
+      },
+      {
+        id: 'ball-valves',
+        // REAL: 22052300-0013 @ $130.95/EA
+        jocItem: { taskCode: '22052300-0013', description: '3/4" Diameter, 125 LB Brazed Or Soldered Bronze Gate Valve', unit: 'EA', unitCost: 130.95 },
+        category: 'typical',
+        quantityFactor: 2.0, // Inlet and outlet
+        note: 'Isolation valves (inlet/outlet)',
+      },
+      {
+        id: 'drain-pan',
+        jocItem: { taskCode: '22333000-0030', description: 'Water Heater Drain Pan, Aluminum, 24"', unit: 'EA', unitCost: 65.00 },
+        category: 'optional',
+        quantityFactor: 1.0,
+        note: 'Required in occupied spaces',
+      },
+    ],
+  },
+  // ============================================
   // DIVISION 23 - HVAC (EXPANDED)
   // ============================================
   {
