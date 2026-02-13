@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JOCHero - The Engine Behind JOC Estimation</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body {
+      background: #000;
+      font-family: 'Inter', -apple-system, sans-serif;
+      color: white;
+      overflow: hidden;
+    }
+    
+    #canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 0;
+    }
+    
+    .scene {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transform: scale(0.9);
+      transition: all 1s cubic-bezier(0.4, 0, 0.2, 1);
+      pointer-events: none;
+      z-index: 10;
+    }
+    
+    .scene.active {
+      opacity: 1;
+      transform: scale(1);
+      pointer-events: auto;
+    }
+    
+    .scene.exit {
+      opacity: 0;
+      transform: scale(1.1);
+    }
+    
+    /* Scene 1: Logo */
+    #scene1 .logo {
+      font-size: 120px;
+      font-weight: 900;
+      letter-spacing: -4px;
+      background: linear-gradient(135deg, #f59e0b 0%, #ef4444 50%, #8b5cf6 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: 0 0 100px rgba(245, 158, 11, 0.5);
+      animation: pulse 2s ease-in-out infinite;
+    }
+    
+    #scene1 .tagline {
+      font-size: 24px;
+      font-weight: 300;
+      color: rgba(255,255,255,0.6);
+      margin-top: 20px;
+      letter-spacing: 8px;
+      text-transform: uppercase;
+    }
+    
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.02); }
+    }
+    
+    /* Scene 2: The Problem */
+    #scene2 .big-text {
+      font-size: 72px;
+      font-weight: 800;
+      text-align: center;
+      line-height: 1.1;
+      max-width: 900px;
+    }
+    
+    #scene2 .highlight {
+      color: #ef4444;
+    }
+    
+    /* Scene 3: Big Number Reveal */
+    #scene3 .number-container {
+      text-align: center;
+    }
+    
+    #scene3 .big-number {
+      font-size: 200px;
+      font-weight: 900;
+      font-variant-numeric: tabular-nums;
+      background: linear-gradient(135deg, #10b981 0%, #06b6d4 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      line-height: 1;
+    }
+    
+    #scene3 .number-label {
+      font-size: 36px;
+      font-weight: 500;
+      color: rgba(255,255,255,0.7);
+      margin-top: 20px;
+    }
+    
+    /* Scene 4: Multipliers */
+    #scene4 .stat-row {
+      display: flex;
+      gap: 80px;
+      margin-bottom: 60px;
+    }
+    
+    #scene4 .stat {
+      text-align: center;
+    }
+    
+    #scene4 .stat-number {
+      font-size: 100px;
+      font-weight: 900;
+      font-variant-numeric: tabular-nums;
+    }
+    
+    #scene4 .stat-number.green { color: #10b981; }
+    #scene4 .stat-number.cyan { color: #06b6d4; }
+    #scene4 .stat-number.orange { color: #f59e0b; }
+    #scene4 .stat-number.purple { color: #8b5cf6; }
+    
+    #scene4 .stat-label {
+      font-size: 18px;
+      color: rgba(255,255,255,0.5);
+      margin-top: 10px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+    
+    /* Scene 5: Intelligence */
+    #scene5 .features {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 40px;
+      max-width: 1200px;
+    }
+    
+    #scene5 .feature {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 20px;
+      padding: 40px;
+      text-align: center;
+      transform: translateY(50px);
+      opacity: 0;
+      animation: featureIn 0.6s forwards;
+    }
+    
+    #scene5 .feature:nth-child(1) { animation-delay: 0.1s; }
+    #scene5 .feature:nth-child(2) { animation-delay: 0.2s; }
+    #scene5 .feature:nth-child(3) { animation-delay: 0.3s; }
+    #scene5 .feature:nth-child(4) { animation-delay: 0.4s; }
+    #scene5 .feature:nth-child(5) { animation-delay: 0.5s; }
+    #scene5 .feature:nth-child(6) { animation-delay: 0.6s; }
+    
+    @keyframes featureIn {
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+    
+    #scene5 .feature-icon {
+      font-size: 48px;
+      margin-bottom: 20px;
+    }
+    
+    #scene5 .feature-title {
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+    
+    #scene5 .feature-desc {
+      font-size: 14px;
+      color: rgba(255,255,255,0.5);
+      line-height: 1.5;
+    }
+    
+    /* Scene 6: Money */
+    #scene6 .money-text {
+      font-size: 48px;
+      font-weight: 300;
+      text-align: center;
+      line-height: 1.6;
+      max-width: 900px;
+    }
+    
+    #scene6 .money-highlight {
+      font-weight: 800;
+      color: #10b981;
+    }
+    
+    /* Scene 7: Final */
+    #scene7 .final-logo {
+      font-size: 80px;
+      font-weight: 900;
+      background: linear-gradient(135deg, #f59e0b, #ef4444);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 40px;
+    }
+    
+    #scene7 .final-tagline {
+      font-size: 32px;
+      font-weight: 300;
+      color: rgba(255,255,255,0.8);
+      margin-bottom: 60px;
+    }
+    
+    #scene7 .cta {
+      padding: 20px 60px;
+      font-size: 18px;
+      font-weight: 600;
+      background: linear-gradient(135deg, #f59e0b, #ef4444);
+      border: none;
+      border-radius: 50px;
+      color: white;
+      cursor: pointer;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+    
+    #scene7 .cta:hover {
+      transform: scale(1.05);
+      box-shadow: 0 20px 60px rgba(245, 158, 11, 0.4);
+    }
+    
+    /* Progress */
+    #progress {
+      position: fixed;
+      bottom: 40px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 12px;
+      z-index: 100;
+    }
+    
+    #progress .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.2);
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    
+    #progress .dot.active {
+      background: #f59e0b;
+      transform: scale(1.3);
+    }
+    
+    #progress .dot:hover {
+      background: rgba(255,255,255,0.5);
+    }
+    
+    /* Skip */
+    #skip {
+      position: fixed;
+      bottom: 40px;
+      right: 40px;
+      padding: 12px 24px;
+      font-size: 14px;
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 8px;
+      color: rgba(255,255,255,0.6);
+      cursor: pointer;
+      z-index: 100;
+      transition: all 0.3s;
+    }
+    
+    #skip:hover {
+      background: rgba(255,255,255,0.2);
+      color: white;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="canvas"></canvas>
+  
+  <!-- Scene 1: Logo -->
+  <div class="scene active" id="scene1">
+    <div class="logo">JOCHero</div>
+    <div class="tagline">The Engine Behind JOC Estimation</div>
+  </div>
+  
+  <!-- Scene 2: The Problem -->
+  <div class="scene" id="scene2">
+    <div class="big-text">
+      JOC estimators spend <span class="highlight">hours</span> searching through <span class="highlight">thousands</span> of line items
+    </div>
+  </div>
+  
+  <!-- Scene 3: Big Number -->
+  <div class="scene" id="scene3">
+    <div class="number-container">
+      <div class="big-number" id="itemCount">0</div>
+      <div class="number-label">Line Items in the H+H Catalogue</div>
+    </div>
+  </div>
+  
+  <!-- Scene 4: The Stats -->
+  <div class="scene" id="scene4">
+    <div class="stat-row">
+      <div class="stat">
+        <div class="stat-number cyan" id="multiplierCount">0</div>
+        <div class="stat-label">With Quantity Multipliers</div>
+      </div>
+      <div class="stat">
+        <div class="stat-number orange" id="assemblyCount">0</div>
+        <div class="stat-label">Pre-Built Assemblies</div>
+      </div>
+    </div>
+    <div class="stat-row">
+      <div class="stat">
+        <div class="stat-number purple" id="divisionCount">0</div>
+        <div class="stat-label">CSI Divisions Mapped</div>
+      </div>
+      <div class="stat">
+        <div class="stat-number green" id="synonymCount">0</div>
+        <div class="stat-label">Search Synonyms</div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Scene 5: Intelligence -->
+  <div class="scene" id="scene5">
+    <div class="features">
+      <div class="feature">
+        <div class="feature-icon">🔍</div>
+        <div class="feature-title">Smart Search</div>
+        <div class="feature-desc">Natural language finds the right JOC codes instantly</div>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">📦</div>
+        <div class="feature-title">Assemblies</div>
+        <div class="feature-desc">Pre-configured packages for common work items</div>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">🔗</div>
+        <div class="feature-title">Companion Items</div>
+        <div class="feature-desc">Auto-suggests fittings, accessories, and related items</div>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">📊</div>
+        <div class="feature-title">Quantity Multipliers</div>
+        <div class="feature-desc">Automatic tier pricing for bulk quantities</div>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">📐</div>
+        <div class="feature-title">Unit Conversion</div>
+        <div class="feature-desc">SF to CY, LF to EA - automatic calculations</div>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">⚡</div>
+        <div class="feature-title">Height Premiums</div>
+        <div class="feature-desc">Ceiling height multipliers applied automatically</div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Scene 6: Money -->
+  <div class="scene" id="scene6">
+    <div class="money-text">
+      Every missed multiplier is <span class="money-highlight">money left on the table</span>.<br><br>
+      We find them <span class="money-highlight">automatically</span>.
+    </div>
+  </div>
+  
+  <!-- Scene 7: Final -->
+  <div class="scene" id="scene7">
+    <div class="final-logo">JOCHero</div>
+    <div class="final-tagline">Making JOC contractors heroes.</div>
+    <button class="cta" onclick="window.location.href='/'">Try It Now →</button>
+  </div>
+  
+  <div id="progress"></div>
+  <button id="skip" onclick="skipToEnd()">Skip →</button>
+
+  <script>
+    // ============================================
+    // PARTICLE BACKGROUND
+    // ============================================
+    
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    
+    let width = window.innerWidth;
+    let height = window.innerHeight;
+    canvas.width = width;
+    canvas.height = height;
+    
+    const particles = [];
+    const particleCount = 150;
+    
+    for (let i = 0; i < particleCount; i++) {
+      particles.push({
+        x: Math.random() * width,
+        y: Math.random() * height,
+        vx: (Math.random() - 0.5) * 0.5,
+        vy: (Math.random() - 0.5) * 0.5,
+        size: Math.random() * 2 + 1,
+        alpha: Math.random() * 0.5 + 0.2,
+        color: ['#f59e0b', '#ef4444', '#10b981', '#3b82f6', '#8b5cf6'][Math.floor(Math.random() * 5)]
+      });
+    }
+    
+    function animateParticles() {
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+      ctx.fillRect(0, 0, width, height);
+      
+      particles.forEach(p => {
+        p.x += p.vx;
+        p.y += p.vy;
+        
+        if (p.x < 0) p.x = width;
+        if (p.x > width) p.x = 0;
+        if (p.y < 0) p.y = height;
+        if (p.y > height) p.y = 0;
+        
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        ctx.fillStyle = p.color;
+        ctx.globalAlpha = p.alpha;
+        ctx.fill();
+        ctx.globalAlpha = 1;
+      });
+      
+      // Draw connections
+      ctx.strokeStyle = 'rgba(255,255,255,0.03)';
+      ctx.lineWidth = 1;
+      for (let i = 0; i < particles.length; i++) {
+        for (let j = i + 1; j < particles.length; j++) {
+          const dx = particles[i].x - particles[j].x;
+          const dy = particles[i].y - particles[j].y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          
+          if (dist < 150) {
+            ctx.beginPath();
+            ctx.moveTo(particles[i].x, particles[i].y);
+            ctx.lineTo(particles[j].x, particles[j].y);
+            ctx.stroke();
+          }
+        }
+      }
+      
+      requestAnimationFrame(animateParticles);
+    }
+    
+    animateParticles();
+    
+    // ============================================
+    // SCENE MANAGEMENT
+    // ============================================
+    
+    const scenes = ['scene1', 'scene2', 'scene3', 'scene4', 'scene5', 'scene6', 'scene7'];
+    let currentScene = 0;
+    
+    // Build progress dots
+    const progressContainer = document.getElementById('progress');
+    scenes.forEach((_, i) => {
+      const dot = document.createElement('div');
+      dot.className = 'dot' + (i === 0 ? ' active' : '');
+      dot.onclick = () => goToScene(i);
+      progressContainer.appendChild(dot);
+    });
+    
+    function goToScene(index) {
+      if (index === currentScene) return;
+      
+      // Exit current
+      document.getElementById(scenes[currentScene]).classList.remove('active');
+      document.getElementById(scenes[currentScene]).classList.add('exit');
+      
+      // Update dots
+      progressContainer.children[currentScene].classList.remove('active');
+      progressContainer.children[index].classList.add('active');
+      
+      currentScene = index;
+      
+      // Enter new
+      setTimeout(() => {
+        document.querySelectorAll('.scene').forEach(s => s.classList.remove('exit'));
+        document.getElementById(scenes[currentScene]).classList.add('active');
+        
+        // Trigger animations for specific scenes
+        if (currentScene === 2) animateNumber('itemCount', 65331, 2000);
+        if (currentScene === 3) {
+          animateNumber('multiplierCount', 7940, 1500);
+          animateNumber('assemblyCount', 32, 1000);
+          animateNumber('divisionCount', 43, 1000);
+          animateNumber('synonymCount', 150, 1200);
+        }
+      }, 300);
+    }
+    
+    function nextScene() {
+      if (currentScene < scenes.length - 1) {
+        goToScene(currentScene + 1);
+      }
+    }
+    
+    function skipToEnd() {
+      goToScene(scenes.length - 1);
+    }
+    
+    // Auto-advance
+    const sceneDurations = [3000, 4000, 3500, 5000, 6000, 4000, 0]; // 0 = stay forever
+    
+    function autoAdvance() {
+      const duration = sceneDurations[currentScene];
+      if (duration > 0) {
+        setTimeout(() => {
+          nextScene();
+          autoAdvance();
+        }, duration);
+      }
+    }
+    
+    setTimeout(autoAdvance, 500);
+    
+    // ============================================
+    // NUMBER ANIMATION
+    // ============================================
+    
+    function animateNumber(elementId, target, duration) {
+      const element = document.getElementById(elementId);
+      const start = 0;
+      const startTime = performance.now();
+      
+      function update(currentTime) {
+        const elapsed = currentTime - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+        
+        // Easing
+        const eased = 1 - Math.pow(1 - progress, 3);
+        const current = Math.floor(start + (target - start) * eased);
+        
+        element.textContent = current.toLocaleString();
+        
+        if (progress < 1) {
+          requestAnimationFrame(update);
+        }
+      }
+      
+      requestAnimationFrame(update);
+    }
+    
+    // ============================================
+    // KEYBOARD NAVIGATION
+    // ============================================
+    
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === ' ') {
+        nextScene();
+      } else if (e.key === 'ArrowLeft') {
+        if (currentScene > 0) goToScene(currentScene - 1);
+      } else if (e.key === 'Escape') {
+        skipToEnd();
+      }
+    });
+    
+    // Click to advance
+    document.addEventListener('click', (e) => {
+      if (e.target.tagName !== 'BUTTON' && !e.target.classList.contains('dot')) {
+        nextScene();
+      }
+    });
+    
+    // Resize
+    window.addEventListener('resize', () => {
+      width = window.innerWidth;
+      height = window.innerHeight;
+      canvas.width = width;
+      canvas.height = height;
+    });
+  </script>
+</body>
+</html>
