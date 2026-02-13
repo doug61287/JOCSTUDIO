@@ -48,7 +48,7 @@ const FIRE_PROTECTION_TYPES: AssemblyTypeOption[] = [
     description: 'Underground or riser pipe',
     needsSize: true,
     needsMaterial: true,
-    taskCodePrefix: '21111', // Fire suppression piping
+    taskCodePrefix: '21', // Fire suppression (CPVC under 21134, black steel under 23211)
     applicableTo: ['line', 'polyline'],
   },
   {
@@ -58,7 +58,7 @@ const FIRE_PROTECTION_TYPES: AssemblyTypeOption[] = [
     description: 'Ceiling distribution',
     needsSize: true,
     needsMaterial: true,
-    taskCodePrefix: '21111',
+    taskCodePrefix: '21',
     applicableTo: ['line', 'polyline'],
   },
   {
@@ -261,45 +261,62 @@ export function AssemblyAssembler({
   // Find pipe item when size and material are selected
   useEffect(() => {
     if (selectedType && selectedSize && selectedMaterial) {
-      const prefix = selectedType.taskCodePrefix;
       const size = selectedSize;
+      const isFP = category === 'fire-protection';
       
-      // Search for matching pipe
+      // Search for matching pipe - search broader for black steel (in Div 23)
       const matches = jocCatalogue.filter(item => {
         const code = item.taskCode;
         const desc = item.description.toLowerCase();
         
-        // Must start with correct division
-        if (!code.startsWith(prefix.substring(0, 2))) return false;
+        // For FP, CPVC is in 21, Black Steel is in 23
+        // For Plumbing, most items in 22, some in 23
+        const validDivisions = isFP 
+          ? ['21', '23'] // FP can use Div 21 (CPVC) or 23 (Black Steel)
+          : ['22', '23']; // Plumbing uses 22 and 23
         
-        // Must match size at start of description
-        if (!desc.startsWith(`${size}"`) && !desc.startsWith(`${size} `)) return false;
+        if (!validDivisions.some(d => code.startsWith(d))) return false;
+        
+        // Must contain size (anywhere in description)
+        const sizePattern = `${size}"`;
+        if (!desc.includes(sizePattern)) return false;
         
         // Must be pipe (not fitting, not service)
-        if (!desc.includes('pipe') && !desc.includes('piping') && !desc.includes('tubing')) return false;
+        if (!desc.includes('pipe')) return false;
         if (desc.includes('removal') || desc.includes('relocate') || desc.includes('demo')) return false;
+        if (desc.includes('clamp') || desc.includes('nipple') || desc.includes('repair')) return false;
         
         // Must match material keywords
         const hasKeyword = selectedMaterial.keywords.some(kw => desc.includes(kw.toLowerCase()));
         if (!hasKeyword) return false;
         
+        // For FP, prefer items with "fire" or "sprinkler" in description
+        if (isFP && selectedMaterial.id === 'cpvc') {
+          if (!desc.includes('fire') && !desc.includes('sprinkler')) return false;
+        }
+        
         return true;
       });
       
       if (matches.length > 0) {
-        // Sort by unit cost (higher = probably main item, not accessory)
-        matches.sort((a, b) => b.unitCost - a.unitCost);
+        // Sort by relevance: prefer items with "pipe" in description
+        matches.sort((a, b) => {
+          const aScore = a.description.toLowerCase().includes('pipe') ? 10 : 0;
+          const bScore = b.description.toLowerCase().includes('pipe') ? 10 : 0;
+          return bScore - aScore || b.unitCost - a.unitCost;
+        });
         setSelectedPipeItem(matches[0]);
       } else {
         setSelectedPipeItem(null);
       }
     }
-  }, [selectedType, selectedSize, selectedMaterial]);
+  }, [selectedType, selectedSize, selectedMaterial, category]);
 
   // Find fitting items when pipe is selected
   useEffect(() => {
     if (selectedPipeItem && selectedSize && selectedMaterial) {
-      const prefix = selectedType?.taskCodePrefix.substring(0, 2) || '22';
+      const isFP = category === 'fire-protection';
+      const validDivisions = isFP ? ['21', '23'] : ['22', '23'];
       const fittings: Record<string, JOCItem | null> = {};
       
       const fittingTypes = ['coupling', 'hanger', 'elbow', 'tee'];
@@ -309,22 +326,39 @@ export function AssemblyAssembler({
           const desc = item.description.toLowerCase();
           const code = item.taskCode;
           
-          if (!code.startsWith(prefix)) return false;
-          if (!desc.startsWith(`${selectedSize}"`) && !desc.includes(` ${selectedSize}"`)) return false;
-          if (!desc.includes(fittingType)) return false;
-          if (desc.includes('removal') || desc.includes('relocate')) return false;
+          // Must be in valid division
+          if (!validDivisions.some(d => code.startsWith(d))) return false;
           
-          // Try to match material
-          const hasKeyword = selectedMaterial!.keywords.some(kw => desc.includes(kw.toLowerCase()));
-          return hasKeyword || fittingType === 'hanger'; // Hangers don't always specify material
+          // Must contain size
+          if (!desc.includes(`${selectedSize}"`)) return false;
+          
+          // Must match fitting type
+          if (!desc.includes(fittingType)) return false;
+          
+          // Exclude service items
+          if (desc.includes('removal') || desc.includes('relocate') || desc.includes('demo')) return false;
+          
+          // Try to match material (hangers are generic)
+          if (fittingType !== 'hanger') {
+            const hasKeyword = selectedMaterial!.keywords.some(kw => desc.includes(kw.toLowerCase()));
+            if (!hasKeyword) return false;
+          }
+          
+          return true;
         });
         
         fittings[fittingType] = matches.length > 0 ? matches[0] : null;
       }
       
+      // Only pre-select fittings that were found
+      const foundFittings = new Set<string>();
+      if (fittings.coupling) foundFittings.add('coupling');
+      if (fittings.hanger) foundFittings.add('hanger');
+      setSelectedFittings(foundFittings);
+      
       setFittingItems(fittings);
     }
-  }, [selectedPipeItem, selectedSize, selectedMaterial, selectedType]);
+  }, [selectedPipeItem, selectedSize, selectedMaterial, category]);
 
   // TODO: Add head/fixture selection step for count-type assemblies
 
@@ -456,11 +490,11 @@ export function AssemblyAssembler({
                     key={type.id}
                     onClick={() => {
                       setSelectedType(type);
-                      // Auto-advance for count items
+                      // Auto-advance - directly set step since state hasn't updated yet
                       if (!type.needsSize) {
                         setCurrentStep('review');
                       } else {
-                        nextStep();
+                        setCurrentStep('size'); // Go directly to size step
                       }
                     }}
                     className={`p-4 rounded-xl border-2 text-center transition-all hover:scale-105
@@ -557,44 +591,53 @@ export function AssemblyAssembler({
                 </div>
               </div>
 
-              <div className="space-y-2">
-                {Object.entries(TRADE_FACTORS).map(([key, factor]) => {
-                  const fittingItem = fittingItems[key];
-                  return (
-                    <label
-                      key={key}
-                      className={`flex items-center gap-4 p-4 rounded-xl border-2 cursor-pointer transition-all
-                        ${selectedFittings.has(key)
-                          ? 'border-green-500 bg-green-500/10'
-                          : 'border-slate-600 hover:border-slate-500 bg-slate-700/30'}`}
-                    >
-                      <input
-                        type="checkbox"
-                        checked={selectedFittings.has(key)}
-                        onChange={(e) => {
-                          const newSet = new Set(selectedFittings);
-                          if (e.target.checked) newSet.add(key);
-                          else newSet.delete(key);
-                          setSelectedFittings(newSet);
-                        }}
-                        className="w-5 h-5 rounded"
-                      />
-                      <div className="flex-1">
-                        <div className="flex items-center gap-2">
-                          <span className="font-medium text-white capitalize">{key}s</span>
-                          <span className="text-amber-400 text-sm">× {factor.factor}/LF</span>
-                          <span className="text-slate-400 text-sm">({factor.label})</span>
+              {/* Only show fittings that exist in catalogue */}
+              {Object.values(fittingItems).every(v => v === null) ? (
+                <div className="p-4 bg-amber-500/10 border border-amber-500/30 rounded-lg">
+                  <p className="text-amber-400 text-sm">No matching fittings found in catalogue for this size/material combination.</p>
+                  <p className="text-slate-400 text-xs mt-1">You can still save the pipe-only assembly.</p>
+                </div>
+              ) : (
+                <div className="space-y-2">
+                  {Object.entries(TRADE_FACTORS).map(([key, factor]) => {
+                    const fittingItem = fittingItems[key];
+                    // Only show fittings that exist in the catalogue
+                    if (!fittingItem) return null;
+                    
+                    return (
+                      <label
+                        key={key}
+                        className={`flex items-center gap-4 p-4 rounded-xl border-2 cursor-pointer transition-all
+                          ${selectedFittings.has(key)
+                            ? 'border-green-500 bg-green-500/10'
+                            : 'border-slate-600 hover:border-slate-500 bg-slate-700/30'}`}
+                      >
+                        <input
+                          type="checkbox"
+                          checked={selectedFittings.has(key)}
+                          onChange={(e) => {
+                            const newSet = new Set(selectedFittings);
+                            if (e.target.checked) newSet.add(key);
+                            else newSet.delete(key);
+                            setSelectedFittings(newSet);
+                          }}
+                          className="w-5 h-5 rounded"
+                        />
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2">
+                            <span className="font-medium text-white capitalize">{key}s</span>
+                            <span className="text-amber-400 text-sm">× {factor.factor}/LF</span>
+                            <span className="text-slate-400 text-sm">({factor.label})</span>
+                          </div>
+                          <div className="text-xs text-slate-400 mt-1">
+                            {fittingItem.description} — ${fittingItem.unitCost.toFixed(2)}/{fittingItem.unit}
+                          </div>
                         </div>
-                        {fittingItem ? (
-                          <div className="text-xs text-slate-400 mt-1">{fittingItem.description} — ${fittingItem.unitCost.toFixed(2)}</div>
-                        ) : (
-                          <div className="text-xs text-slate-500 mt-1">No matching item found</div>
-                        )}
-                      </div>
-                    </label>
-                  );
-                })}
-              </div>
+                      </label>
+                    );
+                  })}
+                </div>
+              )}
             </div>
           )}
 
