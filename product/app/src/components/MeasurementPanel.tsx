@@ -277,11 +277,25 @@ export function MeasurementPanel() {
   }, [project]);
 
   const totals = useMemo(() => {
-    if (!project) return { subtotal: 0, complexityAmount: 0, total: 0 };
+    if (!project) return { subtotal: 0, complexityAmount: 0, total: 0, tierSavings: 0 };
     
     const subtotal = lineItemTotals.reduce((sum, { item, quantity }) => 
       sum + (quantity * item.unitCost), 0
     );
+    
+    // Calculate total tier savings across all measurements
+    let tierSavings = 0;
+    project.measurements.forEach((m) => {
+      const items = getJocItems(m);
+      items.forEach((item) => {
+        if (hasAddDeductTiers(item.taskCode)) {
+          const tierInfo = calculateAdjustedPrice(item.unitCost, item.taskCode, m.value);
+          if (tierInfo.adjustment < 0) {
+            tierSavings += Math.abs(tierInfo.adjustment) * m.value;
+          }
+        }
+      });
+    });
     
     // Calculate complexity multiplier
     const complexityMultiplier = calculateComplexityMultiplier(project.complexityFactors || []);
@@ -292,6 +306,7 @@ export function MeasurementPanel() {
       subtotal,
       complexityAmount,
       total: afterComplexity * project.coefficient,
+      tierSavings,
     };
   }, [lineItemTotals, project]);
 
@@ -695,28 +710,63 @@ export function MeasurementPanel() {
     const activeComplexityFactors = (project.complexityFactors || []).filter(f => f.enabled);
     const subtotalAfterComplexity = totals.subtotal * complexityMultiplier;
     
+    // Build detailed line items with tier adjustments
+    const detailedLines: string[] = [];
+    let runningSubtotal = 0;
+    
+    lineItemTotals.forEach(({ item, quantity }) => {
+      const hasTiers = hasAddDeductTiers(item.taskCode);
+      let effectivePrice = item.unitCost;
+      let tierLabel = '';
+      let tierAdjustment = 0;
+      
+      if (hasTiers) {
+        const tierInfo = calculateAdjustedPrice(item.unitCost, item.taskCode, quantity);
+        effectivePrice = tierInfo.adjustedPrice;
+        tierLabel = tierInfo.tierLabel;
+        tierAdjustment = tierInfo.adjustment;
+      }
+      
+      const extendedPrice = quantity * effectivePrice;
+      runningSubtotal += extendedPrice;
+      
+      // Format: Task Code, Description, Qty, Unit, Base Price, Tier, Adj/Unit, Adj Price, Extended
+      detailedLines.push(
+        `"${item.taskCode}","${item.description}",${quantity.toFixed(0)},${item.unit},$${item.unitCost.toFixed(2)},"${tierLabel}",${tierAdjustment !== 0 ? (tierAdjustment >= 0 ? '+' : '') + '$' + tierAdjustment.toFixed(2) : ''},$${effectivePrice.toFixed(2)},$${extendedPrice.toFixed(2)}`
+      );
+    });
+    
     const lines = [
-      'JOC Code,Description,Quantity,Unit,Unit Price,Extended Price',
-      ...lineItemTotals.map(({ item, quantity }) => 
-        `"${item.taskCode}","${item.description}",${quantity.toFixed(2)},${item.unit},${item.unitCost.toFixed(2)},${(quantity * item.unitCost).toFixed(2)}`
-      ),
+      '# JOCHero Takeoff Export',
+      `# Project: ${project.name}`,
+      `# Date: ${new Date().toLocaleDateString()}`,
       '',
-      `,,,,Subtotal,${totals.subtotal.toFixed(2)}`,
+      'Task Code,Description,Quantity,Unit,Base Price,Tier,Adjustment,Adj Price,Extended',
+      ...detailedLines,
+      '',
+      ',,,,,,,Subtotal,$' + totals.subtotal.toFixed(2),
     ];
+    
+    // Add tier savings if any
+    if (totals.tierSavings > 0) {
+      lines.push(`,,,,,,,Quantity Tier Savings,-$${totals.tierSavings.toFixed(2)}`);
+    }
     
     // Add complexity factors "below the line" if any are active
     if (activeComplexityFactors.length > 0) {
-      lines.push(`,,,,--- Complexity Factors ---,`);
+      lines.push('');
+      lines.push(',,,,,,,--- Complexity Factors ---,');
       activeComplexityFactors.forEach(f => {
         const amount = totals.subtotal * ((f.multiplier - 1) * 100) / 100;
-        lines.push(`,,"${f.name}",,${((f.multiplier - 1) * 100).toFixed(0)}%,${amount.toFixed(2)}`);
+        lines.push(`,,,,,,,"${f.name} (${((f.multiplier - 1) * 100).toFixed(0)}%)",$${amount.toFixed(2)}`);
       });
-      lines.push(`,,,,Complexity Subtotal,${subtotalAfterComplexity.toFixed(2)}`);
+      lines.push(`,,,,,,,Complexity Subtotal,$${subtotalAfterComplexity.toFixed(2)}`);
     }
     
     lines.push(
-      `,,,,Coefficient,${project.coefficient}`,
-      `,,,,TOTAL,${totals.total.toFixed(2)}`,
+      '',
+      `,,,,,,,Location Coefficient,${project.coefficient}`,
+      `,,,,,,,GRAND TOTAL,$${totals.total.toFixed(2)}`,
     );
     
     const csv = lines.join('\n');
@@ -724,7 +774,8 @@ export function MeasurementPanel() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `${project.name.replace(/\s+/g, '-')}-takeoff.csv`;
+    const date = new Date().toISOString().split('T')[0];
+    a.download = `JOCHero-${project.name.replace(/\s+/g, '-')}-${date}.csv`;
     a.click();
     URL.revokeObjectURL(url);
   };
@@ -1420,6 +1471,19 @@ export function MeasurementPanel() {
             <span className="text-white/50">Subtotal</span>
             <span className="tabular-nums">${totals.subtotal.toLocaleString(undefined, { minimumFractionDigits: 2 })}</span>
           </div>
+          
+          {/* Tier Savings Summary - THE MONEY SHOT */}
+          {totals.tierSavings > 0 && (
+            <div className="flex items-center justify-between text-xs py-2 px-3 -mx-3 bg-emerald-500/10 border-y border-emerald-500/20">
+              <span className="flex items-center gap-1.5 text-emerald-400 font-medium">
+                <TrendingDown className="w-4 h-4" />
+                Quantity Tier Savings
+              </span>
+              <span className="text-emerald-400 font-bold tabular-nums">
+                -${totals.tierSavings.toLocaleString(undefined, { minimumFractionDigits: 2 })}
+              </span>
+            </div>
+          )}
           
           {/* Complexity Factors Summary */}
           <ComplexitySummary

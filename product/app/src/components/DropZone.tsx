@@ -1,4 +1,5 @@
 import { useCallback, useState, useRef } from 'react';
+import { useProjectStore } from '../stores/projectStore';
 
 interface DropZoneProps {
   onFileSelect: (file: File) => void;
@@ -8,22 +9,28 @@ export function DropZone({ onFileSelect }: DropZoneProps) {
   const [isDragging, setIsDragging] = useState(false);
   const [loadingDemo, setLoadingDemo] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const loadDemo = useProjectStore((s) => s.loadDemo);
 
-  // Load the demo drawing (Bellevue ED Ambulance Bay)
+  // Load the demo project with pre-populated measurements
   const handleLoadDemo = useCallback(async () => {
     setLoadingDemo(true);
     try {
+      // Load demo project data (measurements, groups, etc.)
+      loadDemo();
+      
+      // Also load the PDF drawing
       const response = await fetch('/test-drawing.pdf');
       const blob = await response.blob();
-      const file = new File([blob], 'Bellevue-ED-Ambulance-Bay.pdf', { type: 'application/pdf' });
+      const file = new File([blob], 'Bellevue-Hospital-ED.pdf', { type: 'application/pdf' });
       onFileSelect(file);
     } catch (error) {
       console.error('Failed to load demo:', error);
-      alert('Failed to load demo drawing');
+      // Still load the project even if PDF fails
+      loadDemo();
     } finally {
       setLoadingDemo(false);
     }
-  }, [onFileSelect]);
+  }, [onFileSelect, loadDemo]);
 
   const handleDragOver = useCallback((e: React.DragEvent) => {
     e.preventDefault();
@@ -82,9 +89,16 @@ export function DropZone({ onFileSelect }: DropZoneProps) {
             <button 
               onClick={(e) => { e.stopPropagation(); handleLoadDemo(); }}
               disabled={loadingDemo}
-              className="px-6 py-2.5 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-black font-semibold rounded-lg transition-all disabled:opacity-50"
+              className="px-6 py-2.5 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-black font-semibold rounded-lg transition-all disabled:opacity-50 flex items-center gap-2"
             >
-              {loadingDemo ? '⏳ Loading...' : '🏥 Load Demo: Bellevue ED'}
+              {loadingDemo ? (
+                <>⏳ Loading Demo...</>
+              ) : (
+                <>
+                  🏥 Load Demo Project
+                  <span className="text-xs opacity-75">(FP + Plumbing)</span>
+                </>
+              )}
             </button>
           </div>
           <p className="text-sm text-white/40 mt-4">

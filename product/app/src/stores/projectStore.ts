@@ -1,6 +1,16 @@
 import { create } from 'zustand';
 import type { Project, Measurement, MeasurementGroup, Tool, JOCItem, Flag } from '../types';
 import { DEFAULT_COMPLEXITY_FACTORS } from '../utils/complexityFactors';
+import demoProjectData from '../data/demo-project.json';
+
+// Load demo project from JSON
+export function loadDemoProject(): Project {
+  return {
+    ...demoProjectData,
+    createdAt: new Date(),
+    complexityFactors: DEFAULT_COMPLEXITY_FACTORS.map(f => ({ ...f })),
+  } as Project;
+}
 
 interface ProjectState {
   project: Project | null;
@@ -40,6 +50,8 @@ interface ProjectState {
   // Complexity factor actions - "Handle separately at the end"
   toggleComplexityFactor: (factorId: string) => void;
   updateComplexityMultiplier: (factorId: string, multiplier: number) => void;
+  // Demo project loader
+  loadDemo: () => void;
 }
 
 // Auto-load test drawing in dev mode
@@ -224,4 +236,7 @@ export const useProjectStore = create<ProjectState>((set) => ({
       )
     } : null
   })),
+
+  // Load demo project for presentations
+  loadDemo: () => set({ project: loadDemoProject() }),
 }));
