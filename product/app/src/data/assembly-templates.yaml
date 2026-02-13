@@ -1,0 +1,543 @@
+# JOCHero Assembly Templates
+# Maps trade workflows to H+H Task Code assemblies
+# Version: 1.0 | Updated: 2026-02-12
+
+# ============================================
+# SCHEMA
+# ============================================
+# 
+# assembly: string          # Unique ID (kebab-case)
+# name: string              # Display name
+# division: number          # CSI division (21, 22, etc.)
+# category: string          # Grouping for UI
+# unit: string              # EA, LF, SF, CY
+# workflow: string          # measure | count | area
+# 
+# primaryItem:
+#   taskCode: string        # H+H task code (XXXXXXXX-XXXX)
+#   description: string     # Human-readable name
+#   unitPrice: number       # Base price from H+H CTC
+#   unit: string            # Must match assembly unit
+# 
+# companions:               # Optional related items
+#   - type: string          # Fitting type identifier
+#     taskCode: string      # H+H task code
+#     description: string   # Optional override
+#     quantityFactor: number # Ratio to primary (e.g., 0.05 = 1 per 20)
+#     unitPrice: number     # Base price
+#     workflow: count       # Always count for fittings
+#
+# quantityTiers: boolean    # Whether H+H tiers apply (default: true)
+# heightPremium: boolean    # Whether height factors apply (default: false)
+# 
+# ============================================
+
+
+# ============================================
+# DIVISION 21 - FIRE PROTECTION
+# ============================================
+
+# --- Sprinkler Heads ---
+
+- assembly: fp-head-pendent
+  name: "Pendent Sprinkler Head"
+  division: 21
+  category: "Sprinkler Heads"
+  unit: EA
+  workflow: count
+  primaryItem:
+    taskCode: "21131300-0020"
+    description: "Sprinkler Head - Pendent - Chrome - 1/2\" Orifice"
+    unitPrice: 126.72
+    unit: EA
+  companions:
+    - type: escutcheon
+      taskCode: "21131300-0045"
+      description: "Escutcheon - Chrome - Adjustable"
+      quantityFactor: 1.0
+      unitPrice: 12.50
+      workflow: count
+  quantityTiers: true
+  heightPremium: true
+
+- assembly: fp-head-upright
+  name: "Upright Sprinkler Head"
+  division: 21
+  category: "Sprinkler Heads"
+  unit: EA
+  workflow: count
+  primaryItem:
+    taskCode: "21131300-0025"
+    description: "Sprinkler Head - Upright - Brass"
+    unitPrice: 118.45
+    unit: EA
+  companions:
+    - type: escutcheon
+      taskCode: "21131300-0048"
+      quantityFactor: 1.0
+      unitPrice: 11.25
+      workflow: count
+  quantityTiers: true
+  heightPremium: true
+
+- assembly: fp-head-sidewall
+  name: "Sidewall Sprinkler Head"
+  division: 21
+  category: "Sprinkler Heads"
+  unit: EA
+  workflow: count
+  primaryItem:
+    taskCode: "21131300-0030"
+    description: "Sprinkler Head - Sidewall - Chrome"
+    unitPrice: 142.30
+    unit: EA
+  companions:
+    - type: escutcheon
+      taskCode: "21131300-0050"
+      quantityFactor: 1.0
+      unitPrice: 14.75
+      workflow: count
+  quantityTiers: true
+  heightPremium: true
+
+# --- Fire Protection Piping ---
+# Note: Uses Division 22 galvanized pipe (cross-division)
+
+- assembly: fp-pipe-3
+  name: "3\" FP Sprinkler Pipe"
+  division: 21
+  category: "FP Piping"
+  unit: LF
+  workflow: measure
+  crossDivision: 22  # Pipe from Div 22
+  primaryItem:
+    taskCode: "22111316-0150"
+    description: "Pipe - Galvanized - Schedule 40 - 3\""
+    unitPrice: 18.45
+    unit: LF
+  companions:
+    - type: elbow-90
+      taskCode: "22111316-0180"
+      description: "Elbow - 90° - Galvanized - 3\""
+      quantityFactor: 0.05  # 1 per 20 LF
+      unitPrice: 28.50
+      workflow: count
+    - type: coupling
+      taskCode: "22111316-0175"
+      description: "Coupling - Galvanized - 3\""
+      quantityFactor: 0.10  # 1 per 10 LF
+      unitPrice: 14.25
+      workflow: count
+    - type: tee
+      taskCode: "22111316-0185"
+      description: "Tee - Galvanized - 3\""
+      quantityFactor: 0.02  # 1 per 50 LF
+      unitPrice: 42.00
+      workflow: count
+  quantityTiers: true
+  heightPremium: false
+
+- assembly: fp-pipe-1.5
+  name: "1-1/2\" FP Branch Line"
+  division: 21
+  category: "FP Piping"
+  unit: LF
+  workflow: measure
+  crossDivision: 22
+  primaryItem:
+    taskCode: "22111316-0120"
+    description: "Pipe - Galvanized - Schedule 40 - 1-1/2\""
+    unitPrice: 9.85
+    unit: LF
+  companions:
+    - type: elbow-90
+      taskCode: "22111316-0145"
+      quantityFactor: 0.05
+      unitPrice: 12.75
+      workflow: count
+    - type: coupling
+      taskCode: "22111316-0140"
+      quantityFactor: 0.10
+      unitPrice: 6.50
+      workflow: count
+  quantityTiers: true
+
+- assembly: fp-pipe-1.25
+  name: "1-1/4\" FP Branch Line"
+  division: 21
+  category: "FP Piping"
+  unit: LF
+  workflow: measure
+  primaryItem:
+    taskCode: "22111316-0110"
+    description: "Pipe - Galvanized - Schedule 40 - 1-1/4\""
+    unitPrice: 8.25
+    unit: LF
+  companions:
+    - type: elbow-90
+      taskCode: "22111316-0135"
+      quantityFactor: 0.05
+      unitPrice: 10.50
+      workflow: count
+  quantityTiers: true
+
+# --- FP Equipment ---
+
+- assembly: fp-fdc
+  name: "Fire Department Connection (Siamese)"
+  division: 21
+  category: "FP Equipment"
+  unit: EA
+  workflow: count
+  primaryItem:
+    taskCode: "21131300-0200"
+    description: "Fire Department Connection - Siamese - 4\" x 2-1/2\" x 2-1/2\""
+    unitPrice: 685.00
+    unit: EA
+  companions:
+    - type: check-valve
+      taskCode: "21131300-0210"
+      quantityFactor: 2.0  # 2 per FDC
+      unitPrice: 145.00
+      workflow: count
+    - type: cap-chain
+      taskCode: "21131300-0215"
+      quantityFactor: 2.0
+      unitPrice: 28.00
+      workflow: count
+  quantityTiers: false
+
+- assembly: fp-flow-switch
+  name: "Waterflow Switch"
+  division: 21
+  category: "FP Equipment"
+  unit: EA
+  workflow: count
+  primaryItem:
+    taskCode: "21131300-0250"
+    description: "Waterflow Switch - Paddle Type - 4\""
+    unitPrice: 245.00
+    unit: EA
+  quantityTiers: false
+
+# --- FP Services (Relocation/Modification) ---
+
+- assembly: fp-relocate-head
+  name: "Relocate Sprinkler Head"
+  division: 21
+  category: "FP Services"
+  unit: EA
+  workflow: count
+  isService: true  # Flag for service vs product
+  primaryItem:
+    taskCode: "21011091-0025"
+    description: "Relocate Sprinkler Head - Within 5 LF"
+    unitPrice: 285.00
+    unit: EA
+  quantityTiers: true
+
+
+# ============================================
+# DIVISION 22 - PLUMBING
+# ============================================
+
+# --- Fixtures ---
+
+- assembly: plumb-water-closet
+  name: "Water Closet (Floor Mount)"
+  division: 22
+  category: "Plumbing Fixtures"
+  unit: EA
+  workflow: count
+  primaryItem:
+    taskCode: "22421300-0040"
+    description: "Water Closet - Floor Mounted - Vitreous China - 1.6 GPF"
+    unitPrice: 525.00
+    unit: EA
+  companions:
+    - type: seat
+      taskCode: "22421300-0085"
+      description: "Toilet Seat - Heavy Duty - White"
+      quantityFactor: 1.0
+      unitPrice: 48.00
+      workflow: count
+    - type: supply
+      taskCode: "22421300-0090"
+      description: "Supply Line - Chrome - 3/8\" x 12\""
+      quantityFactor: 1.0
+      unitPrice: 18.50
+      workflow: count
+    - type: flange
+      taskCode: "22421300-0075"
+      description: "Closet Flange - ABS - 4\""
+      quantityFactor: 1.0
+      unitPrice: 22.00
+      workflow: count
+    - type: wax-ring
+      taskCode: "22421300-0080"
+      description: "Wax Ring - Jumbo"
+      quantityFactor: 1.0
+      unitPrice: 8.50
+      workflow: count
+  quantityTiers: true
+
+- assembly: plumb-lavatory
+  name: "Lavatory (Wall-Hung)"
+  division: 22
+  category: "Plumbing Fixtures"
+  unit: EA
+  workflow: count
+  primaryItem:
+    taskCode: "22411300-0025"
+    description: "Lavatory - Wall Hung - Vitreous China - 20\" x 18\""
+    unitPrice: 485.00
+    unit: EA
+  companions:
+    - type: faucet
+      taskCode: "22411300-0100"
+      description: "Faucet - Centerset - Chrome - 4\" Centers"
+      quantityFactor: 1.0
+      unitPrice: 165.00
+      workflow: count
+    - type: supply
+      taskCode: "22411300-0085"
+      description: "Supply Line - Braided SS - 3/8\" x 20\""
+      quantityFactor: 2.0  # Hot + Cold
+      unitPrice: 14.50
+      workflow: count
+    - type: p-trap
+      taskCode: "22411300-0070"
+      description: "P-Trap - Chrome - 1-1/4\""
+      quantityFactor: 1.0
+      unitPrice: 32.00
+      workflow: count
+    - type: drain
+      taskCode: "22411300-0075"
+      description: "Grid Drain - Chrome - 1-1/4\""
+      quantityFactor: 1.0
+      unitPrice: 24.00
+      workflow: count
+  quantityTiers: true
+
+- assembly: plumb-sink-ss
+  name: "Sink (Stainless Steel)"
+  division: 22
+  category: "Plumbing Fixtures"
+  unit: EA
+  workflow: count
+  primaryItem:
+    taskCode: "22411300-0150"
+    description: "Sink - Stainless Steel - Single Bowl - 25\" x 22\""
+    unitPrice: 385.00
+    unit: EA
+  companions:
+    - type: faucet
+      taskCode: "22411300-0180"
+      description: "Faucet - Single Handle - Chrome"
+      quantityFactor: 1.0
+      unitPrice: 145.00
+      workflow: count
+    - type: supply
+      taskCode: "22411300-0085"
+      quantityFactor: 2.0
+      unitPrice: 14.50
+      workflow: count
+    - type: strainer
+      taskCode: "22411300-0165"
+      description: "Strainer - Basket - SS"
+      quantityFactor: 1.0
+      unitPrice: 28.00
+      workflow: count
+    - type: p-trap
+      taskCode: "22411300-0160"
+      description: "P-Trap - PVC - 1-1/2\""
+      quantityFactor: 1.0
+      unitPrice: 18.00
+      workflow: count
+  quantityTiers: true
+
+# --- Water Heaters ---
+
+- assembly: plumb-wh-tank-50
+  name: "Water Heater - Gas - 50 Gal"
+  division: 22
+  category: "Water Heaters"
+  unit: EA
+  workflow: count
+  primaryItem:
+    taskCode: "22333600-0040"
+    description: "Water Heater - Gas - 50 Gallon - 40,000 BTU"
+    unitPrice: 1850.00
+    unit: EA
+  companions:
+    - type: flex-connector
+      taskCode: "22333600-0080"
+      description: "Flex Connector - SS - 3/4\" x 18\""
+      quantityFactor: 2.0  # Hot + Cold
+      unitPrice: 28.00
+      workflow: count
+    - type: t-p-valve
+      taskCode: "22333600-0095"
+      description: "T&P Relief Valve - 3/4\""
+      quantityFactor: 1.0
+      unitPrice: 32.00
+      workflow: count
+    - type: discharge-tube
+      taskCode: "22333600-0098"
+      description: "Discharge Tube - Copper - 3/4\" x 24\""
+      quantityFactor: 1.0
+      unitPrice: 18.00
+      workflow: count
+    - type: gas-connector
+      taskCode: "22333600-0085"
+      description: "Gas Connector - Flex - 3/4\" x 24\""
+      quantityFactor: 1.0
+      unitPrice: 45.00
+      workflow: count
+  quantityTiers: false
+
+- assembly: plumb-wh-tankless
+  name: "Water Heater - Tankless"
+  division: 22
+  category: "Water Heaters"
+  unit: EA
+  workflow: count
+  primaryItem:
+    taskCode: "22333600-0100"
+    description: "Water Heater - Tankless - Gas - 199,000 BTU"
+    unitPrice: 2450.00
+    unit: EA
+  companions:
+    - type: isolation-valve
+      taskCode: "22333600-0115"
+      quantityFactor: 2.0
+      unitPrice: 45.00
+      workflow: count
+    - type: gas-valve
+      taskCode: "22333600-0120"
+      quantityFactor: 1.0
+      unitPrice: 65.00
+      workflow: count
+    - type: vent-kit
+      taskCode: "22333600-0125"
+      quantityFactor: 1.0
+      unitPrice: 185.00
+      workflow: count
+  quantityTiers: false
+
+# --- Plumbing Piping ---
+
+- assembly: plumb-cwp-2
+  name: "2\" Cold Water Pipe (Copper)"
+  division: 22
+  category: "Plumbing Piping"
+  unit: LF
+  workflow: measure
+  primaryItem:
+    taskCode: "22111316-0250"
+    description: "Pipe - Copper - Type L - 2\""
+    unitPrice: 24.50
+    unit: LF
+  companions:
+    - type: elbow-90
+      taskCode: "22111316-0280"
+      quantityFactor: 0.05
+      unitPrice: 18.00
+      workflow: count
+    - type: coupling
+      taskCode: "22111316-0275"
+      quantityFactor: 0.10
+      unitPrice: 12.00
+      workflow: count
+    - type: tee
+      taskCode: "22111316-0285"
+      quantityFactor: 0.02
+      unitPrice: 28.00
+      workflow: count
+  quantityTiers: true
+
+- assembly: plumb-hwp-1
+  name: "1\" Hot Water Pipe (Copper)"
+  division: 22
+  category: "Plumbing Piping"
+  unit: LF
+  workflow: measure
+  primaryItem:
+    taskCode: "22111316-0220"
+    description: "Pipe - Copper - Type L - 1\""
+    unitPrice: 14.25
+    unit: LF
+  companions:
+    - type: elbow-90
+      taskCode: "22111316-0245"
+      quantityFactor: 0.05
+      unitPrice: 8.50
+      workflow: count
+    - type: coupling
+      taskCode: "22111316-0240"
+      quantityFactor: 0.10
+      unitPrice: 5.25
+      workflow: count
+  quantityTiers: true
+
+- assembly: plumb-drain-4
+  name: "4\" Drain Pipe (PVC)"
+  division: 22
+  category: "Plumbing Piping"
+  unit: LF
+  workflow: measure
+  primaryItem:
+    taskCode: "22131300-0080"
+    description: "Pipe - PVC - DWV - Schedule 40 - 4\""
+    unitPrice: 8.75
+    unit: LF
+  companions:
+    - type: elbow-90
+      taskCode: "22131300-0095"
+      quantityFactor: 0.03
+      unitPrice: 12.50
+      workflow: count
+    - type: wye
+      taskCode: "22131300-0100"
+      quantityFactor: 0.02
+      unitPrice: 18.00
+      workflow: count
+    - type: cleanout
+      taskCode: "22131300-0110"
+      quantityFactor: 0.01  # 1 per 100 LF
+      unitPrice: 24.00
+      workflow: count
+  quantityTiers: true
+
+
+# ============================================
+# CREATING NEW ASSEMBLIES - GUIDE
+# ============================================
+#
+# 1. Identify the primary item in H+H CTC
+#    - Search by description or task code
+#    - Note the exact taskCode, unit, and price
+#
+# 2. Identify companion items (fittings, accessories)
+#    - What always goes with this item?
+#    - What's the typical ratio? (e.g., 1 elbow per 20 LF)
+#
+# 3. Set quantityFactor based on trade knowledge:
+#    - 1.0 = one per primary (seats, drains)
+#    - 2.0 = two per primary (supply lines)
+#    - 0.10 = one per 10 LF (couplings)
+#    - 0.05 = one per 20 LF (elbows)
+#    - 0.02 = one per 50 LF (tees, cleanouts)
+#
+# 4. Set workflow:
+#    - "measure" for linear items (pipe, conduit)
+#    - "count" for discrete items (fixtures, heads)
+#    - "area" for surface items (flooring, coating)
+#
+# 5. Flags:
+#    - quantityTiers: true if H+H has volume discounts
+#    - heightPremium: true if work above 10' costs more
+#    - isService: true for R&R/labor items (not products)
+#    - crossDivision: number if using items from another division
+#
+# ============================================
