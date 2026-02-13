@@ -34,179 +34,49 @@ console.log(`JOC Catalogue loaded: ${jocCatalogue.length.toLocaleString()} items
 // When searching for products (sprinkler head, valve, etc.), 
 // boost actual product items and de-boost service items (relocate, demo, etc.)
 // ============================================
+// PRODUCT_SEARCH_BOOSTS - Only for complex multi-word queries
+// Simple fixture terms (lavatory, sink, toilet, etc.) use FAST PATH instead
 const PRODUCT_SEARCH_BOOSTS: Record<string, { boost: string[]; deBoost: string[] }> = {
-  'sprinkler head': { 
-    boost: ['21131300'],  // Actual sprinkler head products
-    deBoost: ['21011091', '21011092'] // Relocate/modify services
-  },
-  'head': { 
-    boost: ['21131300'],
-    deBoost: ['21011091']
-  },
-  'escutcheon': { 
-    boost: ['21131300'],  // Escutcheons are in same range as heads
-    deBoost: []
-  },
-  'valve': {
-    boost: ['21052', '22052', '23052'],  // Valve products
-    deBoost: ['21011', '22011']  // Service items
-  },
-  'pipe': {
-    boost: ['21111', '21134', '22111', '23311'],  // Actual pipe products
-    deBoost: ['21011', '22011']  // Service items
-  },
+  // Fire protection - keep these (not in fast path)
+  'sprinkler head': { boost: ['21131300'], deBoost: ['21011091', '21011092'] },
+  'valve': { boost: ['21052', '22052', '23052'], deBoost: ['21011', '22011'] },
+  'pipe': { boost: ['21111', '21134', '22111', '23311'], deBoost: ['21011', '22011'] },
+  // Fittings - keep for pipe searches
   'elbow': { boost: ['21134'], deBoost: [] },
   'tee': { boost: ['21134'], deBoost: [] },
   'coupling': { boost: ['21134'], deBoost: [] },
-  'fitting': { boost: ['21134'], deBoost: [] },
-  // Division 22 - Plumbing product boosts
-  // NOTE: Synonyms automatically inherit boosts via expandedWords check
-  // e.g., "lav" → expands to "lavatory" → triggers 'lavatory' boost
-  'floor drain': { boost: ['22131913'], deBoost: ['22014'] },
-  'lavatory': { boost: ['22421613', '22131300', '22421316'], deBoost: [] },
-  'sink': { boost: ['22421613', '22421616', '22131300'], deBoost: [] },
-  'water closet': { boost: ['22131300'], deBoost: ['22014'] },
-  'toilet': { boost: ['22131300'], deBoost: ['22014'] },  // Keep - not a synonym of "water closet"
-  'kitchen sink': { boost: ['22421616'], deBoost: ['22014'] },
-  'faucet': { boost: ['22423900'], deBoost: ['22014'] },
-  'roof drain': { boost: ['22142613'], deBoost: [] },
-  'water heater': { boost: ['22333016', '22333300', '22333616'], deBoost: [] },
-  'cleanout': { boost: ['22057600'], deBoost: [] },
-  'grease trap': { boost: ['22131926'], deBoost: [] },
-  'grease interceptor': { boost: ['22131926'], deBoost: [] },
 };
 
+// KEYWORD_SYNONYMS - Abbreviations and common misspellings only
+// Keeps search fast by avoiding over-expansion
 const KEYWORD_SYNONYMS: Record<string, string[]> = {
-  // Masonry terms
-  'masonry': ['concrete block', 'cmu', 'brick', 'block wall', 'mortar'],
-  'cmu': ['concrete block', 'block'],
-  'block': ['concrete block', 'cmu'],
-  'brick': ['face brick', 'common brick', 'clay brick'],
-  
-  // Drywall/Gypsum terms  
-  'drywall': ['gypsum', 'gypsum board', 'sheetrock', 'gyp bd'],
-  'sheetrock': ['gypsum', 'gypsum board', 'drywall'],
+  // Common abbreviations
+  'cmu': ['concrete block'],
+  'vct': ['vinyl composition tile'],
+  'lvt': ['luxury vinyl'],
+  'act': ['acoustic ceiling', 'ceiling tile'],
+  'hm': ['hollow metal'],
   'gyp': ['gypsum'],
+  'drywall': ['gypsum'],
   
-  // Flooring terms
-  'vct': ['vinyl composition tile', 'vinyl tile'],
-  'lvt': ['luxury vinyl', 'vinyl plank'],
-  'carpet': ['carpet tile', 'broadloom'],
-  'terrazzo': ['epoxy terrazzo', 'cementitious terrazzo'],
+  // Fire protection
+  'cpvc': ['chlorinated polyvinyl chloride'],
+  'fp': ['fire protection', 'sprinkler'],
+  'fdc': ['siamese'],
+  'pendant': ['pendent'],  // Misspelling → H+H spelling
+  'fm200': ['fm-200'],
   
-  // Ceiling terms
-  'act': ['acoustic ceiling', 'ceiling tile', 'suspended ceiling'],
-  'drop ceiling': ['suspended ceiling', 'acoustic', 'ceiling tile'],
+  // Plumbing abbreviations
+  'lav': ['lavatory'],
+  'wc': ['water closet'],
+  'ci': ['cast iron'],
+  'galv': ['galvanized'],
+  'hwh': ['water heater'],
+  'dhw': ['water heater'],
   
-  // Door terms
-  'hm': ['hollow metal', 'steel door'],
-  'hollow metal': ['hm door', 'steel door', 'metal door'],
-  
-  // Paint terms
-  'paint': ['coating', 'finish', 'primer'],
-  'epoxy': ['epoxy coating', 'epoxy paint', 'epoxy floor'],
-  
-  // MEP terms
-  'hvac': ['mechanical', 'ductwork', 'air handling'],
-  'electrical': ['power', 'lighting', 'receptacle', 'outlet'],
-  'plumbing': ['piping', 'fixture', 'lavatory', 'water'],
-  
-  // ============================================
-  // DIVISION 21 - FIRE PROTECTION SYNONYMS
-  // ============================================
-  
-  // Sprinkler pipe - natural language to catalogue terminology
-  'sprinkler pipe': ['cpvc', 'fire sprinkler pipe', 'chlorinated polyvinyl'],
-  'fp pipe': ['cpvc', 'fire sprinkler pipe'],
-  'fire pipe': ['cpvc', 'fire sprinkler pipe'],
-  'sprinkler main': ['cpvc', 'fire sprinkler pipe'],
-  'branch pipe': ['cpvc', 'fire sprinkler pipe'],
-  'branch line': ['cpvc', 'fire sprinkler pipe'],
-  'cpvc': ['chlorinated polyvinyl chloride', 'fire sprinkler pipe'],
-  
-  // Sprinkler heads - including common misspellings
-  'sprinkler head': ['sprinkler head', 'wet pipe sprinkler head'],
-  // Removed 'head': ['sprinkler head'] - too generic, matches traffic signals etc.
-  'pendant': ['pendent'],  // Common misspelling → H+H spelling
-  'pendant head': ['pendent', 'sprinkler head'],
-  'upright head': ['upright', 'sprinkler head'],
-  'sidewall head': ['sidewall', 'sprinkler head'],
-  'concealed head': ['concealed', 'sprinkler head'],
-  'qr head': ['quick response'],
-  'quick response head': ['quick response', 'sprinkler head'],
-  
-  // System types
-  'wet pipe': ['wet-pipe', 'wet pipe'],
-  'wet system': ['wet-pipe', 'wet pipe'],
-  'dry pipe': ['dry-pipe', 'dry pipe'],
-  'dry system': ['dry-pipe', 'dry pipe'],
-  'preaction': ['preaction', 'pre-action'],
-  'pre-action': ['preaction'],
-  
-  // Valves and components
-  'alarm check': ['alarm check valve'],
-  'check valve': ['alarm check valve', 'check valve'],
-  'flow switch': ['flow detector', 'water flow'],
-  'tamper switch': ['tamper', 'supervisory'],
-  'fdc': ['siamese'],  // Just 'siamese' - don't expand to 'fire' which matches 'fired'
-  'siamese': ['siamese connection'],
-  'fire department connection': ['siamese'],
-  
-  // Kitchen/specialty systems
-  'ansul': ['kitchen fire suppression', 'wet chemical'],
-  'kitchen hood': ['kitchen fire suppression', 'wet chemical'],
-  'kitchen suppression': ['kitchen fire suppression', 'wet chemical'],
-  'clean agent': ['sapphire', 'novec', 'fm-200'],
-  'sapphire': ['clean agent', 'sapphire'],
-  'fm200': ['fm-200', 'clean agent'],
-  'fm-200': ['fm-200', 'clean agent'],
-  
-  // Relocation/modification - EXPLICIT search terms for relocate items
-  'relocate head': ['relocate', 'sprinkler head', 'branch piping'],
-  'move head': ['relocate', 'sprinkler head'],
-  'head relocation': ['relocate', 'sprinkler head'],
-  'relocate sprinkler': ['relocate', 'sprinkler head'],
-  'purge': ['purge liquid system'],
-  'drain system': ['purge liquid system'],
-  
-  // Fire pumps
-  'fire pump': ['fire pump', 'electric-drive', 'diesel'],
-  'jockey pump': ['jockey pump', 'pressure maintenance'],
-  
-  // Demo terms
-  'demo': ['demolition', 'removal', 'remove'],
-  'demolition': ['demo', 'removal', 'selective demolition'],
-  
-  // ============================================
-  // DIVISION 22 - PLUMBING SYNONYMS
-  // ============================================
-  
-  // Division 22 - Plumbing
-  'galvanized': ['galvanized', 'galv', 'steel pipe'],
-  'galv pipe': ['galvanized steel pipe', 'threaded pipe'],
-  'cast iron': ['cast iron', 'ci', 'soil pipe', 'hub pipe', 'no hub'],
-  'soil pipe': ['cast iron soil', 'dwv'],
-  'lavatory': ['lavatory', 'lav', 'bathroom sink', 'wall hung sink'],
-  'water closet': ['water closet', 'wc', 'toilet', 'commode'],
-  'wc': ['water closet', 'toilet'],
-  'floor drain': ['floor drain', 'fd', 'area drain'],
-  'roof drain': ['roof drain', 'rd'],
-  'cleanout': ['cleanout', 'clean out', 'co', 'access'],
-  'water heater': ['water heater', 'hot water heater', 'hwh', 'dhw'],
-  'grease trap': ['grease interceptor', 'grease trap', 'grease separator'],
-  'faucet': ['faucet', 'tap', 'spigot'],
-  'trap': ['p trap', 'trap', 'p-trap'],
-  'supply line': ['supply line', 'supply tube', 'riser'],
-  'shut off': ['shut off', 'shutoff', 'stop valve', 'angle stop'],
-  'flush valve': ['flush valve', 'flushometer', 'sloan'],
-  'sump pump': ['sump pump', 'ejector', 'sewage pump'],
-  'booster pump': ['booster pump', 'circulator', 'recirculating pump'],
-  
-  // General terms
-  'storefront': ['aluminum storefront', 'storefront framing', 'glazing'],
-  'window': ['glazing', 'glass', 'window frame'],
-  'door': ['door frame', 'hardware', 'closer'],
-  'insulation': ['thermal', 'fiberglass', 'rigid insulation'],
+  // Service terms
+  'demo': ['demolition', 'removal'],
+  'r&r': ['removal', 'replacement'],
 };
 
 // Division code mappings for category searches
