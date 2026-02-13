@@ -1,6 +1,8 @@
+import type { Assembly } from '../types';
+
 interface AssemblyContextBarProps {
-  selectedAssembly: unknown;
-  onSelectAssembly: (assembly: unknown) => void;
+  selectedAssembly: Assembly | null;
+  onSelectAssembly: (assembly: Assembly | null) => void;
 }
 
 export function AssemblyContextBar(_props: AssemblyContextBarProps) {

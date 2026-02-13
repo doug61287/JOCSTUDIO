@@ -1,11 +1,12 @@
 // NYC H+H Construction Task Catalog - FULL 65,331 items
 import type { JOCItem } from '../types';
 import fullCatalogue from './nyc-hh-ctc-full.json';
+import { categorizeItem, detectSearchIntent, calculateCategoryScore } from './searchRulesEngine';
 
 export type { JOCItem };
 
 // Re-export rules engine for external use
-export { categorizeItem, detectSearchIntent, calculateCategoryScore } from './searchRulesEngine';
+export { categorizeItem, detectSearchIntent, calculateCategoryScore };
 
 // Export the full catalogue
 export const jocCatalogue: JOCItem[] = fullCatalogue as JOCItem[];
