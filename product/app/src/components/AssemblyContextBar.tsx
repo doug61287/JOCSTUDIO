@@ -31,6 +31,7 @@ export function AssemblyContextBar({
   const [showDropdown, setShowDropdown] = useState(false);
   const [showAssembler, setShowAssembler] = useState(false);
   const [assemblerQuery, setAssemblerQuery] = useState('');
+  const [assemblerCategory, setAssemblerCategory] = useState<AssemblyCategory>('fire-protection');
   const [userAssemblies, setUserAssemblies] = useState<Assembly[]>([]);
 
   // Load user assemblies on mount
@@ -89,9 +90,10 @@ export function AssemblyContextBar({
     setSearchQuery('');
   };
 
-  // Open assembler with current query
-  const openAssembler = () => {
+  // Open assembler with current query and category
+  const openAssembler = (category?: AssemblyCategory) => {
     setAssemblerQuery(searchQuery);
+    setAssemblerCategory(category || (activeCategory !== 'all' ? activeCategory : 'fire-protection'));
     setShowAssembler(true);
     setShowDropdown(false);
   };
@@ -206,8 +208,7 @@ export function AssemblyContextBar({
           {/* Build New Assembly button */}
           <button
             onClick={() => {
-              setAssemblerQuery('');
-              setShowAssembler(true);
+              openAssembler(activeCategory !== 'all' ? activeCategory : 'fire-protection');
             }}
             className="px-3 py-1.5 rounded-full text-xs font-medium bg-gradient-to-r from-amber-500/20 to-orange-500/20 
                        text-amber-400 hover:from-amber-500/30 hover:to-orange-500/30 border border-amber-500/30 
@@ -299,6 +300,7 @@ export function AssemblyContextBar({
       <AssemblyAssembler
         isOpen={showAssembler}
         onClose={() => setShowAssembler(false)}
+        initialCategory={assemblerCategory}
         onSave={handleSaveAssembly}
         onSaveAndStart={handleSaveAndStart}
         initialQuery={assemblerQuery}
