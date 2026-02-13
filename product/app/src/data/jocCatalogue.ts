@@ -355,6 +355,28 @@ export function searchJOCItems(query: string, limit: number = 20): JOCItem[] {
   const q = query.toLowerCase().trim();
   const results: JOCItem[] = [];
   
+  // FAST PATH: Simple fixture searches - just match description directly
+  // This bypasses complex scoring for common, unambiguous searches
+  const SIMPLE_FIXTURE_TERMS = ['lavatory', 'urinal', 'water closet', 'toilet', 'faucet', 'sink'];
+  const isSimpleFixtureSearch = SIMPLE_FIXTURE_TERMS.some(term => q.includes(term));
+  
+  if (isSimpleFixtureSearch) {
+    // Direct description match, prioritize Division 22 (plumbing)
+    const matches: JOCItem[] = [];
+    for (const item of jocCatalogue) {
+      if (item.description.toLowerCase().includes(q)) {
+        // Prioritize Division 22 items
+        if (item.taskCode.startsWith('22')) {
+          matches.unshift(item);
+        } else {
+          matches.push(item);
+        }
+        if (matches.length >= limit * 2) break;
+      }
+    }
+    return matches.slice(0, limit);
+  }
+  
   // If looks like a task code (starts with 2 digits), search by code prefix
   if (/^\d{2}/.test(query)) {
     const codeQuery = q.replace(/[\s-]/g, '');
