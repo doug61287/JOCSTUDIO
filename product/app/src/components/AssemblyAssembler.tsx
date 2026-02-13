@@ -242,6 +242,9 @@ export function AssemblyAssembler({
   const [customItems, setCustomItems] = useState<AssemblyItem[]>([]);
   const [manualSearchQuery, setManualSearchQuery] = useState('');
   const [showManualSearch, setShowManualSearch] = useState(false);
+  // Companion items for count assemblies (escutcheon for heads, etc.)
+  const [companionEscutcheon, setCompanionEscutcheon] = useState<JOCItem | null>(null);
+  const [includeEscutcheon, setIncludeEscutcheon] = useState(true);
 
   // Determine category
   const category = initialCategory || 'fire-protection';
@@ -264,8 +267,47 @@ export function AssemblyAssembler({
       setCustomItems([]);
       setManualSearchQuery('');
       setShowManualSearch(false);
+      setCompanionEscutcheon(null);
+      setIncludeEscutcheon(true);
     }
   }, [isOpen, initialQuery]);
+
+  // Find matching escutcheon when sprinkler head is selected
+  useEffect(() => {
+    if (selectedType?.id === 'sprinkler-head' && selectedPipeItem) {
+      const headDesc = selectedPipeItem.description.toLowerCase();
+      
+      // Extract NPT size from head description (e.g., "1/2" NPT")
+      const nptMatch = headDesc.match(/(\d+\/?\d*)" npt/);
+      const nptSize = nptMatch ? nptMatch[1] : '1/2';
+      
+      // Determine finish (brass, chrome, white)
+      let finish = 'brass';
+      if (headDesc.includes('chrome')) finish = 'chrome';
+      else if (headDesc.includes('white')) finish = 'white';
+      
+      // Find matching escutcheon
+      const escutcheon = jocCatalogue.find(item => {
+        const desc = item.description.toLowerCase();
+        return item.taskCode.startsWith('211313') &&
+               desc.includes('escutcheon') &&
+               desc.includes(`${nptSize}" npt`) &&
+               desc.includes(finish);
+      });
+      
+      // Fallback: any escutcheon with matching NPT
+      const fallback = !escutcheon ? jocCatalogue.find(item => {
+        const desc = item.description.toLowerCase();
+        return item.taskCode.startsWith('211313') &&
+               desc.includes('escutcheon') &&
+               desc.includes(`${nptSize}" npt`);
+      }) : null;
+      
+      setCompanionEscutcheon(escutcheon || fallback || null);
+    } else {
+      setCompanionEscutcheon(null);
+    }
+  }, [selectedType, selectedPipeItem]);
 
   // Manual search results
   const manualSearchResults = useMemo(() => {
@@ -466,6 +508,11 @@ export function AssemblyAssembler({
     } else if (selectedPipeItem) {
       // Count item (head, fixture, etc.)
       items.push({ jocItem: selectedPipeItem, quantityFactor: 1.0 });
+      
+      // Add escutcheon for sprinkler heads (1:1 ratio)
+      if (selectedType?.id === 'sprinkler-head' && includeEscutcheon && companionEscutcheon) {
+        items.push({ jocItem: companionEscutcheon, quantityFactor: 1.0, notes: 'Ceiling plate' });
+      }
     }
     
     // Add custom items (manually added via search)
@@ -916,6 +963,22 @@ export function AssemblyAssembler({
                       <div className="text-white text-sm">{selectedPipeItem.description}</div>
                       <div className="text-emerald-400 font-medium">${selectedPipeItem.unitCost.toFixed(2)}/{selectedPipeItem.unit}</div>
                     </div>
+                  )}
+                  {/* Escutcheon companion for sprinkler heads */}
+                  {selectedType?.id === 'sprinkler-head' && companionEscutcheon && (
+                    <label className="flex items-center gap-3 p-2 bg-cyan-500/10 rounded border border-cyan-500/30 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={includeEscutcheon}
+                        onChange={(e) => setIncludeEscutcheon(e.target.checked)}
+                        className="w-4 h-4 rounded"
+                      />
+                      <div className="flex-1">
+                        <div className="text-cyan-400 text-xs uppercase tracking-wider mb-0.5">+ Escutcheon (Ceiling Plate)</div>
+                        <div className="text-white text-sm truncate">{companionEscutcheon.description.slice(0, 50)}...</div>
+                        <div className="text-emerald-400 text-sm">${companionEscutcheon.unitCost.toFixed(2)}/EA</div>
+                      </div>
+                    </label>
                   )}
                   {selectedType?.needsSize && selectedFittings.size > 0 && (
                     <div className="p-2 bg-slate-700/50 rounded">
