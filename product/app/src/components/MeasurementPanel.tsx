@@ -959,6 +959,27 @@ export function MeasurementPanel() {
             {isVisible ? <Eye className="w-3.5 h-3.5" /> : <EyeOff className="w-3.5 h-3.5" />}
           </button>
           
+          {/* Continue Takeoff - add to existing measurement */}
+          <button
+            onClick={(e) => { 
+              e.stopPropagation(); 
+              selectMeasurement(m.id);
+              // Set tool based on measurement type
+              const toolMap: Record<string, string> = {
+                'line': 'line',
+                'polyline': 'polyline', 
+                'count': 'count',
+                'area': 'area',
+                'space': 'space'
+              };
+              setActiveTool(toolMap[m.type] || 'select');
+            }}
+            className="w-6 h-6 flex items-center justify-center rounded bg-amber-500/20 text-amber-400 hover:bg-amber-500/30 opacity-0 group-hover:opacity-100 transition-all"
+            title="Continue takeoff: add to this measurement"
+          >
+            <MousePointer2 className="w-3 h-3" />
+          </button>
+          
           {/* Actions Menu */}
           <div className="relative group">
             <button
