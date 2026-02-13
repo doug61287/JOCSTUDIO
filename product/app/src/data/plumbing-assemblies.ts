@@ -20,7 +20,7 @@ export const PLUMBING_ASSEMBLIES: Assembly[] = [
     category: 'plumbing',
     keywords: ['copper', 'pipe', 'water line', 'type l', '1/2 inch', 'domestic water', 'plumbing'],
     applicableTo: ['line', 'polyline'],
-    createdBy: 'ai-generated',
+    createdBy: 'system',
     items: [
       {
         jocItem: {
@@ -70,7 +70,7 @@ export const PLUMBING_ASSEMBLIES: Assembly[] = [
     category: 'plumbing',
     keywords: ['copper', 'pipe', 'water line', 'type l', '3/4 inch', 'domestic water', 'plumbing'],
     applicableTo: ['line', 'polyline'],
-    createdBy: 'ai-generated',
+    createdBy: 'system',
     items: [
       {
         jocItem: {
@@ -120,7 +120,7 @@ export const PLUMBING_ASSEMBLIES: Assembly[] = [
     category: 'plumbing',
     keywords: ['copper', 'pipe', 'water line', 'type l', '1 inch', 'domestic water', 'plumbing'],
     applicableTo: ['line', 'polyline'],
-    createdBy: 'ai-generated',
+    createdBy: 'system',
     items: [
       {
         jocItem: {
@@ -170,7 +170,7 @@ export const PLUMBING_ASSEMBLIES: Assembly[] = [
     category: 'plumbing',
     keywords: ['copper', 'pipe', 'water line', 'type l', '2 inch', 'domestic water', 'plumbing'],
     applicableTo: ['line', 'polyline'],
-    createdBy: 'ai-generated',
+    createdBy: 'system',
     items: [
       {
         jocItem: {
@@ -224,7 +224,7 @@ export const PLUMBING_ASSEMBLIES: Assembly[] = [
     category: 'plumbing',
     keywords: ['cast iron', 'pipe', 'dwv', 'waste', '2 inch', 'no-hub', 'plumbing'],
     applicableTo: ['line', 'polyline'],
-    createdBy: 'ai-generated',
+    createdBy: 'system',
     items: [
       {
         jocItem: {
@@ -264,7 +264,7 @@ export const PLUMBING_ASSEMBLIES: Assembly[] = [
     category: 'plumbing',
     keywords: ['cast iron', 'pipe', 'dwv', 'waste', '3 inch', 'no-hub', 'plumbing'],
     applicableTo: ['line', 'polyline'],
-    createdBy: 'ai-generated',
+    createdBy: 'system',
     items: [
       {
         jocItem: {
@@ -304,7 +304,7 @@ export const PLUMBING_ASSEMBLIES: Assembly[] = [
     category: 'plumbing',
     keywords: ['cast iron', 'pipe', 'dwv', 'waste', '4 inch', 'no-hub', 'plumbing'],
     applicableTo: ['line', 'polyline'],
-    createdBy: 'ai-generated',
+    createdBy: 'system',
     items: [
       {
         jocItem: {
@@ -348,7 +348,7 @@ export const PLUMBING_ASSEMBLIES: Assembly[] = [
     category: 'plumbing',
     keywords: ['pvc', 'pipe', 'dwv', 'waste', '2 inch', 'plastic', 'plumbing'],
     applicableTo: ['line', 'polyline'],
-    createdBy: 'ai-generated',
+    createdBy: 'system',
     items: [
       {
         jocItem: {
@@ -388,7 +388,7 @@ export const PLUMBING_ASSEMBLIES: Assembly[] = [
     category: 'plumbing',
     keywords: ['pvc', 'pipe', 'dwv', 'waste', '3 inch', 'plastic', 'plumbing'],
     applicableTo: ['line', 'polyline'],
-    createdBy: 'ai-generated',
+    createdBy: 'system',
     items: [
       {
         jocItem: {
@@ -428,7 +428,7 @@ export const PLUMBING_ASSEMBLIES: Assembly[] = [
     category: 'plumbing',
     keywords: ['pvc', 'pipe', 'dwv', 'waste', '4 inch', 'plastic', 'plumbing'],
     applicableTo: ['line', 'polyline'],
-    createdBy: 'ai-generated',
+    createdBy: 'system',
     items: [
       {
         jocItem: {
@@ -472,7 +472,7 @@ export const PLUMBING_ASSEMBLIES: Assembly[] = [
     category: 'plumbing',
     keywords: ['water closet', 'toilet', 'floor mount', 'fixture', 'wc', 'plumbing'],
     applicableTo: ['count'],
-    createdBy: 'ai-generated',
+    createdBy: 'system',
     items: [
       {
         jocItem: {
@@ -492,7 +492,7 @@ export const PLUMBING_ASSEMBLIES: Assembly[] = [
     category: 'plumbing',
     keywords: ['lavatory', 'sink', 'wall mount', 'fixture', 'hand wash', 'plumbing'],
     applicableTo: ['count'],
-    createdBy: 'ai-generated',
+    createdBy: 'system',
     items: [
       {
         jocItem: {
@@ -512,7 +512,7 @@ export const PLUMBING_ASSEMBLIES: Assembly[] = [
     category: 'plumbing',
     keywords: ['urinal', 'wall mount', 'fixture', 'plumbing'],
     applicableTo: ['count'],
-    createdBy: 'ai-generated',
+    createdBy: 'system',
     items: [
       {
         jocItem: {
@@ -532,7 +532,7 @@ export const PLUMBING_ASSEMBLIES: Assembly[] = [
     category: 'plumbing',
     keywords: ['service sink', 'mop sink', 'floor mount', 'fixture', 'janitor', 'plumbing'],
     applicableTo: ['count'],
-    createdBy: 'ai-generated',
+    createdBy: 'system',
     items: [
       {
         jocItem: {
@@ -552,7 +552,7 @@ export const PLUMBING_ASSEMBLIES: Assembly[] = [
     category: 'plumbing',
     keywords: ['kitchen sink', 'countertop', 'fixture', 'sink', 'plumbing'],
     applicableTo: ['count'],
-    createdBy: 'ai-generated',
+    createdBy: 'system',
     items: [
       {
         jocItem: {
@@ -572,7 +572,7 @@ export const PLUMBING_ASSEMBLIES: Assembly[] = [
     category: 'plumbing',
     keywords: ['floor drain', 'drain', 'fixture', 'plumbing'],
     applicableTo: ['count'],
-    createdBy: 'ai-generated',
+    createdBy: 'system',
     items: [
       {
         jocItem: {
@@ -596,7 +596,7 @@ export const PLUMBING_ASSEMBLIES: Assembly[] = [
     category: 'plumbing',
     keywords: ['cleanout', 'access', 'clean out', 'plumbing'],
     applicableTo: ['count'],
-    createdBy: 'ai-generated',
+    createdBy: 'system',
     items: [
       {
         jocItem: {
@@ -616,7 +616,7 @@ export const PLUMBING_ASSEMBLIES: Assembly[] = [
     category: 'plumbing',
     keywords: ['hose bibb', 'hose valve', 'garden hose', 'sillcock', 'plumbing'],
     applicableTo: ['count'],
-    createdBy: 'ai-generated',
+    createdBy: 'system',
     items: [
       {
         jocItem: {
@@ -636,7 +636,7 @@ export const PLUMBING_ASSEMBLIES: Assembly[] = [
     category: 'plumbing',
     keywords: ['backflow preventer', 'rpz', 'backflow', 'preventer', 'plumbing'],
     applicableTo: ['count'],
-    createdBy: 'ai-generated',
+    createdBy: 'system',
     items: [
       {
         jocItem: {
@@ -656,7 +656,7 @@ export const PLUMBING_ASSEMBLIES: Assembly[] = [
     category: 'plumbing',
     keywords: ['water heater', 'electric', '40 gallon', 'hot water', 'plumbing'],
     applicableTo: ['count'],
-    createdBy: 'ai-generated',
+    createdBy: 'system',
     items: [
       {
         jocItem: {

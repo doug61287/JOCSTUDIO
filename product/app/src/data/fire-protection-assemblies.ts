@@ -20,7 +20,7 @@ export const FIRE_PROTECTION_ASSEMBLIES: Assembly[] = [
     category: 'fire-protection',
     keywords: ['sprinkler', 'pipe', 'black steel', '1 inch', 'main', 'fire protection', 'fp'],
     applicableTo: ['line', 'polyline'],
-    createdBy: 'ai-generated',
+    createdBy: 'system',
     items: [
       {
         jocItem: {
@@ -50,7 +50,7 @@ export const FIRE_PROTECTION_ASSEMBLIES: Assembly[] = [
     category: 'fire-protection',
     keywords: ['sprinkler', 'pipe', 'black steel', '1-1/4 inch', 'main', 'fire protection', 'fp'],
     applicableTo: ['line', 'polyline'],
-    createdBy: 'ai-generated',
+    createdBy: 'system',
     items: [
       {
         jocItem: {
@@ -80,7 +80,7 @@ export const FIRE_PROTECTION_ASSEMBLIES: Assembly[] = [
     category: 'fire-protection',
     keywords: ['sprinkler', 'pipe', 'black steel', '1-1/2 inch', 'main', 'fire protection', 'fp'],
     applicableTo: ['line', 'polyline'],
-    createdBy: 'ai-generated',
+    createdBy: 'system',
     items: [
       {
         jocItem: {
@@ -110,7 +110,7 @@ export const FIRE_PROTECTION_ASSEMBLIES: Assembly[] = [
     category: 'fire-protection',
     keywords: ['sprinkler', 'pipe', 'black steel', '2 inch', 'main', 'fire protection', 'fp'],
     applicableTo: ['line', 'polyline'],
-    createdBy: 'ai-generated',
+    createdBy: 'system',
     items: [
       {
         jocItem: {
@@ -140,7 +140,7 @@ export const FIRE_PROTECTION_ASSEMBLIES: Assembly[] = [
     category: 'fire-protection',
     keywords: ['sprinkler', 'pipe', 'black steel', '2-1/2 inch', 'main', 'fire protection', 'fp'],
     applicableTo: ['line', 'polyline'],
-    createdBy: 'ai-generated',
+    createdBy: 'system',
     items: [
       {
         jocItem: {
@@ -170,7 +170,7 @@ export const FIRE_PROTECTION_ASSEMBLIES: Assembly[] = [
     category: 'fire-protection',
     keywords: ['sprinkler', 'pipe', 'black steel', '4 inch', 'main', 'fire protection', 'fp'],
     applicableTo: ['line', 'polyline'],
-    createdBy: 'ai-generated',
+    createdBy: 'system',
     items: [
       {
         jocItem: {
@@ -204,7 +204,7 @@ export const FIRE_PROTECTION_ASSEMBLIES: Assembly[] = [
     category: 'fire-protection',
     keywords: ['sprinkler', 'pipe', 'cpvc', '1 inch', 'fire protection', 'fp', 'plastic'],
     applicableTo: ['line', 'polyline'],
-    createdBy: 'ai-generated',
+    createdBy: 'system',
     items: [
       {
         jocItem: {
@@ -244,7 +244,7 @@ export const FIRE_PROTECTION_ASSEMBLIES: Assembly[] = [
     category: 'fire-protection',
     keywords: ['sprinkler', 'pipe', 'cpvc', '1-1/4 inch', 'fire protection', 'fp', 'plastic'],
     applicableTo: ['line', 'polyline'],
-    createdBy: 'ai-generated',
+    createdBy: 'system',
     items: [
       {
         jocItem: {
@@ -284,7 +284,7 @@ export const FIRE_PROTECTION_ASSEMBLIES: Assembly[] = [
     category: 'fire-protection',
     keywords: ['sprinkler', 'pipe', 'cpvc', '2 inch', 'fire protection', 'fp', 'plastic'],
     applicableTo: ['line', 'polyline'],
-    createdBy: 'ai-generated',
+    createdBy: 'system',
     items: [
       {
         jocItem: {
@@ -328,7 +328,7 @@ export const FIRE_PROTECTION_ASSEMBLIES: Assembly[] = [
     category: 'fire-protection',
     keywords: ['sprinkler', 'head', 'pendent', 'fire protection', 'fp', 'ceiling'],
     applicableTo: ['count', 'area'],
-    createdBy: 'ai-generated',
+    createdBy: 'system',
     items: [
       {
         jocItem: {
@@ -358,7 +358,7 @@ export const FIRE_PROTECTION_ASSEMBLIES: Assembly[] = [
     category: 'fire-protection',
     keywords: ['sprinkler', 'head', 'upright', 'fire protection', 'fp'],
     applicableTo: ['count', 'area'],
-    createdBy: 'ai-generated',
+    createdBy: 'system',
     items: [
       {
         jocItem: {
@@ -378,7 +378,7 @@ export const FIRE_PROTECTION_ASSEMBLIES: Assembly[] = [
     category: 'fire-protection',
     keywords: ['sprinkler', 'head', 'sidewall', 'fire protection', 'fp', 'wall'],
     applicableTo: ['count', 'area'],
-    createdBy: 'ai-generated',
+    createdBy: 'system',
     items: [
       {
         jocItem: {
@@ -408,7 +408,7 @@ export const FIRE_PROTECTION_ASSEMBLIES: Assembly[] = [
     category: 'fire-protection',
     keywords: ['sprinkler', 'head', 'concealed', 'fire protection', 'fp', 'cover plate'],
     applicableTo: ['count', 'area'],
-    createdBy: 'ai-generated',
+    createdBy: 'system',
     items: [
       {
         jocItem: {
@@ -432,7 +432,7 @@ export const FIRE_PROTECTION_ASSEMBLIES: Assembly[] = [
     category: 'fire-protection',
     keywords: ['fdc', 'fire department', 'connection', 'siamese', 'fire protection', 'fp'],
     applicableTo: ['count'],
-    createdBy: 'ai-generated',
+    createdBy: 'system',
     items: [
       {
         jocItem: {
@@ -452,7 +452,7 @@ export const FIRE_PROTECTION_ASSEMBLIES: Assembly[] = [
     category: 'fire-protection',
     keywords: ['alarm', 'valve', 'check valve', 'wet pipe', 'fire protection', 'fp'],
     applicableTo: ['count'],
-    createdBy: 'ai-generated',
+    createdBy: 'system',
     items: [
       {
         jocItem: {
@@ -482,7 +482,7 @@ export const FIRE_PROTECTION_ASSEMBLIES: Assembly[] = [
     category: 'fire-protection',
     keywords: ['flow switch', 'waterflow', 'detector', 'fire protection', 'fp'],
     applicableTo: ['count'],
-    createdBy: 'ai-generated',
+    createdBy: 'system',
     items: [
       {
         jocItem: {
@@ -502,7 +502,7 @@ export const FIRE_PROTECTION_ASSEMBLIES: Assembly[] = [
     category: 'fire-protection',
     keywords: ['inspector', 'test', 'drain', 'connection', 'fire protection', 'fp'],
     applicableTo: ['count'],
-    createdBy: 'ai-generated',
+    createdBy: 'system',
     items: [
       {
         jocItem: {
@@ -523,7 +523,7 @@ export const FIRE_PROTECTION_ASSEMBLIES: Assembly[] = [
     category: 'fire-protection',
     keywords: ['drain', 'valve', 'auxiliary', 'main drain', 'fire protection', 'fp'],
     applicableTo: ['count'],
-    createdBy: 'ai-generated',
+    createdBy: 'system',
     items: [
       {
         jocItem: {
@@ -547,7 +547,7 @@ export const FIRE_PROTECTION_ASSEMBLIES: Assembly[] = [
     category: 'fire-protection',
     keywords: ['standpipe', 'riser', '4 inch', 'fire protection', 'fp', 'vertical'],
     applicableTo: ['line', 'polyline', 'count'],
-    createdBy: 'ai-generated',
+    createdBy: 'system',
     items: [
       {
         jocItem: {
@@ -578,7 +578,7 @@ export const FIRE_PROTECTION_ASSEMBLIES: Assembly[] = [
     category: 'fire-protection',
     keywords: ['hose valve', 'standpipe', '2-1/2 inch', 'fire protection', 'fp', 'outlet'],
     applicableTo: ['count'],
-    createdBy: 'ai-generated',
+    createdBy: 'system',
     items: [
       {
         jocItem: {
