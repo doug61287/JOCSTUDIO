@@ -1,0 +1,1334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JOC Brain - Fire Protection & Plumbing Deep Dive</title>
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body {
+      background: linear-gradient(135deg, #0a0a12 0%, #151525 50%, #0a0a12 100%);
+      font-family: 'Inter', -apple-system, sans-serif;
+      color: white;
+      overflow: hidden;
+    }
+    
+    #header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      padding: 16px 24px;
+      background: linear-gradient(180deg, rgba(10,10,18,0.98) 0%, transparent 100%);
+      z-index: 100;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    #header h1 {
+      font-size: 22px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    #header h1 .fire { color: #ef4444; }
+    #header h1 .plumb { color: #3b82f6; }
+    #header h1 .sep { color: rgba(255,255,255,0.3); }
+    
+    #header .stats {
+      display: flex;
+      gap: 24px;
+    }
+    
+    #header .stat {
+      text-align: center;
+    }
+    
+    #header .stat-value {
+      font-size: 24px;
+      font-weight: 700;
+    }
+    
+    #header .stat-value.fire { color: #ef4444; }
+    #header .stat-value.plumb { color: #3b82f6; }
+    #header .stat-value.mult { color: #f59e0b; }
+    #header .stat-value.asm { color: #10b981; }
+    
+    #header .stat-label {
+      font-size: 10px;
+      color: rgba(255,255,255,0.5);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    
+    #graph {
+      width: 100vw;
+      height: 100vh;
+    }
+    
+    #tooltip {
+      position: fixed;
+      padding: 14px 18px;
+      background: rgba(0,0,0,0.95);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 10px;
+      font-size: 12px;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.2s;
+      max-width: 380px;
+      z-index: 1000;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+    }
+    
+    #tooltip.visible { opacity: 1; }
+    
+    #tooltip h3 {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+    
+    #tooltip .code {
+      font-family: monospace;
+      font-size: 11px;
+      color: rgba(255,255,255,0.5);
+      margin-bottom: 6px;
+    }
+    
+    #tooltip p {
+      color: rgba(255,255,255,0.8);
+      line-height: 1.5;
+      margin-bottom: 8px;
+    }
+    
+    #tooltip .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    
+    #tooltip .tag {
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-size: 10px;
+      font-weight: 500;
+    }
+    
+    #tooltip .tag.mult {
+      background: rgba(245,158,11,0.2);
+      color: #f59e0b;
+    }
+    
+    #tooltip .tag.fitting {
+      background: rgba(139,92,246,0.2);
+      color: #8b5cf6;
+    }
+    
+    #tooltip .tag.asm {
+      background: rgba(16,185,129,0.2);
+      color: #10b981;
+    }
+    
+    #tooltip .price {
+      font-size: 16px;
+      font-weight: 600;
+      color: #10b981;
+      margin-top: 6px;
+    }
+    
+    #tooltip .multiplier-info {
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px solid rgba(255,255,255,0.1);
+    }
+    
+    #tooltip .tier {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      padding: 3px 0;
+    }
+    
+    #tooltip .tier .qty { color: rgba(255,255,255,0.6); }
+    #tooltip .tier .adj { color: #f59e0b; font-weight: 500; }
+    #tooltip .tier .adj.deduct { color: #10b981; }
+    
+    #legend {
+      position: fixed;
+      bottom: 20px;
+      left: 20px;
+      background: rgba(0,0,0,0.85);
+      padding: 18px;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,0.1);
+      max-width: 200px;
+    }
+    
+    #legend h4 {
+      font-size: 11px;
+      color: rgba(255,255,255,0.5);
+      margin-bottom: 14px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+      font-size: 12px;
+    }
+    
+    .legend-dot {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    
+    .legend-count {
+      font-size: 10px;
+      color: rgba(255,255,255,0.4);
+      margin-left: auto;
+    }
+    
+    #controls {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    
+    .control-group {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+    
+    #controls button {
+      padding: 10px 16px;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.15);
+      color: white;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 12px;
+      transition: all 0.2s;
+      font-weight: 500;
+    }
+    
+    #controls button:hover {
+      background: rgba(255,255,255,0.15);
+    }
+    
+    #controls button.active {
+      border-color: #f59e0b;
+      color: #f59e0b;
+    }
+    
+    #controls button.fire.active {
+      background: rgba(239,68,68,0.15);
+      border-color: #ef4444;
+      color: #ef4444;
+    }
+    
+    #controls button.plumb.active {
+      background: rgba(59,130,246,0.15);
+      border-color: #3b82f6;
+      color: #3b82f6;
+    }
+    
+    .node text {
+      font-size: 10px;
+      fill: rgba(255,255,255,0.85);
+      pointer-events: none;
+      font-weight: 500;
+    }
+    
+    .link {
+      stroke-opacity: 0.3;
+    }
+    
+    #search-box {
+      position: fixed;
+      top: 80px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 100;
+    }
+    
+    #search-box input {
+      width: 350px;
+      padding: 12px 20px;
+      background: rgba(0,0,0,0.8);
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 25px;
+      color: white;
+      font-size: 14px;
+      outline: none;
+    }
+    
+    #search-box input:focus {
+      border-color: #f59e0b;
+    }
+    
+    #search-box input::placeholder {
+      color: rgba(255,255,255,0.4);
+    }
+    
+    #detail-panel {
+      position: fixed;
+      top: 80px;
+      right: 20px;
+      width: 320px;
+      max-height: calc(100vh - 180px);
+      background: rgba(0,0,0,0.9);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 12px;
+      padding: 20px;
+      overflow-y: auto;
+      z-index: 100;
+      display: none;
+    }
+    
+    #detail-panel.visible { display: block; }
+    
+    #detail-panel h2 {
+      font-size: 16px;
+      margin-bottom: 12px;
+    }
+    
+    #detail-panel .close {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      background: none;
+      border: none;
+      color: rgba(255,255,255,0.5);
+      font-size: 20px;
+      cursor: pointer;
+    }
+    
+    #detail-panel .item-list {
+      max-height: 400px;
+      overflow-y: auto;
+    }
+    
+    #detail-panel .item {
+      padding: 10px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      cursor: pointer;
+    }
+    
+    #detail-panel .item:hover {
+      background: rgba(255,255,255,0.05);
+    }
+    
+    #detail-panel .item .name {
+      font-size: 12px;
+      margin-bottom: 4px;
+    }
+    
+    #detail-panel .item .code {
+      font-family: monospace;
+      font-size: 10px;
+      color: rgba(255,255,255,0.5);
+    }
+    
+    #detail-panel .item .price {
+      font-size: 12px;
+      color: #10b981;
+      float: right;
+    }
+    
+    #detail-panel .item .mult-badge {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      background: #f59e0b;
+      border-radius: 50%;
+      margin-right: 6px;
+    }
+  </style>
+</head>
+<body>
+  <div id="header">
+    <h1>
+      🧠 JOC Brain: 
+      <span class="fire">Fire Protection</span>
+      <span class="sep">&</span>
+      <span class="plumb">Plumbing</span>
+    </h1>
+    <div class="stats">
+      <div class="stat">
+        <div class="stat-value fire">1,073</div>
+        <div class="stat-label">Div 21 Items</div>
+      </div>
+      <div class="stat">
+        <div class="stat-value plumb">6,093</div>
+        <div class="stat-label">Div 22 Items</div>
+      </div>
+      <div class="stat">
+        <div class="stat-value mult">470</div>
+        <div class="stat-label">With Multipliers</div>
+      </div>
+      <div class="stat">
+        <div class="stat-value asm">16</div>
+        <div class="stat-label">Assemblies</div>
+      </div>
+    </div>
+  </div>
+  
+  <div id="search-box">
+    <input type="text" id="search" placeholder="Search: sprinkler head, 3 inch pipe, floor drain..." />
+  </div>
+  
+  <div id="graph"></div>
+  
+  <div id="tooltip"></div>
+  
+  <div id="detail-panel">
+    <button class="close">&times;</button>
+    <h2 id="detail-title"></h2>
+    <div id="detail-info"></div>
+    <div class="item-list" id="detail-items"></div>
+  </div>
+  
+  <div id="legend">
+    <h4>Node Types</h4>
+    <div class="legend-item">
+      <div class="legend-dot" style="background: #ef4444;"></div>
+      <span>Div 21 Fire</span>
+      <span class="legend-count">20 cats</span>
+    </div>
+    <div class="legend-item">
+      <div class="legend-dot" style="background: #3b82f6;"></div>
+      <span>Div 22 Plumb</span>
+      <span class="legend-count">30+ cats</span>
+    </div>
+    <div class="legend-item">
+      <div class="legend-dot" style="background: #10b981;"></div>
+      <span>Assembly</span>
+      <span class="legend-count">16</span>
+    </div>
+    <div class="legend-item">
+      <div class="legend-dot" style="background: #f59e0b;"></div>
+      <span>Has Multiplier</span>
+      <span class="legend-count">470</span>
+    </div>
+    <div class="legend-item">
+      <div class="legend-dot" style="background: #8b5cf6;"></div>
+      <span>Fitting/Companion</span>
+    </div>
+  </div>
+  
+  <div id="controls">
+    <div class="control-group">
+      <button id="btn-all" class="active">All Items</button>
+      <button id="btn-div21" class="fire">Fire Only</button>
+      <button id="btn-div22" class="plumb">Plumbing Only</button>
+    </div>
+    <div class="control-group">
+      <button id="btn-multipliers">💰 Multipliers Only</button>
+      <button id="btn-assemblies">📦 Assemblies</button>
+    </div>
+  </div>
+
+  <script>
+    // ============================================
+    // DIVISION 21 - FIRE PROTECTION DATA
+    // ============================================
+    
+    const div21Categories = [
+      { 
+        prefix: '21221600', 
+        name: 'Clean Agent Systems', 
+        shortName: 'Clean Agent',
+        count: 270, 
+        sample: 'Sapphire® Fire Suppression',
+        description: 'Data centers, server rooms, electrical rooms',
+        multiplierCount: 0,
+        keywords: ['sapphire', 'novec', 'fm200', 'clean agent', 'data center']
+      },
+      { 
+        prefix: '21131300', 
+        name: 'Wet Pipe Sprinkler', 
+        shortName: 'Wet Pipe',
+        count: 209, 
+        sample: 'Sprinkler Heads & Assemblies',
+        description: 'Complete wet-pipe systems, heads, valves',
+        multiplierCount: 196,
+        keywords: ['sprinkler', 'head', 'pendent', 'upright', 'sidewall', 'wet pipe']
+      },
+      { 
+        prefix: '21231600', 
+        name: 'Kitchen Suppression', 
+        shortName: 'Kitchen',
+        count: 167, 
+        sample: 'Ansul/Pyro-Chem Systems',
+        description: 'Restaurant hoods, cooking areas',
+        multiplierCount: 0,
+        keywords: ['ansul', 'kitchen', 'hood', 'restaurant', 'cooking']
+      },
+      { 
+        prefix: '21241600', 
+        name: 'Dry Chemical', 
+        shortName: 'Dry Chem',
+        count: 164, 
+        sample: 'ABC Dry Chemical Systems',
+        description: 'Industrial suppression systems',
+        multiplierCount: 0,
+        keywords: ['dry chemical', 'abc', 'industrial']
+      },
+      { 
+        prefix: '21134100', 
+        name: 'Sprinkler Pipe', 
+        shortName: 'Pipe',
+        count: 60, 
+        sample: 'CPVC Schedule 40 Pipe',
+        description: '3/4" to 3" CPVC fire sprinkler pipe',
+        multiplierCount: 0,
+        hasFittings: true,
+        keywords: ['cpvc', 'pipe', 'sprinkler pipe', 'fire pipe']
+      },
+      { 
+        prefix: '21131600', 
+        name: 'Dry Pipe Systems', 
+        shortName: 'Dry Pipe',
+        count: 58, 
+        sample: 'Dry-Pipe Sprinkler Systems',
+        description: 'Freezing/unheated areas, parking garages',
+        multiplierCount: 34,
+        keywords: ['dry pipe', 'freezer', 'parking', 'unheated']
+      },
+      { 
+        prefix: '21011091', 
+        name: 'Relocation Work', 
+        shortName: 'Relocate',
+        count: 28, 
+        sample: 'Relocate Sprinkler Heads',
+        description: 'Move existing heads, purge systems',
+        multiplierCount: 0,
+        keywords: ['relocate', 'move', 'purge', 'existing']
+      },
+      { 
+        prefix: '21122300', 
+        name: 'FD Valves', 
+        shortName: 'FD Valve',
+        count: 20, 
+        sample: 'Fire Department Valves',
+        description: '2-1/2" hose connections, standpipe',
+        multiplierCount: 0,
+        keywords: ['fd valve', 'fire department', 'hose connection', 'standpipe valve']
+      },
+      { 
+        prefix: '21121300', 
+        name: 'Fire Hose', 
+        shortName: 'Hose',
+        count: 19, 
+        sample: 'Linen/Cotton Fire Hose',
+        description: '1-1/2" to 3" fire hose',
+        multiplierCount: 0,
+        keywords: ['hose', 'fire hose', 'linen', 'cotton']
+      },
+      { 
+        prefix: '21311600', 
+        name: 'Diesel Fire Pumps', 
+        shortName: 'Diesel Pump',
+        count: 12, 
+        sample: 'Diesel-Driven Fire Pumps',
+        description: '30-200 HP NFPA-20 compliant',
+        multiplierCount: 0,
+        keywords: ['diesel pump', 'fire pump', 'diesel driven']
+      },
+      { 
+        prefix: '21122900', 
+        name: 'Flow Detection', 
+        shortName: 'Flow',
+        count: 11, 
+        sample: 'Flow Switches, Manifolds',
+        description: 'Water flow detection, gongs',
+        multiplierCount: 0,
+        keywords: ['flow switch', 'flow detector', 'water motor gong', 'manifold']
+      },
+      { 
+        prefix: '21013091', 
+        name: 'Inspection', 
+        shortName: 'Inspect',
+        count: 10, 
+        sample: 'System Inspections',
+        description: 'Test and recharge services',
+        multiplierCount: 0,
+        keywords: ['inspection', 'test', 'recharge']
+      },
+      { 
+        prefix: '21051900', 
+        name: 'Pressure Gauges', 
+        shortName: 'Gauge',
+        count: 10, 
+        sample: 'Water Pressure Gauges',
+        description: '0-200 to 0-600 PSI',
+        multiplierCount: 5,
+        keywords: ['pressure gauge', 'gauge', 'psi']
+      },
+      { 
+        prefix: '21111900', 
+        name: 'Siamese/FDC', 
+        shortName: 'FDC',
+        count: 8, 
+        sample: 'Fire Department Connections',
+        description: 'Siamese connections, standpipe',
+        multiplierCount: 0,
+        keywords: ['siamese', 'fdc', 'fire department connection']
+      },
+      { 
+        prefix: '21341300', 
+        name: 'Jockey Pumps', 
+        shortName: 'Jockey',
+        count: 7, 
+        sample: 'Pressure Maintenance Pumps',
+        description: 'Jockey/pressure maintenance',
+        multiplierCount: 0,
+        keywords: ['jockey', 'pressure maintenance']
+      },
+      { 
+        prefix: '21211600', 
+        name: 'CO2 Systems', 
+        shortName: 'CO2',
+        count: 5, 
+        sample: 'Carbon Dioxide Cylinders',
+        description: 'CO2 suppression systems',
+        multiplierCount: 0,
+        keywords: ['co2', 'carbon dioxide']
+      },
+      { 
+        prefix: '21311300', 
+        name: 'Electric Fire Pumps', 
+        shortName: 'Elec Pump',
+        count: 5, 
+        sample: 'Electric-Drive Fire Pumps',
+        description: '20-200 HP electric pumps',
+        multiplierCount: 0,
+        keywords: ['electric pump', 'fire pump']
+      },
+      { 
+        prefix: '21132600', 
+        name: 'Deluge Systems', 
+        shortName: 'Deluge',
+        count: 4, 
+        sample: 'Deluge Valves',
+        description: 'High hazard, open head systems',
+        multiplierCount: 0,
+        keywords: ['deluge', 'high hazard', 'open head']
+      },
+      { 
+        prefix: '21133900', 
+        name: 'Foam Systems', 
+        shortName: 'Foam',
+        count: 4, 
+        sample: 'Foam Control Valves',
+        description: 'AFFF foam suppression',
+        multiplierCount: 0,
+        keywords: ['foam', 'afff']
+      },
+      { 
+        prefix: '21131900', 
+        name: 'Preaction Systems', 
+        shortName: 'Preaction',
+        count: 2, 
+        sample: 'Preaction Sprinkler Systems',
+        description: 'Double interlock, server rooms',
+        multiplierCount: 2,
+        keywords: ['preaction', 'pre-action', 'double interlock']
+      }
+    ];
+    
+    // ============================================
+    // DIVISION 22 - PLUMBING DATA
+    // ============================================
+    
+    const div22Categories = [
+      { 
+        prefix: '22111600', 
+        name: 'Steel Pipe', 
+        shortName: 'Galv Pipe',
+        count: 1269, 
+        sample: 'Galvanized Steel Pipe',
+        description: 'Schedule 40 threaded pipe, all sizes',
+        multiplierCount: 233,
+        hasFittings: true,
+        keywords: ['galvanized', 'steel pipe', 'threaded pipe']
+      },
+      { 
+        prefix: '22071900', 
+        name: 'Pipe Insulation', 
+        shortName: 'Insulation',
+        count: 1177, 
+        sample: 'Fiberglass Pipe Insulation',
+        description: 'Fiberglass, elastomeric insulation',
+        multiplierCount: 0,
+        keywords: ['insulation', 'fiberglass', 'pipe insulation']
+      },
+      { 
+        prefix: '22131600', 
+        name: 'Cast Iron Soil', 
+        shortName: 'CI Soil',
+        count: 792, 
+        sample: 'Cast Iron Soil Pipe',
+        description: 'Bell & spigot, underground',
+        multiplierCount: 0,
+        hasFittings: true,
+        keywords: ['cast iron', 'soil pipe', 'bell and spigot']
+      },
+      { 
+        prefix: '22665300', 
+        name: 'Acid Resistant DWV', 
+        shortName: 'Acid DWV',
+        count: 676, 
+        sample: 'Polypropylene DWV',
+        description: 'Lab/industrial acid-resistant',
+        multiplierCount: 0,
+        keywords: ['polypropylene', 'acid resistant', 'lab']
+      },
+      { 
+        prefix: '22111900', 
+        name: 'EPDM Tubing', 
+        shortName: 'EPDM',
+        count: 286, 
+        sample: 'EPDM Flexible Tubing',
+        description: 'Flexible connections',
+        multiplierCount: 0,
+        keywords: ['epdm', 'flexible', 'tubing']
+      },
+      { 
+        prefix: '22151300', 
+        name: 'Aluminum Pipe', 
+        shortName: 'Alum Pipe',
+        count: 169, 
+        sample: 'Rigid Aluminum Pipe',
+        description: 'Medical gas, specialty',
+        multiplierCount: 0,
+        keywords: ['aluminum', 'medical gas']
+      },
+      { 
+        prefix: '22333616', 
+        name: 'Commercial Water Heaters', 
+        shortName: 'Comm WH',
+        count: 144, 
+        sample: 'Electric Commercial Water Heaters',
+        description: '15-480 KW commercial units',
+        multiplierCount: 0,
+        keywords: ['water heater', 'commercial', 'electric']
+      },
+      { 
+        prefix: '22131913', 
+        name: 'Floor Drains', 
+        shortName: 'Floor Drain',
+        count: 116, 
+        sample: 'Bronze Top Floor Drains',
+        description: 'Round/square, various outlets',
+        multiplierCount: 0,
+        keywords: ['floor drain', 'drain', 'bronze']
+      },
+      { 
+        prefix: '22631370', 
+        name: 'Zone Valves', 
+        shortName: 'Zone Valve',
+        count: 91, 
+        sample: 'Single Zone Valve Assemblies',
+        description: 'HVAC zone valves',
+        multiplierCount: 0,
+        keywords: ['zone valve', 'hvac valve']
+      },
+      { 
+        prefix: '22333300', 
+        name: 'Residential Water Heaters', 
+        shortName: 'Res WH',
+        count: 88, 
+        sample: 'Electric Residential Water Heaters',
+        description: 'Lowboy, standard residential',
+        multiplierCount: 0,
+        keywords: ['water heater', 'residential', 'lowboy']
+      },
+      { 
+        prefix: '22423900', 
+        name: 'Kitchen Faucets', 
+        shortName: 'Kitchen Faucet',
+        count: 88, 
+        sample: 'Single Handle Kitchen Faucets',
+        description: 'Chrome, various styles',
+        multiplierCount: 0,
+        keywords: ['kitchen faucet', 'faucet', 'chrome']
+      },
+      { 
+        prefix: '22131300', 
+        name: 'Water Closet Rough-In', 
+        shortName: 'WC Rough',
+        count: 70, 
+        sample: 'Floor Mounted WC Rough-In',
+        description: 'Single fixture rough-in, cast iron',
+        multiplierCount: 0,
+        keywords: ['water closet', 'wc', 'rough-in', 'toilet']
+      },
+      { 
+        prefix: '22057600', 
+        name: 'Floor Cleanouts', 
+        shortName: 'Cleanout',
+        count: 66, 
+        sample: 'Floor Cleanouts',
+        description: 'Round/square top, cast iron',
+        multiplierCount: 0,
+        keywords: ['cleanout', 'floor cleanout', 'cast iron']
+      },
+      { 
+        prefix: '22422300', 
+        name: 'Shower Enclosures', 
+        shortName: 'Shower',
+        count: 63, 
+        sample: 'Baked Enamel Shower Enclosures',
+        description: 'Steel shower enclosures',
+        multiplierCount: 0,
+        keywords: ['shower', 'shower enclosure', 'enamel']
+      },
+      { 
+        prefix: '22052300', 
+        name: 'Bronze Valves', 
+        shortName: 'Bronze Valve',
+        count: 60, 
+        sample: 'Bronze Shut-Off Valves',
+        description: 'Non-rising stem, crimped',
+        multiplierCount: 0,
+        keywords: ['bronze valve', 'shut-off', 'gate valve']
+      },
+      { 
+        prefix: '22421613', 
+        name: 'Lavatories', 
+        shortName: 'Lavatory',
+        count: 58, 
+        sample: 'Wall Hung Lavatories',
+        description: 'Porcelain/cast iron lavs',
+        multiplierCount: 0,
+        keywords: ['lavatory', 'sink', 'wall hung']
+      },
+      { 
+        prefix: '22142613', 
+        name: 'Roof Drains', 
+        shortName: 'Roof Drain',
+        count: 56, 
+        sample: 'Cast Iron Roof Drains',
+        description: 'Various sizes, 124+ SF',
+        multiplierCount: 0,
+        keywords: ['roof drain', 'cast iron', 'drain']
+      },
+      { 
+        prefix: '22131926', 
+        name: 'Grease Interceptors', 
+        shortName: 'Grease Int',
+        count: 48, 
+        sample: 'Epoxy Coated Grease Interceptors',
+        description: 'Manual cleaning, various GPM',
+        multiplierCount: 0,
+        keywords: ['grease interceptor', 'grease trap', 'restaurant']
+      },
+      { 
+        prefix: '22014081', 
+        name: 'Fixture Accessories', 
+        shortName: 'Accessories',
+        count: 44, 
+        sample: 'Shut-Off Valves, Supply Lines',
+        description: 'Compression fittings, supply',
+        multiplierCount: 0,
+        keywords: ['shut-off', 'supply line', 'compression']
+      },
+      { 
+        prefix: '22321600', 
+        name: 'Water Filters', 
+        shortName: 'Filter',
+        count: 42, 
+        sample: 'Melt Blown Water Filters',
+        description: '10" depth filters, various micron',
+        multiplierCount: 0,
+        keywords: ['water filter', 'filter', 'melt blown']
+      }
+    ];
+    
+    // ============================================
+    // ASSEMBLIES DATA
+    // ============================================
+    
+    const assemblies = [
+      // Division 21 - Fire Protection
+      { id: 'fp-pipe-3', name: '3" CPVC Fire Pipe', division: 21, prefix: '21134100', 
+        components: ['Pipe LF', 'Elbow EA', 'Tee EA', 'Coupling EA'], hasFittings: true },
+      { id: 'fp-pipe-1.5', name: '1-1/2" CPVC Fire Pipe', division: 21, prefix: '21134100', 
+        components: ['Pipe LF', 'Elbow EA', 'Tee EA'], hasFittings: true },
+      { id: 'fp-pipe-1.25', name: '1-1/4" CPVC Fire Pipe', division: 21, prefix: '21134100', 
+        components: ['Pipe LF', 'Elbow EA', 'Reducer EA'], hasFittings: true },
+      { id: 'fp-head-pendent', name: 'Pendent Sprinkler Head', division: 21, prefix: '21131300', 
+        components: ['Head EA', 'Escutcheon EA'], hasMultiplier: true },
+      { id: 'fp-head-upright', name: 'Upright Sprinkler Head', division: 21, prefix: '21131300', 
+        components: ['Head EA', 'Escutcheon EA'], hasMultiplier: true },
+      { id: 'fp-head-sidewall', name: 'Sidewall Sprinkler Head', division: 21, prefix: '21131300', 
+        components: ['Head EA', 'Escutcheon EA'], hasMultiplier: true },
+      { id: 'fp-fdc', name: 'Fire Dept Connection', division: 21, prefix: '21111900', 
+        components: ['Siamese EA'] },
+      { id: 'fp-flow-switch', name: 'Flow Switch', division: 21, prefix: '21122900', 
+        components: ['Switch EA'] },
+      { id: 'fp-relocate-head', name: 'Relocate Sprinkler Head', division: 21, prefix: '21011091', 
+        components: ['Relocate EA', 'Head EA'] },
+      
+      // Division 22 - Plumbing
+      { id: 'plumb-lav', name: 'Lavatory Install', division: 22, prefix: '22421613', 
+        components: ['Lav EA', 'Faucet EA', 'Trap EA', 'Supply EA'] },
+      { id: 'plumb-wc', name: 'Water Closet Rough-In', division: 22, prefix: '22131300', 
+        components: ['Rough-In EA', 'Flange EA', 'Supply EA', 'Bolts EA'] },
+      { id: 'plumb-copper', name: 'Copper Water Line', division: 22, prefix: '22111600', 
+        components: ['Pipe LF', 'Elbow EA', 'Tee EA'], hasFittings: true },
+      { id: 'plumb-floor-drain', name: 'Floor Drain', division: 22, prefix: '22131913', 
+        components: ['Drain EA', 'P-Trap EA'] },
+      { id: 'plumb-water-heater', name: 'Water Heater Install', division: 22, prefix: '22333300', 
+        components: ['Heater EA', 'Supply Lines', 'T&P Valve', 'Expansion Tank'] },
+      { id: 'plumb-roof-drain', name: 'Roof Drain', division: 22, prefix: '22142613', 
+        components: ['Drain EA', 'Clamp EA'] },
+      { id: 'plumb-kitchen-sink', name: 'Kitchen Sink Package', division: 22, prefix: '22423900', 
+        components: ['Sink EA', 'Faucet EA', 'Trap EA', 'Disposal EA'] }
+    ];
+    
+    // ============================================
+    // MULTIPLIER EXAMPLES (from tier-map.json)
+    // ============================================
+    
+    const multiplierExamples = {
+      '21131300-0074': [
+        { qty: '1-25', adj: '+$5.40' },
+        { qty: '26-50', adj: '-$3.38' },
+        { qty: '51-100', adj: '-$6.76' },
+        { qty: '101+', adj: '-$10.14' }
+      ],
+      '21131300-0026': [
+        { qty: '1-25', adj: '+$5.40' },
+        { qty: '26-50', adj: '-$3.38' },
+        { qty: '51-100', adj: '-$6.76' }
+      ],
+      '22111600-0001': [
+        { qty: '101-250', adj: '-$0.45' },
+        { qty: '251-500', adj: '-$0.90' },
+        { qty: '501+', adj: '-$1.35' }
+      ]
+    };
+    
+    // ============================================
+    // BUILD GRAPH DATA
+    // ============================================
+    
+    const width = window.innerWidth;
+    const height = window.innerHeight;
+    let currentFilter = 'all';
+    let searchTerm = '';
+    
+    function buildGraphData(filter = 'all', search = '') {
+      const nodes = [];
+      const links = [];
+      
+      // Division nodes
+      const showDiv21 = filter === 'all' || filter === 'div21' || filter === 'multipliers';
+      const showDiv22 = filter === 'all' || filter === 'div22' || filter === 'multipliers';
+      
+      if (showDiv21) {
+        nodes.push({
+          id: 'div-21',
+          name: 'Division 21',
+          subtitle: 'Fire Protection',
+          type: 'division',
+          color: '#ef4444',
+          size: 50,
+          count: 1073
+        });
+      }
+      
+      if (showDiv22) {
+        nodes.push({
+          id: 'div-22',
+          name: 'Division 22',
+          subtitle: 'Plumbing',
+          type: 'division',
+          color: '#3b82f6',
+          size: 50,
+          count: 6093
+        });
+      }
+      
+      // Category nodes
+      const searchLower = search.toLowerCase();
+      
+      if (showDiv21) {
+        div21Categories.forEach(cat => {
+          if (filter === 'multipliers' && cat.multiplierCount === 0) return;
+          if (search && !cat.keywords.some(k => k.includes(searchLower)) && 
+              !cat.name.toLowerCase().includes(searchLower)) return;
+          
+          nodes.push({
+            id: `cat-${cat.prefix}`,
+            name: cat.shortName,
+            fullName: cat.name,
+            type: 'category',
+            color: cat.multiplierCount > 0 ? '#f59e0b' : '#ef4444',
+            size: 20 + Math.min(cat.count / 20, 15),
+            count: cat.count,
+            multiplierCount: cat.multiplierCount,
+            description: cat.description,
+            prefix: cat.prefix,
+            hasFittings: cat.hasFittings,
+            division: 21
+          });
+          
+          links.push({
+            source: 'div-21',
+            target: `cat-${cat.prefix}`,
+            strength: 0.3
+          });
+        });
+      }
+      
+      if (showDiv22) {
+        div22Categories.forEach(cat => {
+          if (filter === 'multipliers' && cat.multiplierCount === 0) return;
+          if (search && !cat.keywords.some(k => k.includes(searchLower)) && 
+              !cat.name.toLowerCase().includes(searchLower)) return;
+          
+          nodes.push({
+            id: `cat-${cat.prefix}`,
+            name: cat.shortName,
+            fullName: cat.name,
+            type: 'category',
+            color: cat.multiplierCount > 0 ? '#f59e0b' : '#3b82f6',
+            size: 20 + Math.min(cat.count / 50, 15),
+            count: cat.count,
+            multiplierCount: cat.multiplierCount,
+            description: cat.description,
+            prefix: cat.prefix,
+            hasFittings: cat.hasFittings,
+            division: 22
+          });
+          
+          links.push({
+            source: 'div-22',
+            target: `cat-${cat.prefix}`,
+            strength: 0.3
+          });
+        });
+      }
+      
+      // Assembly nodes (always show in 'assemblies' filter, or when relevant category shown)
+      if (filter === 'all' || filter === 'assemblies' || filter === 'div21' || filter === 'div22') {
+        assemblies.forEach(asm => {
+          if (filter === 'div21' && asm.division !== 21) return;
+          if (filter === 'div22' && asm.division !== 22) return;
+          
+          const catNode = nodes.find(n => n.id === `cat-${asm.prefix}`);
+          if (!catNode && filter !== 'assemblies') return;
+          
+          nodes.push({
+            id: `asm-${asm.id}`,
+            name: asm.name,
+            type: 'assembly',
+            color: '#10b981',
+            size: 15,
+            components: asm.components,
+            hasMultiplier: asm.hasMultiplier,
+            hasFittings: asm.hasFittings,
+            prefix: asm.prefix,
+            division: asm.division
+          });
+          
+          if (catNode) {
+            links.push({
+              source: `cat-${asm.prefix}`,
+              target: `asm-${asm.id}`,
+              strength: 0.5
+            });
+          } else if (filter === 'assemblies') {
+            // Link directly to division for assemblies-only view
+            links.push({
+              source: asm.division === 21 ? 'div-21' : 'div-22',
+              target: `asm-${asm.id}`,
+              strength: 0.4
+            });
+          }
+        });
+      }
+      
+      return { nodes, links };
+    }
+    
+    // ============================================
+    // D3 VISUALIZATION
+    // ============================================
+    
+    const svg = d3.select('#graph')
+      .append('svg')
+      .attr('width', width)
+      .attr('height', height);
+    
+    const g = svg.append('g');
+    
+    svg.call(d3.zoom()
+      .scaleExtent([0.2, 4])
+      .on('zoom', (event) => {
+        g.attr('transform', event.transform);
+      }));
+    
+    const tooltip = d3.select('#tooltip');
+    
+    let simulation;
+    
+    function renderGraph(filter = 'all', search = '') {
+      const { nodes, links } = buildGraphData(filter, search);
+      
+      g.selectAll('*').remove();
+      
+      simulation = d3.forceSimulation(nodes)
+        .force('link', d3.forceLink(links).id(d => d.id).distance(100).strength(d => d.strength || 0.3))
+        .force('charge', d3.forceManyBody().strength(-300))
+        .force('center', d3.forceCenter(width / 2, height / 2))
+        .force('collision', d3.forceCollide().radius(d => d.size + 15));
+      
+      // Links
+      const linkElements = g.append('g')
+        .selectAll('line')
+        .data(links)
+        .enter()
+        .append('line')
+        .attr('class', 'link')
+        .attr('stroke', '#ffffff')
+        .attr('stroke-width', 1.5);
+      
+      // Nodes
+      const nodeElements = g.append('g')
+        .selectAll('g')
+        .data(nodes)
+        .enter()
+        .append('g')
+        .attr('class', 'node')
+        .call(d3.drag()
+          .on('start', dragstarted)
+          .on('drag', dragged)
+          .on('end', dragended));
+      
+      // Node circles
+      nodeElements.append('circle')
+        .attr('r', d => d.size)
+        .attr('fill', d => d.color)
+        .attr('stroke', '#ffffff')
+        .attr('stroke-width', d => d.type === 'division' ? 3 : 1.5)
+        .attr('stroke-opacity', 0.4)
+        .style('cursor', 'pointer')
+        .on('mouseover', showTooltip)
+        .on('mouseout', hideTooltip)
+        .on('click', handleNodeClick);
+      
+      // Labels
+      nodeElements.append('text')
+        .attr('dy', d => d.size + 14)
+        .attr('text-anchor', 'middle')
+        .text(d => d.name);
+      
+      // Multiplier badge
+      nodeElements.filter(d => d.multiplierCount > 0 || d.hasMultiplier)
+        .append('circle')
+        .attr('r', 6)
+        .attr('cx', d => d.size - 4)
+        .attr('cy', d => -d.size + 4)
+        .attr('fill', '#f59e0b')
+        .attr('stroke', '#000')
+        .attr('stroke-width', 1);
+      
+      // Fittings badge
+      nodeElements.filter(d => d.hasFittings)
+        .append('circle')
+        .attr('r', 5)
+        .attr('cx', d => -d.size + 4)
+        .attr('cy', d => -d.size + 4)
+        .attr('fill', '#8b5cf6')
+        .attr('stroke', '#000')
+        .attr('stroke-width', 1);
+      
+      simulation.on('tick', () => {
+        linkElements
+          .attr('x1', d => d.source.x)
+          .attr('y1', d => d.source.y)
+          .attr('x2', d => d.target.x)
+          .attr('y2', d => d.target.y);
+        
+        nodeElements.attr('transform', d => `translate(${d.x},${d.y})`);
+      });
+    }
+    
+    function showTooltip(event, d) {
+      let content = `<h3 style="color: ${d.color}">${d.fullName || d.name}</h3>`;
+      
+      if (d.prefix) {
+        content += `<div class="code">${d.prefix}-XXXX</div>`;
+      }
+      
+      if (d.type === 'division') {
+        content += `<p>${d.count.toLocaleString()} total items</p>`;
+      } else if (d.type === 'category') {
+        content += `<p>${d.description}</p>`;
+        content += `<p><strong>${d.count}</strong> items in catalogue</p>`;
+        content += `<div class="tags">`;
+        if (d.multiplierCount > 0) {
+          content += `<span class="tag mult">💰 ${d.multiplierCount} with multipliers</span>`;
+        }
+        if (d.hasFittings) {
+          content += `<span class="tag fitting">🔧 Has fittings</span>`;
+        }
+        content += `</div>`;
+      } else if (d.type === 'assembly') {
+        content += `<p>Components: ${d.components.join(', ')}</p>`;
+        content += `<div class="tags">`;
+        content += `<span class="tag asm">📦 Assembly</span>`;
+        if (d.hasMultiplier) {
+          content += `<span class="tag mult">💰 Has multipliers</span>`;
+        }
+        if (d.hasFittings) {
+          content += `<span class="tag fitting">🔧 Auto-fittings</span>`;
+        }
+        content += `</div>`;
+      }
+      
+      // Show multiplier example if available
+      const exampleKey = Object.keys(multiplierExamples).find(k => k.startsWith(d.prefix));
+      if (exampleKey) {
+        content += `<div class="multiplier-info">`;
+        content += `<strong>Quantity Tiers:</strong>`;
+        multiplierExamples[exampleKey].forEach(tier => {
+          const isDeduct = tier.adj.startsWith('-');
+          content += `<div class="tier"><span class="qty">${tier.qty}</span><span class="adj ${isDeduct ? 'deduct' : ''}">${tier.adj}</span></div>`;
+        });
+        content += `</div>`;
+      }
+      
+      tooltip.html(content)
+        .style('left', (event.pageX + 20) + 'px')
+        .style('top', (event.pageY - 10) + 'px')
+        .classed('visible', true);
+    }
+    
+    function hideTooltip() {
+      tooltip.classed('visible', false);
+    }
+    
+    function handleNodeClick(event, d) {
+      if (d.type === 'category') {
+        showDetailPanel(d);
+      }
+    }
+    
+    function showDetailPanel(d) {
+      document.getElementById('detail-panel').classList.add('visible');
+      document.getElementById('detail-title').textContent = d.fullName || d.name;
+      document.getElementById('detail-title').style.color = d.color;
+      
+      let info = `<p style="color: rgba(255,255,255,0.7); font-size: 12px; margin-bottom: 12px;">${d.description}</p>`;
+      info += `<p style="font-size: 13px;"><strong>${d.count}</strong> items • <strong>${d.multiplierCount}</strong> with multipliers</p>`;
+      document.getElementById('detail-info').innerHTML = info;
+      
+      // Would load actual items here from catalogue
+      let items = `<p style="color: rgba(255,255,255,0.5); font-size: 11px; padding: 20px; text-align: center;">
+        Click to load ${d.count} items from ${d.prefix}-XXXX
+      </p>`;
+      document.getElementById('detail-items').innerHTML = items;
+    }
+    
+    document.querySelector('#detail-panel .close').addEventListener('click', () => {
+      document.getElementById('detail-panel').classList.remove('visible');
+    });
+    
+    function dragstarted(event) {
+      if (!event.active) simulation.alphaTarget(0.3).restart();
+      event.subject.fx = event.subject.x;
+      event.subject.fy = event.subject.y;
+    }
+    
+    function dragged(event) {
+      event.subject.fx = event.x;
+      event.subject.fy = event.y;
+    }
+    
+    function dragended(event) {
+      if (!event.active) simulation.alphaTarget(0);
+      event.subject.fx = null;
+      event.subject.fy = null;
+    }
+    
+    // ============================================
+    // CONTROLS
+    // ============================================
+    
+    function setActiveButton(id) {
+      document.querySelectorAll('#controls button').forEach(b => b.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+    }
+    
+    document.getElementById('btn-all').addEventListener('click', () => {
+      setActiveButton('btn-all');
+      currentFilter = 'all';
+      renderGraph('all', searchTerm);
+    });
+    
+    document.getElementById('btn-div21').addEventListener('click', () => {
+      setActiveButton('btn-div21');
+      currentFilter = 'div21';
+      renderGraph('div21', searchTerm);
+    });
+    
+    document.getElementById('btn-div22').addEventListener('click', () => {
+      setActiveButton('btn-div22');
+      currentFilter = 'div22';
+      renderGraph('div22', searchTerm);
+    });
+    
+    document.getElementById('btn-multipliers').addEventListener('click', () => {
+      setActiveButton('btn-multipliers');
+      currentFilter = 'multipliers';
+      renderGraph('multipliers', searchTerm);
+    });
+    
+    document.getElementById('btn-assemblies').addEventListener('click', () => {
+      setActiveButton('btn-assemblies');
+      currentFilter = 'assemblies';
+      renderGraph('assemblies', searchTerm);
+    });
+    
+    // Search
+    let searchTimeout;
+    document.getElementById('search').addEventListener('input', (e) => {
+      clearTimeout(searchTimeout);
+      searchTimeout = setTimeout(() => {
+        searchTerm = e.target.value;
+        renderGraph(currentFilter, searchTerm);
+      }, 300);
+    });
+    
+    // Initial render
+    renderGraph('all');
+    
+    // Resize handler
+    window.addEventListener('resize', () => {
+      svg.attr('width', window.innerWidth).attr('height', window.innerHeight);
+    });
+  </script>
+</body>
+</html>
