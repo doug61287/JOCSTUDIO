@@ -22,7 +22,7 @@ interface AssemblyAssemblerProps {
   initialCategory?: AssemblyCategory;
 }
 
-type Step = 'type' | 'size' | 'material' | 'fittings' | 'review';
+type Step = 'type' | 'size' | 'material' | 'fittings' | 'item' | 'review';
 
 // Assembly type definitions per category
 interface AssemblyTypeOption {
@@ -237,6 +237,7 @@ export function AssemblyAssembler({
   const [selectedFittings, setSelectedFittings] = useState<Set<string>>(new Set(['coupling', 'hanger']));
   const [fittingItems, setFittingItems] = useState<Record<string, JOCItem | null>>({});
   const [customName, setCustomName] = useState('');
+  const [itemSearchQuery, setItemSearchQuery] = useState('');
 
   // Determine category
   const category = initialCategory || 'fire-protection';
@@ -255,6 +256,7 @@ export function AssemblyAssembler({
       setSelectedFittings(new Set(['coupling', 'hanger']));
       setFittingItems({});
       setCustomName(initialQuery || '');
+      setItemSearchQuery('');
     }
   }, [isOpen, initialQuery]);
 
@@ -360,7 +362,29 @@ export function AssemblyAssembler({
     }
   }, [selectedPipeItem, selectedSize, selectedMaterial, category]);
 
-  // TODO: Add head/fixture selection step for count-type assemblies
+  // Get available items for count-type assemblies (fixtures, heads, etc.)
+  const availableCountItems = useMemo(() => {
+    if (!selectedType || selectedType.needsSize) return [];
+    
+    const prefix = selectedType.taskCodePrefix;
+    const searchLower = itemSearchQuery.toLowerCase();
+    
+    return jocCatalogue.filter(item => {
+      const code = item.taskCode;
+      const desc = item.description.toLowerCase();
+      
+      // Must start with the type's prefix
+      if (!code.startsWith(prefix.substring(0, 4))) return false;
+      
+      // Exclude service items
+      if (desc.includes('removal') || desc.includes('relocate') || desc.includes('demo')) return false;
+      
+      // If search query, filter by it
+      if (searchLower && !desc.includes(searchLower)) return false;
+      
+      return true;
+    }).slice(0, 30); // Limit results
+  }, [selectedType, itemSearchQuery]);
 
   // Build assembly
   const buildAssembly = (): Assembly => {
@@ -414,7 +438,7 @@ export function AssemblyAssembler({
   // Determine steps based on type
   const getSteps = (): Step[] => {
     if (!selectedType) return ['type'];
-    if (!selectedType.needsSize) return ['type', 'review']; // Count items skip size/material/fittings
+    if (!selectedType.needsSize) return ['type', 'item', 'review']; // Count items: select from catalogue
     return ['type', 'size', 'material', 'fittings', 'review'];
   };
 
@@ -492,9 +516,9 @@ export function AssemblyAssembler({
                       setSelectedType(type);
                       // Auto-advance - directly set step since state hasn't updated yet
                       if (!type.needsSize) {
-                        setCurrentStep('review');
+                        setCurrentStep('item'); // Go to item selection for count types
                       } else {
-                        setCurrentStep('size'); // Go directly to size step
+                        setCurrentStep('size'); // Go to size step for pipe types
                       }
                     }}
                     className={`p-4 rounded-xl border-2 text-center transition-all hover:scale-105
@@ -507,6 +531,58 @@ export function AssemblyAssembler({
                     <div className="text-xs text-slate-400 mt-1">{type.description}</div>
                   </button>
                 ))}
+              </div>
+            </div>
+          )}
+
+          {/* Step: Item Selection (for count-type assemblies) */}
+          {currentStep === 'item' && (
+            <div className="space-y-4">
+              <h3 className="text-lg font-medium text-white mb-2">Select a {selectedType?.name || 'item'}</h3>
+              
+              {/* Search */}
+              <input
+                type="text"
+                placeholder="Search items..."
+                value={itemSearchQuery}
+                onChange={(e) => setItemSearchQuery(e.target.value)}
+                className="w-full px-4 py-2 bg-slate-700 border border-slate-600 rounded-lg text-white 
+                         placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-amber-500"
+              />
+              
+              {/* Results */}
+              <div className="space-y-2 max-h-[400px] overflow-y-auto">
+                {availableCountItems.length === 0 ? (
+                  <div className="p-4 text-center text-slate-400">
+                    No items found. Try a different search term.
+                  </div>
+                ) : (
+                  availableCountItems.map((item) => (
+                    <button
+                      key={item.taskCode}
+                      onClick={() => {
+                        setSelectedPipeItem(item);
+                        setCustomName(item.description);
+                        setCurrentStep('review');
+                      }}
+                      className={`w-full p-3 rounded-lg border-2 text-left transition-all
+                        ${selectedPipeItem?.taskCode === item.taskCode
+                          ? 'border-amber-500 bg-amber-500/10'
+                          : 'border-slate-600 hover:border-slate-500 bg-slate-700/30'}`}
+                    >
+                      <div className="flex items-start justify-between gap-3">
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm text-white">{item.description}</p>
+                          <p className="text-xs text-slate-400 mt-1 font-mono">{item.taskCode}</p>
+                        </div>
+                        <div className="text-right flex-shrink-0">
+                          <p className="text-emerald-400 font-bold">${item.unitCost.toFixed(2)}</p>
+                          <p className="text-xs text-slate-400">per {item.unit}</p>
+                        </div>
+                      </div>
+                    </button>
+                  ))
+                )}
               </div>
             </div>
           )}
