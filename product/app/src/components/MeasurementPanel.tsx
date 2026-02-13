@@ -159,8 +159,16 @@ export function MeasurementPanel() {
     return `${typeNames[m.type] || 'Measurement'} ${m.id.slice(-4)}`;
   };
 
-  // Calculate totals
+  // Calculate totals - accounts for assembly quantity factors
   const calculateTotal = (m: Measurement): number => {
+    // If measurement has assembly items, use their quantity factors
+    if (m.assemblyItems && m.assemblyItems.length > 0) {
+      return m.assemblyItems.reduce((sum, assemblyItem) => {
+        const qty = m.value * assemblyItem.quantityFactor;
+        return sum + (qty * assemblyItem.jocItem.unitCost);
+      }, 0);
+    }
+    // Fallback for non-assembly measurements
     const items = getJocItems(m);
     return items.reduce((sum, item) => sum + (m.value * item.unitCost), 0);
   };
@@ -253,24 +261,41 @@ export function MeasurementPanel() {
     return { ungrouped, byGroup, childrenByParent };
   }, [project, filterQuery]);
 
-  // Line item totals for summary
+  // Line item totals for summary - accounts for assembly quantity factors
   const lineItemTotals = useMemo(() => {
     if (!project) return [];
     
     const grouped: Record<string, { item: JOCItem; quantity: number; measurements: Measurement[] }> = {};
     
     project.measurements.forEach((m) => {
-      const items = getJocItems(m);
-      items.forEach((item) => {
-        const key = item.taskCode;
-        if (!grouped[key]) {
-          grouped[key] = { item, quantity: 0, measurements: [] };
-        }
-        grouped[key].quantity += m.value;
-        if (!grouped[key].measurements.includes(m)) {
-          grouped[key].measurements.push(m);
-        }
-      });
+      // If measurement has assembly items, use those with quantity factors
+      if (m.assemblyItems && m.assemblyItems.length > 0) {
+        m.assemblyItems.forEach((assemblyItem) => {
+          const item = assemblyItem.jocItem;
+          const key = item.taskCode;
+          const qty = m.value * assemblyItem.quantityFactor;
+          if (!grouped[key]) {
+            grouped[key] = { item, quantity: 0, measurements: [] };
+          }
+          grouped[key].quantity += qty;
+          if (!grouped[key].measurements.includes(m)) {
+            grouped[key].measurements.push(m);
+          }
+        });
+      } else {
+        // Fallback for non-assembly measurements
+        const items = getJocItems(m);
+        items.forEach((item) => {
+          const key = item.taskCode;
+          if (!grouped[key]) {
+            grouped[key] = { item, quantity: 0, measurements: [] };
+          }
+          grouped[key].quantity += m.value;
+          if (!grouped[key].measurements.includes(m)) {
+            grouped[key].measurements.push(m);
+          }
+        });
+      }
     });
     
     return Object.values(grouped).sort((a, b) => a.item.taskCode.localeCompare(b.item.taskCode));
