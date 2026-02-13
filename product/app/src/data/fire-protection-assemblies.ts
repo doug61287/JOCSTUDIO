@@ -546,7 +546,7 @@ export const FIRE_PROTECTION_ASSEMBLIES: Assembly[] = [
     description: 'Install 4" standpipe riser per floor with supports',
     category: 'fire-protection',
     keywords: ['standpipe', 'riser', '4 inch', 'fire protection', 'fp', 'vertical'],
-    applicableTo: ['length', 'count'],
+    applicableTo: ['line', 'polyline', 'count'],
     createdBy: 'ai-generated',
     items: [
       {
