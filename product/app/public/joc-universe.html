@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JOC Universe - 65,331 Items Visualized</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body {
+      background: #0a0a0f;
+      font-family: 'Inter', -apple-system, sans-serif;
+      color: white;
+      overflow: hidden;
+    }
+    
+    #canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+    }
+    
+    #header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      padding: 20px 30px;
+      background: linear-gradient(180deg, rgba(10,10,15,0.98) 0%, transparent 100%);
+      z-index: 100;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    #header h1 {
+      font-size: 28px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    
+    #header h1 span {
+      background: linear-gradient(135deg, #f59e0b, #ef4444, #8b5cf6);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    
+    .stats {
+      display: flex;
+      gap: 40px;
+    }
+    
+    .stat {
+      text-align: right;
+    }
+    
+    .stat-value {
+      font-size: 32px;
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+    }
+    
+    .stat-value.items { color: #10b981; }
+    .stat-value.multipliers { color: #06b6d4; }
+    .stat-value.divisions { color: #f59e0b; }
+    
+    .stat-label {
+      font-size: 11px;
+      color: rgba(255,255,255,0.4);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    
+    #info {
+      position: fixed;
+      bottom: 30px;
+      left: 30px;
+      background: rgba(0,0,0,0.8);
+      backdrop-filter: blur(10px);
+      padding: 20px;
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,0.1);
+      min-width: 280px;
+    }
+    
+    #info h3 {
+      font-size: 16px;
+      margin-bottom: 12px;
+      color: #f59e0b;
+    }
+    
+    #info p {
+      font-size: 13px;
+      color: rgba(255,255,255,0.7);
+      line-height: 1.5;
+      margin-bottom: 8px;
+    }
+    
+    #info .tag {
+      display: inline-block;
+      padding: 4px 10px;
+      background: rgba(16,185,129,0.2);
+      color: #10b981;
+      border-radius: 6px;
+      font-size: 11px;
+      margin-right: 6px;
+      margin-top: 8px;
+    }
+    
+    #info .tag.multiplier {
+      background: rgba(6,182,212,0.2);
+      color: #06b6d4;
+    }
+    
+    #legend {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      background: rgba(0,0,0,0.8);
+      backdrop-filter: blur(10px);
+      padding: 16px 20px;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+    
+    #legend h4 {
+      font-size: 11px;
+      color: rgba(255,255,255,0.4);
+      margin-bottom: 12px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 8px;
+      font-size: 12px;
+      color: rgba(255,255,255,0.7);
+    }
+    
+    .legend-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+    
+    #loading {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+      z-index: 200;
+    }
+    
+    #loading h2 {
+      font-size: 24px;
+      margin-bottom: 20px;
+      color: #f59e0b;
+    }
+    
+    #loading .progress {
+      width: 300px;
+      height: 4px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+    
+    #loading .progress-bar {
+      height: 100%;
+      background: linear-gradient(90deg, #f59e0b, #ef4444);
+      width: 0%;
+      transition: width 0.3s;
+    }
+    
+    #loading p {
+      margin-top: 12px;
+      color: rgba(255,255,255,0.5);
+      font-size: 13px;
+    }
+    
+    .hidden { display: none !important; }
+    
+    #search {
+      position: fixed;
+      top: 90px;
+      left: 30px;
+      z-index: 100;
+    }
+    
+    #search input {
+      width: 280px;
+      padding: 12px 16px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 10px;
+      color: white;
+      font-size: 14px;
+      outline: none;
+    }
+    
+    #search input:focus {
+      border-color: #f59e0b;
+      background: rgba(255,255,255,0.08);
+    }
+    
+    #search input::placeholder {
+      color: rgba(255,255,255,0.3);
+    }
+  </style>
+</head>
+<body>
+  <div id="loading">
+    <h2>🌌 Generating JOC Universe...</h2>
+    <div class="progress">
+      <div class="progress-bar" id="progress-bar"></div>
+    </div>
+    <p id="loading-text">Loading catalogue data...</p>
+  </div>
+  
+  <canvas id="canvas"></canvas>
+  
+  <div id="header" class="hidden">
+    <h1>🌌 <span>JOC Universe</span></h1>
+    <div class="stats">
+      <div class="stat">
+        <div class="stat-value items" id="stat-items">0</div>
+        <div class="stat-label">Items Visualized</div>
+      </div>
+      <div class="stat">
+        <div class="stat-value multipliers" id="stat-multipliers">0</div>
+        <div class="stat-label">With Multipliers</div>
+      </div>
+      <div class="stat">
+        <div class="stat-value divisions" id="stat-divisions">0</div>
+        <div class="stat-label">CSI Divisions</div>
+      </div>
+    </div>
+  </div>
+  
+  <div id="search" class="hidden">
+    <input type="text" placeholder="Search items..." id="search-input">
+  </div>
+  
+  <div id="info" class="hidden">
+    <h3 id="info-title">Hover over items</h3>
+    <p id="info-desc">Move your mouse over the particles to see item details</p>
+    <p id="info-code"></p>
+    <p id="info-price"></p>
+    <div id="info-tags"></div>
+  </div>
+  
+  <div id="legend" class="hidden">
+    <h4>CSI Divisions</h4>
+    <div id="legend-items"></div>
+  </div>
+
+  <script>
+    // ============================================
+    // CONFIGURATION
+    // ============================================
+    
+    const DIVISION_COLORS = {
+      '01': '#6b7280', // General
+      '02': '#78716c', // Existing Conditions
+      '03': '#a3a3a3', // Concrete
+      '04': '#d4d4d4', // Masonry
+      '05': '#fbbf24', // Metals
+      '06': '#a78bfa', // Wood
+      '07': '#f472b6', // Thermal
+      '08': '#c084fc', // Doors/Windows
+      '09': '#ec4899', // Finishes
+      '10': '#f97316', // Specialties
+      '11': '#84cc16', // Equipment
+      '12': '#22d3ee', // Furnishings
+      '13': '#2dd4bf', // Special Construction
+      '14': '#a3e635', // Conveying
+      '21': '#ef4444', // Fire Suppression
+      '22': '#3b82f6', // Plumbing
+      '23': '#06b6d4', // HVAC
+      '25': '#8b5cf6', // Integrated Automation
+      '26': '#f59e0b', // Electrical
+      '27': '#10b981', // Communications
+      '28': '#14b8a6', // Electronic Safety
+      '31': '#78716c', // Earthwork
+      '32': '#65a30d', // Exterior Improvements
+      '33': '#0284c7', // Utilities
+    };
+    
+    const DIVISION_NAMES = {
+      '01': 'General Requirements',
+      '02': 'Existing Conditions', 
+      '03': 'Concrete',
+      '04': 'Masonry',
+      '05': 'Metals',
+      '06': 'Wood & Plastics',
+      '07': 'Thermal & Moisture',
+      '08': 'Doors & Windows',
+      '09': 'Finishes',
+      '10': 'Specialties',
+      '11': 'Equipment',
+      '12': 'Furnishings',
+      '13': 'Special Construction',
+      '14': 'Conveying Equipment',
+      '21': 'Fire Suppression',
+      '22': 'Plumbing',
+      '23': 'HVAC',
+      '25': 'Integrated Automation',
+      '26': 'Electrical',
+      '27': 'Communications',
+      '28': 'Electronic Safety',
+      '31': 'Earthwork',
+      '32': 'Exterior Improvements',
+      '33': 'Utilities',
+    };
+    
+    // ============================================
+    // CANVAS SETUP
+    // ============================================
+    
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    
+    let width = window.innerWidth;
+    let height = window.innerHeight;
+    canvas.width = width;
+    canvas.height = height;
+    
+    let particles = [];
+    let hoveredParticle = null;
+    let searchQuery = '';
+    let animationFrame;
+    
+    // ============================================
+    // LOAD DATA
+    // ============================================
+    
+    async function loadCatalogue() {
+      try {
+        updateProgress(10, 'Fetching catalogue...');
+        
+        // Load the full catalogue JSON
+        const response = await fetch('/src/data/nyc-hh-ctc-full.json');
+        const catalogue = await response.json();
+        
+        updateProgress(30, 'Loading multiplier data...');
+        
+        // Load tier map
+        let tierMap = {};
+        try {
+          const tierResponse = await fetch('/src/data/tier-map.json');
+          tierMap = await tierResponse.json();
+        } catch (e) {
+          console.log('Tier map not found, continuing without multipliers');
+        }
+        
+        updateProgress(50, 'Generating particle positions...');
+        
+        // Group by division
+        const divisionGroups = {};
+        catalogue.forEach(item => {
+          const div = item.taskCode.slice(0, 2);
+          if (!divisionGroups[div]) divisionGroups[div] = [];
+          divisionGroups[div].push(item);
+        });
+        
+        updateProgress(60, 'Creating universe layout...');
+        
+        // Create particles with clustered positions
+        const divisions = Object.keys(divisionGroups).sort();
+        const divisionCount = divisions.length;
+        
+        let particleIndex = 0;
+        const totalItems = catalogue.length;
+        
+        divisions.forEach((div, divIndex) => {
+          const items = divisionGroups[div];
+          const color = DIVISION_COLORS[div] || '#6b7280';
+          
+          // Calculate division center position (arrange in a circle)
+          const angle = (divIndex / divisionCount) * Math.PI * 2 - Math.PI / 2;
+          const radius = Math.min(width, height) * 0.35;
+          const centerX = width / 2 + Math.cos(angle) * radius;
+          const centerY = height / 2 + Math.sin(angle) * radius;
+          
+          // Scatter items around division center
+          const itemCount = items.length;
+          const clusterRadius = Math.sqrt(itemCount) * 2.5;
+          
+          items.forEach((item, itemIndex) => {
+            // Spiral distribution within cluster
+            const itemAngle = (itemIndex / itemCount) * Math.PI * 20;
+            const itemRadius = Math.sqrt(itemIndex / itemCount) * clusterRadius;
+            
+            const x = centerX + Math.cos(itemAngle) * itemRadius + (Math.random() - 0.5) * 20;
+            const y = centerY + Math.sin(itemAngle) * itemRadius + (Math.random() - 0.5) * 20;
+            
+            const hasMultiplier = item.taskCode in tierMap;
+            
+            particles.push({
+              x,
+              y,
+              baseX: x,
+              baseY: y,
+              vx: 0,
+              vy: 0,
+              division: div,
+              color,
+              taskCode: item.taskCode,
+              description: item.description,
+              unit: item.unit,
+              unitCost: item.unitCost,
+              hasMultiplier,
+              size: hasMultiplier ? 2.5 : 1.5,
+              alpha: 0.7,
+            });
+            
+            particleIndex++;
+            if (particleIndex % 5000 === 0) {
+              updateProgress(60 + (particleIndex / totalItems) * 30, 
+                `Positioning ${particleIndex.toLocaleString()} items...`);
+            }
+          });
+        });
+        
+        updateProgress(95, 'Initializing animation...');
+        
+        // Update stats
+        document.getElementById('stat-items').textContent = particles.length.toLocaleString();
+        document.getElementById('stat-multipliers').textContent = 
+          particles.filter(p => p.hasMultiplier).length.toLocaleString();
+        document.getElementById('stat-divisions').textContent = divisionCount;
+        
+        // Build legend
+        const legendContainer = document.getElementById('legend-items');
+        divisions.forEach(div => {
+          if (divisionGroups[div].length > 100) {
+            const item = document.createElement('div');
+            item.className = 'legend-item';
+            item.innerHTML = `
+              <div class="legend-dot" style="background: ${DIVISION_COLORS[div] || '#6b7280'};"></div>
+              <span>${div} - ${DIVISION_NAMES[div] || 'Other'} (${divisionGroups[div].length.toLocaleString()})</span>
+            `;
+            legendContainer.appendChild(item);
+          }
+        });
+        
+        updateProgress(100, 'Complete!');
+        
+        setTimeout(() => {
+          document.getElementById('loading').classList.add('hidden');
+          document.getElementById('header').classList.remove('hidden');
+          document.getElementById('info').classList.remove('hidden');
+          document.getElementById('legend').classList.remove('hidden');
+          document.getElementById('search').classList.remove('hidden');
+          animate();
+        }, 500);
+        
+      } catch (error) {
+        console.error('Failed to load catalogue:', error);
+        document.getElementById('loading-text').textContent = 'Error loading data: ' + error.message;
+      }
+    }
+    
+    function updateProgress(percent, text) {
+      document.getElementById('progress-bar').style.width = percent + '%';
+      document.getElementById('loading-text').textContent = text;
+    }
+    
+    // ============================================
+    // ANIMATION
+    // ============================================
+    
+    function animate() {
+      ctx.fillStyle = 'rgba(10, 10, 15, 0.2)';
+      ctx.fillRect(0, 0, width, height);
+      
+      const mouseInfluence = 100;
+      
+      particles.forEach(p => {
+        // Gentle floating motion
+        p.x = p.baseX + Math.sin(Date.now() * 0.001 + p.baseX * 0.01) * 3;
+        p.y = p.baseY + Math.cos(Date.now() * 0.001 + p.baseY * 0.01) * 3;
+        
+        // Determine if highlighted by search
+        let highlighted = false;
+        if (searchQuery) {
+          highlighted = p.taskCode.toLowerCase().includes(searchQuery) ||
+                       p.description.toLowerCase().includes(searchQuery);
+        }
+        
+        // Draw particle
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, highlighted ? p.size * 2 : p.size, 0, Math.PI * 2);
+        
+        if (highlighted) {
+          ctx.fillStyle = '#ffffff';
+          ctx.shadowColor = p.color;
+          ctx.shadowBlur = 15;
+        } else if (p === hoveredParticle) {
+          ctx.fillStyle = '#ffffff';
+          ctx.shadowColor = p.color;
+          ctx.shadowBlur = 20;
+        } else {
+          ctx.fillStyle = p.color;
+          ctx.shadowBlur = 0;
+        }
+        
+        ctx.globalAlpha = highlighted || p === hoveredParticle ? 1 : (searchQuery ? 0.1 : p.alpha);
+        ctx.fill();
+        ctx.globalAlpha = 1;
+        ctx.shadowBlur = 0;
+        
+        // Multiplier indicator
+        if (p.hasMultiplier && !searchQuery) {
+          ctx.beginPath();
+          ctx.arc(p.x + p.size, p.y - p.size, 1.5, 0, Math.PI * 2);
+          ctx.fillStyle = '#06b6d4';
+          ctx.fill();
+        }
+      });
+      
+      animationFrame = requestAnimationFrame(animate);
+    }
+    
+    // ============================================
+    // INTERACTION
+    // ============================================
+    
+    canvas.addEventListener('mousemove', (e) => {
+      const rect = canvas.getBoundingClientRect();
+      const mouseX = e.clientX - rect.left;
+      const mouseY = e.clientY - rect.top;
+      
+      // Find closest particle
+      let closest = null;
+      let closestDist = 20; // Max hover distance
+      
+      for (const p of particles) {
+        const dx = p.x - mouseX;
+        const dy = p.y - mouseY;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        
+        if (dist < closestDist) {
+          closestDist = dist;
+          closest = p;
+        }
+      }
+      
+      hoveredParticle = closest;
+      
+      if (closest) {
+        document.getElementById('info-title').textContent = 
+          DIVISION_NAMES[closest.division] || 'Division ' + closest.division;
+        document.getElementById('info-desc').textContent = closest.description;
+        document.getElementById('info-code').textContent = closest.taskCode;
+        document.getElementById('info-price').textContent = 
+          `$${closest.unitCost.toFixed(2)} / ${closest.unit}`;
+        
+        let tags = '';
+        if (closest.hasMultiplier) {
+          tags += '<span class="tag multiplier">Has Qty Multiplier</span>';
+        }
+        document.getElementById('info-tags').innerHTML = tags;
+        
+        canvas.style.cursor = 'pointer';
+      } else {
+        document.getElementById('info-title').textContent = 'JOC Universe';
+        document.getElementById('info-desc').textContent = 
+          'Hover over particles to explore 65,331 JOC items';
+        document.getElementById('info-code').textContent = '';
+        document.getElementById('info-price').textContent = '';
+        document.getElementById('info-tags').innerHTML = '';
+        canvas.style.cursor = 'default';
+      }
+    });
+    
+    // Search
+    document.getElementById('search-input').addEventListener('input', (e) => {
+      searchQuery = e.target.value.toLowerCase();
+    });
+    
+    // Resize
+    window.addEventListener('resize', () => {
+      width = window.innerWidth;
+      height = window.innerHeight;
+      canvas.width = width;
+      canvas.height = height;
+    });
+    
+    // Start
+    loadCatalogue();
+  </script>
+</body>
+</html>
