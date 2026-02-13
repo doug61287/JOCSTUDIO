@@ -1,5 +1,6 @@
 import { useState, useMemo, useEffect } from 'react';
-import { Search, ChevronDown, Package, Layers, Check, X, Wrench, Plus } from 'lucide-react';
+import { Search, ChevronDown, Package, Layers, Check, X, Wrench, Plus, User } from 'lucide-react';
+import { useProjectStore } from '../stores/projectStore';
 import { ASSEMBLY_LIBRARY } from '../data/assemblies';
 import { getUserAssemblies, saveUserAssembly } from '../utils/userAssemblyStore';
 import { AssemblyAssembler } from './AssemblyAssembler';
@@ -33,6 +34,7 @@ export function AssemblyContextBar({
   const [assemblerQuery, setAssemblerQuery] = useState('');
   const [assemblerCategory, setAssemblerCategory] = useState<AssemblyCategory>('fire-protection');
   const [userAssemblies, setUserAssemblies] = useState<Assembly[]>([]);
+  const [showOnlyMine, setShowOnlyMine] = useState(false);
 
   // Load user assemblies on mount
   useEffect(() => {
@@ -44,9 +46,9 @@ export function AssemblyContextBar({
     return [...userAssemblies, ...ASSEMBLY_LIBRARY];
   }, [userAssemblies]);
 
-  // Filter assemblies based on search and category
+  // Filter assemblies based on search, category, and user filter
   const filteredAssemblies = useMemo(() => {
-    let results = allAssemblies;
+    let results = showOnlyMine ? userAssemblies : allAssemblies;
 
     // Filter by category
     if (activeCategory !== 'all') {
@@ -88,6 +90,16 @@ export function AssemblyContextBar({
     onSelectAssembly(assembly);
     setShowAssembler(false);
     setSearchQuery('');
+    
+    // Also set the appropriate tool based on assembly type
+    const setActiveTool = useProjectStore.getState().setActiveTool;
+    if (assembly.applicableTo.includes('line') || assembly.applicableTo.includes('polyline')) {
+      setActiveTool('line');
+    } else if (assembly.applicableTo.includes('count')) {
+      setActiveTool('count');
+    } else if (assembly.applicableTo.includes('area')) {
+      setActiveTool('area');
+    }
   };
 
   // Open assembler with current query and category
@@ -189,6 +201,23 @@ export function AssemblyContextBar({
 
         {/* Category pills */}
         <div className="hidden md:flex items-center gap-1">
+          {/* My Assemblies filter - only show if user has saved assemblies */}
+          {userAssemblies.length > 0 && (
+            <button
+              onClick={() => {
+                setShowOnlyMine(!showOnlyMine);
+                setActiveCategory('all');
+                setShowDropdown(true);
+              }}
+              className={`px-3 py-1.5 rounded-full text-xs font-medium flex items-center gap-1 transition-colors
+                         ${showOnlyMine 
+                           ? 'bg-purple-500 text-white' 
+                           : 'bg-purple-500/20 text-purple-300 hover:bg-purple-500/30 border border-purple-500/30'}`}
+            >
+              <User className="w-3 h-3" />
+              My ({userAssemblies.length})
+            </button>
+          )}
           {CATEGORY_CONFIG.slice(0, 4).map(cat => (
             <button
               key={cat.id}
