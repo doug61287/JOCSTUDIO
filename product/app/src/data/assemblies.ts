@@ -1100,6 +1100,283 @@ export const ASSEMBLY_LIBRARY: Assembly[] = [
       },
     ],
   },
+  
+  // ============================================
+  // DIVISION 22 - PLUMBING ASSEMBLIES 🚿
+  // ============================================
+  
+  // --- LAVATORY INSTALLATION ---
+  {
+    id: 'lav-installation',
+    name: 'Lavatory Installation',
+    description: 'Complete lavatory installation with faucet, trap, and supply lines',
+    category: 'plumbing',
+    keywords: ['lavatory', 'lav', 'sink', 'bathroom sink', 'installation', 'faucet', 'trap'],
+    applicableTo: ['count'],
+    createdBy: 'system',
+    items: [
+      {
+        jocItem: {
+          taskCode: '22421613-0005',
+          description: '18" x 15", 4" Centers, Wall Hung, Vitreous China Lavatory',
+          unit: 'EA',
+          unitCost: 425.00,
+        },
+        quantityFactor: 1.0,
+      },
+      {
+        jocItem: {
+          taskCode: '22413900-0009',
+          description: 'Chrome, Single Lever Handle, Lavatory Faucet (Delta 500-WF)',
+          unit: 'EA',
+          unitCost: 203.97,
+        },
+        quantityFactor: 1.0,
+      },
+      {
+        jocItem: {
+          taskCode: '22014081-0018',
+          description: 'Removal And Replacement Of Sink Trap, Adjustable, 1-1/2"',
+          unit: 'EA',
+          unitCost: 54.81,
+        },
+        quantityFactor: 1.0,
+        notes: 'P-trap',
+      },
+      {
+        jocItem: {
+          taskCode: '22014081-0004',
+          description: 'Removal And Replacement Of Chrome Supply Lines To Sink/Lavatory',
+          unit: 'EA',
+          unitCost: 36.33,
+        },
+        quantityFactor: 2.0,
+        notes: 'Hot and cold supply lines',
+      },
+    ],
+  },
+  
+  // --- WATER CLOSET ROUGH-IN ---
+  {
+    id: 'wc-roughin-complete',
+    name: 'Water Closet Rough-In',
+    description: 'Complete WC rough-in with flush valve',
+    category: 'plumbing',
+    keywords: ['water closet', 'wc', 'toilet', 'rough-in', 'roughin', 'flush valve'],
+    applicableTo: ['count'],
+    createdBy: 'system',
+    items: [
+      {
+        jocItem: {
+          taskCode: '22131300-0003',
+          description: 'Floor Mounted Water Closet, Single Fixture Rough-In, Cast Iron Waste And Vent',
+          unit: 'EA',
+          unitCost: 1336.56,
+        },
+        quantityFactor: 1.0,
+      },
+      {
+        jocItem: {
+          taskCode: '22421616-0002',
+          description: 'Exposed Manual Flush Valve for Water Closet, 1.6 GPF',
+          unit: 'EA',
+          unitCost: 485.00,
+        },
+        quantityFactor: 1.0,
+        notes: 'Manual flush valve',
+      },
+    ],
+  },
+  
+  // --- FLOOR DRAIN INSTALLATION ---
+  {
+    id: 'floor-drain-complete',
+    name: 'Floor Drain Installation',
+    description: 'Complete floor drain with trap primer',
+    category: 'plumbing',
+    keywords: ['floor drain', 'fd', 'drain', 'trap primer'],
+    applicableTo: ['count'],
+    createdBy: 'system',
+    items: [
+      {
+        jocItem: {
+          taskCode: '22131913-0003',
+          description: 'Bronze Top, 6" Round Top Floor Drain With 2" Outlet',
+          unit: 'EA',
+          unitCost: 961.24,
+        },
+        quantityFactor: 1.0,
+      },
+      {
+        jocItem: {
+          taskCode: '22111900-0042',
+          description: '1/2" Inlet/Outlet, Automatic Trap Primer, Up To Two Floor Drains',
+          unit: 'EA',
+          unitCost: 210.67,
+        },
+        quantityFactor: 0.5,
+        notes: '1 trap primer per 2 drains',
+      },
+    ],
+  },
+  
+  // --- ROOF DRAIN INSTALLATION ---
+  {
+    id: 'roof-drain-complete',
+    name: 'Roof Drain Installation',
+    description: 'Complete roof drain with dome strainer',
+    category: 'plumbing',
+    keywords: ['roof drain', 'rd', 'drain', 'dome strainer', 'roof leader'],
+    applicableTo: ['count'],
+    createdBy: 'system',
+    items: [
+      {
+        jocItem: {
+          taskCode: '22142613-0003',
+          description: '6" Outlet, Cast Iron Body, Roof Drain With Dome Strainer',
+          unit: 'EA',
+          unitCost: 1245.00,
+        },
+        quantityFactor: 1.0,
+      },
+    ],
+  },
+  
+  // --- GALVANIZED STEEL PIPE ASSEMBLY ---
+  {
+    id: 'galv-pipe-assembly',
+    name: 'Galvanized Steel Pipe',
+    description: '1" galvanized steel pipe with fittings allowance',
+    category: 'plumbing',
+    keywords: ['galvanized', 'galv', 'steel pipe', 'threaded pipe', '1 inch', '1"'],
+    applicableTo: ['line', 'polyline'],
+    createdBy: 'system',
+    items: [
+      {
+        jocItem: {
+          taskCode: '22111600-0004',
+          description: '1" Schedule 40 Threaded Galvanized Steel Pipe With 150 LB Malleable Iron Fittings',
+          unit: 'LF',
+          unitCost: 30.74,
+        },
+        quantityFactor: 1.0,
+      },
+      {
+        jocItem: {
+          taskCode: '22111600-0050',
+          description: '1" Galvanized 90° Elbow, Malleable Iron',
+          unit: 'EA',
+          unitCost: 18.50,
+        },
+        quantityFactor: 0.05,
+        notes: 'Fitting allowance: 1 elbow per 20 LF',
+      },
+      {
+        jocItem: {
+          taskCode: '22111600-0055',
+          description: '1" Galvanized Tee, Malleable Iron',
+          unit: 'EA',
+          unitCost: 22.50,
+        },
+        quantityFactor: 0.03,
+        notes: 'Fitting allowance: 1 tee per 33 LF',
+      },
+    ],
+  },
+  
+  // --- CAST IRON SOIL PIPE ASSEMBLY ---
+  {
+    id: 'cast-iron-soil-pipe',
+    name: 'Cast Iron Soil Pipe',
+    description: '4" no-hub cast iron soil pipe with couplings',
+    category: 'plumbing',
+    keywords: ['cast iron', 'ci', 'soil pipe', 'no-hub', 'nohub', '4 inch', '4"', 'dwv'],
+    applicableTo: ['line', 'polyline'],
+    createdBy: 'system',
+    items: [
+      {
+        jocItem: {
+          taskCode: '22131600-0006',
+          description: '4" No-Hub Cast Iron Soil Pipe',
+          unit: 'LF',
+          unitCost: 28.50,
+        },
+        quantityFactor: 1.0,
+      },
+      {
+        jocItem: {
+          taskCode: '22131600-0020',
+          description: '4" No-Hub Coupling, Stainless Steel Band',
+          unit: 'EA',
+          unitCost: 32.50,
+        },
+        quantityFactor: 0.05,
+        notes: 'Coupling allowance: 1 per 20 LF',
+      },
+      {
+        jocItem: {
+          taskCode: '22131600-0025',
+          description: '4" Cast Iron No-Hub 90° Bend',
+          unit: 'EA',
+          unitCost: 65.00,
+        },
+        quantityFactor: 0.05,
+        notes: 'Fitting allowance: 1 elbow per 20 LF',
+      },
+    ],
+  },
+  
+  // --- WATER HEATER INSTALLATION ---
+  {
+    id: 'water-heater-complete',
+    name: 'Water Heater Installation',
+    description: 'Complete electric water heater installation with connections',
+    category: 'plumbing',
+    keywords: ['water heater', 'hwh', 'hot water', 'electric heater', '40 gallon', '50 gallon'],
+    applicableTo: ['count'],
+    createdBy: 'system',
+    items: [
+      {
+        jocItem: {
+          taskCode: '22333016-0003',
+          description: '40 Gallon, Electric Domestic Water Heater',
+          unit: 'EA',
+          unitCost: 1565.35,
+        },
+        quantityFactor: 1.0,
+      },
+      {
+        jocItem: {
+          taskCode: '22052900-0010',
+          description: 'Temperature and Pressure Relief Valve',
+          unit: 'EA',
+          unitCost: 85.00,
+        },
+        quantityFactor: 1.0,
+        notes: 'T&P relief valve',
+      },
+      {
+        jocItem: {
+          taskCode: '22333000-0020',
+          description: 'Expansion Tank, 2 Gallon, Thermal',
+          unit: 'EA',
+          unitCost: 145.00,
+        },
+        quantityFactor: 1.0,
+        notes: 'Thermal expansion tank',
+      },
+      {
+        jocItem: {
+          taskCode: '22052300-0013',
+          description: '3/4" Diameter, 125 LB Brazed Or Soldered Bronze Gate Valve',
+          unit: 'EA',
+          unitCost: 130.95,
+        },
+        quantityFactor: 2.0,
+        notes: 'Isolation valves (inlet/outlet)',
+      },
+    ],
+  },
 ];
 
 // ============================================

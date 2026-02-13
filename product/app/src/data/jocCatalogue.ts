@@ -56,11 +56,19 @@ const PRODUCT_SEARCH_BOOSTS: Record<string, { boost: string[]; deBoost: string[]
   'coupling': { boost: ['21134'], deBoost: [] },
   'fitting': { boost: ['21134'], deBoost: [] },
   // Division 22 - Plumbing product boosts
-  'floor drain': { boost: ['22131913'], deBoost: [] },
-  'lavatory': { boost: ['22421613'], deBoost: [] },
-  'water closet': { boost: ['22131300'], deBoost: [] },
-  'kitchen sink': { boost: ['22421616'], deBoost: [] },
-  'faucet': { boost: ['22423900'], deBoost: [] },
+  'floor drain': { boost: ['22131913'], deBoost: ['22014'] },
+  'fd': { boost: ['22131913'], deBoost: [] },
+  'lavatory': { boost: ['22421613'], deBoost: ['22014'] },
+  'lav': { boost: ['22421613'], deBoost: ['22014'] },
+  'sink': { boost: ['22421613', '22421616'], deBoost: ['22014'] },
+  'water closet': { boost: ['22131300'], deBoost: ['22014'] },
+  'wc': { boost: ['22131300'], deBoost: ['22014'] },
+  'toilet': { boost: ['22131300'], deBoost: ['22014'] },
+  'kitchen sink': { boost: ['22421616'], deBoost: ['22014'] },
+  'faucet': { boost: ['22423900'], deBoost: ['22014'] },
+  'roof drain': { boost: ['22142613'], deBoost: [] },
+  'rd': { boost: ['22142613'], deBoost: [] },
+  'water heater': { boost: ['22333016', '22333300', '22333616'], deBoost: [] },
 };
 
 const KEYWORD_SYNONYMS: Record<string, string[]> = {
