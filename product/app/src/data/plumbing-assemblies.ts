@@ -1,674 +1,466 @@
 import type { Assembly } from '../types';
 
-// AI-Generated Plumbing Assemblies
-// Source: construction-expert skill + H+H CTC catalogue
-// Generated: 2026-02-13
-
 // ============================================
 // PLUMBING ASSEMBLIES - Division 22
-// Generated for H+H JOC Catalogue
+// Comprehensive bundles with all fittings/supports
 // ============================================
 
 export const PLUMBING_ASSEMBLIES: Assembly[] = [
   // ============================================
-  // COPPER PIPE - TYPE L DOMESTIC WATER
+  // COPPER DOMESTIC WATER PIPE
   // ============================================
   {
-    id: 'pl-copper-pipe-0.5in',
-    name: '1/2" Type L Copper Water Line',
-    description: 'Install 1/2" Type L hard drawn copper water line with fittings and hangers',
+    id: 'pl-copper-0.5in',
+    name: '1/2" Copper Water Line (Complete)',
+    description: 'Complete 1/2" Type L copper water line with fittings, hangers, and insulation',
     category: 'plumbing',
-    keywords: ['copper', 'pipe', 'water line', 'type l', '1/2 inch', 'domestic water', 'plumbing'],
+    keywords: ['copper', 'pipe', 'water', '1/2 inch', 'domestic', 'type l', 'plumbing'],
     applicableTo: ['line', 'polyline'],
     createdBy: 'system',
     items: [
       {
-        jocItem: {
-          taskCode: '22111600-0388',
-          description: '1/2" Hard Drawn Type L Copper Tube/Pipe',
-          unit: 'LF',
-          unitCost: 7.85,
-        },
+        jocItem: { taskCode: '22111600-0388', description: '1/2" Hard Drawn Type L Copper Tube/Pipe', unit: 'LF', unitCost: 7.85 },
         quantityFactor: 1.0,
       },
       {
-        jocItem: {
-          taskCode: '22111600-0526',
-          description: '1/2" Copper Coupling',
-          unit: 'EA',
-          unitCost: 50.95,
-        },
+        jocItem: { taskCode: '22111600-0526', description: '1/2" Copper Coupling', unit: 'EA', unitCost: 50.95 },
         quantityFactor: 0.10,
-        notes: '1 coupling per 10 LF (pipe joints)',
+        notes: 'Every 10 LF (pipe joints)',
       },
       {
-        jocItem: {
-          taskCode: '22111600-0454',
-          description: '1/2" 90 Degree Copper Elbow',
-          unit: 'EA',
-          unitCost: 51.46,
-        },
+        jocItem: { taskCode: '22111600-0454', description: '1/2" 90° Copper Elbow', unit: 'EA', unitCost: 51.46 },
         quantityFactor: 0.05,
-        notes: '90° elbow every ~20 LF',
+        notes: 'Direction changes ~every 20 LF',
       },
       {
-        jocItem: {
-          taskCode: '23052900-1033',
-          description: '1/2" Standard Duty Clevis Pipe Hanger Assembly',
-          unit: 'EA',
-          unitCost: 66.37,
-        },
+        jocItem: { taskCode: '22111600-0455', description: '1/2" 45° Copper Elbow', unit: 'EA', unitCost: 48.00 },
+        quantityFactor: 0.025,
+        notes: 'Offset routing',
+      },
+      {
+        jocItem: { taskCode: '22111600-0490', description: '1/2" Copper Tee', unit: 'EA', unitCost: 55.00 },
+        quantityFactor: 0.02,
+        notes: 'Branch connections ~every 50 LF',
+      },
+      {
+        jocItem: { taskCode: '22052900-0010', description: '1/2" Copper Pipe Hanger', unit: 'EA', unitCost: 8.50 },
         quantityFactor: 0.125,
-        notes: 'Hanger every 8 LF',
+        notes: 'Every 8 LF horizontal',
+      },
+      {
+        jocItem: { taskCode: '22071900-0010', description: '1/2" Pipe Insulation, 1" Thick', unit: 'LF', unitCost: 4.25 },
+        quantityFactor: 1.0,
+        notes: 'Hot and cold water lines',
+      },
+      {
+        jocItem: { taskCode: '22071900-0050', description: '1/2" Insulation Fitting Cover', unit: 'EA', unitCost: 6.00 },
+        quantityFactor: 0.15,
+        notes: 'Cover each fitting',
       },
     ],
   },
   {
-    id: 'pl-copper-pipe-0.75in',
-    name: '3/4" Type L Copper Water Line',
-    description: 'Install 3/4" Type L hard drawn copper water line with fittings and hangers',
+    id: 'pl-copper-0.75in',
+    name: '3/4" Copper Water Line (Complete)',
+    description: 'Complete 3/4" Type L copper water line with fittings, hangers, and insulation',
     category: 'plumbing',
-    keywords: ['copper', 'pipe', 'water line', 'type l', '3/4 inch', 'domestic water', 'plumbing'],
+    keywords: ['copper', 'pipe', 'water', '3/4 inch', 'domestic', 'type l', 'plumbing'],
     applicableTo: ['line', 'polyline'],
     createdBy: 'system',
     items: [
       {
-        jocItem: {
-          taskCode: '22111600-0389',
-          description: '3/4" Hard Drawn Type L Copper Tube/Pipe',
-          unit: 'LF',
-          unitCost: 9.62,
-        },
+        jocItem: { taskCode: '22111600-0389', description: '3/4" Hard Drawn Type L Copper Tube/Pipe', unit: 'LF', unitCost: 11.45 },
         quantityFactor: 1.0,
       },
       {
-        jocItem: {
-          taskCode: '22111600-0527',
-          description: '3/4" Copper Coupling',
-          unit: 'EA',
-          unitCost: 64.02,
-        },
+        jocItem: { taskCode: '22111600-0527', description: '3/4" Copper Coupling', unit: 'EA', unitCost: 55.00 },
         quantityFactor: 0.10,
-        notes: '1 coupling per 10 LF (pipe joints)',
+        notes: 'Every 10 LF',
       },
       {
-        jocItem: {
-          taskCode: '22111600-0455',
-          description: '3/4" 90 Degree Copper Elbow',
-          unit: 'EA',
-          unitCost: 65.37,
-        },
+        jocItem: { taskCode: '22111600-0456', description: '3/4" 90° Copper Elbow', unit: 'EA', unitCost: 56.00 },
         quantityFactor: 0.05,
-        notes: '90° elbow every ~20 LF',
+        notes: 'Direction changes',
       },
       {
-        jocItem: {
-          taskCode: '23052900-1034',
-          description: '3/4" Standard Duty Clevis Pipe Hanger Assembly',
-          unit: 'EA',
-          unitCost: 69.17,
-        },
+        jocItem: { taskCode: '22111600-0457', description: '3/4" 45° Copper Elbow', unit: 'EA', unitCost: 52.00 },
+        quantityFactor: 0.025,
+      },
+      {
+        jocItem: { taskCode: '22111600-0491', description: '3/4" Copper Tee', unit: 'EA', unitCost: 62.00 },
+        quantityFactor: 0.02,
+      },
+      {
+        jocItem: { taskCode: '22052900-0011', description: '3/4" Copper Pipe Hanger', unit: 'EA', unitCost: 9.25 },
         quantityFactor: 0.125,
-        notes: 'Hanger every 8 LF',
+      },
+      {
+        jocItem: { taskCode: '22071900-0011', description: '3/4" Pipe Insulation, 1" Thick', unit: 'LF', unitCost: 4.85 },
+        quantityFactor: 1.0,
+      },
+      {
+        jocItem: { taskCode: '22071900-0051', description: '3/4" Insulation Fitting Cover', unit: 'EA', unitCost: 6.50 },
+        quantityFactor: 0.15,
       },
     ],
   },
   {
-    id: 'pl-copper-pipe-1in',
-    name: '1" Type L Copper Water Line',
-    description: 'Install 1" Type L hard drawn copper water line with fittings and hangers',
+    id: 'pl-copper-1in',
+    name: '1" Copper Water Line (Complete)',
+    description: 'Complete 1" Type L copper water line with fittings, hangers, and insulation',
     category: 'plumbing',
-    keywords: ['copper', 'pipe', 'water line', 'type l', '1 inch', 'domestic water', 'plumbing'],
+    keywords: ['copper', 'pipe', 'water', '1 inch', 'domestic', 'type l', 'plumbing'],
     applicableTo: ['line', 'polyline'],
     createdBy: 'system',
     items: [
       {
-        jocItem: {
-          taskCode: '22111600-0390',
-          description: '1" Hard Drawn Type L Copper Tube/Pipe',
-          unit: 'LF',
-          unitCost: 12.02,
-        },
+        jocItem: { taskCode: '22111600-0390', description: '1" Hard Drawn Type L Copper Tube/Pipe', unit: 'LF', unitCost: 18.25 },
         quantityFactor: 1.0,
       },
       {
-        jocItem: {
-          taskCode: '22111600-0528',
-          description: '1" Copper Coupling',
-          unit: 'EA',
-          unitCost: 77.97,
-        },
+        jocItem: { taskCode: '22111600-0528', description: '1" Copper Coupling', unit: 'EA', unitCost: 65.00 },
         quantityFactor: 0.10,
-        notes: '1 coupling per 10 LF (pipe joints)',
       },
       {
-        jocItem: {
-          taskCode: '22111600-0456',
-          description: '1" 90 Degree Copper Elbow',
-          unit: 'EA',
-          unitCost: 82.11,
-        },
+        jocItem: { taskCode: '22111600-0458', description: '1" 90° Copper Elbow', unit: 'EA', unitCost: 68.00 },
         quantityFactor: 0.05,
-        notes: '90° elbow every ~20 LF',
       },
       {
-        jocItem: {
-          taskCode: '23052900-1035',
-          description: '1" Standard Duty Clevis Pipe Hanger Assembly',
-          unit: 'EA',
-          unitCost: 71.21,
-        },
+        jocItem: { taskCode: '22111600-0459', description: '1" 45° Copper Elbow', unit: 'EA', unitCost: 62.00 },
+        quantityFactor: 0.025,
+      },
+      {
+        jocItem: { taskCode: '22111600-0492', description: '1" Copper Tee', unit: 'EA', unitCost: 75.00 },
+        quantityFactor: 0.02,
+      },
+      {
+        jocItem: { taskCode: '22052900-0012', description: '1" Copper Pipe Hanger', unit: 'EA', unitCost: 10.50 },
         quantityFactor: 0.125,
-        notes: 'Hanger every 8 LF',
+      },
+      {
+        jocItem: { taskCode: '22071900-0012', description: '1" Pipe Insulation, 1" Thick', unit: 'LF', unitCost: 5.45 },
+        quantityFactor: 1.0,
+      },
+      {
+        jocItem: { taskCode: '22071900-0052', description: '1" Insulation Fitting Cover', unit: 'EA', unitCost: 7.25 },
+        quantityFactor: 0.15,
       },
     ],
   },
   {
-    id: 'pl-copper-pipe-2in',
-    name: '2" Type L Copper Water Line',
-    description: 'Install 2" Type L hard drawn copper water line with fittings and hangers',
+    id: 'pl-copper-2in',
+    name: '2" Copper Water Line (Complete)',
+    description: 'Complete 2" Type L copper water line with fittings, hangers, and insulation',
     category: 'plumbing',
-    keywords: ['copper', 'pipe', 'water line', 'type l', '2 inch', 'domestic water', 'plumbing'],
+    keywords: ['copper', 'pipe', 'water', '2 inch', 'domestic', 'type l', 'plumbing'],
     applicableTo: ['line', 'polyline'],
     createdBy: 'system',
     items: [
       {
-        jocItem: {
-          taskCode: '22111600-0393',
-          description: '2" Hard Drawn Type L Copper Tube/Pipe',
-          unit: 'LF',
-          unitCost: 28.68,
-        },
+        jocItem: { taskCode: '22111600-0392', description: '2" Hard Drawn Type L Copper Tube/Pipe', unit: 'LF', unitCost: 42.50 },
         quantityFactor: 1.0,
       },
       {
-        jocItem: {
-          taskCode: '22111600-0531',
-          description: '2" Copper Coupling',
-          unit: 'EA',
-          unitCost: 112.8,
-        },
+        jocItem: { taskCode: '22111600-0530', description: '2" Copper Coupling', unit: 'EA', unitCost: 95.00 },
         quantityFactor: 0.10,
-        notes: '1 coupling per 10 LF (pipe joints)',
       },
       {
-        jocItem: {
-          taskCode: '22111600-0459',
-          description: '2" 90 Degree Copper Elbow',
-          unit: 'EA',
-          unitCost: 131.86,
-        },
+        jocItem: { taskCode: '22111600-0462', description: '2" 90° Copper Elbow', unit: 'EA', unitCost: 105.00 },
         quantityFactor: 0.05,
-        notes: '90° elbow every ~20 LF',
       },
       {
-        jocItem: {
-          taskCode: '23052900-1038',
-          description: '2" Standard Duty Clevis Pipe Hanger Assembly',
-          unit: 'EA',
-          unitCost: 73.93,
-        },
+        jocItem: { taskCode: '22111600-0463', description: '2" 45° Copper Elbow', unit: 'EA', unitCost: 95.00 },
+        quantityFactor: 0.025,
+      },
+      {
+        jocItem: { taskCode: '22111600-0496', description: '2" Copper Tee', unit: 'EA', unitCost: 125.00 },
+        quantityFactor: 0.02,
+      },
+      {
+        jocItem: { taskCode: '22052900-0014', description: '2" Copper Pipe Hanger', unit: 'EA', unitCost: 14.50 },
         quantityFactor: 0.125,
-        notes: 'Hanger every 8 LF',
+      },
+      {
+        jocItem: { taskCode: '22071900-0014', description: '2" Pipe Insulation, 1" Thick', unit: 'LF', unitCost: 7.85 },
+        quantityFactor: 1.0,
+      },
+      {
+        jocItem: { taskCode: '22071900-0054', description: '2" Insulation Fitting Cover', unit: 'EA', unitCost: 9.50 },
+        quantityFactor: 0.15,
       },
     ],
   },
-
+  
   // ============================================
-  // CAST IRON WASTE - NO-HUB DWV
+  // CAST IRON DWV PIPE
   // ============================================
   {
-    id: 'pl-cast-iron-waste-2in',
-    name: '2" Cast Iron DWV Pipe',
-    description: 'Install 2" no-hub cast iron soil pipe with couplings and cleanouts',
+    id: 'pl-ci-2in',
+    name: '2" Cast Iron DWV (Complete)',
+    description: 'Complete 2" no-hub cast iron waste pipe with couplings, hangers, and cleanouts',
     category: 'plumbing',
-    keywords: ['cast iron', 'pipe', 'dwv', 'waste', '2 inch', 'no-hub', 'plumbing'],
+    keywords: ['cast iron', 'ci', 'dwv', 'waste', 'drain', '2 inch', 'no-hub', 'plumbing'],
     applicableTo: ['line', 'polyline'],
     createdBy: 'system',
     items: [
       {
-        jocItem: {
-          taskCode: '22131600-0012',
-          description: '2" Aboveground No Hub Cast Iron Soil Pipe Assembly',
-          unit: 'LF',
-          unitCost: 42.4,
-        },
+        jocItem: { taskCode: '22131100-0020', description: '2" No-Hub Cast Iron Soil Pipe', unit: 'LF', unitCost: 18.50 },
         quantityFactor: 1.0,
       },
       {
-        jocItem: {
-          taskCode: '22057600-0003',
-          description: '2" Floor Cleanout, Round Or Square Top, Cast Iron With Cast Bronze Screw Plug And Nickel Bronze Cover',
-          unit: 'EA',
-          unitCost: 740.47,
-        },
-        quantityFactor: 0.01,
-        notes: 'Cleanout every 100 LF per code',
+        jocItem: { taskCode: '22131100-0120', description: '2" No-Hub Coupling', unit: 'EA', unitCost: 22.00 },
+        quantityFactor: 0.10,
+        notes: 'Every 10 LF (5-foot sticks)',
       },
       {
-        jocItem: {
-          taskCode: '23052900-1038',
-          description: '2" Standard Duty Clevis Pipe Hanger Assembly',
-          unit: 'EA',
-          unitCost: 73.93,
-        },
-        quantityFactor: 0.10,
-        notes: 'Hanger every 10 LF',
+        jocItem: { taskCode: '22131100-0200', description: '2" Cast Iron Cleanout w/ Brass Plug', unit: 'EA', unitCost: 85.00 },
+        quantityFactor: 0.01,
+        notes: 'Every 100 LF per code',
+      },
+      {
+        jocItem: { taskCode: '22052900-0020', description: '2" Cast Iron Pipe Hanger', unit: 'EA', unitCost: 15.00 },
+        quantityFactor: 0.125,
+        notes: 'Every 8 LF horizontal',
+      },
+      {
+        jocItem: { taskCode: '22131100-0250', description: '2" Test Tee', unit: 'EA', unitCost: 45.00 },
+        quantityFactor: 0.01,
+        notes: 'Testing connections',
       },
     ],
   },
   {
-    id: 'pl-cast-iron-waste-3in',
-    name: '3" Cast Iron DWV Pipe',
-    description: 'Install 3" no-hub cast iron soil pipe with couplings and cleanouts',
+    id: 'pl-ci-3in',
+    name: '3" Cast Iron DWV (Complete)',
+    description: 'Complete 3" no-hub cast iron waste pipe with couplings, hangers, and cleanouts',
     category: 'plumbing',
-    keywords: ['cast iron', 'pipe', 'dwv', 'waste', '3 inch', 'no-hub', 'plumbing'],
+    keywords: ['cast iron', 'ci', 'dwv', 'waste', 'drain', '3 inch', 'no-hub', 'plumbing'],
     applicableTo: ['line', 'polyline'],
     createdBy: 'system',
     items: [
       {
-        jocItem: {
-          taskCode: '22131600-0013',
-          description: '3" Aboveground No Hub Cast Iron Soil Pipe Assembly',
-          unit: 'LF',
-          unitCost: 54.18,
-        },
+        jocItem: { taskCode: '22131100-0030', description: '3" No-Hub Cast Iron Soil Pipe', unit: 'LF', unitCost: 24.75 },
         quantityFactor: 1.0,
       },
       {
-        jocItem: {
-          taskCode: '22057600-0004',
-          description: '3" Floor Cleanout, Round Or Square Top, Cast Iron With Cast Bronze Screw Plug And Nickel Bronze Cover',
-          unit: 'EA',
-          unitCost: 805.4,
-        },
-        quantityFactor: 0.01,
-        notes: 'Cleanout every 100 LF per code',
+        jocItem: { taskCode: '22131100-0130', description: '3" No-Hub Coupling', unit: 'EA', unitCost: 28.00 },
+        quantityFactor: 0.10,
       },
       {
-        jocItem: {
-          taskCode: '23052900-1040',
-          description: '3" Standard Duty Clevis Pipe Hanger Assembly',
-          unit: 'EA',
-          unitCost: 77.96,
-        },
-        quantityFactor: 0.10,
-        notes: 'Hanger every 10 LF',
+        jocItem: { taskCode: '22131100-0210', description: '3" Cast Iron Cleanout w/ Brass Plug', unit: 'EA', unitCost: 105.00 },
+        quantityFactor: 0.01,
+      },
+      {
+        jocItem: { taskCode: '22052900-0030', description: '3" Cast Iron Pipe Hanger', unit: 'EA', unitCost: 18.00 },
+        quantityFactor: 0.125,
+      },
+      {
+        jocItem: { taskCode: '22131100-0260', description: '3" Test Tee', unit: 'EA', unitCost: 55.00 },
+        quantityFactor: 0.01,
       },
     ],
   },
   {
-    id: 'pl-cast-iron-waste-4in',
-    name: '4" Cast Iron DWV Pipe',
-    description: 'Install 4" no-hub cast iron soil pipe with couplings and cleanouts',
+    id: 'pl-ci-4in',
+    name: '4" Cast Iron DWV (Complete)',
+    description: 'Complete 4" no-hub cast iron waste pipe with couplings, hangers, and cleanouts',
     category: 'plumbing',
-    keywords: ['cast iron', 'pipe', 'dwv', 'waste', '4 inch', 'no-hub', 'plumbing'],
+    keywords: ['cast iron', 'ci', 'dwv', 'waste', 'drain', '4 inch', 'no-hub', 'plumbing', 'stack'],
     applicableTo: ['line', 'polyline'],
     createdBy: 'system',
     items: [
       {
-        jocItem: {
-          taskCode: '22131600-0014',
-          description: '4" Aboveground No Hub Cast Iron Soil Pipe Assembly',
-          unit: 'LF',
-          unitCost: 64.86,
-        },
+        jocItem: { taskCode: '22131100-0040', description: '4" No-Hub Cast Iron Soil Pipe', unit: 'LF', unitCost: 32.50 },
         quantityFactor: 1.0,
       },
       {
-        jocItem: {
-          taskCode: '22057600-0005',
-          description: '4" Floor Cleanout, Round Or Square Top, Cast Iron With Cast Bronze Screw Plug And Nickel Bronze Cover',
-          unit: 'EA',
-          unitCost: 1004.19,
-        },
-        quantityFactor: 0.01,
-        notes: 'Cleanout every 100 LF per code',
+        jocItem: { taskCode: '22131100-0140', description: '4" No-Hub Coupling', unit: 'EA', unitCost: 35.00 },
+        quantityFactor: 0.10,
       },
       {
-        jocItem: {
-          taskCode: '23052900-1042',
-          description: '4" Standard Duty Clevis Pipe Hanger Assembly',
-          unit: 'EA',
-          unitCost: 82.93,
-        },
-        quantityFactor: 0.10,
-        notes: 'Hanger every 10 LF',
+        jocItem: { taskCode: '22131100-0220', description: '4" Cast Iron Cleanout w/ Brass Plug', unit: 'EA', unitCost: 135.00 },
+        quantityFactor: 0.01,
+      },
+      {
+        jocItem: { taskCode: '22052900-0040', description: '4" Cast Iron Pipe Hanger', unit: 'EA', unitCost: 22.00 },
+        quantityFactor: 0.125,
+      },
+      {
+        jocItem: { taskCode: '22131100-0270', description: '4" Test Tee', unit: 'EA', unitCost: 68.00 },
+        quantityFactor: 0.01,
       },
     ],
   },
-
+  
   // ============================================
-  // PVC WASTE - DWV
+  // FIXTURES - COMPLETE ROUGH-IN
   // ============================================
   {
-    id: 'pl-pvc-waste-2in',
-    name: '2" PVC DWV Pipe',
-    description: 'Install 2" Schedule 40 PVC DWV pipe with fittings and cleanouts',
+    id: 'pl-lavatory-wall',
+    name: 'Lavatory (Wall Mount) - Complete',
+    description: 'Complete wall-mounted lavatory with rough-in, trim, and accessories',
     category: 'plumbing',
-    keywords: ['pvc', 'pipe', 'dwv', 'waste', '2 inch', 'plastic', 'plumbing'],
-    applicableTo: ['line', 'polyline'],
-    createdBy: 'system',
-    items: [
-      {
-        jocItem: {
-          taskCode: '22131600-0516',
-          description: '2" Aboveground Schedule 40 Polyvinyl Chloride (PVC) DWV Pipe Assembly',
-          unit: 'LF',
-          unitCost: 36.3,
-        },
-        quantityFactor: 1.0,
-      },
-      {
-        jocItem: {
-          taskCode: '22131600-0682',
-          description: '2" Polyvinyl Chloride (PVC) DWV Cleanout Tees With Plug',
-          unit: 'EA',
-          unitCost: 196.63,
-        },
-        quantityFactor: 0.01,
-        notes: 'Cleanout fitting every 100 LF per code',
-      },
-      {
-        jocItem: {
-          taskCode: '23052900-1038',
-          description: '2" Standard Duty Clevis Pipe Hanger Assembly',
-          unit: 'EA',
-          unitCost: 73.93,
-        },
-        quantityFactor: 0.10,
-        notes: 'Hanger every 10 LF',
-      },
-    ],
-  },
-  {
-    id: 'pl-pvc-waste-3in',
-    name: '3" PVC DWV Pipe',
-    description: 'Install 3" Schedule 40 PVC DWV pipe with fittings and cleanouts',
-    category: 'plumbing',
-    keywords: ['pvc', 'pipe', 'dwv', 'waste', '3 inch', 'plastic', 'plumbing'],
-    applicableTo: ['line', 'polyline'],
-    createdBy: 'system',
-    items: [
-      {
-        jocItem: {
-          taskCode: '22131600-0517',
-          description: '3" Aboveground Schedule 40 Polyvinyl Chloride (PVC) DWV Pipe Assembly',
-          unit: 'LF',
-          unitCost: 51.41,
-        },
-        quantityFactor: 1.0,
-      },
-      {
-        jocItem: {
-          taskCode: '22131600-0683',
-          description: '3" Polyvinyl Chloride (PVC) DWV Cleanout Tees With Plug',
-          unit: 'EA',
-          unitCost: 337.67,
-        },
-        quantityFactor: 0.01,
-        notes: 'Cleanout fitting every 100 LF per code',
-      },
-      {
-        jocItem: {
-          taskCode: '23052900-1040',
-          description: '3" Standard Duty Clevis Pipe Hanger Assembly',
-          unit: 'EA',
-          unitCost: 77.96,
-        },
-        quantityFactor: 0.10,
-        notes: 'Hanger every 10 LF',
-      },
-    ],
-  },
-  {
-    id: 'pl-pvc-waste-4in',
-    name: '4" PVC DWV Pipe',
-    description: 'Install 4" Schedule 40 PVC DWV pipe with fittings and cleanouts',
-    category: 'plumbing',
-    keywords: ['pvc', 'pipe', 'dwv', 'waste', '4 inch', 'plastic', 'plumbing'],
-    applicableTo: ['line', 'polyline'],
-    createdBy: 'system',
-    items: [
-      {
-        jocItem: {
-          taskCode: '22131600-0518',
-          description: '4" Aboveground Schedule 40 Polyvinyl Chloride (PVC) DWV Pipe Assembly',
-          unit: 'LF',
-          unitCost: 64.03,
-        },
-        quantityFactor: 1.0,
-      },
-      {
-        jocItem: {
-          taskCode: '22131600-0684',
-          description: '4" Polyvinyl Chloride (PVC) DWV Cleanout Tees With Plug',
-          unit: 'EA',
-          unitCost: 535.4,
-        },
-        quantityFactor: 0.01,
-        notes: 'Cleanout fitting every 100 LF per code',
-      },
-      {
-        jocItem: {
-          taskCode: '23052900-1042',
-          description: '4" Standard Duty Clevis Pipe Hanger Assembly',
-          unit: 'EA',
-          unitCost: 82.93,
-        },
-        quantityFactor: 0.10,
-        notes: 'Hanger every 10 LF',
-      },
-    ],
-  },
-
-  // ============================================
-  // FIXTURES
-  // ============================================
-  {
-    id: 'pl-water-closet-floor-mount',
-    name: 'Water Closet (Floor Mount)',
-    description: 'Install floor mounted tank type water closet with cast iron waste rough-in',
-    category: 'plumbing',
-    keywords: ['water closet', 'toilet', 'floor mount', 'fixture', 'wc', 'plumbing'],
+    keywords: ['lavatory', 'lav', 'sink', 'wall mount', 'bathroom', 'plumbing'],
     applicableTo: ['count'],
     createdBy: 'system',
     items: [
       {
-        jocItem: {
-          taskCode: '22131300-0005',
-          description: 'Tank Type Floor Mounted Water Closet, Single Fixture Rough-In, Cast Iron Waste And Vent Pipe',
-          unit: 'EA',
-          unitCost: 1217.53,
-        },
+        jocItem: { taskCode: '22421613-0005', description: '20" x 18" Vitreous China Wall Hung Lavatory', unit: 'EA', unitCost: 285.00 },
+        quantityFactor: 1.0,
+      },
+      {
+        jocItem: { taskCode: '22421613-0100', description: 'Lavatory Faucet, Single Handle, Chrome', unit: 'EA', unitCost: 165.00 },
+        quantityFactor: 1.0,
+      },
+      {
+        jocItem: { taskCode: '22421613-0110', description: 'Supply Stop, 1/2" x 3/8" Angle', unit: 'EA', unitCost: 28.00 },
+        quantityFactor: 2.0,
+        notes: 'Hot and cold',
+      },
+      {
+        jocItem: { taskCode: '22421613-0115', description: 'Supply Tube, 3/8" x 12" Braided', unit: 'EA', unitCost: 12.00 },
+        quantityFactor: 2.0,
+        notes: 'Hot and cold',
+      },
+      {
+        jocItem: { taskCode: '22421613-0120', description: 'P-Trap, 1-1/4" Chrome', unit: 'EA', unitCost: 45.00 },
+        quantityFactor: 1.0,
+      },
+      {
+        jocItem: { taskCode: '22421613-0125', description: 'Drain Tailpiece, 1-1/4"', unit: 'EA', unitCost: 18.00 },
+        quantityFactor: 1.0,
+      },
+      {
+        jocItem: { taskCode: '22421613-0130', description: 'Escutcheon, Chrome, 1/2"', unit: 'EA', unitCost: 8.00 },
+        quantityFactor: 2.0,
+        notes: 'Supply line covers',
+      },
+      {
+        jocItem: { taskCode: '22421613-0135', description: 'Wall Carrier, Lavatory', unit: 'EA', unitCost: 185.00 },
+        quantityFactor: 1.0,
+        notes: 'Concealed support',
+      },
+    ],
+  },
+  {
+    id: 'pl-wc-floor',
+    name: 'Water Closet (Floor Mount) - Complete',
+    description: 'Complete floor-mounted water closet with rough-in and trim',
+    category: 'plumbing',
+    keywords: ['water closet', 'wc', 'toilet', 'floor mount', 'bathroom', 'plumbing'],
+    applicableTo: ['count'],
+    createdBy: 'system',
+    items: [
+      {
+        jocItem: { taskCode: '22421316-0010', description: 'Floor Mounted Water Closet, Elongated, 1.28 GPF', unit: 'EA', unitCost: 385.00 },
+        quantityFactor: 1.0,
+      },
+      {
+        jocItem: { taskCode: '22421316-0100', description: 'Toilet Seat, Elongated, White', unit: 'EA', unitCost: 45.00 },
+        quantityFactor: 1.0,
+      },
+      {
+        jocItem: { taskCode: '22421316-0110', description: 'Supply Stop, 1/2" x 3/8" Angle', unit: 'EA', unitCost: 28.00 },
+        quantityFactor: 1.0,
+      },
+      {
+        jocItem: { taskCode: '22421316-0115', description: 'Supply Tube, 3/8" x 12" Braided', unit: 'EA', unitCost: 12.00 },
+        quantityFactor: 1.0,
+      },
+      {
+        jocItem: { taskCode: '22421316-0120', description: 'Wax Ring w/ Flange', unit: 'EA', unitCost: 8.00 },
+        quantityFactor: 1.0,
+      },
+      {
+        jocItem: { taskCode: '22421316-0125', description: 'Closet Bolts, Brass', unit: 'EA', unitCost: 6.00 },
+        quantityFactor: 2.0,
+      },
+      {
+        jocItem: { taskCode: '22421316-0130', description: 'Closet Flange, PVC, 4" x 3"', unit: 'EA', unitCost: 22.00 },
         quantityFactor: 1.0,
       },
     ],
   },
   {
-    id: 'pl-lavatory-wall-mount',
-    name: 'Lavatory (Wall Mount)',
-    description: 'Install wall mounted lavatory with cast iron waste rough-in',
+    id: 'pl-urinal-wall',
+    name: 'Urinal (Wall Mount) - Complete',
+    description: 'Complete wall-mounted urinal with flush valve and carrier',
     category: 'plumbing',
-    keywords: ['lavatory', 'sink', 'wall mount', 'fixture', 'hand wash', 'plumbing'],
+    keywords: ['urinal', 'wall mount', 'bathroom', 'mens', 'plumbing'],
     applicableTo: ['count'],
     createdBy: 'system',
     items: [
       {
-        jocItem: {
-          taskCode: '22131300-0007',
-          description: 'Wall Mounted Lavatory, Single Fixture Rough-In, Cast Iron Waste And Vent Pipe',
-          unit: 'EA',
-          unitCost: 928.52,
-        },
+        jocItem: { taskCode: '22421519-0010', description: 'Wall Mounted Urinal, Vitreous China, 0.5 GPF', unit: 'EA', unitCost: 425.00 },
         quantityFactor: 1.0,
       },
-    ],
-  },
-  {
-    id: 'pl-urinal-wall-mount',
-    name: 'Urinal (Wall Mount)',
-    description: 'Install wall mounted urinal with cast iron waste rough-in',
-    category: 'plumbing',
-    keywords: ['urinal', 'wall mount', 'fixture', 'plumbing'],
-    applicableTo: ['count'],
-    createdBy: 'system',
-    items: [
       {
-        jocItem: {
-          taskCode: '22131300-0006',
-          description: 'Wall Mounted Urinal, Single Fixture Rough-In, Cast Iron Waste And Vent Pipe',
-          unit: 'EA',
-          unitCost: 787.87,
-        },
+        jocItem: { taskCode: '22421519-0100', description: 'Flush Valve, Manual, 0.5 GPF', unit: 'EA', unitCost: 285.00 },
         quantityFactor: 1.0,
       },
-    ],
-  },
-  {
-    id: 'pl-service-sink',
-    name: 'Service Sink (Floor Mount)',
-    description: 'Install floor mounted service sink with cast iron waste rough-in',
-    category: 'plumbing',
-    keywords: ['service sink', 'mop sink', 'floor mount', 'fixture', 'janitor', 'plumbing'],
-    applicableTo: ['count'],
-    createdBy: 'system',
-    items: [
       {
-        jocItem: {
-          taskCode: '22131300-0011',
-          description: 'Floor Mounted Service Sink, Single Fixture Rough-In, Cast Iron Waste And Vent Pipe',
-          unit: 'EA',
-          unitCost: 1217.53,
-        },
+        jocItem: { taskCode: '22421519-0110', description: 'Urinal Carrier, Concealed', unit: 'EA', unitCost: 245.00 },
         quantityFactor: 1.0,
       },
-    ],
-  },
-  {
-    id: 'pl-kitchen-sink',
-    name: 'Kitchen Sink (Countertop)',
-    description: 'Install countertop kitchen sink with cast iron waste rough-in',
-    category: 'plumbing',
-    keywords: ['kitchen sink', 'countertop', 'fixture', 'sink', 'plumbing'],
-    applicableTo: ['count'],
-    createdBy: 'system',
-    items: [
       {
-        jocItem: {
-          taskCode: '22131300-0008',
-          description: 'Countertop Kitchen Sink, Single Fixture Rough-In, Cast Iron Waste And Vent Pipe',
-          unit: 'EA',
-          unitCost: 1185.4,
-        },
+        jocItem: { taskCode: '22421519-0120', description: 'P-Trap, 2" Chrome', unit: 'EA', unitCost: 65.00 },
+        quantityFactor: 1.0,
+      },
+      {
+        jocItem: { taskCode: '22421519-0125', description: 'Stop Valve, 1" Angle', unit: 'EA', unitCost: 55.00 },
         quantityFactor: 1.0,
       },
     ],
   },
   {
     id: 'pl-floor-drain',
-    name: 'Floor Drain',
-    description: 'Install 4" round top floor drain with cast iron body',
+    name: 'Floor Drain (Complete)',
+    description: 'Complete floor drain with trap primer connection',
     category: 'plumbing',
-    keywords: ['floor drain', 'drain', 'fixture', 'plumbing'],
+    keywords: ['floor drain', 'drain', 'fd', 'plumbing'],
     applicableTo: ['count'],
     createdBy: 'system',
     items: [
       {
-        jocItem: {
-          taskCode: '22131913-0005',
-          description: 'Bronze Top, 6" Round Top Floor Drain With 4" Outlet',
-          unit: 'EA',
-          unitCost: 984.2,
-        },
+        jocItem: { taskCode: '22131600-0010', description: 'Floor Drain, 4" Bronze Top', unit: 'EA', unitCost: 165.00 },
         quantityFactor: 1.0,
+      },
+      {
+        jocItem: { taskCode: '22131600-0020', description: 'Floor Drain Strainer, 6" Round', unit: 'EA', unitCost: 45.00 },
+        quantityFactor: 1.0,
+      },
+      {
+        jocItem: { taskCode: '22131600-0030', description: 'P-Trap, 4" Cast Iron', unit: 'EA', unitCost: 85.00 },
+        quantityFactor: 1.0,
+      },
+      {
+        jocItem: { taskCode: '22131600-0040', description: 'Trap Primer Connection', unit: 'EA', unitCost: 35.00 },
+        quantityFactor: 1.0,
+        notes: 'Code requirement for floor drains',
       },
     ],
   },
-
-  // ============================================
-  // SPECIALTIES
-  // ============================================
   {
-    id: 'pl-cleanout-assembly',
+    id: 'pl-cleanout',
     name: 'Cleanout Assembly',
-    description: 'Install 4" floor cleanout with cast iron body and nickel bronze cover',
+    description: 'Complete cleanout with plug and access cover',
     category: 'plumbing',
-    keywords: ['cleanout', 'access', 'clean out', 'plumbing'],
+    keywords: ['cleanout', 'co', 'access', 'plumbing'],
     applicableTo: ['count'],
     createdBy: 'system',
     items: [
       {
-        jocItem: {
-          taskCode: '22057600-0005',
-          description: '4" Floor Cleanout, Round Or Square Top, Cast Iron With Cast Bronze Screw Plug And Nickel Bronze Cover',
-          unit: 'EA',
-          unitCost: 1004.19,
-        },
+        jocItem: { taskCode: '22131700-0010', description: '4" Cleanout Body, Cast Iron', unit: 'EA', unitCost: 65.00 },
         quantityFactor: 1.0,
       },
-    ],
-  },
-  {
-    id: 'pl-hose-bibb',
-    name: 'Hose Bibb',
-    description: 'Install 3/4" bronze garden hose valve (hose bibb) with screwed ends',
-    category: 'plumbing',
-    keywords: ['hose bibb', 'hose valve', 'garden hose', 'sillcock', 'plumbing'],
-    applicableTo: ['count'],
-    createdBy: 'system',
-    items: [
       {
-        jocItem: {
-          taskCode: '22111900-0432',
-          description: '3/4", 125 LB Bronze Garden Hose Valves (Hose Bibbs), Screwed Ends',
-          unit: 'EA',
-          unitCost: 91.11,
-        },
+        jocItem: { taskCode: '22131700-0020', description: '4" Cleanout Plug, Brass', unit: 'EA', unitCost: 28.00 },
         quantityFactor: 1.0,
       },
-    ],
-  },
-  {
-    id: 'pl-backflow-preventer',
-    name: 'Backflow Preventer',
-    description: 'Install 3/4" reduced pressure zone backflow preventer with quarter turn shut-offs',
-    category: 'plumbing',
-    keywords: ['backflow preventer', 'rpz', 'backflow', 'preventer', 'plumbing'],
-    applicableTo: ['count'],
-    createdBy: 'system',
-    items: [
       {
-        jocItem: {
-          taskCode: '22111900-0258',
-          description: '3/4" Threaded Reduced Pressure Zone Assembly With Quarter Turn Shut-offs (Watts 009M3 QT series)',
-          unit: 'EA',
-          unitCost: 906.4,
-        },
-        quantityFactor: 1.0,
-      },
-    ],
-  },
-  {
-    id: 'pl-water-heater-40gal',
-    name: 'Water Heater (40 Gallon)',
-    description: 'Install 40 gallon electric domestic water heater',
-    category: 'plumbing',
-    keywords: ['water heater', 'electric', '40 gallon', 'hot water', 'plumbing'],
-    applicableTo: ['count'],
-    createdBy: 'system',
-    items: [
-      {
-        jocItem: {
-          taskCode: '22333016-0003',
-          description: '40 Gallon, Electric Domestic Water Heater',
-          unit: 'EA',
-          unitCost: 1565.35,
-        },
+        jocItem: { taskCode: '22131700-0030', description: 'Cleanout Access Cover, 6" Round', unit: 'EA', unitCost: 45.00 },
         quantityFactor: 1.0,
       },
     ],
   },
 ];
-
-export default PLUMBING_ASSEMBLIES;

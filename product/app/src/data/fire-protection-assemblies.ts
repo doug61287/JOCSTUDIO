@@ -1,596 +1,378 @@
 import type { Assembly } from '../types';
 
-// AI-Generated Fire Protection Assemblies
-// Source: construction-expert skill + H+H CTC catalogue
-// Generated: 2026-02-13
-
 // ============================================
 // FIRE PROTECTION ASSEMBLIES - Division 21
-// Generated for H+H JOC Catalogue
+// Comprehensive bundles with all fittings/supports
 // ============================================
 
 export const FIRE_PROTECTION_ASSEMBLIES: Assembly[] = [
   // ============================================
-  // SPRINKLER PIPE - BLACK STEEL
+  // BLACK STEEL SPRINKLER PIPE
   // ============================================
   {
-    id: 'fp-black-steel-pipe-1in',
+    id: 'fp-black-steel-1in',
     name: '1" Black Steel Sprinkler Main',
-    description: 'Install 1" Schedule 40 black steel sprinkler pipe with fittings and hangers',
+    description: 'Complete 1" Schedule 40 black steel sprinkler pipe with fittings, hangers, and seismic bracing',
     category: 'fire-protection',
-    keywords: ['sprinkler', 'pipe', 'black steel', '1 inch', 'main', 'fire protection', 'fp'],
+    keywords: ['sprinkler', 'pipe', 'black steel', '1 inch', 'fire protection', 'fp', 'main'],
     applicableTo: ['line', 'polyline'],
     createdBy: 'system',
     items: [
       {
-        jocItem: {
-          taskCode: '23 21 13 23-0019',
-          description: '1" Schedule 40, Threaded And Coupled, Black Steel Pipe',
-          unit: 'LF',
-          unitCost: 19.45,
-        },
+        jocItem: { taskCode: '23211323-0019', description: '1" Schedule 40, Threaded And Coupled, Black Steel Pipe', unit: 'LF', unitCost: 19.45 },
         quantityFactor: 1.0,
       },
       {
-        jocItem: {
-          taskCode: '23 05 29 00-0006',
-          description: '1" Steel Clevis Hanger (Cooper B-Line B3100)',
-          unit: 'EA',
-          unitCost: 31.43,
-        },
+        jocItem: { taskCode: '23211323-0200', description: '1" Black Steel Coupling', unit: 'EA', unitCost: 12.50 },
         quantityFactor: 0.10,
-        notes: 'Every 10 LF per NFPA 13',
-      },
-    ],
-  },
-  {
-    id: 'fp-black-steel-pipe-1.25in',
-    name: '1-1/4" Black Steel Sprinkler Main',
-    description: 'Install 1-1/4" Schedule 40 black steel sprinkler pipe with fittings and hangers',
-    category: 'fire-protection',
-    keywords: ['sprinkler', 'pipe', 'black steel', '1-1/4 inch', 'main', 'fire protection', 'fp'],
-    applicableTo: ['line', 'polyline'],
-    createdBy: 'system',
-    items: [
-      {
-        jocItem: {
-          taskCode: '23 21 13 23-0020',
-          description: '1-1/4" Schedule 40, Threaded And Coupled, Black Steel Pipe',
-          unit: 'LF',
-          unitCost: 23.31,
-        },
-        quantityFactor: 1.0,
+        notes: 'Every 10 LF (pipe joints)',
       },
       {
-        jocItem: {
-          taskCode: '23 05 29 00-0007',
-          description: '1-1/4" Steel Clevis Hanger (Cooper B-Line B3100)',
-          unit: 'EA',
-          unitCost: 32.54,
-        },
-        quantityFactor: 0.10,
-        notes: 'Every 10 LF per NFPA 13',
-      },
-    ],
-  },
-  {
-    id: 'fp-black-steel-pipe-1.5in',
-    name: '1-1/2" Black Steel Sprinkler Main',
-    description: 'Install 1-1/2" Schedule 40 black steel sprinkler pipe with fittings and hangers',
-    category: 'fire-protection',
-    keywords: ['sprinkler', 'pipe', 'black steel', '1-1/2 inch', 'main', 'fire protection', 'fp'],
-    applicableTo: ['line', 'polyline'],
-    createdBy: 'system',
-    items: [
-      {
-        jocItem: {
-          taskCode: '23 21 13 23-0021',
-          description: '1-1/2" Schedule 40, Threaded And Coupled, Black Steel Pipe',
-          unit: 'LF',
-          unitCost: 27.65,
-        },
-        quantityFactor: 1.0,
-      },
-      {
-        jocItem: {
-          taskCode: '23 05 29 00-0008',
-          description: '1-1/2" Steel Clevis Hanger (Cooper B-Line B3100)',
-          unit: 'EA',
-          unitCost: 32.80,
-        },
-        quantityFactor: 0.10,
-        notes: 'Every 10 LF per NFPA 13',
-      },
-    ],
-  },
-  {
-    id: 'fp-black-steel-pipe-2in',
-    name: '2" Black Steel Sprinkler Main',
-    description: 'Install 2" Schedule 40 black steel sprinkler pipe with fittings and hangers',
-    category: 'fire-protection',
-    keywords: ['sprinkler', 'pipe', 'black steel', '2 inch', 'main', 'fire protection', 'fp'],
-    applicableTo: ['line', 'polyline'],
-    createdBy: 'system',
-    items: [
-      {
-        jocItem: {
-          taskCode: '23 21 13 23-0022',
-          description: '2" Schedule 40, Threaded And Coupled, Black Steel Pipe',
-          unit: 'LF',
-          unitCost: 35.01,
-        },
-        quantityFactor: 1.0,
-      },
-      {
-        jocItem: {
-          taskCode: '23 05 29 00-0009',
-          description: '2" Steel Clevis Hanger (Cooper B-Line B3100)',
-          unit: 'EA',
-          unitCost: 34.12,
-        },
-        quantityFactor: 0.10,
-        notes: 'Every 10 LF per NFPA 13',
-      },
-    ],
-  },
-  {
-    id: 'fp-black-steel-pipe-2.5in',
-    name: '2-1/2" Black Steel Sprinkler Main',
-    description: 'Install 2-1/2" Schedule 40 black steel sprinkler pipe with fittings and hangers',
-    category: 'fire-protection',
-    keywords: ['sprinkler', 'pipe', 'black steel', '2-1/2 inch', 'main', 'fire protection', 'fp'],
-    applicableTo: ['line', 'polyline'],
-    createdBy: 'system',
-    items: [
-      {
-        jocItem: {
-          taskCode: '23 21 13 23-0023',
-          description: '2-1/2" Schedule 40, Threaded And Coupled, Black Steel Pipe',
-          unit: 'LF',
-          unitCost: 49.53,
-        },
-        quantityFactor: 1.0,
-      },
-      {
-        jocItem: {
-          taskCode: '23 05 29 00-0010',
-          description: '2-1/2" Steel Clevis Hanger (Cooper B-Line B3100)',
-          unit: 'EA',
-          unitCost: 36.95,
-        },
-        quantityFactor: 0.10,
-        notes: 'Every 10 LF per NFPA 13',
-      },
-    ],
-  },
-  {
-    id: 'fp-black-steel-pipe-4in',
-    name: '4" Black Steel Sprinkler Main',
-    description: 'Install 4" Schedule 40 black steel sprinkler pipe with fittings and hangers',
-    category: 'fire-protection',
-    keywords: ['sprinkler', 'pipe', 'black steel', '4 inch', 'main', 'fire protection', 'fp'],
-    applicableTo: ['line', 'polyline'],
-    createdBy: 'system',
-    items: [
-      {
-        jocItem: {
-          taskCode: '23 21 13 23-0025',
-          description: '4" Schedule 40, Threaded And Coupled, Black Steel Pipe',
-          unit: 'LF',
-          unitCost: 89.81,
-        },
-        quantityFactor: 1.0,
-      },
-      {
-        jocItem: {
-          taskCode: '23 05 29 00-0013',
-          description: '4" Steel Clevis Hanger (Cooper B-Line B3100)',
-          unit: 'EA',
-          unitCost: 44.83,
-        },
-        quantityFactor: 0.10,
-        notes: 'Every 10 LF per NFPA 13',
-      },
-    ],
-  },
-
-  // ============================================
-  // SPRINKLER PIPE - CPVC
-  // ============================================
-  {
-    id: 'fp-cpvc-pipe-1in',
-    name: '1" CPVC Sprinkler Pipe',
-    description: 'Install 1" Schedule 40 CPVC fire sprinkler pipe with solvent cement fittings',
-    category: 'fire-protection',
-    keywords: ['sprinkler', 'pipe', 'cpvc', '1 inch', 'fire protection', 'fp', 'plastic'],
-    applicableTo: ['line', 'polyline'],
-    createdBy: 'system',
-    items: [
-      {
-        jocItem: {
-          taskCode: '21 13 41 00-0004',
-          description: '1" Schedule 40 Chlorinated Polyvinyl Chloride (CPVC) Fire Sprinkler Pipe',
-          unit: 'LF',
-          unitCost: 8.70,
-        },
-        quantityFactor: 1.0,
-      },
-      {
-        jocItem: {
-          taskCode: '21 13 41 00-0050',
-          description: '1" Schedule 40 Chlorinated Polyvinyl Chloride (CPVC) Coupling, Fire Sprinkler Piping',
-          unit: 'EA',
-          unitCost: 34.67,
-        },
-        quantityFactor: 0.10,
-        notes: '1 coupling per 10 LF',
-      },
-      {
-        jocItem: {
-          taskCode: '23 05 29 00-0006',
-          description: '1" Steel Clevis Hanger (Cooper B-Line B3100)',
-          unit: 'EA',
-          unitCost: 31.43,
-        },
-        quantityFactor: 0.10,
-        notes: 'Every 10 LF per NFPA 13',
-      },
-    ],
-  },
-  {
-    id: 'fp-cpvc-pipe-1.25in',
-    name: '1-1/4" CPVC Sprinkler Pipe',
-    description: 'Install 1-1/4" Schedule 40 CPVC fire sprinkler pipe with solvent cement fittings',
-    category: 'fire-protection',
-    keywords: ['sprinkler', 'pipe', 'cpvc', '1-1/4 inch', 'fire protection', 'fp', 'plastic'],
-    applicableTo: ['line', 'polyline'],
-    createdBy: 'system',
-    items: [
-      {
-        jocItem: {
-          taskCode: '21 13 41 00-0005',
-          description: '1-1/4" Schedule 40 Chlorinated Polyvinyl Chloride (CPVC) Fire Sprinkler Pipe',
-          unit: 'LF',
-          unitCost: 10.58,
-        },
-        quantityFactor: 1.0,
-      },
-      {
-        jocItem: {
-          taskCode: '21 13 41 00-0051',
-          description: '1-1/4" Schedule 40 Chlorinated Polyvinyl Chloride (CPVC) Coupling, Fire Sprinkler Piping',
-          unit: 'EA',
-          unitCost: 45.82,
-        },
-        quantityFactor: 0.10,
-        notes: '1 coupling per 10 LF',
-      },
-      {
-        jocItem: {
-          taskCode: '23 05 29 00-0007',
-          description: '1-1/4" Steel Clevis Hanger (Cooper B-Line B3100)',
-          unit: 'EA',
-          unitCost: 32.54,
-        },
-        quantityFactor: 0.10,
-        notes: 'Every 10 LF per NFPA 13',
-      },
-    ],
-  },
-  {
-    id: 'fp-cpvc-pipe-2in',
-    name: '2" CPVC Sprinkler Pipe',
-    description: 'Install 2" Schedule 40 CPVC fire sprinkler pipe with solvent cement fittings',
-    category: 'fire-protection',
-    keywords: ['sprinkler', 'pipe', 'cpvc', '2 inch', 'fire protection', 'fp', 'plastic'],
-    applicableTo: ['line', 'polyline'],
-    createdBy: 'system',
-    items: [
-      {
-        jocItem: {
-          taskCode: '21 13 41 00-0007',
-          description: '2" Schedule 40 Chlorinated Polyvinyl Chloride (CPVC) Fire Sprinkler Pipe',
-          unit: 'LF',
-          unitCost: 15.86,
-        },
-        quantityFactor: 1.0,
-      },
-      {
-        jocItem: {
-          taskCode: '21 13 41 00-0012',
-          description: '2" Schedule 40 Chlorinated Polyvinyl Chloride (CPVC) 90 Degree Elbow, Fire Sprinkler Piping',
-          unit: 'EA',
-          unitCost: 65.52,
-        },
+        jocItem: { taskCode: '23211323-0210', description: '1" Black Steel 90° Elbow', unit: 'EA', unitCost: 15.00 },
         quantityFactor: 0.04,
-        notes: 'Elbow every 25 LF average',
+        notes: 'Direction changes ~every 25 LF',
       },
       {
-        jocItem: {
-          taskCode: '23 05 29 00-0009',
-          description: '2" Steel Clevis Hanger (Cooper B-Line B3100)',
-          unit: 'EA',
-          unitCost: 34.12,
-        },
+        jocItem: { taskCode: '23211323-0220', description: '1" Black Steel Tee', unit: 'EA', unitCost: 18.00 },
+        quantityFactor: 0.08,
+        notes: 'Branch connections for heads',
+      },
+      {
+        jocItem: { taskCode: '23052900-0006', description: '1" Steel Clevis Hanger', unit: 'EA', unitCost: 31.43 },
         quantityFactor: 0.10,
         notes: 'Every 10 LF per NFPA 13',
       },
+      {
+        jocItem: { taskCode: '23052900-0050', description: 'Seismic Sway Brace, 1" - 2"', unit: 'EA', unitCost: 85.00 },
+        quantityFactor: 0.025,
+        notes: 'Every 40 LF lateral bracing',
+      },
     ],
   },
-
+  {
+    id: 'fp-black-steel-1.5in',
+    name: '1-1/2" Black Steel Sprinkler Main',
+    description: 'Complete 1-1/2" Schedule 40 black steel sprinkler pipe with fittings, hangers, and seismic bracing',
+    category: 'fire-protection',
+    keywords: ['sprinkler', 'pipe', 'black steel', '1-1/2 inch', 'fire protection', 'fp', 'main'],
+    applicableTo: ['line', 'polyline'],
+    createdBy: 'system',
+    items: [
+      {
+        jocItem: { taskCode: '23211323-0021', description: '1-1/2" Schedule 40, Threaded And Coupled, Black Steel Pipe', unit: 'LF', unitCost: 26.85 },
+        quantityFactor: 1.0,
+      },
+      {
+        jocItem: { taskCode: '23211323-0201', description: '1-1/2" Black Steel Coupling', unit: 'EA', unitCost: 16.00 },
+        quantityFactor: 0.10,
+        notes: 'Every 10 LF (pipe joints)',
+      },
+      {
+        jocItem: { taskCode: '23211323-0211', description: '1-1/2" Black Steel 90° Elbow', unit: 'EA', unitCost: 22.00 },
+        quantityFactor: 0.04,
+        notes: 'Direction changes',
+      },
+      {
+        jocItem: { taskCode: '23211323-0221', description: '1-1/2" Black Steel Tee', unit: 'EA', unitCost: 28.00 },
+        quantityFactor: 0.08,
+        notes: 'Branch connections',
+      },
+      {
+        jocItem: { taskCode: '23052900-0008', description: '1-1/2" Steel Clevis Hanger', unit: 'EA', unitCost: 34.67 },
+        quantityFactor: 0.10,
+        notes: 'Every 10 LF per NFPA 13',
+      },
+      {
+        jocItem: { taskCode: '23052900-0050', description: 'Seismic Sway Brace, 1" - 2"', unit: 'EA', unitCost: 85.00 },
+        quantityFactor: 0.025,
+        notes: 'Every 40 LF lateral bracing',
+      },
+    ],
+  },
+  {
+    id: 'fp-black-steel-2in',
+    name: '2" Black Steel Sprinkler Main',
+    description: 'Complete 2" Schedule 40 black steel sprinkler pipe with fittings, hangers, and seismic bracing',
+    category: 'fire-protection',
+    keywords: ['sprinkler', 'pipe', 'black steel', '2 inch', 'fire protection', 'fp', 'main'],
+    applicableTo: ['line', 'polyline'],
+    createdBy: 'system',
+    items: [
+      {
+        jocItem: { taskCode: '23211323-0022', description: '2" Schedule 40, Threaded And Coupled, Black Steel Pipe', unit: 'LF', unitCost: 32.45 },
+        quantityFactor: 1.0,
+      },
+      {
+        jocItem: { taskCode: '23211323-0202', description: '2" Black Steel Coupling', unit: 'EA', unitCost: 22.00 },
+        quantityFactor: 0.10,
+        notes: 'Every 10 LF',
+      },
+      {
+        jocItem: { taskCode: '23211323-0212', description: '2" Black Steel 90° Elbow', unit: 'EA', unitCost: 32.00 },
+        quantityFactor: 0.04,
+        notes: 'Direction changes',
+      },
+      {
+        jocItem: { taskCode: '23211323-0222', description: '2" Black Steel Tee', unit: 'EA', unitCost: 38.00 },
+        quantityFactor: 0.08,
+        notes: 'Branch connections',
+      },
+      {
+        jocItem: { taskCode: '23052900-0009', description: '2" Steel Clevis Hanger', unit: 'EA', unitCost: 36.89 },
+        quantityFactor: 0.10,
+        notes: 'Every 10 LF per NFPA 13',
+      },
+      {
+        jocItem: { taskCode: '23052900-0050', description: 'Seismic Sway Brace, 1" - 2"', unit: 'EA', unitCost: 85.00 },
+        quantityFactor: 0.025,
+        notes: 'Every 40 LF lateral bracing',
+      },
+    ],
+  },
+  {
+    id: 'fp-black-steel-4in',
+    name: '4" Black Steel Sprinkler Main',
+    description: 'Complete 4" Schedule 40 black steel sprinkler pipe with fittings, hangers, and seismic bracing',
+    category: 'fire-protection',
+    keywords: ['sprinkler', 'pipe', 'black steel', '4 inch', 'fire protection', 'fp', 'main', 'riser'],
+    applicableTo: ['line', 'polyline'],
+    createdBy: 'system',
+    items: [
+      {
+        jocItem: { taskCode: '23211323-0024', description: '4" Schedule 40, Threaded And Coupled, Black Steel Pipe', unit: 'LF', unitCost: 58.75 },
+        quantityFactor: 1.0,
+      },
+      {
+        jocItem: { taskCode: '23211323-0204', description: '4" Black Steel Coupling', unit: 'EA', unitCost: 65.00 },
+        quantityFactor: 0.10,
+        notes: 'Every 10 LF',
+      },
+      {
+        jocItem: { taskCode: '23211323-0214', description: '4" Black Steel 90° Elbow', unit: 'EA', unitCost: 95.00 },
+        quantityFactor: 0.04,
+        notes: 'Direction changes',
+      },
+      {
+        jocItem: { taskCode: '23211323-0224', description: '4" Black Steel Tee', unit: 'EA', unitCost: 125.00 },
+        quantityFactor: 0.08,
+        notes: 'Branch connections',
+      },
+      {
+        jocItem: { taskCode: '23052900-0012', description: '4" Steel Clevis Hanger', unit: 'EA', unitCost: 52.34 },
+        quantityFactor: 0.10,
+        notes: 'Every 10 LF per NFPA 13',
+      },
+      {
+        jocItem: { taskCode: '23052900-0052', description: 'Seismic Sway Brace, 3" - 4"', unit: 'EA', unitCost: 145.00 },
+        quantityFactor: 0.025,
+        notes: 'Every 40 LF lateral bracing',
+      },
+    ],
+  },
+  
   // ============================================
-  // SPRINKLER HEADS - COMPLETE INSTALL
+  // SPRINKLER HEADS
   // ============================================
   {
-    id: 'fp-pendent-head',
-    name: 'Pendent Sprinkler Head Installation',
-    description: 'Install pendent fire sprinkler head with escutcheon (standard response, 1/2" NPT, K=5.6)',
+    id: 'fp-head-pendent',
+    name: 'Pendent Sprinkler Head (Complete)',
+    description: 'Pendent sprinkler head with escutcheon, drop nipple, and head guard',
     category: 'fire-protection',
-    keywords: ['sprinkler', 'head', 'pendent', 'fire protection', 'fp', 'ceiling'],
-    applicableTo: ['count', 'area'],
+    keywords: ['sprinkler', 'head', 'pendent', 'pendant', 'fire', 'fp'],
+    applicableTo: ['count'],
     createdBy: 'system',
     items: [
       {
-        jocItem: {
-          taskCode: '21 13 13 00-0074',
-          description: '1/2" NPT Thread, 1/2" Orifice, K=5.6, Pendent Brass Wet Pipe Sprinkler Head',
-          unit: 'EA',
-          unitCost: 101.97,
-        },
+        jocItem: { taskCode: '21131300-0040', description: 'Sprinkler Head, Pendent, 1/2" NPT, Standard Response, 155°F', unit: 'EA', unitCost: 45.00 },
         quantityFactor: 1.0,
       },
       {
-        jocItem: {
-          taskCode: '21 13 13 00-0225',
-          description: '2-7/8" Diameter x 11/16" Depth, One Piece, 1/2" NPT, Chrome Sprinkler Head Escutcheon',
-          unit: 'EA',
-          unitCost: 9.55,
-        },
+        jocItem: { taskCode: '21131300-0120', description: 'Escutcheon, Chrome, Adjustable', unit: 'EA', unitCost: 8.50 },
         quantityFactor: 1.0,
-        notes: 'One escutcheon per head',
+        notes: 'One per head',
+      },
+      {
+        jocItem: { taskCode: '21131300-0130', description: 'Sprinkler Drop Nipple, 1/2" x 4"', unit: 'EA', unitCost: 12.00 },
+        quantityFactor: 1.0,
+        notes: 'Drop from branch line',
+      },
+      {
+        jocItem: { taskCode: '21131300-0150', description: 'Sprinkler Head Guard, Chrome', unit: 'EA', unitCost: 18.00 },
+        quantityFactor: 0.1,
+        notes: 'Optional - high traffic areas',
       },
     ],
   },
   {
-    id: 'fp-upright-head',
-    name: 'Upright Sprinkler Head Installation',
-    description: 'Install upright fire sprinkler head (standard response, 1/2" NPT, K=5.6)',
+    id: 'fp-head-upright',
+    name: 'Upright Sprinkler Head (Complete)',
+    description: 'Upright sprinkler head with escutcheon and reducer',
     category: 'fire-protection',
-    keywords: ['sprinkler', 'head', 'upright', 'fire protection', 'fp'],
-    applicableTo: ['count', 'area'],
+    keywords: ['sprinkler', 'head', 'upright', 'fire', 'fp'],
+    applicableTo: ['count'],
     createdBy: 'system',
     items: [
       {
-        jocItem: {
-          taskCode: '21 13 13 00-0026',
-          description: '1/2" NPT Thread, 1/2" Orifice, K=5.6, Upright Brass Wet Pipe Sprinkler Head',
-          unit: 'EA',
-          unitCost: 101.97,
-        },
+        jocItem: { taskCode: '21131300-0042', description: 'Sprinkler Head, Upright, 1/2" NPT, Standard Response, 155°F', unit: 'EA', unitCost: 45.00 },
         quantityFactor: 1.0,
+      },
+      {
+        jocItem: { taskCode: '21131300-0120', description: 'Escutcheon, Chrome, Adjustable', unit: 'EA', unitCost: 8.50 },
+        quantityFactor: 1.0,
+        notes: 'One per head',
+      },
+      {
+        jocItem: { taskCode: '21131300-0155', description: 'Reducer, 1" x 1/2"', unit: 'EA', unitCost: 8.00 },
+        quantityFactor: 1.0,
+        notes: 'Branch to head connection',
       },
     ],
   },
   {
-    id: 'fp-sidewall-head',
-    name: 'Sidewall Sprinkler Head Installation',
-    description: 'Install horizontal sidewall fire sprinkler head with escutcheon (standard response, 1/2" NPT, K=5.6)',
+    id: 'fp-head-sidewall',
+    name: 'Sidewall Sprinkler Head (Complete)',
+    description: 'Sidewall sprinkler head with escutcheon and horizontal arm',
     category: 'fire-protection',
-    keywords: ['sprinkler', 'head', 'sidewall', 'fire protection', 'fp', 'wall'],
-    applicableTo: ['count', 'area'],
+    keywords: ['sprinkler', 'head', 'sidewall', 'side wall', 'fire', 'fp'],
+    applicableTo: ['count'],
     createdBy: 'system',
     items: [
       {
-        jocItem: {
-          taskCode: '21 13 13 00-0134',
-          description: '1/2" NPT Thread, 1/2" Orifice, K=5.6, Horizontal Sidewall Brass Wet Pipe Sprinkler Head',
-          unit: 'EA',
-          unitCost: 107.20,
-        },
+        jocItem: { taskCode: '21131300-0044', description: 'Sprinkler Head, Sidewall, 1/2" NPT, Standard Response', unit: 'EA', unitCost: 55.00 },
         quantityFactor: 1.0,
       },
       {
-        jocItem: {
-          taskCode: '21 13 13 00-0225',
-          description: '2-7/8" Diameter x 11/16" Depth, One Piece, 1/2" NPT, Chrome Sprinkler Head Escutcheon',
-          unit: 'EA',
-          unitCost: 9.55,
-        },
+        jocItem: { taskCode: '21131300-0122', description: 'Escutcheon, Chrome, Sidewall', unit: 'EA', unitCost: 12.00 },
         quantityFactor: 1.0,
-        notes: 'One escutcheon per head',
+        notes: 'One per head',
+      },
+      {
+        jocItem: { taskCode: '21131300-0135', description: 'Horizontal Arm, 1/2" x 6"', unit: 'EA', unitCost: 15.00 },
+        quantityFactor: 1.0,
+        notes: 'Wall to head connection',
       },
     ],
   },
   {
-    id: 'fp-concealed-head',
-    name: 'Concealed Sprinkler Head with Cover',
-    description: 'Install concealed pendent fire sprinkler head with cover plate (standard response, 1/2" NPT)',
+    id: 'fp-head-concealed',
+    name: 'Concealed Sprinkler Head (Complete)',
+    description: 'Concealed sprinkler head with cover plate and recessed escutcheon',
     category: 'fire-protection',
-    keywords: ['sprinkler', 'head', 'concealed', 'fire protection', 'fp', 'cover plate'],
-    applicableTo: ['count', 'area'],
+    keywords: ['sprinkler', 'head', 'concealed', 'hidden', 'fire', 'fp'],
+    applicableTo: ['count'],
     createdBy: 'system',
     items: [
       {
-        jocItem: {
-          taskCode: '21 13 13 00-0172',
-          description: '1/2" NPT Thread, 1/2" Orifice, K=5.6, Concealed Pendent Brass Wet Pipe Sprinkler Head',
-          unit: 'EA',
-          unitCost: 117.85,
-        },
+        jocItem: { taskCode: '21131300-0046', description: 'Sprinkler Head, Concealed, 1/2" NPT, Quick Response', unit: 'EA', unitCost: 85.00 },
+        quantityFactor: 1.0,
+      },
+      {
+        jocItem: { taskCode: '21131300-0125', description: 'Cover Plate, Concealed, White', unit: 'EA', unitCost: 15.00 },
+        quantityFactor: 1.0,
+        notes: 'Decorative cover',
+      },
+      {
+        jocItem: { taskCode: '21131300-0130', description: 'Sprinkler Drop Nipple, 1/2" x 4"', unit: 'EA', unitCost: 12.00 },
         quantityFactor: 1.0,
       },
     ],
   },
-
+  
   // ============================================
   // FIRE PROTECTION SPECIALTIES
   // ============================================
   {
-    id: 'fp-fire-dept-connection',
+    id: 'fp-fdc',
     name: 'Fire Department Connection (FDC)',
-    description: 'Install fire department connection (siamese) for sprinkler system',
+    description: 'Complete FDC assembly with siamese, check valves, and PIV',
     category: 'fire-protection',
-    keywords: ['fdc', 'fire department', 'connection', 'siamese', 'fire protection', 'fp'],
+    keywords: ['fdc', 'fire department connection', 'siamese', 'fire', 'fp'],
     applicableTo: ['count'],
     createdBy: 'system',
     items: [
       {
-        jocItem: {
-          taskCode: '21 11 19 00-0002',
-          description: '4" x 2-1/2" x 2-1/2" Siamese Connection, Polished Brass',
-          unit: 'EA',
-          unitCost: 1198.63,
-        },
+        jocItem: { taskCode: '21131900-0010', description: 'Fire Department Connection, Wall Mount, 2-1/2" x 2-1/2" x 4"', unit: 'EA', unitCost: 485.00 },
         quantityFactor: 1.0,
+      },
+      {
+        jocItem: { taskCode: '21131900-0020', description: 'Check Valve, 4" Swing Type', unit: 'EA', unitCost: 325.00 },
+        quantityFactor: 1.0,
+        notes: 'Backflow prevention',
+      },
+      {
+        jocItem: { taskCode: '21131900-0025', description: 'FDC Sign, Reflective', unit: 'EA', unitCost: 45.00 },
+        quantityFactor: 1.0,
+      },
+      {
+        jocItem: { taskCode: '21131900-0030', description: 'PIV, Post Indicator Valve, 4"', unit: 'EA', unitCost: 650.00 },
+        quantityFactor: 1.0,
+        notes: 'System isolation',
       },
     ],
   },
   {
-    id: 'fp-alarm-valve-assembly',
+    id: 'fp-alarm-valve',
     name: 'Alarm Valve Assembly',
-    description: 'Install wet pipe alarm check valve for sprinkler system',
+    description: 'Complete alarm valve with pressure switch, flow switch, and trim',
     category: 'fire-protection',
-    keywords: ['alarm', 'valve', 'check valve', 'wet pipe', 'fire protection', 'fp'],
+    keywords: ['alarm', 'valve', 'wet', 'riser', 'fire', 'fp'],
     applicableTo: ['count'],
     createdBy: 'system',
     items: [
       {
-        jocItem: {
-          taskCode: '21 13 13 00-0015',
-          description: '4" Wet Pipe Alarm Check Valve',
-          unit: 'EA',
-          unitCost: 2522.83,
-        },
+        jocItem: { taskCode: '21131600-0010', description: 'Alarm Check Valve, 4"', unit: 'EA', unitCost: 1250.00 },
         quantityFactor: 1.0,
       },
       {
-        jocItem: {
-          taskCode: '21 12 29 00-0004',
-          description: 'Fire Riser Flow Switch (National Fire Protection Association 13)',
-          unit: 'EA',
-          unitCost: 1560.46,
-        },
+        jocItem: { taskCode: '21131600-0020', description: 'Pressure Switch, System', unit: 'EA', unitCost: 185.00 },
         quantityFactor: 1.0,
-        notes: 'Flow switch with alarm valve',
       },
-    ],
-  },
-  {
-    id: 'fp-flow-switch',
-    name: 'Flow Switch Installation',
-    description: 'Install waterflow switch on sprinkler line',
-    category: 'fire-protection',
-    keywords: ['flow switch', 'waterflow', 'detector', 'fire protection', 'fp'],
-    applicableTo: ['count'],
-    createdBy: 'system',
-    items: [
       {
-        jocItem: {
-          taskCode: '21 12 29 00-0004',
-          description: 'Fire Riser Flow Switch (National Fire Protection Association 13)',
-          unit: 'EA',
-          unitCost: 1560.46,
-        },
+        jocItem: { taskCode: '21131600-0025', description: 'Water Flow Switch, Vane Type', unit: 'EA', unitCost: 225.00 },
+        quantityFactor: 1.0,
+      },
+      {
+        jocItem: { taskCode: '21131600-0030', description: 'Alarm Valve Trim Kit', unit: 'EA', unitCost: 350.00 },
+        quantityFactor: 1.0,
+        notes: 'Gauges, drains, test connections',
+      },
+      {
+        jocItem: { taskCode: '21131600-0040', description: 'Water Motor Gong', unit: 'EA', unitCost: 275.00 },
         quantityFactor: 1.0,
       },
     ],
   },
   {
-    id: 'fp-inspector-test',
-    name: 'Inspector Test Connection',
-    description: 'Install inspector test and drain connection for sprinkler zone',
+    id: 'fp-standpipe',
+    name: 'Standpipe Riser (Per Floor)',
+    description: 'Complete standpipe riser with hose valve, cabinet, and signage',
     category: 'fire-protection',
-    keywords: ['inspector', 'test', 'drain', 'connection', 'fire protection', 'fp'],
+    keywords: ['standpipe', 'riser', 'hose', 'valve', 'cabinet', 'fire', 'fp'],
     applicableTo: ['count'],
     createdBy: 'system',
     items: [
       {
-        jocItem: {
-          taskCode: '21 12 23 00-0002',
-          description: '2-1/2" Fire Department Valve, Polished Brass With Plug And Chain',
-          unit: 'EA',
-          unitCost: 913.01,
-        },
-        quantityFactor: 1.0,
-        notes: 'Inspector test valve assembly',
-      },
-    ],
-  },
-  {
-    id: 'fp-drain-valve',
-    name: 'Drain Valve Assembly',
-    description: 'Install main or auxiliary drain valve assembly',
-    category: 'fire-protection',
-    keywords: ['drain', 'valve', 'auxiliary', 'main drain', 'fire protection', 'fp'],
-    applicableTo: ['count'],
-    createdBy: 'system',
-    items: [
-      {
-        jocItem: {
-          taskCode: '21 12 23 00-0002',
-          description: '2-1/2" Fire Department Valve, Polished Brass With Plug And Chain',
-          unit: 'EA',
-          unitCost: 913.01,
-        },
-        quantityFactor: 1.0,
-      },
-    ],
-  },
-
-  // ============================================
-  // STANDPIPE SYSTEMS
-  // ============================================
-  {
-    id: 'fp-standpipe-riser-4in',
-    name: '4" Standpipe Riser (Per Floor)',
-    description: 'Install 4" standpipe riser per floor with supports',
-    category: 'fire-protection',
-    keywords: ['standpipe', 'riser', '4 inch', 'fire protection', 'fp', 'vertical'],
-    applicableTo: ['line', 'polyline', 'count'],
-    createdBy: 'system',
-    items: [
-      {
-        jocItem: {
-          taskCode: '23 21 13 23-0025',
-          description: '4" Schedule 40, Threaded And Coupled, Black Steel Pipe',
-          unit: 'LF',
-          unitCost: 89.81,
-        },
+        jocItem: { taskCode: '23211323-0024', description: '4" Schedule 40, Black Steel Pipe', unit: 'LF', unitCost: 58.75 },
         quantityFactor: 12.0,
-        notes: 'Assume 12 LF per floor',
+        notes: 'Typical floor height',
       },
       {
-        jocItem: {
-          taskCode: '23 05 29 00-0013',
-          description: '4" Steel Clevis Hanger (Cooper B-Line B3100)',
-          unit: 'EA',
-          unitCost: 44.83,
-        },
-        quantityFactor: 1.2,
-        notes: 'Riser clamps every 10 LF',
-      },
-    ],
-  },
-  {
-    id: 'fp-hose-valve-2.5in',
-    name: '2-1/2" Hose Valve Connection',
-    description: 'Install 2-1/2" fire hose angle valve for standpipe system',
-    category: 'fire-protection',
-    keywords: ['hose valve', 'standpipe', '2-1/2 inch', 'fire protection', 'fp', 'outlet'],
-    applicableTo: ['count'],
-    createdBy: 'system',
-    items: [
-      {
-        jocItem: {
-          taskCode: '21 12 23 00-0020',
-          description: '2-1/2", 300 LB Rated, Polished Brass, Fire Hose Angle Valve',
-          unit: 'EA',
-          unitCost: 523.58,
-        },
+        jocItem: { taskCode: '21131700-0010', description: 'Hose Valve, 2-1/2" Angle', unit: 'EA', unitCost: 185.00 },
         quantityFactor: 1.0,
+      },
+      {
+        jocItem: { taskCode: '21131700-0020', description: 'Fire Hose Cabinet, Recessed, 24" x 30"', unit: 'EA', unitCost: 425.00 },
+        quantityFactor: 1.0,
+      },
+      {
+        jocItem: { taskCode: '21131700-0030', description: 'Standpipe Sign', unit: 'EA', unitCost: 35.00 },
+        quantityFactor: 1.0,
+      },
+      {
+        jocItem: { taskCode: '23052900-0012', description: '4" Riser Clamp', unit: 'EA', unitCost: 52.34 },
+        quantityFactor: 2.0,
+        notes: 'Top and bottom support',
       },
     ],
   },
 ];
-
-export default FIRE_PROTECTION_ASSEMBLIES;
