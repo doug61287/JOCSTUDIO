@@ -12,6 +12,64 @@ export interface MeasurementStyle {
   showCost: boolean;
 }
 
+// ============================================
+// JOC ITEM - Core unit of work
+// ============================================
+
+export interface JOCItem {
+  taskCode: string;      // JOC task code (e.g., "09290513-0045")
+  code?: string;         // Alias for taskCode (backwards compatibility)
+  description: string;
+  unit: string;
+  unitCost: number;      // Cost per unit
+  unitPrice?: number;    // Alias for unitCost (backwards compatibility)
+  division?: string;     // CSI division (optional)
+}
+
+// ============================================
+// ASSEMBLY SYSTEM - The Translation Engine
+// (Must be defined before Measurement)
+// ============================================
+
+export type AssemblyCategory = 
+  | 'demolition'
+  | 'carpentry'
+  | 'drywall'
+  | 'flooring'
+  | 'ceiling'
+  | 'doors'
+  | 'painting'
+  | 'plumbing'
+  | 'electrical'
+  | 'hvac'
+  | 'fire-protection'
+  | 'general'
+  | 'custom';
+
+// A single item in an assembly with quantity modifier
+export interface AssemblyItem {
+  jocItem: JOCItem;
+  quantityFactor: number; // Multiplier (1.0 = same as measurement, 2.0 = double, etc.)
+  notes?: string; // e.g., "2 coats", "both sides"
+}
+
+// A reusable assembly/recipe of JOC items
+export interface Assembly {
+  id: string;
+  name: string; // User-facing name: "Wall Patch", "Door Install"
+  description?: string;
+  category: AssemblyCategory;
+  keywords: string[]; // Search/match terms: ["wall", "patch", "drywall", "gypsum", "repair"]
+  items: AssemblyItem[];
+  applicableTo: ('line' | 'polyline' | 'area' | 'count' | 'space')[]; // What measurement types this applies to
+  createdBy: 'system' | 'user' | 'ai-generated';
+  usageCount?: number; // Track popularity
+}
+
+// ============================================
+// MEASUREMENT - A takeoff item
+// ============================================
+
 export interface Measurement {
   id: string;
   type: 'line' | 'polyline' | 'count' | 'area' | 'space';
@@ -102,16 +160,6 @@ export interface SpaceFinish {
   unit: string;
 }
 
-export interface JOCItem {
-  taskCode: string;      // JOC task code (e.g., "09290513-0045")
-  code?: string;         // Alias for taskCode (backwards compatibility)
-  description: string;
-  unit: string;
-  unitCost: number;      // Cost per unit
-  unitPrice?: number;    // Alias for unitCost (backwards compatibility)
-  division?: string;     // CSI division (optional)
-}
-
 // Import complexity factor type
 import type { ComplexityFactor } from '../utils/complexityFactors';
 
@@ -130,42 +178,3 @@ export interface Project {
 }
 
 export type Tool = 'select' | 'pan' | 'text' | 'line' | 'polyline' | 'count' | 'area' | 'space' | 'calibrate';
-
-// ============================================
-// ASSEMBLY SYSTEM - The Translation Engine
-// ============================================
-
-// A single item in an assembly with quantity modifier
-export interface AssemblyItem {
-  jocItem: JOCItem;
-  quantityFactor: number; // Multiplier (1.0 = same as measurement, 2.0 = double, etc.)
-  notes?: string; // e.g., "2 coats", "both sides"
-}
-
-// A reusable assembly/recipe of JOC items
-export interface Assembly {
-  id: string;
-  name: string; // User-facing name: "Wall Patch", "Door Install"
-  description?: string;
-  category: AssemblyCategory;
-  keywords: string[]; // Search/match terms: ["wall", "patch", "drywall", "gypsum", "repair"]
-  items: AssemblyItem[];
-  applicableTo: ('line' | 'polyline' | 'area' | 'count' | 'space')[]; // What measurement types this applies to
-  createdBy: 'system' | 'user';
-  usageCount?: number; // Track popularity
-}
-
-export type AssemblyCategory = 
-  | 'demolition'
-  | 'carpentry'
-  | 'drywall'
-  | 'flooring'
-  | 'ceiling'
-  | 'doors'
-  | 'painting'
-  | 'plumbing'
-  | 'electrical'
-  | 'hvac'
-  | 'fire-protection'
-  | 'general'
-  | 'custom';
