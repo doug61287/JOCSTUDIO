@@ -1,11 +1,14 @@
 import type { Assembly, AssemblyCategory } from '../types';
+import { FIRE_PROTECTION_ASSEMBLIES } from './fire-protection-assemblies';
+import { PLUMBING_ASSEMBLIES } from './plumbing-assemblies';
 
 // ============================================
 // JOCHero Assembly Library
 // "Type what you're measuring. We translate it."
 // ============================================
 
-export const ASSEMBLY_LIBRARY: Assembly[] = [
+// Core assemblies (manually curated)
+const CORE_ASSEMBLIES: Assembly[] = [
   // ============================================
   // DRYWALL / WALL REPAIRS
   // ============================================
@@ -1377,6 +1380,16 @@ export const ASSEMBLY_LIBRARY: Assembly[] = [
       },
     ],
   },
+];
+
+// ============================================
+// MERGED ASSEMBLY LIBRARY
+// Core + AI-Generated (Fire Protection + Plumbing)
+// ============================================
+export const ASSEMBLY_LIBRARY: Assembly[] = [
+  ...CORE_ASSEMBLIES,
+  ...FIRE_PROTECTION_ASSEMBLIES,
+  ...PLUMBING_ASSEMBLIES,
 ];
 
 // ============================================
