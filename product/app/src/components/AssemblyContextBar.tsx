@@ -1,6 +1,8 @@
 import { useState, useMemo, useEffect } from 'react';
-import { Search, ChevronDown, Package, Layers, Check, X } from 'lucide-react';
+import { Search, ChevronDown, Package, Layers, Check, X, Wrench, Plus } from 'lucide-react';
 import { ASSEMBLY_LIBRARY } from '../data/assemblies';
+import { getUserAssemblies, saveUserAssembly } from '../utils/userAssemblyStore';
+import { AssemblyAssembler } from './AssemblyAssembler';
 import type { Assembly, AssemblyCategory } from '../types';
 
 interface AssemblyContextBarProps {
@@ -27,10 +29,23 @@ export function AssemblyContextBar({
   const [activeCategory, setActiveCategory] = useState<AssemblyCategory | 'all'>('all');
   const [isExpanded, setIsExpanded] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
+  const [showAssembler, setShowAssembler] = useState(false);
+  const [assemblerQuery, setAssemblerQuery] = useState('');
+  const [userAssemblies, setUserAssemblies] = useState<Assembly[]>([]);
+
+  // Load user assemblies on mount
+  useEffect(() => {
+    setUserAssemblies(getUserAssemblies());
+  }, []);
+
+  // Combine built-in and user assemblies
+  const allAssemblies = useMemo(() => {
+    return [...userAssemblies, ...ASSEMBLY_LIBRARY];
+  }, [userAssemblies]);
 
   // Filter assemblies based on search and category
   const filteredAssemblies = useMemo(() => {
-    let results = ASSEMBLY_LIBRARY;
+    let results = allAssemblies;
 
     // Filter by category
     if (activeCategory !== 'all') {
@@ -51,12 +66,35 @@ export function AssemblyContextBar({
 
   // Get category counts
   const categoryCounts = useMemo(() => {
-    const counts: Record<string, number> = { all: ASSEMBLY_LIBRARY.length };
-    ASSEMBLY_LIBRARY.forEach(a => {
+    const counts: Record<string, number> = { all: allAssemblies.length };
+    allAssemblies.forEach(a => {
       counts[a.category] = (counts[a.category] || 0) + 1;
     });
     return counts;
-  }, []);
+  }, [allAssemblies]);
+
+  // Handle saving assembly from wizard
+  const handleSaveAssembly = (assembly: Assembly) => {
+    saveUserAssembly(assembly);
+    setUserAssemblies(getUserAssemblies());
+    setShowAssembler(false);
+  };
+
+  // Handle save and start takeoff
+  const handleSaveAndStart = (assembly: Assembly) => {
+    saveUserAssembly(assembly);
+    setUserAssemblies(getUserAssemblies());
+    onSelectAssembly(assembly);
+    setShowAssembler(false);
+    setSearchQuery('');
+  };
+
+  // Open assembler with current query
+  const openAssembler = () => {
+    setAssemblerQuery(searchQuery);
+    setShowAssembler(true);
+    setShowDropdown(false);
+  };
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -95,8 +133,18 @@ export function AssemblyContextBar({
             <div className="absolute top-full left-0 right-0 mt-1 bg-slate-700 border border-slate-600 
                             rounded-lg shadow-xl z-50 max-h-80 overflow-y-auto">
               {filteredAssemblies.length === 0 ? (
-                <div className="p-4 text-slate-400 text-sm text-center">
-                  No assemblies found. Try different keywords.
+                <div className="p-4 text-center">
+                  <p className="text-slate-400 text-sm mb-3">No matching assemblies found.</p>
+                  {searchQuery.trim().length >= 2 && (
+                    <button
+                      onClick={openAssembler}
+                      className="inline-flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-amber-500 to-orange-500 
+                                 hover:from-amber-400 hover:to-orange-400 text-black font-semibold rounded-lg transition-all"
+                    >
+                      <Wrench className="w-4 h-4" />
+                      Build "{searchQuery}" Assembly
+                    </button>
+                  )}
                 </div>
               ) : (
                 filteredAssemblies.map(assembly => (
@@ -155,6 +203,18 @@ export function AssemblyContextBar({
               <span className="ml-1 opacity-60">({categoryCounts[cat.id] || 0})</span>
             </button>
           ))}
+          {/* Build New Assembly button */}
+          <button
+            onClick={() => {
+              setAssemblerQuery('');
+              setShowAssembler(true);
+            }}
+            className="px-3 py-1.5 rounded-full text-xs font-medium bg-gradient-to-r from-amber-500/20 to-orange-500/20 
+                       text-amber-400 hover:from-amber-500/30 hover:to-orange-500/30 border border-amber-500/30 
+                       transition-colors flex items-center gap-1"
+          >
+            <Plus className="w-3 h-3" /> Build
+          </button>
           <button
             onClick={() => setIsExpanded(!isExpanded)}
             className="px-2 py-1.5 rounded-full text-xs bg-slate-700 text-slate-300 hover:bg-slate-600"
@@ -234,6 +294,15 @@ export function AssemblyContextBar({
           </div>
         </div>
       )}
+
+      {/* Assembly Assembler Wizard */}
+      <AssemblyAssembler
+        isOpen={showAssembler}
+        onClose={() => setShowAssembler(false)}
+        onSave={handleSaveAssembly}
+        onSaveAndStart={handleSaveAndStart}
+        initialQuery={assemblerQuery}
+      />
     </div>
   );
 }

@@ -15,3 +15,5 @@ export { SchedulePanel } from './SchedulePanel';
 export { TierSelector, TierBadge } from './TierSelector';
 export { HeightSelector, HeightBadge } from './HeightSelector';
 export { ComplexityPanel, ComplexitySummary } from './ComplexityPanel';
+export { AssemblyAssembler } from './AssemblyAssembler';
+export { AssemblyContextBar } from './AssemblyContextBar';
