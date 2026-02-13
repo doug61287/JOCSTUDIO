@@ -1,0 +1,332 @@
+{
+  "meta": {
+    "version": "1.0.0",
+    "description": "Empirical quantity factors for construction assemblies",
+    "source": "Trade knowledge + industry standards",
+    "lastUpdated": "2026-02-13"
+  },
+  
+  "plumbing": {
+    "fittings": {
+      "coupling": {
+        "factor": 0.10,
+        "unit": "EA per LF",
+        "rationale": "10-foot pipe sticks = 1 coupling per 10 LF"
+      },
+      "elbow_90": {
+        "factor": 0.05,
+        "unit": "EA per LF", 
+        "rationale": "Direction change every ~20 LF average"
+      },
+      "elbow_45": {
+        "factor": 0.025,
+        "unit": "EA per LF",
+        "rationale": "Half as common as 90° elbows"
+      },
+      "tee": {
+        "factor": 0.02,
+        "unit": "EA per LF",
+        "rationale": "Branch connection every ~50 LF"
+      },
+      "cap": {
+        "factor": 0.005,
+        "unit": "EA per LF",
+        "rationale": "End terminations relatively rare"
+      },
+      "cleanout": {
+        "factor": 0.01,
+        "unit": "EA per LF",
+        "rationale": "Code requires ~every 100 LF"
+      },
+      "valve_gate": {
+        "factor": 0.02,
+        "unit": "EA per LF",
+        "rationale": "Isolation valve every ~50 LF"
+      },
+      "valve_ball": {
+        "factor": 0.02,
+        "unit": "EA per LF",
+        "rationale": "Equipment/fixture isolation"
+      },
+      "union": {
+        "factor": 0.02,
+        "unit": "EA per LF",
+        "rationale": "Equipment connections for serviceability"
+      },
+      "reducer": {
+        "factor": 0.015,
+        "unit": "EA per LF",
+        "rationale": "Size transitions ~every 65 LF"
+      },
+      "flange": {
+        "factor": 0.01,
+        "unit": "EA per LF",
+        "rationale": "Equipment and valve connections"
+      }
+    },
+    "supports": {
+      "pipe_hanger": {
+        "factor": 0.125,
+        "unit": "EA per LF",
+        "rationale": "Code minimum every 8 LF horizontal"
+      },
+      "riser_clamp": {
+        "factor": 0.05,
+        "unit": "EA per LF",
+        "rationale": "Every 20 LF on vertical runs"
+      },
+      "clevis_hanger": {
+        "factor": 0.10,
+        "unit": "EA per LF",
+        "rationale": "Every 10 LF typical commercial"
+      },
+      "strut_channel": {
+        "factor": 0.20,
+        "unit": "LF per LF of pipe",
+        "rationale": "Trapeze supports every 5 LF"
+      }
+    },
+    "insulation": {
+      "pipe_insulation": {
+        "factor": 1.0,
+        "unit": "LF per LF",
+        "rationale": "Linear coverage"
+      },
+      "fitting_cover": {
+        "factor": 0.15,
+        "unit": "EA per LF",
+        "rationale": "Each fitting needs insulation cover"
+      },
+      "valve_cover": {
+        "factor": 0.02,
+        "unit": "EA per LF",
+        "rationale": "Matches valve frequency"
+      }
+    },
+    "testing": {
+      "pressure_test": {
+        "factor": 0.01,
+        "unit": "EA per LF",
+        "rationale": "Test every ~100 LF section"
+      }
+    }
+  },
+
+  "fire_protection": {
+    "fittings": {
+      "coupling": {
+        "factor": 0.10,
+        "unit": "EA per LF",
+        "rationale": "Same as plumbing - 10-foot sticks"
+      },
+      "elbow_90": {
+        "factor": 0.04,
+        "unit": "EA per LF",
+        "rationale": "Fewer direction changes in FP mains"
+      },
+      "elbow_45": {
+        "factor": 0.02,
+        "unit": "EA per LF",
+        "rationale": "Offset routing"
+      },
+      "tee": {
+        "factor": 0.08,
+        "unit": "EA per LF",
+        "rationale": "More branches for head connections"
+      },
+      "reducer": {
+        "factor": 0.02,
+        "unit": "EA per LF",
+        "rationale": "Size transitions main to branch"
+      },
+      "flange": {
+        "factor": 0.01,
+        "unit": "EA per LF",
+        "rationale": "Riser and equipment connections"
+      },
+      "mechanical_tee": {
+        "factor": 0.06,
+        "unit": "EA per LF",
+        "rationale": "Grooved system branch takeoffs"
+      }
+    },
+    "heads": {
+      "pendent": {
+        "factor": 0.0056,
+        "unit": "EA per SF",
+        "rationale": "Standard 15x15 spacing = 1 head per 180 SF"
+      },
+      "upright": {
+        "factor": 0.0056,
+        "unit": "EA per SF",
+        "rationale": "Same coverage as pendent"
+      },
+      "sidewall": {
+        "factor": 0.0071,
+        "unit": "EA per SF",
+        "rationale": "~1 head per 140 SF coverage"
+      },
+      "concealed": {
+        "factor": 0.0056,
+        "unit": "EA per SF",
+        "rationale": "Same as pendent with cover plate"
+      },
+      "escutcheon": {
+        "factor": 1.0,
+        "unit": "EA per head",
+        "rationale": "One per head always"
+      }
+    },
+    "supports": {
+      "pipe_hanger": {
+        "factor": 0.10,
+        "unit": "EA per LF",
+        "rationale": "Every 10 LF per NFPA 13"
+      },
+      "sway_brace": {
+        "factor": 0.025,
+        "unit": "EA per LF",
+        "rationale": "Every 40 LF lateral, code requirement"
+      },
+      "riser_clamp": {
+        "factor": 0.05,
+        "unit": "EA per LF",
+        "rationale": "Vertical support every 20 LF"
+      }
+    },
+    "specialties": {
+      "drain_valve": {
+        "factor": 0.005,
+        "unit": "EA per LF",
+        "rationale": "Low point drains ~200 LF"
+      },
+      "inspector_test": {
+        "factor": 0.002,
+        "unit": "EA per LF",
+        "rationale": "One per zone ~500 LF"
+      },
+      "flow_switch": {
+        "factor": 0.002,
+        "unit": "EA per LF",
+        "rationale": "One per zone"
+      }
+    }
+  },
+
+  "drywall": {
+    "framing": {
+      "stud": {
+        "factor": 0.0625,
+        "unit": "EA per SF",
+        "rationale": "16\" OC = 1 stud per 16 SF wall"
+      },
+      "track": {
+        "factor": 0.25,
+        "unit": "LF per SF",
+        "rationale": "Top and bottom track"
+      }
+    },
+    "finishing": {
+      "tape_and_mud": {
+        "factor": 1.0,
+        "unit": "SF per SF",
+        "rationale": "Full coverage"
+      },
+      "corner_bead": {
+        "factor": 0.1,
+        "unit": "LF per SF",
+        "rationale": "Estimate 1 LF per 10 SF for corners"
+      }
+    },
+    "painting": {
+      "primer": {
+        "factor": 1.0,
+        "unit": "SF per SF",
+        "rationale": "Full coverage"
+      },
+      "paint_2_coat": {
+        "factor": 1.0,
+        "unit": "SF per SF",
+        "rationale": "Full coverage"
+      }
+    }
+  },
+
+  "concrete": {
+    "slab_conversion": {
+      "4_inch": {
+        "factor": 0.0123,
+        "unit": "CY per SF",
+        "rationale": "4\" ÷ 12 ÷ 27 = 0.0123 CY/SF"
+      },
+      "6_inch": {
+        "factor": 0.0185,
+        "unit": "CY per SF",
+        "rationale": "6\" ÷ 12 ÷ 27 = 0.0185 CY/SF"
+      },
+      "8_inch": {
+        "factor": 0.0247,
+        "unit": "CY per SF",
+        "rationale": "8\" ÷ 12 ÷ 27 = 0.0247 CY/SF"
+      }
+    },
+    "reinforcement": {
+      "wwf": {
+        "factor": 1.05,
+        "unit": "SF per SF",
+        "rationale": "5% overlap allowance"
+      },
+      "rebar": {
+        "factor": 0.5,
+        "unit": "LF per SF",
+        "rationale": "Varies by design, typical estimate"
+      }
+    },
+    "formwork": {
+      "edge_form": {
+        "factor": 0.05,
+        "unit": "LF per SF",
+        "rationale": "Perimeter forms"
+      }
+    }
+  },
+
+  "electrical": {
+    "rough_in": {
+      "box": {
+        "factor": 0.01,
+        "unit": "EA per SF",
+        "rationale": "~1 device per 100 SF typical"
+      },
+      "conduit": {
+        "factor": 0.15,
+        "unit": "LF per SF",
+        "rationale": "Varies heavily by use"
+      },
+      "wire": {
+        "factor": 0.5,
+        "unit": "LF per LF conduit",
+        "rationale": "Average 3 wires at 1.5x conduit length"
+      }
+    }
+  },
+
+  "hvac": {
+    "ductwork": {
+      "hanger": {
+        "factor": 0.125,
+        "unit": "EA per LF",
+        "rationale": "Support every 8 LF"
+      },
+      "flex_connector": {
+        "factor": 0.1,
+        "unit": "EA per LF",
+        "rationale": "Equipment connections"
+      }
+    },
+    "piping": {
+      "same_as": "plumbing",
+      "note": "Use plumbing factors for hydronic piping"
+    }
+  }
+}
