@@ -1,4 +1,4 @@
-import { useState, useMemo, useRef } from 'react';
+import { useState, useMemo, useRef, lazy, Suspense } from 'react';
 import { useProjectStore } from '../stores/projectStore';
 import { searchJOCItems, jocCatalogue, findTierFamily, hasTierVariants, type TierFamily, type QuantityTier } from '../data/jocCatalogue';
 import { searchAssemblies, calculateAssemblyCost, getAssemblyById } from '../data/assemblies';
@@ -8,7 +8,9 @@ import { ComplexityPanel, ComplexitySummary } from './ComplexityPanel';
 import { calculateComplexityMultiplier } from '../utils/complexityFactors';
 import { hasAddDeductTiers, calculateAdjustedPrice } from '../utils/quantityTiers';
 import type { Assembly } from '../types';
-import { GuidedAssistant } from './GuidedAssistant';
+
+// Lazy load GuidedAssistant (carries 20MB catalogueTree.ts)
+const GuidedAssistant = lazy(() => import('./GuidedAssistant'));
 import { FormattingPanel } from './FormattingPanel';
 import { FlagsPanel } from './FlagsPanel';
 import type { JOCItem, Measurement, MeasurementGroup, Flag as FlagType } from '../types';
@@ -1544,6 +1546,7 @@ export function MeasurementPanel() {
       {showAssistant && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
           <div className="w-full max-w-4xl h-[85vh]">
+            <Suspense fallback={<div className="flex items-center justify-center h-full text-zinc-400">Loading catalogue browser...</div>}>
             <GuidedAssistant
               measurementId={showAssistant.id}
               measurementType={showAssistant.type as 'line' | 'count' | 'area' | 'space'}
@@ -1560,6 +1563,7 @@ export function MeasurementPanel() {
               }}
               onClose={() => setShowAssistant(null)}
             />
+            </Suspense>
           </div>
         </div>
       )}

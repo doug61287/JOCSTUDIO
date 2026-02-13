@@ -431,3 +431,5 @@ export function GuidedAssistant({ onSelect, onClose, measurementLabel }: GuidedA
     </div>
   );
 }
+
+export default GuidedAssistant;
