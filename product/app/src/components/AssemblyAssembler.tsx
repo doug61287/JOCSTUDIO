@@ -326,22 +326,7 @@ export function AssemblyAssembler({
     }
   }, [selectedPipeItem, selectedSize, selectedMaterial, selectedType]);
 
-  // Find head/fixture items for count-type assemblies
-  // TODO: Use this in a future step for selecting specific heads/fixtures
-  const _countItems = useMemo(() => {
-    if (!selectedType || selectedType.needsSize) return [];
-    
-    const prefix = selectedType.taskCodePrefix;
-    return jocCatalogue.filter(item => {
-      const code = item.taskCode;
-      const desc = item.description.toLowerCase();
-      
-      if (!code.startsWith(prefix.substring(0, 4))) return false;
-      if (desc.includes('removal') || desc.includes('relocate') || desc.includes('demo')) return false;
-      
-      return true;
-    }).slice(0, 20); // Limit results
-  }, [selectedType]);
+  // TODO: Add head/fixture selection step for count-type assemblies
 
   // Build assembly
   const buildAssembly = (): Assembly => {
