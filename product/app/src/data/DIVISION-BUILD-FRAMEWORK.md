@@ -1,7 +1,7 @@
 # JOCHero Division Build Framework 🏗️
 
 ## Overview
-This document defines the standard process for building out each CSI division in JOCHero. Follow this framework to ensure consistency across all divisions.
+This document defines the standard process for building out each CSI division in JOCHero. Division 21 (Fire Protection) is the reference implementation.
 
 ---
 
@@ -13,242 +13,299 @@ This document defines the standard process for building out each CSI division in
 cat nyc-hh-ctc-full.json | jq -r '.[] | select(.taskCode | startswith("XX")) | .taskCode[:8]' | sort -u
 ```
 
-### Step 1.2: Categorize Items
-For each prefix, identify:
-- **Line items (LF)** - Measured by length (pipe, cable, etc.)
-- **Count items (EA)** - Individual items (heads, fixtures, etc.)
-- **Area items (SF)** - Measured by area
-- **Assemblies** - Pre-priced complete systems
+### Step 1.2: Categorize by Prefix
+For each prefix, document:
+- **Count**: How many items
+- **Sample**: Representative item description
+- **Keywords**: What estimators call it
+- **Workflow**: `measure` (LF/SF) or `count` (EA) or `lump`
 
-### Step 1.3: Document Price Ranges
-Create a quick reference table:
-| Category | Task Code Range | Unit | Price Range |
-|----------|-----------------|------|-------------|
-| Pipe 3/4" | XXXXXXXX-0003 | LF | $X.XX |
-| ... | ... | ... | ... |
+Example from Division 21:
+```
+21131300: 209 items - Wet Pipe Sprinkler (heads, assemblies) - COUNT
+21134100:  60 items - CPVC Sprinkler Pipe - MEASURE (has fittings)
+21011091:  28 items - Relocation Work - COUNT
+```
+
+### Step 1.3: Check for Quantity Multipliers 💰
+```bash
+# Check tier-map.json for division multipliers
+python3 -c "
+import json
+with open('tier-map.json') as f:
+    tiers = json.load(f)
+divXX = {k:v for k,v in tiers.items() if k.startswith('XX')}
+print(f'Items with multipliers: {len(divXX)}')
+# Group by prefix
+prefixes = {}
+for k in divXX:
+    p = k[:8]
+    if p not in prefixes: prefixes[p] = 0
+    prefixes[p] += 1
+for p in sorted(prefixes.keys()):
+    print(f'{p}: {prefixes[p]} items')
+"
+```
+
+**Division 21 Results:**
+- 21051900: 5 items (Gauges)
+- 21131300: 196 items (Wet pipe) ← 💰 THE BIG ONE
+- 21131600: 34 items (Dry pipe)
+- 21131900: 2 items (Preaction)
 
 ---
 
-## Phase 2: Search Synonyms
+## Phase 2: Division Mapping File
 
-### Step 2.1: Identify Trade Language
-Interview estimators or review drawings to understand:
-- What terms do they use? (e.g., "pendant" vs catalogue "pendent")
-- Common abbreviations (FDC, ACT, VCT, CMU)
-- Size formats ("3 inch", "3"", "three inch")
+Create a dedicated mapping file: `src/data/divisionXX-mapping.ts`
 
-### Step 2.2: Add to KEYWORD_SYNONYMS
+### Step 2.1: Define Interface
+```typescript
+export interface DivisionXXMapping {
+  searchTerms: string[];      // What estimators type
+  taskCodePrefix: string;     // H+H prefix (8 chars)
+  category: string;           // Logical grouping
+  unit: 'LF' | 'EA' | 'SF' | 'HR';
+  workflow: 'measure' | 'count' | 'lump';
+  description: string;
+}
+```
+
+### Step 2.2: Map Each Prefix
+```typescript
+export const divisionXXMappings: DivisionXXMapping[] = [
+  {
+    searchTerms: [
+      'primary term', 'alternate term', 'abbreviation',
+      'common misspelling', 'trade slang'
+    ],
+    taskCodePrefix: 'XXXXXXXX',
+    category: 'Category Name',
+    unit: 'EA',
+    workflow: 'count',
+    description: 'What this category contains'
+  },
+  // ... more mappings
+];
+```
+
+### Step 2.3: Add Size Synonyms (if applicable)
+```typescript
+export const pipeSizeSynonyms: Record<string, string> = {
+  '3/4': '3/4"',
+  '1-1/2': '1-1/2"',
+  '1.5': '1-1/2"',
+  'inch and a half': '1-1/2"',
+};
+```
+
+### Step 2.4: Add Type Synonyms (if applicable)
+```typescript
+export const headTypeSynonyms: Record<string, string[]> = {
+  'pendent': ['pendent', 'pendant', 'hanging', 'drop', 'ceiling'],
+  'upright': ['upright', 'up', 'standing'],
+};
+```
+
+---
+
+## Phase 3: Search Configuration
+
+### Step 3.1: Add KEYWORD_SYNONYMS
 Location: `src/data/jocCatalogue.ts`
 
 ```typescript
-// Template for new division
-// Division XX - [DIVISION NAME]
+// Division XX - [NAME]
 'term estimator uses': ['catalogue term', 'related term'],
-'abbreviation': ['full name'],
-'common misspelling': ['correct spelling'],
+'abbreviation': ['full expansion'],
+'misspelling': ['correct spelling'],
 ```
 
-### Step 2.3: Add Division Keywords
+### Step 3.2: Add DIVISION_KEYWORDS
 ```typescript
-// In DIVISION_KEYWORDS object
-'term': 'XX',  // Maps search term to division code
+'search term': 'XX',  // Maps term to division code
 ```
 
-### Step 2.4: Handle Special Cases
-- **Size extraction**: If division uses sizes (pipe, conduit), ensure `extractPipeSize()` handles the formats
-- **Unit conversion**: Flag items where measurement unit differs from catalogue unit
+### ⚠️ Step 3.3: Product vs Service Disambiguation
+**CRITICAL LESSON**: Some searches return services before products.
+
+Example: "sprinkler head" returned:
+- ❌ 21011091 (Relocate head - SERVICE) 
+- ✅ 21131300 (Actual head - PRODUCT)
+
+**Solution**: Add to `PRODUCT_SEARCH_BOOSTS`:
+```typescript
+export const PRODUCT_SEARCH_BOOSTS: Record<string, string[]> = {
+  'sprinkler head': ['21131300'],  // Boost products over services
+  'floor drain': ['22131913'],
+};
+```
+
+### Step 3.4: Handle Inch/Size Formats
+H+H catalogue uses `3"` not `3 inch`. The search engine automatically:
+- Removes "inch" when pipe size detected
+- Normalizes sizes to catalogue format
 
 ---
 
-## Phase 3: Assemblies with Companion Items
+## Phase 4: Assemblies with Companion Items
 
-There are **TWO** assembly systems to update:
+### The One Rule: Fittings Always Belong to a Parent
+No orphan fittings. Every fitting measurement has a `parentMeasurementId`.
 
-### A. Simple Assemblies (`src/data/assemblies.ts`)
-Used for quick suggestions in the measurement panel dropdown.
-
-### B. Full Assembly Configurator (`src/components/AssemblyConfigurator.tsx`)
-Shows the rich UI with checkboxes, categories, and search.
-
----
-
-### Step 3.1: Identify Common Workflows
-What does an estimator typically price together?
-- Pipe + fittings + hangers
-- Fixture + trim + connection
-- Demo + disposal + patching
-
-### Step 3.2: Create Simple Assembly (assemblies.ts)
-Location: `src/data/assemblies.ts`
-
+### Step 4.1: Identify Pipe → Fitting Relationships
+When user measures pipe, auto-create fitting children:
 ```typescript
 {
-  id: 'div-XX-item-name',           // Unique ID
-  name: 'User-Friendly Name',       // What user sees
-  description: 'Detailed description with scope',
-  category: 'category-name',        // Must be in AssemblyCategory type
-  keywords: ['search', 'terms'],    // For matching
-  applicableTo: ['line', 'polyline', 'count', 'area'], // Measurement types
-  createdBy: 'system',
+  id: 'fp-pipe-3',
+  name: '3" CPVC Fire Pipe',
   items: [
-    {
-      jocItem: {
-        taskCode: 'XXXXXXXX-XXXX',
-        description: 'Full H+H description',
-        unit: 'XX',
-        unitCost: XX.XX,
-      },
-      quantityFactor: 1.0,          // 1.0 = same as measurement
-      notes: 'Optional explanation',
+    { id: 'pipe', category: 'primary', quantityFactor: 1.0 },
+    { 
+      id: 'elbow', 
+      category: 'companion',  // ← Fitting
+      quantityFactor: 0.05,   // 1 per 20 LF
+      fittingType: 'elbow',
+      note: 'Elbow allowance: ~1 per 20 LF'
     },
-  ],
+    { 
+      id: 'tee', 
+      category: 'companion',
+      quantityFactor: 0.03,   // 1 per 33 LF
+      fittingType: 'tee',
+    },
+  ]
 }
 ```
 
-### Step 3.3: Create Full Configurator Assembly (AssemblyConfigurator.tsx)
-Location: `src/components/AssemblyConfigurator.tsx` → `ASSEMBLY_CONFIGS` array
-
+### Step 4.2: Identify Head → Accessory Relationships
 ```typescript
 {
-  id: 'div-XX-item-name',
-  name: 'User-Friendly Name',
-  matchPatterns: ['pattern 1', 'pattern 2'],  // Triggers configurator
-  measurementTypes: ['line', 'polyline', 'count', 'area'],
+  id: 'fp-head-pendent',
+  name: 'Pendent Sprinkler Head',
   items: [
-    {
-      id: 'primary-item',
-      jocItem: { taskCode: 'XX', description: '...', unit: 'XX', unitCost: XX },
-      category: 'primary',        // Always included, can't uncheck
-      quantityFactor: 1.0,
+    { id: 'head', category: 'primary', quantityFactor: 1.0 },
+    { 
+      id: 'escutcheon', 
+      category: 'companion',
+      quantityFactor: 1.0,  // 1:1 with head
+      note: 'Escutcheon (cover plate)'
     },
-    {
-      id: 'typical-item',
-      jocItem: { ... },
-      category: 'typical',        // Pre-checked, recommended
-      quantityFactor: 0.05,
-      note: 'Fitting allowance: 1 per 20 LF',
-    },
-    {
-      id: 'optional-item',
-      jocItem: { ... },
-      category: 'optional',       // Unchecked, available to add
-      quantityFactor: 0.02,
-      note: 'Add for special conditions',
-    },
-  ],
+  ]
 }
 ```
 
-### Item Categories Explained
-| Category | Behavior | Example |
-|----------|----------|---------|
-| `primary` | Always included, cannot uncheck | Main pipe, fixture |
-| `typical` | Pre-checked, can uncheck | Fittings, escutcheons |
-| `optional` | Unchecked, can add | Guards, special fittings |
+### Step 4.3: Fitting Workflow (Simplified)
+Previous: 3-button UI (Use Estimate / Count Now / Later) ← TOO COMPLEX
 
-### Step 3.4: Add Pattern Matching (assemblies.ts)
+Current: **Auto-create with estimates**
+1. User measures pipe (e.g., 350 LF)
+2. System auto-creates fitting children with `Math.ceil()` estimates
+3. Fittings appear grouped under parent in MeasurementPanel
+4. **Hard Count button** (🖱️) on hover → reset to 0 for precise counting
+
 ```typescript
-// In ASSEMBLY_PATTERNS array
-{ pattern: /\bsearch pattern/i, assemblyIds: ['assembly-id'], boost: 90 },
+// Fittings auto-populate with Math.ceil
+const estimatedQty = Math.ceil(parentValue * quantityFactor);
 ```
 
-### Step 3.5: Add Category to Types (if new)
-Location: `src/types/index.ts`
+### Step 4.4: Assembly Categories
+| Category | Behavior | Checkbox | Example |
+|----------|----------|----------|---------|
+| `primary` | Always included | Locked ✓ | Main pipe, fixture |
+| `typical` | Pre-checked | Can uncheck | Standard fittings |
+| `companion` | Auto-creates child measurement | N/A | Elbows, escutcheons |
+| `optional` | Unchecked | Can check | Special items |
+
+---
+
+## Phase 5: UI Enhancements
+
+### Step 5.1: Clean Item Names
+H+H descriptions are verbose:
+> "FIRE PROTECTION - SPRINKLER HEAD - PENDENT - CHROME - 1/2" ORIFICE"
+
+Use `getCleanItemName()` to extract:
+> "Sprinkler Head"
+
 ```typescript
-export type AssemblyCategory = 
-  | 'existing-categories'
-  | 'new-category';  // Add new category
+function getCleanItemName(description: string): string {
+  // Extract meaningful type from verbose H+H description
+  // See MeasurementPanel.tsx for implementation
+}
 ```
 
-### Step 3.6: Update applicableTo Types (if needed)
-Ensure measurement types are in the Assembly type:
-```typescript
-applicableTo: ('line' | 'polyline' | 'area' | 'count' | 'space')[];
+### Step 5.2: Multiplier Indicator
+When item has quantity tiers, show in UI:
+```
+💰 Multiplier: Qty 26-50 • Save $158.86
+```
+
+Implementation in MeasurementPanel.tsx:
+- Check `hasAddDeductTiers(taskCode)`
+- Calculate with `calculateAdjustedPrice(taskCode, quantity, basePrice)`
+- Show TrendingDown icon for deductions
+
+### Step 5.3: Grouped Measurements
+Fittings render under their parent pipe:
+```
+📏 3" CPVC Fire Pipe — 350 LF — $10,041.50
+   └─ 🔧 3" Elbow — 18 EA — $2,120.76
+   └─ 🔧 3" Tee — 11 EA — $1,898.82
 ```
 
 ---
 
-## Phase 4: Cross-Division References
+## Phase 6: Brain Visualization
 
-### Step 4.1: Identify Cross-Division Items
-Some items in one division are commonly used with another:
-- Division 22 galvanized pipe → used in Division 21 fire protection
-- Division 26 conduit → used with Division 27 communications
+Update `fire-plumbing-brain.html` (or create division-specific):
 
-### Step 4.2: Document in DIVISION-MAPPING-NOTES.md
-Note these relationships for future integration.
+### Data Structure for Visualization
+```javascript
+const divXXCategories = [
+  { 
+    prefix: 'XXXXXXXX', 
+    name: 'Category Name', 
+    shortName: 'Short',
+    count: 123,              // Items in catalogue
+    multiplierCount: 45,     // Items with qty tiers
+    description: 'User-friendly description',
+    keywords: ['search', 'terms'],
+    hasFittings: true/false
+  },
+];
+```
 
 ---
 
-## Phase 5: Testing Checklist
+## Phase 7: Testing Checklist
 
 ### Search Tests
-- [ ] Size + item type (e.g., "3 inch sprinkler pipe")
-- [ ] Abbreviation (e.g., "FDC")
+- [ ] Primary term returns correct items
+- [ ] Size + type (e.g., "3 inch sprinkler pipe")
+- [ ] Abbreviation (e.g., "FDC", "WC")
 - [ ] Misspelling (e.g., "pendant" for "pendent")
-- [ ] Generic term (e.g., "sprinkler head")
-- [ ] Division code prefix (e.g., "21134100")
+- [ ] **Products rank above services** (the disambiguation test)
+- [ ] Division filter works
 
 ### Assembly Tests
-- [ ] Assembly appears when naming measurement
-- [ ] All companion items included
-- [ ] Quantity factors calculate correctly
-- [ ] Pattern matching triggers correctly
+- [ ] Assembly triggers on measurement name match
+- [ ] Primary items always included
+- [ ] Companion items auto-create as children
+- [ ] Quantity factors calculate correctly with Math.ceil()
+- [ ] Fittings grouped under parent in panel
 
-### Results Quality
-- [ ] Top results are from correct division
-- [ ] Division badges display correctly
-- [ ] Full descriptions visible
-- [ ] Prices accurate
+### Multiplier Tests
+- [ ] Items with tiers show multiplier indicator
+- [ ] Correct tier selected based on quantity
+- [ ] Savings calculated and displayed
+- [ ] Price adjusts with quantity changes
 
----
-
-## Division Status Tracker
-
-| Division | Name | Status | Notes |
-|----------|------|--------|-------|
-| 01 | General Requirements | ⬜ TODO | |
-| 02 | Existing Conditions | ⬜ TODO | |
-| 03 | Concrete | ✅ DONE | Basic assemblies |
-| 04 | Masonry | ✅ DONE | CMU assemblies |
-| 05 | Metals | ⬜ TODO | |
-| 06 | Wood/Plastics | ⬜ TODO | |
-| 07 | Thermal/Moisture | ⬜ TODO | |
-| 08 | Openings | ✅ DONE | Doors, storefront |
-| 09 | Finishes | ✅ DONE | Drywall, flooring, paint |
-| 10 | Specialties | ⬜ TODO | |
-| 11 | Equipment | ⬜ TODO | |
-| 12 | Furnishings | ⬜ TODO | |
-| 21 | Fire Suppression | ✅ DONE | Full mapping + assemblies |
-| 22 | Plumbing | 🔄 NEXT | Contractor specialty |
-| 23 | HVAC | ⬜ TODO | |
-| 26 | Electrical | ⬜ TODO | |
-| 27 | Communications | ⬜ TODO | |
-| 28 | Electronic Safety | ⬜ TODO | |
-
----
-
-## Quick Commands
-
-### Check items in a division
-```bash
-cat nyc-hh-ctc-full.json | jq '[.[] | select(.taskCode | startswith("XX"))] | length'
-```
-
-### Find items by description
-```bash
-cat nyc-hh-ctc-full.json | jq '.[] | select(.description | test("keyword"; "i"))'
-```
-
-### List unique units in division
-```bash
-cat nyc-hh-ctc-full.json | jq -r '.[] | select(.taskCode | startswith("XX")) | .unit' | sort -u
-```
-
-### Price range for a category
-```bash
-cat nyc-hh-ctc-full.json | jq '[.[] | select(.taskCode | startswith("XXXXXXXX")) | .unitCost] | {min: min, max: max, avg: (add/length)}'
-```
+### UI Tests
+- [ ] Clean names display (not verbose H+H)
+- [ ] Hard Count button works (resets to 0)
+- [ ] Count tool auto-selects for continuing
+- [ ] Visibility filter respects `m.visible`
 
 ---
 
@@ -256,24 +313,82 @@ cat nyc-hh-ctc-full.json | jq '[.[] | select(.taskCode | startswith("XXXXXXXX"))
 
 | File | What to Add |
 |------|-------------|
-| `src/data/jocCatalogue.ts` | KEYWORD_SYNONYMS + DIVISION_KEYWORDS |
+| `src/data/divisionXX-mapping.ts` | **NEW** - Full division reference |
+| `src/data/jocCatalogue.ts` | KEYWORD_SYNONYMS, DIVISION_KEYWORDS, PRODUCT_SEARCH_BOOSTS |
 | `src/data/assemblies.ts` | ASSEMBLY_LIBRARY + ASSEMBLY_PATTERNS |
-| `src/components/AssemblyConfigurator.tsx` | ASSEMBLY_CONFIGS (full UI) |
+| `src/components/AssemblyConfigurator.tsx` | ASSEMBLY_CONFIGS with companion items |
+| `src/components/MeasurementPanel.tsx` | Any division-specific display logic |
+| `fire-plumbing-brain.html` | Visualization data |
 | `src/types/index.ts` | AssemblyCategory (if new category) |
-| `src/data/DIVISION-MAPPING-NOTES.md` | Cross-division notes |
-| `src/data/division{XX}-mapping.ts` | Optional detailed reference |
-
-### Checklist Per Division
-- [ ] Add synonyms to `KEYWORD_SYNONYMS`
-- [ ] Add division to `DIVISION_KEYWORDS`  
-- [ ] Add assemblies to `ASSEMBLY_LIBRARY`
-- [ ] Add patterns to `ASSEMBLY_PATTERNS`
-- [ ] Add configs to `ASSEMBLY_CONFIGS` (AssemblyConfigurator.tsx)
-- [ ] Add category to `AssemblyCategory` type (if new)
-- [ ] Test search with all synonym variations
-- [ ] Test assembly configurator triggers
-- [ ] Verify item descriptions not truncated
 
 ---
 
-*Framework Version 1.0 - Division 21 as reference implementation*
+## Division Status Tracker
+
+| Division | Name | Items | Multipliers | Status | Notes |
+|----------|------|-------|-------------|--------|-------|
+| 03 | Concrete | 2,847 | ? | ✅ Basic | Slab assemblies |
+| 04 | Masonry | 1,523 | ? | ✅ Basic | CMU assemblies |
+| 08 | Openings | ~2,000 | ? | ✅ Basic | Doors, storefront |
+| 09 | Finishes | 8,234 | ? | ✅ Basic | Flooring, drywall, paint |
+| **21** | **Fire Suppression** | **1,073** | **237** | ✅ **COMPLETE** | Reference implementation |
+| **22** | **Plumbing** | **6,093** | **233** | 🔄 NEXT | Contractor specialty |
+| 23 | HVAC | 7,823 | ? | ⬜ TODO | |
+| 26 | Electrical | 9,234 | ? | ⬜ TODO | |
+
+---
+
+## Key Lessons from Division 21
+
+### 1. Products vs Services
+Search must disambiguate. "Sprinkler head" should return the physical head (21131300), not the relocation service (21011091).
+
+### 2. One Rule for Fittings
+Every fitting belongs to a parent. No orphans. No 3-button UI confusion. Auto-create with estimates, let user refine.
+
+### 3. Quantity Tiers = Hidden Money
+196 sprinkler items have volume discounts most estimators don't apply. Make this visible and automatic.
+
+### 4. Search Scoring Matters
+- Skip items with score ≤ 0 (not just === 0)
+- Require ALL words to match for multi-word searches
+- Boost products over services
+
+### 5. Clean Names for Humans
+Verbose H+H descriptions hurt UX. Extract the meaningful part for display.
+
+### 6. Grouped Display
+Fittings nested under parent pipe is intuitive. Users immediately understand the relationship.
+
+---
+
+## Quick Reference: Division 21 Structure
+
+```
+Division 21 - Fire Protection (1,073 items)
+├── 21131300 - Wet Pipe Sprinkler (209 items, 196 multipliers) 💰
+│   ├── Assembly: fp-head-pendent
+│   │   ├── Primary: Head
+│   │   └── Companion: Escutcheon
+│   ├── Assembly: fp-head-upright
+│   └── Assembly: fp-head-sidewall
+├── 21134100 - Sprinkler Pipe (60 items)
+│   ├── Assembly: fp-pipe-3
+│   │   ├── Primary: 3" CPVC Pipe
+│   │   ├── Companion: 3" Elbow (0.05 factor)
+│   │   └── Companion: 3" Tee (0.03 factor)
+│   ├── Assembly: fp-pipe-1.5
+│   └── Assembly: fp-pipe-1.25
+├── 21131600 - Dry Pipe Systems (58 items, 34 multipliers) 💰
+├── 21011091 - Relocation Work (28 items)
+├── 21122300 - FD Valves (20 items)
+├── 21121300 - Fire Hose (19 items)
+├── 21122900 - Flow Detection (11 items)
+├── 21111900 - Siamese/FDC (8 items)
+└── ... 12 more categories
+```
+
+---
+
+*Framework Version 2.0 - Updated with Division 21 lessons learned*
+*Last updated: 2026-02-12*
