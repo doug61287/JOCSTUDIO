@@ -55,6 +55,12 @@ const PRODUCT_SEARCH_BOOSTS: Record<string, { boost: string[]; deBoost: string[]
   'tee': { boost: ['21134'], deBoost: [] },
   'coupling': { boost: ['21134'], deBoost: [] },
   'fitting': { boost: ['21134'], deBoost: [] },
+  // Division 22 - Plumbing product boosts
+  'floor drain': { boost: ['22131913'], deBoost: [] },
+  'lavatory': { boost: ['22421613'], deBoost: [] },
+  'water closet': { boost: ['22131300'], deBoost: [] },
+  'kitchen sink': { boost: ['22421616'], deBoost: [] },
+  'faucet': { boost: ['22423900'], deBoost: [] },
 };
 
 const KEYWORD_SYNONYMS: Record<string, string[]> = {
@@ -158,6 +164,31 @@ const KEYWORD_SYNONYMS: Record<string, string[]> = {
   'demo': ['demolition', 'removal', 'remove'],
   'demolition': ['demo', 'removal', 'selective demolition'],
   
+  // ============================================
+  // DIVISION 22 - PLUMBING SYNONYMS
+  // ============================================
+  
+  // Division 22 - Plumbing
+  'galvanized': ['galvanized', 'galv', 'steel pipe'],
+  'galv pipe': ['galvanized steel pipe', 'threaded pipe'],
+  'cast iron': ['cast iron', 'ci', 'soil pipe', 'hub pipe', 'no hub'],
+  'soil pipe': ['cast iron soil', 'dwv'],
+  'lavatory': ['lavatory', 'lav', 'bathroom sink', 'wall hung sink'],
+  'water closet': ['water closet', 'wc', 'toilet', 'commode'],
+  'wc': ['water closet', 'toilet'],
+  'floor drain': ['floor drain', 'fd', 'area drain'],
+  'roof drain': ['roof drain', 'rd'],
+  'cleanout': ['cleanout', 'clean out', 'co', 'access'],
+  'water heater': ['water heater', 'hot water heater', 'hwh', 'dhw'],
+  'grease trap': ['grease interceptor', 'grease trap', 'grease separator'],
+  'faucet': ['faucet', 'tap', 'spigot'],
+  'trap': ['p trap', 'trap', 'p-trap'],
+  'supply line': ['supply line', 'supply tube', 'riser'],
+  'shut off': ['shut off', 'shutoff', 'stop valve', 'angle stop'],
+  'flush valve': ['flush valve', 'flushometer', 'sloan'],
+  'sump pump': ['sump pump', 'ejector', 'sewage pump'],
+  'booster pump': ['booster pump', 'circulator', 'recirculating pump'],
+  
   // General terms
   'storefront': ['aluminum storefront', 'storefront framing', 'glazing'],
   'window': ['glazing', 'glass', 'window frame'],
@@ -199,6 +230,22 @@ const DIVISION_KEYWORDS: Record<string, string> = {
   'kitchen suppression': '21',
   'fire pump': '21',
   'plumbing': '22',
+  'galvanized': '22',
+  'galv': '22',
+  'lavatory': '22',
+  'lav': '22',
+  'water closet': '22',
+  'wc': '22',
+  'toilet': '22',
+  'floor drain': '22',
+  'roof drain': '22',
+  'cleanout': '22',
+  'water heater': '22',
+  'grease trap': '22',
+  'faucet': '22',
+  'sump pump': '22',
+  'cast iron': '22',
+  'soil pipe': '22',
   'hvac': '23',
   'mechanical': '23',
   'electrical': '26',
