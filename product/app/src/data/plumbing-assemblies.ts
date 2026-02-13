@@ -19,7 +19,7 @@ export const PLUMBING_ASSEMBLIES: Assembly[] = [
     description: 'Install 1/2" Type L hard drawn copper water line with fittings and hangers',
     category: 'plumbing',
     keywords: ['copper', 'pipe', 'water line', 'type l', '1/2 inch', 'domestic water', 'plumbing'],
-    applicableTo: ['length'],
+    applicableTo: ['line', 'polyline'],
     createdBy: 'ai-generated',
     items: [
       {
@@ -69,7 +69,7 @@ export const PLUMBING_ASSEMBLIES: Assembly[] = [
     description: 'Install 3/4" Type L hard drawn copper water line with fittings and hangers',
     category: 'plumbing',
     keywords: ['copper', 'pipe', 'water line', 'type l', '3/4 inch', 'domestic water', 'plumbing'],
-    applicableTo: ['length'],
+    applicableTo: ['line', 'polyline'],
     createdBy: 'ai-generated',
     items: [
       {
@@ -119,7 +119,7 @@ export const PLUMBING_ASSEMBLIES: Assembly[] = [
     description: 'Install 1" Type L hard drawn copper water line with fittings and hangers',
     category: 'plumbing',
     keywords: ['copper', 'pipe', 'water line', 'type l', '1 inch', 'domestic water', 'plumbing'],
-    applicableTo: ['length'],
+    applicableTo: ['line', 'polyline'],
     createdBy: 'ai-generated',
     items: [
       {
@@ -169,7 +169,7 @@ export const PLUMBING_ASSEMBLIES: Assembly[] = [
     description: 'Install 2" Type L hard drawn copper water line with fittings and hangers',
     category: 'plumbing',
     keywords: ['copper', 'pipe', 'water line', 'type l', '2 inch', 'domestic water', 'plumbing'],
-    applicableTo: ['length'],
+    applicableTo: ['line', 'polyline'],
     createdBy: 'ai-generated',
     items: [
       {
@@ -223,7 +223,7 @@ export const PLUMBING_ASSEMBLIES: Assembly[] = [
     description: 'Install 2" no-hub cast iron soil pipe with couplings and cleanouts',
     category: 'plumbing',
     keywords: ['cast iron', 'pipe', 'dwv', 'waste', '2 inch', 'no-hub', 'plumbing'],
-    applicableTo: ['length'],
+    applicableTo: ['line', 'polyline'],
     createdBy: 'ai-generated',
     items: [
       {
@@ -263,7 +263,7 @@ export const PLUMBING_ASSEMBLIES: Assembly[] = [
     description: 'Install 3" no-hub cast iron soil pipe with couplings and cleanouts',
     category: 'plumbing',
     keywords: ['cast iron', 'pipe', 'dwv', 'waste', '3 inch', 'no-hub', 'plumbing'],
-    applicableTo: ['length'],
+    applicableTo: ['line', 'polyline'],
     createdBy: 'ai-generated',
     items: [
       {
@@ -303,7 +303,7 @@ export const PLUMBING_ASSEMBLIES: Assembly[] = [
     description: 'Install 4" no-hub cast iron soil pipe with couplings and cleanouts',
     category: 'plumbing',
     keywords: ['cast iron', 'pipe', 'dwv', 'waste', '4 inch', 'no-hub', 'plumbing'],
-    applicableTo: ['length'],
+    applicableTo: ['line', 'polyline'],
     createdBy: 'ai-generated',
     items: [
       {
@@ -347,7 +347,7 @@ export const PLUMBING_ASSEMBLIES: Assembly[] = [
     description: 'Install 2" Schedule 40 PVC DWV pipe with fittings and cleanouts',
     category: 'plumbing',
     keywords: ['pvc', 'pipe', 'dwv', 'waste', '2 inch', 'plastic', 'plumbing'],
-    applicableTo: ['length'],
+    applicableTo: ['line', 'polyline'],
     createdBy: 'ai-generated',
     items: [
       {
@@ -387,7 +387,7 @@ export const PLUMBING_ASSEMBLIES: Assembly[] = [
     description: 'Install 3" Schedule 40 PVC DWV pipe with fittings and cleanouts',
     category: 'plumbing',
     keywords: ['pvc', 'pipe', 'dwv', 'waste', '3 inch', 'plastic', 'plumbing'],
-    applicableTo: ['length'],
+    applicableTo: ['line', 'polyline'],
     createdBy: 'ai-generated',
     items: [
       {
@@ -427,7 +427,7 @@ export const PLUMBING_ASSEMBLIES: Assembly[] = [
     description: 'Install 4" Schedule 40 PVC DWV pipe with fittings and cleanouts',
     category: 'plumbing',
     keywords: ['pvc', 'pipe', 'dwv', 'waste', '4 inch', 'plastic', 'plumbing'],
-    applicableTo: ['length'],
+    applicableTo: ['line', 'polyline'],
     createdBy: 'ai-generated',
     items: [
       {

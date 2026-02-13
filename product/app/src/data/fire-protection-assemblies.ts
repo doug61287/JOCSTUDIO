@@ -19,7 +19,7 @@ export const FIRE_PROTECTION_ASSEMBLIES: Assembly[] = [
     description: 'Install 1" Schedule 40 black steel sprinkler pipe with fittings and hangers',
     category: 'fire-protection',
     keywords: ['sprinkler', 'pipe', 'black steel', '1 inch', 'main', 'fire protection', 'fp'],
-    applicableTo: ['length'],
+    applicableTo: ['line', 'polyline'],
     createdBy: 'ai-generated',
     items: [
       {
@@ -49,7 +49,7 @@ export const FIRE_PROTECTION_ASSEMBLIES: Assembly[] = [
     description: 'Install 1-1/4" Schedule 40 black steel sprinkler pipe with fittings and hangers',
     category: 'fire-protection',
     keywords: ['sprinkler', 'pipe', 'black steel', '1-1/4 inch', 'main', 'fire protection', 'fp'],
-    applicableTo: ['length'],
+    applicableTo: ['line', 'polyline'],
     createdBy: 'ai-generated',
     items: [
       {
@@ -79,7 +79,7 @@ export const FIRE_PROTECTION_ASSEMBLIES: Assembly[] = [
     description: 'Install 1-1/2" Schedule 40 black steel sprinkler pipe with fittings and hangers',
     category: 'fire-protection',
     keywords: ['sprinkler', 'pipe', 'black steel', '1-1/2 inch', 'main', 'fire protection', 'fp'],
-    applicableTo: ['length'],
+    applicableTo: ['line', 'polyline'],
     createdBy: 'ai-generated',
     items: [
       {
@@ -109,7 +109,7 @@ export const FIRE_PROTECTION_ASSEMBLIES: Assembly[] = [
     description: 'Install 2" Schedule 40 black steel sprinkler pipe with fittings and hangers',
     category: 'fire-protection',
     keywords: ['sprinkler', 'pipe', 'black steel', '2 inch', 'main', 'fire protection', 'fp'],
-    applicableTo: ['length'],
+    applicableTo: ['line', 'polyline'],
     createdBy: 'ai-generated',
     items: [
       {
@@ -139,7 +139,7 @@ export const FIRE_PROTECTION_ASSEMBLIES: Assembly[] = [
     description: 'Install 2-1/2" Schedule 40 black steel sprinkler pipe with fittings and hangers',
     category: 'fire-protection',
     keywords: ['sprinkler', 'pipe', 'black steel', '2-1/2 inch', 'main', 'fire protection', 'fp'],
-    applicableTo: ['length'],
+    applicableTo: ['line', 'polyline'],
     createdBy: 'ai-generated',
     items: [
       {
@@ -169,7 +169,7 @@ export const FIRE_PROTECTION_ASSEMBLIES: Assembly[] = [
     description: 'Install 4" Schedule 40 black steel sprinkler pipe with fittings and hangers',
     category: 'fire-protection',
     keywords: ['sprinkler', 'pipe', 'black steel', '4 inch', 'main', 'fire protection', 'fp'],
-    applicableTo: ['length'],
+    applicableTo: ['line', 'polyline'],
     createdBy: 'ai-generated',
     items: [
       {
@@ -203,7 +203,7 @@ export const FIRE_PROTECTION_ASSEMBLIES: Assembly[] = [
     description: 'Install 1" Schedule 40 CPVC fire sprinkler pipe with solvent cement fittings',
     category: 'fire-protection',
     keywords: ['sprinkler', 'pipe', 'cpvc', '1 inch', 'fire protection', 'fp', 'plastic'],
-    applicableTo: ['length'],
+    applicableTo: ['line', 'polyline'],
     createdBy: 'ai-generated',
     items: [
       {
@@ -243,7 +243,7 @@ export const FIRE_PROTECTION_ASSEMBLIES: Assembly[] = [
     description: 'Install 1-1/4" Schedule 40 CPVC fire sprinkler pipe with solvent cement fittings',
     category: 'fire-protection',
     keywords: ['sprinkler', 'pipe', 'cpvc', '1-1/4 inch', 'fire protection', 'fp', 'plastic'],
-    applicableTo: ['length'],
+    applicableTo: ['line', 'polyline'],
     createdBy: 'ai-generated',
     items: [
       {
@@ -283,7 +283,7 @@ export const FIRE_PROTECTION_ASSEMBLIES: Assembly[] = [
     description: 'Install 2" Schedule 40 CPVC fire sprinkler pipe with solvent cement fittings',
     category: 'fire-protection',
     keywords: ['sprinkler', 'pipe', 'cpvc', '2 inch', 'fire protection', 'fp', 'plastic'],
-    applicableTo: ['length'],
+    applicableTo: ['line', 'polyline'],
     createdBy: 'ai-generated',
     items: [
       {
