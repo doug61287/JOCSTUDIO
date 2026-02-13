@@ -36,6 +36,9 @@ export interface Measurement {
   parentMeasurementId?: string; // Links back to parent measurement (e.g., pipe run)
   sourceAssemblyId?: string; // The assembly this measurement was derived from
   companionOf?: string; // Task code of the "parent" item (e.g., "3" pipe" → elbow is companion of pipe)
+  // Assembly system - bundled items
+  assembly?: Assembly; // The assembly applied to this measurement
+  assemblyItems?: AssemblyItem[]; // Expanded items from assembly with calculated quantities
 }
 
 // Default formatting style

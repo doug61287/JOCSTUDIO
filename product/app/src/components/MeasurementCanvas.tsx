@@ -48,7 +48,8 @@ export function MeasurementCanvas({ width, height, pageNumber }: MeasurementCanv
     selectedMeasurement,
     selectMeasurement,
     activeJOCItem,
-    activeGroupId
+    activeGroupId,
+    activeAssembly
   } = useProjectStore();
   
   const [tempPoints, setTempPoints] = useState<Point[]>([]);
@@ -65,6 +66,46 @@ export function MeasurementCanvas({ width, height, pageNumber }: MeasurementCanv
     setSnapResult(result);
     return result.point;
   }, [project, snapSettings, tempPoints]);
+
+  // Build measurement with assembly items if assembly is active
+  const buildMeasurementWithAssembly = useCallback((baseMeasurement: Measurement): Measurement => {
+    if (!activeAssembly) return baseMeasurement;
+    
+    // Check if assembly is compatible with this measurement type
+    const measurementTypeMap: Record<string, string> = {
+      'line': 'length',
+      'polyline': 'length', 
+      'area': 'area',
+      'space': 'area',
+      'count': 'count'
+    };
+    const compatType = measurementTypeMap[baseMeasurement.type];
+    if (!activeAssembly.applicableTo.includes(compatType as any)) {
+      // Assembly not compatible, return without it
+      return baseMeasurement;
+    }
+
+    // Build jocItems array from assembly
+    const jocItems = activeAssembly.items.map(item => ({
+      ...item.jocItem,
+      // Store the quantity factor for later calculation
+      _quantityFactor: item.quantityFactor,
+      _notes: item.notes,
+    }));
+
+    return {
+      ...baseMeasurement,
+      assembly: activeAssembly,
+      assemblyItems: activeAssembly.items,
+      jocItems: jocItems as any,
+      // Use first item as primary jocItem for backwards compatibility
+      jocItem: activeAssembly.items[0]?.jocItem,
+      // Use assembly name as the measurement label
+      name: activeAssembly.name,
+      // Assembly items get the themed color
+      color: getMeasurementColor(baseMeasurement.type),
+    };
+  }, [activeAssembly]);
 
   // ============================================
   // DRAWING HELPERS - Clean, Modern Style
@@ -710,7 +751,7 @@ export function MeasurementCanvas({ width, height, pageNumber }: MeasurementCanv
         const d = distance(tempPoints[0], point);
         const feet = pixelsToFeet(d, project!.scale);
         
-        const measurement: Measurement = {
+        const baseMeasurement: Measurement = {
           id: generateId(),
           type: 'line',
           points: [tempPoints[0], point],
@@ -721,6 +762,8 @@ export function MeasurementCanvas({ width, height, pageNumber }: MeasurementCanv
           jocItem: activeJOCItem || undefined,
           groupId: activeGroupId || undefined,
         };
+        // Apply assembly if selected
+        const measurement = buildMeasurementWithAssembly(baseMeasurement);
         addMeasurement(measurement);
         setTempPoints([]);
       }
@@ -745,17 +788,19 @@ export function MeasurementCanvas({ width, height, pageNumber }: MeasurementCanv
       } else {
         // Create new count measurement
         const newId = generateId();
-        const measurement: Measurement = {
+        const baseMeasurement: Measurement = {
           id: newId,
           type: 'count',
           points: [point],
           value: 1,
           unit: 'EA',
           pageNumber,
-          color: activeJOCItem ? getMeasurementColor('count') : COLORS.warning,
+          color: (activeJOCItem || activeAssembly) ? getMeasurementColor('count') : COLORS.warning,
           jocItem: activeJOCItem || undefined,
           groupId: activeGroupId || undefined,
         };
+        // Apply assembly if selected
+        const measurement = buildMeasurementWithAssembly(baseMeasurement);
         addMeasurement(measurement);
         // Auto-select so next clicks continue adding to this count!
         selectMeasurement(newId);
@@ -765,12 +810,12 @@ export function MeasurementCanvas({ width, height, pageNumber }: MeasurementCanv
     if (activeTool === 'area' || activeTool === 'space') {
       setTempPoints([...tempPoints, point]);
     }
-  }, [activeTool, tempPoints, project, addMeasurement, updateMeasurement, selectedMeasurement, selectMeasurement, getSnappedPoint, activeJOCItem, activeGroupId, pageNumber]);
+  }, [activeTool, tempPoints, project, addMeasurement, updateMeasurement, selectedMeasurement, selectMeasurement, getSnappedPoint, activeJOCItem, activeGroupId, activeAssembly, pageNumber, buildMeasurementWithAssembly]);
 
   const handleDoubleClick = useCallback(() => {
     if (activeTool === 'polyline' && tempPoints.length >= 2) {
       const totalLength = calculatePolylineLength(tempPoints, project!.scale);
-      const measurement: Measurement = {
+      const baseMeasurement: Measurement = {
         id: generateId(),
         type: 'polyline',
         points: tempPoints,
@@ -781,13 +826,14 @@ export function MeasurementCanvas({ width, height, pageNumber }: MeasurementCanv
         jocItem: activeJOCItem || undefined,
         groupId: activeGroupId || undefined,
       };
+      const measurement = buildMeasurementWithAssembly(baseMeasurement);
       addMeasurement(measurement);
       setTempPoints([]);
     }
     
     if (activeTool === 'area' && tempPoints.length >= 3) {
       const area = calculatePolygonArea(tempPoints, project!.scale);
-      const measurement: Measurement = {
+      const baseMeasurement: Measurement = {
         id: generateId(),
         type: 'area',
         points: tempPoints,
@@ -798,6 +844,7 @@ export function MeasurementCanvas({ width, height, pageNumber }: MeasurementCanv
         jocItem: activeJOCItem || undefined,
         groupId: activeGroupId || undefined,
       };
+      const measurement = buildMeasurementWithAssembly(baseMeasurement);
       addMeasurement(measurement);
       setTempPoints([]);
     }
@@ -807,7 +854,7 @@ export function MeasurementCanvas({ width, height, pageNumber }: MeasurementCanv
       if (spaceName) {
         const area = calculatePolygonArea(tempPoints, project!.scale);
         const perimeter = calculatePolygonPerimeter(tempPoints, project!.scale);
-        const measurement: Measurement = {
+        const baseMeasurement: Measurement = {
           id: generateId(),
           type: 'space',
           points: tempPoints,
@@ -821,11 +868,12 @@ export function MeasurementCanvas({ width, height, pageNumber }: MeasurementCanv
           jocItem: activeJOCItem || undefined,
           groupId: activeGroupId || undefined,
         };
+        const measurement = buildMeasurementWithAssembly(baseMeasurement);
         addMeasurement(measurement);
       }
       setTempPoints([]);
     }
-  }, [activeTool, tempPoints, project, addMeasurement, activeJOCItem, activeGroupId, pageNumber]);
+  }, [activeTool, tempPoints, project, addMeasurement, activeJOCItem, activeGroupId, pageNumber, buildMeasurementWithAssembly]);
 
   const handleMouseMove = useCallback((e: React.MouseEvent<HTMLCanvasElement>) => {
     const rect = canvasRef.current!.getBoundingClientRect();
