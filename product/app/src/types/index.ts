@@ -38,11 +38,13 @@ export type AssemblyCategory =
   | 'flooring'
   | 'ceiling'
   | 'doors'
+  | 'doors-windows'
   | 'painting'
   | 'plumbing'
   | 'electrical'
   | 'hvac'
   | 'fire-protection'
+  | 'concrete'
   | 'general'
   | 'custom';
 
