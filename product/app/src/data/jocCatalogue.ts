@@ -1,8 +1,12 @@
 // NYC H+H Construction Task Catalog - FULL 65,331 items
 import type { JOCItem } from '../types';
 import fullCatalogue from './nyc-hh-ctc-full.json';
+import { detectSearchIntent, calculateCategoryScore, categorizeItem } from './searchRulesEngine';
 
 export type { JOCItem };
+
+// Re-export rules engine for external use
+export { categorizeItem, detectSearchIntent } from './searchRulesEngine';
 
 // Export the full catalogue
 export const jocCatalogue: JOCItem[] = fullCatalogue as JOCItem[];
@@ -400,18 +404,24 @@ export function searchJOCItems(query: string, limit: number = 20): JOCItem[] {
       score += 50;
     }
     
-    // PRODUCT VS SERVICE DISAMBIGUATION
-    // When searching for "sprinkler head", boost actual products, de-boost relocate items
-    // Also check expandedWords so synonyms inherit boosts (e.g., "lav" → "lavatory" → boost)
+    // PRODUCT VS SERVICE DISAMBIGUATION - RULES ENGINE
+    // Detect what the user is searching for (product/service/accessory)
+    // and score items based on their category
+    const searchIntent = detectSearchIntent(q, expandedWords);
+    const categoryScore = calculateCategoryScore(taskCode, searchIntent);
+    score += categoryScore;
+    
+    // LEGACY: Manual PRODUCT_SEARCH_BOOSTS for specific overrides
+    // These take precedence over rules engine for fine-tuned control
     for (const [searchTerm, { boost, deBoost }] of Object.entries(PRODUCT_SEARCH_BOOSTS)) {
       if (q.includes(searchTerm) || originalWords.some(w => w === searchTerm) || expandedWords.some(w => w === searchTerm)) {
         // Boost actual product items
         if (boost.some(prefix => taskCode.startsWith(prefix))) {
-          score += 150; // Big boost for product items
+          score += 100; // Additional boost for explicitly mapped items
         }
         // De-boost service items (relocate, demo, etc.)
         if (deBoost.some(prefix => taskCode.startsWith(prefix))) {
-          score -= 100; // Penalty for service items when searching for products
+          score -= 75; // Additional penalty
         }
       }
     }
