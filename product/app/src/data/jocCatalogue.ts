@@ -63,8 +63,8 @@ const PRODUCT_SEARCH_BOOSTS: Record<string, { boost: string[]; deBoost: string[]
   // NOTE: Synonyms automatically inherit boosts via expandedWords check
   // e.g., "lav" → expands to "lavatory" → triggers 'lavatory' boost
   'floor drain': { boost: ['22131913'], deBoost: ['22014'] },
-  'lavatory': { boost: ['22421613'], deBoost: ['22014'] },
-  'sink': { boost: ['22421613', '22421616'], deBoost: ['22014'] },
+  'lavatory': { boost: ['22421613', '22131300', '22421316'], deBoost: [] },
+  'sink': { boost: ['22421613', '22421616', '22131300'], deBoost: [] },
   'water closet': { boost: ['22131300'], deBoost: ['22014'] },
   'toilet': { boost: ['22131300'], deBoost: ['22014'] },  // Keep - not a synonym of "water closet"
   'kitchen sink': { boost: ['22421616'], deBoost: ['22014'] },
