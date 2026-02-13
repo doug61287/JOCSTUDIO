@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import type { Project, Measurement, MeasurementGroup, Tool, JOCItem, Flag } from '../types';
+import type { Project, Measurement, MeasurementGroup, Tool, JOCItem, Flag, Assembly } from '../types';
 import { DEFAULT_COMPLEXITY_FACTORS } from '../utils/complexityFactors';
 import demoProjectData from '../data/demo-project.json';
 
@@ -20,6 +20,8 @@ interface ProjectState {
   // Sticky item - persists selection across clicks
   activeJOCItem: JOCItem | null;
   activeGroupId: string | null;
+  // Assembly - bundles multiple JOC items
+  activeAssembly: Assembly | null;
   
   // Actions
   setProject: (project: Project) => void;
@@ -36,6 +38,7 @@ interface ProjectState {
   // Sticky item actions
   setActiveJOCItem: (item: JOCItem | null) => void;
   setActiveGroupId: (groupId: string | null) => void;
+  setActiveAssembly: (assembly: Assembly | null) => void;
   // Group actions
   addGroup: (group: MeasurementGroup) => void;
   updateGroup: (id: string, updates: Partial<MeasurementGroup>) => void;
@@ -76,6 +79,7 @@ export const useProjectStore = create<ProjectState>((set) => ({
   // Sticky item state - select once, click many times
   activeJOCItem: null,
   activeGroupId: null,
+  activeAssembly: null,
 
   setProject: (project) => set({ project }),
   
@@ -133,6 +137,7 @@ export const useProjectStore = create<ProjectState>((set) => ({
   // Sticky item - select JOC item once, apply to multiple measurements
   setActiveJOCItem: (item) => set({ activeJOCItem: item }),
   setActiveGroupId: (groupId) => set({ activeGroupId: groupId }),
+  setActiveAssembly: (assembly) => set({ activeAssembly: assembly }),
 
   // Group management
   addGroup: (group) => set((state) => ({

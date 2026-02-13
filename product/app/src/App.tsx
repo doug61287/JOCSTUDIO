@@ -7,11 +7,11 @@ import { MeasurementPanel } from './components/MeasurementPanel';
 import { DropZone } from './components/DropZone';
 import { CalibrationDialog } from './components/CalibrationDialog';
 import { TranslationMachine } from './components/TranslationMachine';
-// import { ActiveItemPicker } from './components/ActiveItemPicker'; // Removed - was hovering over screen
+import { AssemblyContextBar } from './components/AssemblyContextBar';
 import { SchedulePanel } from './components/SchedulePanel';
 
 function App() {
-  const { project, setPdfUrl, setProject, addMeasurement } = useProjectStore();
+  const { project, setPdfUrl, setProject, addMeasurement, activeAssembly, setActiveAssembly } = useProjectStore();
   const [showCalibration, setShowCalibration] = useState(false);
   const [showTranslator, setShowTranslator] = useState(false);
   const [showSchedules, setShowSchedules] = useState(false);
@@ -171,6 +171,14 @@ function App() {
 
       {/* Toolbar */}
       <Toolbar onCalibrate={() => setShowCalibration(true)} />
+
+      {/* Assembly Context Bar - "What are you measuring?" */}
+      {project?.pdfUrl && (
+        <AssemblyContextBar
+          selectedAssembly={activeAssembly}
+          onSelectAssembly={setActiveAssembly}
+        />
+      )}
 
       {/* Main Content */}
       <div className="flex-1 flex overflow-hidden bg-gray-900 min-h-0">
