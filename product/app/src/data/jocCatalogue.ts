@@ -56,19 +56,20 @@ const PRODUCT_SEARCH_BOOSTS: Record<string, { boost: string[]; deBoost: string[]
   'coupling': { boost: ['21134'], deBoost: [] },
   'fitting': { boost: ['21134'], deBoost: [] },
   // Division 22 - Plumbing product boosts
+  // NOTE: Synonyms automatically inherit boosts via expandedWords check
+  // e.g., "lav" → expands to "lavatory" → triggers 'lavatory' boost
   'floor drain': { boost: ['22131913'], deBoost: ['22014'] },
-  'fd': { boost: ['22131913'], deBoost: [] },
   'lavatory': { boost: ['22421613'], deBoost: ['22014'] },
-  'lav': { boost: ['22421613'], deBoost: ['22014'] },
   'sink': { boost: ['22421613', '22421616'], deBoost: ['22014'] },
   'water closet': { boost: ['22131300'], deBoost: ['22014'] },
-  'wc': { boost: ['22131300'], deBoost: ['22014'] },
-  'toilet': { boost: ['22131300'], deBoost: ['22014'] },
+  'toilet': { boost: ['22131300'], deBoost: ['22014'] },  // Keep - not a synonym of "water closet"
   'kitchen sink': { boost: ['22421616'], deBoost: ['22014'] },
   'faucet': { boost: ['22423900'], deBoost: ['22014'] },
   'roof drain': { boost: ['22142613'], deBoost: [] },
-  'rd': { boost: ['22142613'], deBoost: [] },
   'water heater': { boost: ['22333016', '22333300', '22333616'], deBoost: [] },
+  'cleanout': { boost: ['22057600'], deBoost: [] },
+  'grease trap': { boost: ['22131926'], deBoost: [] },
+  'grease interceptor': { boost: ['22131926'], deBoost: [] },
 };
 
 const KEYWORD_SYNONYMS: Record<string, string[]> = {
@@ -401,8 +402,9 @@ export function searchJOCItems(query: string, limit: number = 20): JOCItem[] {
     
     // PRODUCT VS SERVICE DISAMBIGUATION
     // When searching for "sprinkler head", boost actual products, de-boost relocate items
+    // Also check expandedWords so synonyms inherit boosts (e.g., "lav" → "lavatory" → boost)
     for (const [searchTerm, { boost, deBoost }] of Object.entries(PRODUCT_SEARCH_BOOSTS)) {
-      if (q.includes(searchTerm) || originalWords.some(w => w === searchTerm)) {
+      if (q.includes(searchTerm) || originalWords.some(w => w === searchTerm) || expandedWords.some(w => w === searchTerm)) {
         // Boost actual product items
         if (boost.some(prefix => taskCode.startsWith(prefix))) {
           score += 150; // Big boost for product items
