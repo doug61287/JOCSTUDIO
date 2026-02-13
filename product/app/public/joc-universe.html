@@ -345,7 +345,7 @@
         updateProgress(10, 'Fetching catalogue...');
         
         // Load the full catalogue JSON
-        const response = await fetch('/src/data/nyc-hh-ctc-full.json');
+        const response = await fetch('/data/nyc-hh-ctc-full.json');
         const catalogue = await response.json();
         
         updateProgress(30, 'Loading multiplier data...');
@@ -353,7 +353,7 @@
         // Load tier map
         let tierMap = {};
         try {
-          const tierResponse = await fetch('/src/data/tier-map.json');
+          const tierResponse = await fetch('/data/tier-map.json');
           tierMap = await tierResponse.json();
         } catch (e) {
           console.log('Tier map not found, continuing without multipliers');
