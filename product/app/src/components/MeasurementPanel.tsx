@@ -13,7 +13,7 @@ import type { Assembly } from '../types';
 const GuidedAssistant = lazy(() => import('./GuidedAssistant'));
 import { FormattingPanel } from './FormattingPanel';
 import { FlagsPanel } from './FlagsPanel';
-import type { JOCItem, Measurement, MeasurementGroup, Flag as FlagType } from '../types';
+import type { JOCItem, Measurement, MeasurementGroup, Flag as FlagType, Tool } from '../types';
 import { formatMeasurement, generateId } from '../utils/geometry';
 import {
   Ruler,
@@ -965,7 +965,7 @@ export function MeasurementPanel() {
               e.stopPropagation(); 
               selectMeasurement(m.id);
               // Set tool based on measurement type
-              const toolMap: Record<string, string> = {
+              const toolMap: Record<string, Tool> = {
                 'line': 'line',
                 'polyline': 'polyline', 
                 'count': 'count',

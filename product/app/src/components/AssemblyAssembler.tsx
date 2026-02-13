@@ -6,7 +6,8 @@
 import { useState, useEffect, useMemo } from 'react';
 import { X, ChevronRight, ChevronLeft, Check, Package, Wrench, Info, Sparkles, Save } from 'lucide-react';
 import type { Assembly, JOCItem, AssemblyItem, AssemblyCategory } from '../types';
-import { parseAssemblyIntent, findMaterialOptions, getStandardFittings, type FittingOption } from '../utils/assemblyBuilder';
+import { parseAssemblyIntent, findMaterialOptions, getStandardFittings, type FittingRecommendation } from '../utils/assemblyBuilder';
+import { jocCatalogue } from '../data/jocCatalogue';
 import { generateAssemblyId } from '../utils/userAssemblyStore';
 
 interface AssemblyAssemblerProps {
@@ -29,14 +30,14 @@ export function AssemblyAssembler({
   const [currentStep, setCurrentStep] = useState<Step>('material');
   const [selectedMaterial, setSelectedMaterial] = useState<JOCItem | null>(null);
   const [selectedFittings, setSelectedFittings] = useState<Set<string>>(new Set());
-  const [fittingOptions, setFittingOptions] = useState<FittingOption[]>([]);
+  const [fittingOptions, setFittingOptions] = useState<FittingRecommendation[]>([]);
   const [customName, setCustomName] = useState('');
 
   // Parse the intent from the query
   const intent = useMemo(() => parseAssemblyIntent(initialQuery), [initialQuery]);
   
   // Find material options based on intent
-  const materialOptions = useMemo(() => findMaterialOptions(intent), [intent]);
+  const materialOptions = useMemo(() => findMaterialOptions(intent, jocCatalogue), [intent]);
 
   // Reset state when opening with new query
   useEffect(() => {
@@ -61,7 +62,9 @@ export function AssemblyAssembler({
       else if (desc.includes('galv')) materialName = 'galvanized';
       else if (desc.includes('pvc')) materialName = 'pvc';
       
-      const fittings = getStandardFittings(intent.size, materialName, intent.system);
+      // Get system for fittings (default to plumbing if general)
+      const fittingSystem = intent.system === 'sprinkler' ? 'sprinkler' : 'plumbing';
+      const fittings = getStandardFittings(intent.size, materialName, fittingSystem, jocCatalogue);
       setFittingOptions(fittings);
       
       // Pre-select default fittings
@@ -81,7 +84,6 @@ export function AssemblyAssembler({
       items.push({
         jocItem: selectedMaterial,
         quantityFactor: 1.0,
-        isPrimary: true,
       });
     }
     
@@ -91,7 +93,6 @@ export function AssemblyAssembler({
         items.push({
           jocItem: fitting.jocItem,
           quantityFactor: fitting.quantityFactor,
-          isPrimary: false,
         });
       }
     }
@@ -113,7 +114,6 @@ export function AssemblyAssembler({
         intent.size || '',
         intent.system,
         intent.itemType,
-        intent.materialHint || '',
       ].filter(Boolean),
       createdBy: 'user',
     };
@@ -195,7 +195,7 @@ export function AssemblyAssembler({
               <div className="flex items-center gap-2 text-amber-400 mb-4">
                 <Sparkles className="w-5 h-5" />
                 <span className="font-medium">
-                  Found {materialOptions.length} material options for {intent.sizeFormatted} pipe
+                  Found {materialOptions.length} material options for {intent.sizeFormatted || 'pipe'}
                 </span>
               </div>
 
@@ -288,7 +288,6 @@ export function AssemblyAssembler({
                           <span className="text-amber-400">× {fitting.quantityFactor}/LF</span>
                           <span className="text-slate-400">({fitting.label})</span>
                         </div>
-                        <p className="text-xs text-slate-500 mt-1">{fitting.rationale}</p>
                       </div>
                     </label>
                   ))}

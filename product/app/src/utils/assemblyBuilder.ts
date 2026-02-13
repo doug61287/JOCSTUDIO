@@ -6,7 +6,6 @@
  */
 
 import type { JOCItem } from '../types';
-import { searchJOCItems } from '../data/jocCatalogue';
 
 // ============================================
 // TYPES
@@ -325,7 +324,6 @@ export function getStandardFittings(
 ): FittingRecommendation[] {
   const recommendations: FittingRecommendation[] = [];
   const divisionPrefix = system === 'sprinkler' ? '21' : '22';
-  const sizeFormatted = formatSize(size);
   
   // Fitting types to search for
   const fittingTypes: Array<{
