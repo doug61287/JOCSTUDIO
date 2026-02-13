@@ -18,8 +18,12 @@ export function DropZone({ onFileSelect }: DropZoneProps) {
       // Load demo project data (measurements, groups, etc.)
       loadDemo();
       
-      // Also load the PDF drawing
-      const response = await fetch('/demo-jacobi-fp.pdf');
+      // Try demo PDF first, fallback to test-drawing
+      let response = await fetch('/demo-jacobi-fp.pdf');
+      if (!response.ok) {
+        console.log('Demo PDF not found, using fallback');
+        response = await fetch('/test-drawing.pdf');
+      }
       const blob = await response.blob();
       const file = new File([blob], 'Jacobi-FP-Demo.pdf', { type: 'application/pdf' });
       onFileSelect(file);
