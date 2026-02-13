@@ -1,11 +1,12 @@
 {
-  "id": "demo-jacobi-fp",
-  "name": "Jacobi Medical Center - FP Demolition",
-  "scale": 96,
+  "id": "demo-fp-takeoff",
+  "name": "Fire Protection Takeoff Demo",
+  "scale": 18,
   "coefficient": 1.0,
   "groups": [
-    { "id": "grp-demo", "name": "Demolition", "color": "#ef4444", "expanded": true, "order": 0 },
-    { "id": "grp-exist", "name": "Existing to Remain", "color": "#22c55e", "expanded": true, "order": 1 }
+    { "id": "grp-sprinkler", "name": "Sprinkler System", "color": "#ef4444", "expanded": true, "order": 0 },
+    { "id": "grp-standpipe", "name": "Standpipe", "color": "#3b82f6", "expanded": true, "order": 1 },
+    { "id": "grp-demo", "name": "Demolition", "color": "#f59e0b", "expanded": true, "order": 2 }
   ],
   "flags": [],
   "complexityFactors": [],
