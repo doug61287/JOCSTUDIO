@@ -1,0 +1,95 @@
+{
+  "generated_at": "2026-02-16T10:15:12.765852",
+  "summary": {
+    "total": 7,
+    "critical": 3,
+    "warning": 3,
+    "info": 1,
+    "by_type": {
+      "material": 0,
+      "quantity": 1,
+      "schedule": 2,
+      "addendum": 4,
+      "scope": 0
+    }
+  },
+  "conflicts": [
+    {
+      "type": "addendum",
+      "severity": "warning",
+      "location": "type",
+      "source_a": "Original",
+      "source_b": "Addendum 2",
+      "description": "New requirement added in Addendum 2",
+      "value_a": null,
+      "value_b": "Double-hung",
+      "recommendation": "Review new type requirement: Double-hung"
+    },
+    {
+      "type": "addendum",
+      "severity": "critical",
+      "location": "glazing",
+      "source_a": "Original",
+      "source_b": "Addendum 2",
+      "description": "Value changed in Addendum 2",
+      "value_a": "Double pane",
+      "value_b": "Triple pane",
+      "recommendation": "Update estimate: glazing changed from Double pane to Triple pane"
+    },
+    {
+      "type": "addendum",
+      "severity": "warning",
+      "location": "2",
+      "source_a": "Original",
+      "source_b": "Addendum 2",
+      "description": "New requirement added in Addendum 2",
+      "value_a": null,
+      "value_b": "Window Quantity",
+      "recommendation": "Review new 2 requirement: Window Quantity"
+    },
+    {
+      "type": "addendum",
+      "severity": "critical",
+      "location": "quantity",
+      "source_a": "Original",
+      "source_b": "Addendum 2",
+      "description": "Value changed in Addendum 2",
+      "value_a": "25\n        Type",
+      "value_b": "30\n        Type",
+      "recommendation": "Update estimate: quantity changed from 25\n        Type to 30\n        Type"
+    },
+    {
+      "type": "schedule",
+      "severity": "warning",
+      "location": "Room 103",
+      "source_a": "Finish Schedule",
+      "source_b": "Door Schedule",
+      "description": "Conference has no doors scheduled",
+      "value_a": "Room type: conference",
+      "value_b": "0 doors",
+      "recommendation": "Verify door count for Room 103"
+    },
+    {
+      "type": "schedule",
+      "severity": "info",
+      "location": "Wall Type: CMU",
+      "source_a": "Wall Schedule",
+      "source_b": "Finish Schedule",
+      "description": "Wall type 'CMU' not referenced in finish schedule",
+      "value_a": "CMU",
+      "value_b": null,
+      "recommendation": "Verify wall type usage or remove if not needed"
+    },
+    {
+      "type": "quantity",
+      "severity": "critical",
+      "location": "Concrete Slab (CY)",
+      "source_a": "Calculated (Takeoff)",
+      "source_b": "Bill of Quantities",
+      "description": "Quantity variance of 25.0% detected",
+      "value_a": "1250.00",
+      "value_b": "1000.00",
+      "recommendation": "Recalculate or verify BOQ. Difference: 250.00"
+    }
+  ]
+}
