@@ -1,0 +1,307 @@
+/** Polished Dashboard Component Styles */
+
+/* Room Detail View */
+.room-detail-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: var(--space-8);
+  padding-bottom: var(--space-6);
+  border-bottom: 1px solid var(--gray-200);
+}
+
+.room-detail-header h1 {
+  font-size: var(--text-3xl);
+  margin-bottom: var(--space-2);
+}
+
+.detail-actions {
+  display: flex;
+  gap: var(--space-3);
+}
+
+.detail-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-6);
+}
+
+/* Room Card Enhancements */
+.room-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  margin-bottom: var(--space-4);
+}
+
+.room-info {
+  flex: 1;
+}
+
+.room-name {
+  font-weight: var(--font-semibold);
+  font-size: var(--text-lg);
+  color: var(--gray-900);
+  margin-bottom: var(--space-1);
+}
+
+.room-meta {
+  display: flex;
+  gap: var(--space-4);
+  font-size: var(--text-sm);
+  color: var(--gray-500);
+}
+
+.room-meta span {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+/* Finish Grid */
+.finish-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: var(--space-4);
+}
+
+.finish-item {
+  background: var(--gray-50);
+  padding: var(--space-4);
+  border-radius: var(--radius-lg);
+}
+
+.finish-item label {
+  display: block;
+  font-size: var(--text-xs);
+  font-weight: var(--font-semibold);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--gray-500);
+  margin-bottom: var(--space-1);
+}
+
+.finish-item span {
+  font-weight: var(--font-medium);
+  color: var(--gray-900);
+}
+
+/* Door Rows */
+.door-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-3);
+  background: var(--gray-50);
+  border-radius: var(--radius-lg);
+  margin-bottom: var(--space-2);
+}
+
+.door-row.missing {
+  background: var(--error-50);
+  border: 1px solid var(--error-200);
+}
+
+.door-info {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.door-info strong {
+  font-size: var(--text-base);
+  color: var(--gray-900);
+}
+
+.door-info span {
+  font-size: var(--text-sm);
+  color: var(--gray-500);
+}
+
+/* Document List in Cards */
+.document-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+/* Insights List */
+.insights-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.insight-footer {
+  margin-top: var(--space-4);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--gray-200);
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* Rooms Grid */
+.rooms-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: var(--space-5);
+}
+
+/* Status Indicator */
+.status-indicator {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--success-600);
+}
+
+/* Query Container Enhancements */
+.query-container {
+  margin-bottom: var(--space-6);
+  background: linear-gradient(180deg, var(--gray-0), var(--gray-50));
+}
+
+.query-input-wrapper {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  border-bottom: 1px solid var(--gray-200);
+}
+
+.query-input-wrapper > svg {
+  color: var(--gray-400);
+}
+
+/* Card Variants */
+.card .document-item {
+  background: transparent;
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.card .document-item:hover {
+  background: var(--gray-50);
+  border-radius: var(--radius-md);
+  padding-left: var(--space-3);
+  padding-right: var(--space-3);
+}
+
+/* Tab Container */
+.tabs {
+  margin-bottom: var(--space-6);
+}
+
+/* Container Padding Adjustments */
+.container {
+  padding-top: var(--space-6);
+  padding-bottom: var(--space-10);
+}
+
+/* Responsive Adjustments */
+@media (max-width: 1024px) {
+  .detail-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .room-detail-header {
+    flex-direction: column;
+    gap: var(--space-4);
+  }
+  
+  .detail-actions {
+    width: 100%;
+  }
+  
+  .detail-actions .btn {
+    flex: 1;
+  }
+}
+
+@media (max-width: 768px) {
+  .rooms-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .finish-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .query-input-wrapper {
+    flex-wrap: wrap;
+  }
+  
+  .query-input-wrapper .btn {
+    width: 100%;
+  }
+}
+
+/* Animation Enhancements */
+.animate-slide-in {
+  animation: slideIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Hover Enhancements */
+.room-card {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn {
+  position: relative;
+  overflow: hidden;
+}
+
+.btn::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  transform: translate(-50%, -50%);
+  transition: width 0.3s, height 0.3s;
+}
+
+.btn:active::after {
+  width: 200%;
+  height: 200%;
+}
+
+/* Loading States */
+.loading-pulse {
+  animation: loadingPulse 2s ease-in-out infinite;
+}
+
+@keyframes loadingPulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+/* Focus Visible */
+*:focus-visible {
+  outline: 2px solid var(--primary-500);
+  outline-offset: 2px;
+}
+
+/* Selection */
+::selection {
+  background: var(--primary-200);
+  color: var(--primary-900);
+}
