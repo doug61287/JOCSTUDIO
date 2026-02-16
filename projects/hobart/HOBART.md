@@ -162,21 +162,60 @@ Ready to start? Your first digest arrives tomorrow! 🚀
 ## Job Search Strategy
 
 ### Primary Sources (API-based, reliable)
-1. **Brave Search API** - Use for broad job searches
-2. **LinkedIn Jobs** - Web search with site:linkedin.com/jobs
-3. **Indeed** - Web search with site:indeed.com
-4. **Glassdoor** - Web search with site:glassdoor.com
+1. **Brave Search API** - Use for broad job searches via `web_search` tool
+2. **LinkedIn Jobs** - Prioritize! Most reliable links
+3. **Indeed** - Good fallback
+4. **Glassdoor** - Good for salary info
 
 ### Search Query Construction
+Use `scripts/job-search.js` buildSearchQuery() function:
 ```
-"{keyword}" jobs "{location}" "{salary}" site:linkedin.com/jobs OR site:indeed.com
+"{keyword}" jobs "{location}" site:linkedin.com/jobs OR site:indeed.com OR site:glassdoor.com
 ```
 
-### Anti-Bot Considerations
-- Use web_search tool (Brave API) instead of direct scraping
-- Rotate search patterns
+### ⚠️ CRITICAL RULES (Learned from Sasha's Job Search)
+
+1. **Better 3 verified jobs than 10 broken links** - Quality over quantity!
+
+2. **Do NOT fabricate job IDs** - Only use URLs from actual search results
+
+3. **Avoid problematic sites:**
+   - `jobs.jhu.edu` - Session-gated, links expire
+   - `workday.com` - Often requires login
+   - Any URL that redirects to generic careers page
+
+4. **Prioritize LinkedIn** - Most reliable direct links
+
+5. **Check exclude list strictly** - Filter out:
+   - Construction/facilities management
+   - IT infrastructure / DevOps
+   - Building/mechanical/electrical systems
+   - Any role where user's keywords don't appear in actual description
+
+6. **Verify links with web_fetch** before including - If it returns generic page, drop it
+
+### 🔗 Link Quality Strategy (NEW)
+
+7. **Include search snippets** - Show brief excerpt from posting so users can quick-scan before clicking
+
+8. **Prefer direct employer URLs** - Company careers pages > aggregators (Indeed/LinkedIn/ZipRecruiter)
+   - Search with `site:company.com/careers` when possible
+   - If only aggregator found, try to find employer's direct posting
+   
+9. **Verify job exists on employer page** - Use `web_fetch` on employer's careers site to confirm listing is real
+   - Catches ghost/expired postings
+   - Builds trust with users
+   
+10. **Link hierarchy**:
+    - ✅ Direct employer careers page (best)
+    - ⚠️ LinkedIn (reliable, but middleman)
+    - ❌ Indeed/ZipRecruiter/Glassdoor (often stale, redirects)
+
+### Anti-Bot Strategy
+- Use `web_search` tool (Brave API) - NOT direct scraping
+- Site-restrict queries for better results
 - Cache results to reduce API calls
-- Respect rate limits
+- Space out searches when doing multiple users
 
 ## Resume Parsing
 

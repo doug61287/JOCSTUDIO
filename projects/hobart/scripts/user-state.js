@@ -281,6 +281,57 @@ function listUsers() {
     });
 }
 
+/**
+ * Record a job as shown to user (for deduplication)
+ */
+function recordShownJob(phone, jobId) {
+  const user = getUser(phone);
+  if (!user.history) user.history = {};
+  if (!user.history.shownJobs) user.history.shownJobs = [];
+  
+  if (!user.history.shownJobs.includes(jobId)) {
+    user.history.shownJobs.push(jobId);
+    // Keep only last 200 shown jobs to prevent unbounded growth
+    if (user.history.shownJobs.length > 200) {
+      user.history.shownJobs = user.history.shownJobs.slice(-200);
+    }
+    saveUser(user);
+  }
+}
+
+/**
+ * Record that user expressed interest in a job
+ */
+function recordJobInterest(phone, jobId, jobData) {
+  const user = getUser(phone);
+  if (!user.history) user.history = {};
+  if (!user.history.interestedJobs) user.history.interestedJobs = [];
+  
+  user.history.interestedJobs.push({
+    jobId,
+    ...jobData,
+    interestedAt: new Date().toISOString(),
+  });
+  saveUser(user);
+}
+
+/**
+ * Get user's job search stats
+ */
+function getStats(phone) {
+  const user = getUser(phone);
+  const history = user.history || {};
+  
+  return {
+    jobsDiscovered: history.shownJobs?.length || 0,
+    jobsInterested: history.interestedJobs?.length || 0,
+    jobsApplied: history.jobsApplied?.length || 0,
+    searchesRun: history.searchesRun || 0,
+    lastDigest: history.lastDigestSent,
+    memberSince: user.onboardedAt,
+  };
+}
+
 module.exports = {
   getUser,
   saveUser,
@@ -289,6 +340,9 @@ module.exports = {
   parseOnboardingInput,
   getConfirmationMessage,
   listUsers,
+  recordShownJob,
+  recordJobInterest,
+  getStats,
   DEFAULT_USER,
   MEMORY_DIR,
   RESUME_DIR

@@ -1,0 +1,35 @@
+{
+  "version": 1,
+  "profiles": {
+    "anthropic:default": {
+      "type": "token",
+      "provider": "anthropic",
+      "token": "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"
+    },
+    "openai:default": {
+      "type": "token",
+      "provider": "openai",
+      "token": "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"
+    },
+    "moonshot:default": {
+      "type": "token",
+      "provider": "moonshot",
+      "token": "sk-5MNs1iu2GQcRSv5DVuuZoTpUEhmkZ79hGCD5m5wD8Mmm1cDz"
+    }
+  },
+  "lastGood": {
+    "anthropic": "anthropic:default",
+    "moonshot": "moonshot:default"
+  },
+  "usageStats": {
+    "anthropic:default": {
+      "lastUsed": 1770408366124,
+      "errorCount": 0,
+      "lastFailureAt": 1770151289256
+    },
+    "moonshot:default": {
+      "lastUsed": 1770379424561,
+      "errorCount": 0
+    }
+  }
+}

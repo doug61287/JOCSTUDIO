@@ -1,0 +1,62 @@
+{
+  "name": "Sasha",
+  "telegramId": "7009773128",
+  "onboardedAt": "2026-02-11",
+  "status": "actively_looking",
+  "currentSalary": 130000,
+  "targetSalary": {
+    "min": 110000,
+    "max": 150000
+  },
+  "targetRoles": [
+    "Clinical Trial Manager",
+    "Research Manager",
+    "Regulatory Specialist",
+    "Clinical Operations Lead"
+  ],
+  "keywords": [
+    "clinical operations support",
+    "clinical project assistant",
+    "clinical project specialist",
+    "learning and development",
+    "regulatory specialist",
+    "regulatory affairs",
+    "research manager"
+  ],
+  "industries": [
+    "pharma",
+    "biotech",
+    "health tech",
+    "research institutes",
+    "universities"
+  ],
+  "location": {
+    "preference": "remote",
+    "localCompanies": [
+      "Headlands",
+      "Pharmaron",
+      "Axon",
+      "Ontralytix"
+    ]
+  },
+  "challenges": [
+    "Many Clinical Trial Manager roles require 5+ years CRO experience (doesn't have this)"
+  ],
+  "notes": [],
+  "digestPreference": {
+    "frequency": "daily",
+    "enabled": true,
+    "setupAt": "2026-02-11"
+  },
+  "resume": {
+    "path": "memory/resumes/7009773128_sasha_greenspan.docx",
+    "uploadedAt": "2026-02-11",
+    "highlights": {
+      "education": "PhD Biology (James Cook), MS Biology (Maine), BA Environmental Science (Wesleyan)",
+      "currentRole": "Program Administrator at Kennedy Krieger Institute / Johns Hopkins",
+      "previousRole": "Clinical Research Operations Lead at Emory (Marcus Autism Center) 2022-2025",
+      "yearsExperience": "15+",
+      "strengths": ["line management", "IRB/GCP-ICH compliance", "REDCap", "study start-up through close-out", "pediatric clinical studies", "SOP development", "vendor management", "budget oversight"]
+    }
+  }
+}

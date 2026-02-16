@@ -1,0 +1,25 @@
+{
+  "name": "New User",
+  "phone": "whatsapp_user_test123",
+  "inviteCode": "TEST123",
+  "onboarded": true,
+  "onboardedAt": "2026-02-14T22:42:00-05:00",
+  "source": "whatsapp",
+  "keywords": ["product manager", "PM", "product lead", "senior product manager"],
+  "industries": ["any"],
+  "salaryMin": 130000,
+  "salaryMax": 160000,
+  "location": "New York, NY",
+  "remotePreference": "hybrid",
+  "experienceYears": null,
+  "resume": null,
+  "digest": {
+    "frequency": "daily",
+    "time": "08:00",
+    "timezone": "America/New_York",
+    "format": "summary",
+    "maxListings": 5,
+    "includeCompanyProfiles": true,
+    "includeNewCompanies": true
+  }
+}

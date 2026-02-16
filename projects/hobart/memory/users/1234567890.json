@@ -1,0 +1,28 @@
+{
+  "name": "Alex",
+  "phone": "test-pm",
+  "onboarded": true,
+  "onboardedAt": "2026-02-13T22:00:00.000Z",
+  "keywords": ["product manager", "senior product manager", "product lead"],
+  "industries": ["fintech", "healthcare", "saas"],
+  "salaryMin": 150000,
+  "salaryMax": 220000,
+  "location": "New York",
+  "remotePreference": "hybrid",
+  "dreamCompanies": ["Stripe", "Plaid", "Oscar Health"],
+  "exclude": ["construction", "facilities", "property management"],
+  "digest": {
+    "frequency": "weekly",
+    "day": "sunday",
+    "time": "09:00",
+    "timezone": "America/New_York",
+    "format": "summary",
+    "maxListings": 5
+  },
+  "history": {
+    "shownJobs": [],
+    "interestedJobs": [],
+    "jobsApplied": [],
+    "searchesRun": 0
+  }
+}
