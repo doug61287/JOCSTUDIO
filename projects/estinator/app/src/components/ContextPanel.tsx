@@ -1,4 +1,24 @@
 import { useState } from 'react';
+import { 
+  AlertTriangle, 
+  FileText, 
+  FolderOpen, 
+  Package, 
+  ChevronDown, 
+  ChevronRight,
+  Building2,
+  HardHat,
+  Flame,
+  Droplets,
+  Thermometer,
+  Zap,
+  Hash,
+  DoorOpen,
+  Lightbulb,
+  CheckCircle2,
+  Clock,
+  FileQuestion
+} from 'lucide-react';
 import type { Issue, IssueStatus, Project } from '../types';
 
 interface ContextPanelProps {
@@ -80,14 +100,52 @@ const MOCK_MATERIALS: Material[] = [
   },
 ];
 
-const disciplineEmojis: Record<string, string> = {
-  'Architectural': '🏛️', 'Structural': '🏗️', 'Fire Protection': '🔥',
-  'Plumbing': '🚿', 'Mechanical': '🌡️', 'Electrical': '⚡',
+// Discipline icon mapping
+const DisciplineIcon = ({ discipline, className = "w-4 h-4" }: { discipline: string; className?: string }) => {
+  switch (discipline) {
+    case 'Architectural': return <Building2 className={className} />;
+    case 'Structural': return <HardHat className={className} />;
+    case 'Fire Protection': return <Flame className={className} />;
+    case 'Plumbing': return <Droplets className={className} />;
+    case 'Mechanical': return <Thermometer className={className} />;
+    case 'Electrical': return <Zap className={className} />;
+    default: return <FileText className={className} />;
+  }
 };
 
-const materialCategoryEmojis: Record<string, string> = {
-  'Flooring': '🟫', 'Doors': '🚪', 'HVAC Equipment': '🌡️',
-  'Lighting': '💡', 'Electrical Equipment': '⚡', 'Fire Protection': '🔥', 'Plumbing Fixtures': '🚿',
+// Material category icons
+const MaterialIcon = ({ category, className = "w-4 h-4" }: { category: string; className?: string }) => {
+  switch (category) {
+    case 'Flooring': return <Hash className={className} />;
+    case 'Doors': return <DoorOpen className={className} />;
+    case 'HVAC Equipment': return <Thermometer className={className} />;
+    case 'Lighting': return <Lightbulb className={className} />;
+    case 'Electrical Equipment': return <Zap className={className} />;
+    case 'Fire Protection': return <Flame className={className} />;
+    case 'Plumbing Fixtures': return <Droplets className={className} />;
+    default: return <Package className={className} />;
+  }
+};
+
+// Document type icons
+const DocumentIcon = ({ type, className = "w-4 h-4" }: { type: string; className?: string }) => {
+  switch (type) {
+    case 'drawing': return <FileText className={className} />;
+    case 'spec': return <FileText className={className} />;
+    case 'addendum': return <FileText className={className} />;
+    case 'rfi': return <FileQuestion className={className} />;
+    default: return <FileText className={className} />;
+  }
+};
+
+// Status icon
+const StatusIcon = ({ status, className = "w-4 h-4" }: { status: string; className?: string }) => {
+  switch (status) {
+    case 'processed': return <CheckCircle2 className={`${className} text-[#4ADE80]`} />;
+    case 'processing': return <Clock className={`${className} text-[#FBBF24]`} />;
+    case 'pending': return <Clock className={`${className} text-[#6B7280]`} />;
+    default: return <FileText className={className} />;
+  }
 };
 
 export function ContextPanel({ issues, selectedScopes }: ContextPanelProps) {
@@ -135,9 +193,27 @@ export function ContextPanel({ issues, selectedScopes }: ContextPanelProps) {
     <div className="w-[450px] min-w-[450px] bg-[#0D0D0D] border-l border-[#2A2A2A] flex flex-col">
       {/* Tabs */}
       <div className="h-14 border-b border-[#2A2A2A] flex">
-        <TabButton label="Issues" icon="🚩" count={issues.length} isActive={activeTab === 'issues'} onClick={() => setActiveTab('issues')} />
-        <TabButton label="Documents" icon="📁" count={filteredDocs.length} isActive={activeTab === 'documents'} onClick={() => setActiveTab('documents')} />
-        <TabButton label="Materials" icon="📦" count={filteredMaterials.length} isActive={activeTab === 'materials'} onClick={() => setActiveTab('materials')} />
+        <TabButton 
+          label="Issues" 
+          icon={<AlertTriangle className="w-4 h-4" />}
+          count={issues.length} 
+          isActive={activeTab === 'issues'} 
+          onClick={() => setActiveTab('issues')} 
+        />
+        <TabButton 
+          label="Documents" 
+          icon={<FolderOpen className="w-4 h-4" />}
+          count={filteredDocs.length} 
+          isActive={activeTab === 'documents'} 
+          onClick={() => setActiveTab('documents')} 
+        />
+        <TabButton 
+          label="Materials" 
+          icon={<Package className="w-4 h-4" />}
+          count={filteredMaterials.length} 
+          isActive={activeTab === 'materials'} 
+          onClick={() => setActiveTab('materials')} 
+        />
       </div>
 
       {/* Content */}
@@ -146,26 +222,39 @@ export function ContextPanel({ issues, selectedScopes }: ContextPanelProps) {
           <>
             {/* Drawings */}
             <div className="mb-4">
-              <button onClick={() => toggleSection('Drawings')} className="flex items-center gap-2 w-full py-2 text-left">
-                <span>{expandedSections.has('Drawings') ? '▼' : '▶'}</span>
-                <span className="font-medium">Drawings</span>
-                <span className="text-[#6B7280]">({Object.values(drawingsByDiscipline).flat().length})</span>
+              <button onClick={() => toggleSection('Drawings')} className="flex items-center gap-2 w-full py-2 text-left hover:bg-[#1A1A1A] rounded px-2 transition-fast">
+                {expandedSections.has('Drawings') ? <ChevronDown className="w-4 h-4 text-[#6B7280]" /> : <ChevronRight className="w-4 h-4 text-[#6B7280]" />}
+                <FileText className="w-4 h-4 text-[#5E6AD2]" />
+                <span className="font-medium text-[14px]">Drawings</span>
+                <span className="text-[12px] text-[#6B7280] ml-auto">({Object.values(drawingsByDiscipline).flat().length})</span>
               </button>
               
               {expandedSections.has('Drawings') && (
-                <div className="ml-4 space-y-2">
+                <div className="ml-2 space-y-1 mt-1">
                   {Object.entries(drawingsByDiscipline).map(([discipline, docs]) => (
-                    <div key={discipline} className="border-l-2 border-[#2A2A2A] pl-3">
-                      <button onClick={() => toggleSection(`disc-${discipline}`)} className="flex items-center gap-2 w-full py-1 text-left">
-                        <span className="text-[12px]">{expandedSections.has(`disc-${discipline}`) ? '▼' : '▶'}</span>
-                        <span className="text-[12px] text-[#8A8F98]">{disciplineEmojis[discipline]} {discipline}</span>
-                        <span className="text-[11px] text-[#6B7280]">({docs.length})</span>
+                    <div key={discipline} className="border-l border-[#2A2A2A] ml-4 pl-3">
+                      <button onClick={() => toggleSection(`disc-${discipline}`)} className="flex items-center gap-2 w-full py-1.5 text-left hover:bg-[#1A1A1A] rounded px-2 transition-fast">
+                        {expandedSections.has(`disc-${discipline}`) ? <ChevronDown className="w-3 h-3 text-[#6B7280]" /> : <ChevronRight className="w-3 h-3 text-[#6B7280]" />}
+                        <DisciplineIcon discipline={discipline} className="w-3.5 h-3.5 text-[#8A8F98]" />
+                        <span className="text-[12px] text-[#8A8F98]">{discipline}</span>
+                        <span className="text-[11px] text-[#6B7280] ml-auto">({docs.length})</span>
                       </button>
                       
                       {expandedSections.has(`disc-${discipline}`) && (
-                        <div className="ml-4 space-y-1">
+                        <div className="ml-6 space-y-0.5 mt-1">
                           {docs.map(doc => (
-                            <div key={doc.id} className="text-[11px] text-white/80 py-1">{doc.name}</div>
+                            <div key={doc.id} className="flex items-center gap-2 py-1.5 px-2 rounded hover:bg-[#1A1A1A] cursor-pointer group">
+                              <DocumentIcon type={doc.type} className="w-3.5 h-3.5 text-[#6B7280] group-hover:text-[#5E6AD2]" />
+                              <span className="text-[11px] text-white/70 group-hover:text-white truncate">{doc.name}</span>
+                              {doc.conflictCount ? (
+                                <span className="text-[10px] text-[#FBBF24] ml-auto flex items-center gap-1">
+                                  <AlertTriangle className="w-3 h-3" />
+                                  {doc.conflictCount}
+                                </span>
+                              ) : (
+                                <StatusIcon status={doc.status} className="w-3.5 h-3.5 ml-auto" />
+                              )}
+                            </div>
                           ))}
                         </div>
                       )}
@@ -177,7 +266,11 @@ export function ContextPanel({ issues, selectedScopes }: ContextPanelProps) {
 
             {/* Specs */}
             <div className="mb-4">
-              <div className="text-[12px] text-[#8A8F98] py-2">📄 Specifications ({filteredDocs.filter(d => d.type === 'spec').length})</div>
+              <div className="flex items-center gap-2 py-2 px-2 text-[#8A8F98]">
+                <FileText className="w-4 h-4" />
+                <span className="text-[13px]">Specifications</span>
+                <span className="text-[12px] ml-auto">({filteredDocs.filter(d => d.type === 'spec').length})</span>
+              </div>
             </div>
           </>
         )}
@@ -190,7 +283,7 @@ export function ContextPanel({ issues, selectedScopes }: ContextPanelProps) {
               <div className="flex flex-wrap gap-1">
                 <button 
                   onClick={() => setSelectedMaterialCategory('all')}
-                  className={`px-2 py-1 rounded text-[10px] ${selectedMaterialCategory === 'all' ? 'bg-[#5E6AD2] text-white' : 'bg-[#2A2A2A] text-[#8A8F98]'}`}
+                  className={`px-2 py-1 rounded text-[10px] transition-fast ${selectedMaterialCategory === 'all' ? 'bg-[#5E6AD2] text-white' : 'bg-[#2A2A2A] text-[#8A8F98] hover:bg-[#3A3A3A]'}`}
                 >
                   All
                 </button>
@@ -198,9 +291,10 @@ export function ContextPanel({ issues, selectedScopes }: ContextPanelProps) {
                   <button 
                     key={cat}
                     onClick={() => setSelectedMaterialCategory(cat)}
-                    className={`px-2 py-1 rounded text-[10px] ${selectedMaterialCategory === cat ? 'bg-[#5E6AD2] text-white' : 'bg-[#2A2A2A] text-[#8A8F98]'}`}
+                    className={`px-2 py-1 rounded text-[10px] flex items-center gap-1 transition-fast ${selectedMaterialCategory === cat ? 'bg-[#5E6AD2] text-white' : 'bg-[#2A2A2A] text-[#8A8F98] hover:bg-[#3A3A3A]'}`}
                   >
-                    {materialCategoryEmojis[cat]} {cat}
+                    <MaterialIcon category={cat} className="w-3 h-3" />
+                    {cat}
                   </button>
                 ))}
               </div>
@@ -210,22 +304,23 @@ export function ContextPanel({ issues, selectedScopes }: ContextPanelProps) {
             {Object.entries(materialsByCategory).map(([category, materials]) => (
               <div key={category} className="mb-4">
                 <div className="flex items-center gap-2 py-2">
-                  <span>{materialCategoryEmojis[category]}</span>
+                  <MaterialIcon category={category} className="w-4 h-4 text-[#5E6AD2]" />
                   <span className="font-medium text-[13px]">{category}</span>
                   <span className="text-[11px] text-[#6B7280]">({materials.length})</span>
                 </div>
                 <div className="ml-4 space-y-2">
                   {materials.map(material => (
-                    <div key={material.id} className="p-2 rounded bg-[#1A1A1A] border border-[#2A2A2A]">
-                      <div className="text-[12px] font-medium text-white/90">{material.name}</div>
-                      <div className="text-[10px] text-[#6B7280]">{material.manufacturer} {material.modelNumber}</div>
-                      <div className="text-[10px] text-[#5E6AD2]">Qty: {material.quantity}</div>
-                      <div className="mt-2 space-y-1">
+                    <div key={material.id} className="p-3 rounded bg-[#1A1A1A] border border-[#2A2A2A] hover:border-[#3A3A3A] cursor-pointer transition-fast">
+                      <div className="text-[13px] font-medium text-white/90">{material.name}</div>
+                      <div className="text-[11px] text-[#6B7280]">{material.manufacturer} • {material.modelNumber}</div>
+                      <div className="text-[11px] text-[#5E6AD2] mt-1">{material.quantity}</div>
+                      <div className="mt-2 pt-2 border-t border-[#2A2A2A] space-y-1">
                         {material.sources.map((src, idx) => (
-                          <div key={idx} className="text-[9px] text-[#8A8F98] flex items-center gap-1">
-                            <span>📄</span>
-                            <span>{src.documentName}</span>
-                            <span className="text-[#6B7280]">→ {src.location}</span>
+                          <div key={idx} className="text-[10px] text-[#8A8F98] flex items-center gap-1.5">
+                            <FileText className="w-3 h-3" />
+                            <span className="truncate">{src.documentName}</span>
+                            <span className="text-[#6B7280]">→</span>
+                            <span className="text-[#5E6AD2]">{src.location}</span>
                           </div>
                         ))}
                       </div>
@@ -241,15 +336,15 @@ export function ContextPanel({ issues, selectedScopes }: ContextPanelProps) {
   );
 }
 
-function TabButton({ label, icon, count, isActive, onClick }: { label: string; icon: string; count: number; isActive: boolean; onClick: () => void }) {
+function TabButton({ label, icon, count, isActive, onClick }: { label: string; icon: React.ReactNode; count: number; isActive: boolean; onClick: () => void }) {
   return (
     <button
       onClick={onClick}
-      className={`flex-1 flex items-center justify-center gap-1 py-3 text-[12px] font-medium border-b-2 ${
-        isActive ? 'border-[#5E6AD2] text-white bg-[#5E6AD2]/5' : 'border-transparent text-[#8A8F98]'
+      className={`flex-1 flex items-center justify-center gap-2 py-3 text-[12px] font-medium border-b-2 transition-fast ${
+        isActive ? 'border-[#5E6AD2] text-white bg-[#5E6AD2]/5' : 'border-transparent text-[#8A8F98] hover:text-white/90 hover:bg-[#1A1A1A]'
       }`}
     >
-      <span>{icon}</span>
+      {icon}
       <span>{label}</span>
       <span className="text-[10px] text-[#6B7280]">({count})</span>
     </button>
