@@ -1,27 +1,38 @@
 import { useState, useRef, useEffect } from 'react';
-import type { Message } from '../types';
+import type { Message, Conversation, Project } from '../types';
 
 interface ChatPanelProps {
+  project: Project;
+  conversations: Conversation[];
+  activeConversationId: string;
+  onConversationSelect: (conversationId: string) => void;
+  onNewConversation: () => void;
   messages: Message[];
   onSendMessage: (content: string) => void;
   onFlagAsIssue: (messageId: string, content: string, source?: string) => void;
   onDraftRFI: (issueId: string) => void;
-  projectName: string;
-  conversationTitle: string;
 }
 
 export function ChatPanel({ 
+  project,
+  conversations,
+  activeConversationId,
+  onConversationSelect,
+  onNewConversation,
   messages, 
   onSendMessage, 
   onFlagAsIssue,
-  onDraftRFI,
-  projectName,
-  conversationTitle 
+  onDraftRFI 
 }: ChatPanelProps) {
   const [inputValue, setInputValue] = useState('');
   const [isTyping, setIsTyping] = useState(false);
+  const [showConversationDropdown, setShowConversationDropdown] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  const activeConversation = conversations.find(c => c.id === activeConversationId);
+  const projectConversations = conversations.filter(c => c.projectId === project.id);
 
   // Auto-scroll to bottom
   useEffect(() => {
@@ -36,12 +47,22 @@ export function ChatPanel({
     }
   }, [inputValue]);
 
+  // Close dropdown on click outside
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+        setShowConversationDropdown(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
   const handleSend = () => {
     if (!inputValue.trim()) return;
     onSendMessage(inputValue);
     setInputValue('');
     setIsTyping(true);
-    // Simulate AI typing delay
     setTimeout(() => setIsTyping(false), 1000);
   };
 
@@ -54,28 +75,103 @@ export function ChatPanel({
 
   return (
     <div className="flex flex-col h-full bg-[#0D0D0D]">
-      {/* Header */}
+      {/* Header with Conversation Switcher */}
       <div className="h-14 border-b border-[#2A2A2A] flex items-center justify-between px-4 shrink-0">
         <div className="flex items-center gap-3">
           <span className="text-lg">💬</span>
-          <div>
-            <h2 className="text-[15px] font-semibold text-white/90">{conversationTitle}</h2>
-            <p className="text-[12px] text-[#8A8F98]">{projectName}</p>
+          <div className="flex items-center gap-2" ref={dropdownRef}>
+            {/* Conversation Dropdown */}
+            <button
+              onClick={() => setShowConversationDropdown(!showConversationDropdown)}
+              className="flex items-center gap-2 px-3 py-1.5 bg-[#1A1A1A] hover:bg-[#252525] border border-[#2A2A2A] rounded-lg transition-fast"
+            >
+              <span className="text-[14px] font-medium text-white/90 max-w-[300px] truncate">
+                {activeConversation?.title || 'New Chat'}
+              </span>
+              <svg 
+                width="14" 
+                height="14" 
+                viewBox="0 0 24 24" 
+                fill="none" 
+                stroke="currentColor" 
+                strokeWidth="2"
+                className={`text-[#8A8F98] transition-transform ${showConversationDropdown ? 'rotate-180' : ''}`}
+              >
+                <polyline points="6 9 12 15 18 9"/>
+              </svg>
+            </button>
+
+            {/* New Chat Button */}
+            <button
+              onClick={onNewConversation}
+              className="p-1.5 rounded-lg hover:bg-[#2A2A2A] text-[#8A8F98] transition-fast"
+              title="New conversation"
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <line x1="12" y1="5" x2="12" y2="19"/>
+                <line x1="5" y1="12" x2="19" y2="12"/>
+              </svg>
+            </button>
+
+            {/* Conversation Dropdown Menu */}
+            {showConversationDropdown && (
+              <div className="absolute top-12 left-12 w-[320px] bg-[#1A1A1A] border border-[#2A2A2A] rounded-xl shadow-2xl z-30 overflow-hidden">
+                <div className="p-2 border-b border-[#2A2A2A]">
+                  <div className="text-[11px] font-semibold text-[#8A8F98] uppercase tracking-wider px-2 py-1">
+                    {project.name} Conversations
+                  </div>
+                </div>
+                <div className="max-h-[300px] overflow-y-auto p-1">
+                  {projectConversations.map(conv => (
+                    <button
+                      key={conv.id}
+                      onClick={() => {
+                        onConversationSelect(conv.id);
+                        setShowConversationDropdown(false);
+                      }}
+                      className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-left transition-fast ${
+                        conv.id === activeConversationId
+                          ? 'bg-[#5E6AD2]/15 text-[#5E6AD2]'
+                          : 'text-[#8A8F98] hover:bg-[#2A2A2A] hover:text-white/90'
+                      }`}
+                    >
+                      <span className="text-[14px]">💬</span>
+                      <div className="flex-1 min-w-0">
+                        <div className="text-[13px] font-medium truncate">{conv.title}</div>
+                        <div className="text-[11px] opacity-70">
+                          {conv.messages.length} messages • {new Date(conv.updatedAt).toLocaleDateString()}
+                        </div>
+                      </div>
+                      {conv.id === activeConversationId && (
+                        <span className="w-2 h-2 rounded-full bg-[#5E6AD2]"/>
+                      )}
+                    </button>
+                  ))}
+                  
+                  <div className="border-t border-[#2A2A2A] mt-1 pt-1">
+                    <button
+                      onClick={() => {
+                        onNewConversation();
+                        setShowConversationDropdown(false);
+                      }}
+                      className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-left text-[#8A8F98] hover:bg-[#2A2A2A] hover:text-white/90 transition-fast"
+                    >
+                      <span className="text-[14px]">+</span>
+                      <span className="text-[13px]">Start new conversation</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         </div>
+
         <div className="flex items-center gap-2">
-          <button className="p-2 rounded-lg hover:bg-[#2A2A2A] text-[#8A8F98] transition-fast" title="Share conversation">
+          <button className="p-2 rounded-lg hover:bg-[#2A2A2A] text-[#8A8F98] transition-fast" title="Share">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/>
               <polyline points="16 6 12 2 8 6"/>
               <line x1="12" y1="2" x2="12" y2="15"/>
-            </svg>
-          </button>
-          <button className="p-2 rounded-lg hover:bg-[#2A2A2A] text-[#8A8F98] transition-fast" title="More options">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <circle cx="12" cy="12" r="1"/>
-              <circle cx="19" cy="12" r="1"/>
-              <circle cx="5" cy="12" r="1"/>
             </svg>
           </button>
         </div>
@@ -83,56 +179,57 @@ export function ChatPanel({
 
       {/* Messages */}
       <div className="flex-1 overflow-y-auto px-4 py-6 space-y-6">
-        {messages.map((message, index) => (
-          <MessageItem 
-            key={message.id} 
-            message={message} 
-            onFlagAsIssue={onFlagAsIssue}
-            onDraftRFI={onDraftRFI}
-            isLast={index === messages.length - 1}
-          />
-        ))}
-        
-        {isTyping && (
-          <div className="flex gap-3 animate-fade-in">
-            <div className="w-7 h-7 rounded-md bg-gradient-to-br from-[#5E6AD2] to-[#8B5CF6] flex items-center justify-center text-[12px] shrink-0">
-              🤖
-            </div>
-            <div className="flex items-center gap-1">
-              <span className="w-2 h-2 bg-[#8A8F98] rounded-full animate-bounce" style={{ animationDelay: '0ms' }}/>
-              <span className="w-2 h-2 bg-[#8A8F98] rounded-full animate-bounce" style={{ animationDelay: '150ms' }}/>
-              <span className="w-2 h-2 bg-[#8A8F98] rounded-full animate-bounce" style={{ animationDelay: '300ms' }}/>
+        {messages.length === 0 ? (
+          <div className="flex flex-col items-center justify-center h-full text-[#8A8F98]">
+            <span className="text-4xl mb-4">💬</span>
+            <h3 className="text-[18px] font-semibold text-white/90 mb-2">Start a conversation</h3>
+            <p className="text-[14px] text-center max-w-md mb-6">
+              Ask Estinator about your project documents, find conflicts, or generate RFIs.
+            </p>
+            <div className="flex flex-wrap justify-center gap-2 max-w-lg">
+              <QuickActionButton 
+                icon="⚡" 
+                label="Find conflicts" 
+                onClick={() => onSendMessage("Find conflicts in the documents")}
+              />
+              <QuickActionButton 
+                icon="📋" 
+                label="List missing specs" 
+                onClick={() => onSendMessage("What specifications are missing?")}
+              />
+              <QuickActionButton 
+                icon="🔢" 
+                label="Calculate quantities" 
+                onClick={() => onSendMessage("Calculate quantities")}
+              />
             </div>
           </div>
+        ) : (
+          <>
+            {messages.map((message) => (
+              <MessageItem 
+                key={message.id} 
+                message={message} 
+                onFlagAsIssue={onFlagAsIssue}
+                onDraftRFI={onDraftRFI}
+              />
+            ))}
+            
+            {isTyping && (
+              <div className="flex gap-3 animate-fade-in">
+                <div className="w-7 h-7 rounded-md bg-gradient-to-br from-[#5E6AD2] to-[#8B5CF6] flex items-center justify-center text-[12px] shrink-0">
+                  🤖
+                </div>
+                <div className="flex items-center gap-1">
+                  <span className="w-2 h-2 bg-[#8A8F98] rounded-full animate-bounce" style={{ animationDelay: '0ms' }}/>
+                  <span className="w-2 h-2 bg-[#8A8F98] rounded-full animate-bounce" style={{ animationDelay: '150ms' }}/>
+                  <span className="w-2 h-2 bg-[#8A8F98] rounded-full animate-bounce" style={{ animationDelay: '300ms' }}/>
+                </div>
+              </div>
+            )}
+          </>
         )}
-        
         <div ref={messagesEndRef} />
-      </div>
-
-      {/* Quick Actions */}
-      <div className="px-4 pb-3">
-        <div className="flex flex-wrap gap-2">
-          <QuickActionButton 
-            icon="⚡" 
-            label="Find conflicts" 
-            onClick={() => onSendMessage("Find conflicts in the documents")}
-          />
-          <QuickActionButton 
-            icon="📋" 
-            label="List missing specs" 
-            onClick={() => onSendMessage("What specifications are missing?")}
-          />
-          <QuickActionButton 
-            icon="🔢" 
-            label="Calculate quantities" 
-            onClick={() => onSendMessage("Calculate quantities for the electrical work")}
-          />
-          <QuickActionButton 
-            icon="📊" 
-            label="Compare specs" 
-            onClick={() => onSendMessage("Compare spec section 26 with the drawings")}
-          />
-        </div>
       </div>
 
       {/* Input Area */}
@@ -163,9 +260,6 @@ export function ChatPanel({
                   <line x1="12" y1="19" x2="12" y2="22"/>
                 </svg>
               </button>
-              <button className="p-1.5 rounded hover:bg-[#2A2A2A] text-[#8A8F98] transition-fast" title="Commands">
-                <kbd className="text-[10px]">⌘K</kbd>
-              </button>
             </div>
             
             <button 
@@ -174,7 +268,7 @@ export function ChatPanel({
               className="flex items-center gap-1.5 px-3 py-1.5 bg-[#5E6AD2] hover:bg-[#6872E3] disabled:opacity-50 disabled:cursor-not-allowed rounded-lg text-[13px] font-medium text-white transition-fast"
             >
               Send
-              <kbd className="bg-[#5E6AD2]/50 text-white/80">↵</kbd>
+              <kbd className="bg-[#5E6AD2]/50 text-white/80 text-[10px]">↵</kbd>
             </button>
           </div>
         </div>
@@ -191,16 +285,15 @@ interface MessageItemProps {
   message: Message;
   onFlagAsIssue: (messageId: string, content: string, source?: string) => void;
   onDraftRFI: (issueId: string) => void;
-  isLast: boolean;
 }
 
-function MessageItem({ message, onFlagAsIssue, isLast }: MessageItemProps) {
+function MessageItem({ message, onFlagAsIssue }: MessageItemProps) {
   const isUser = message.role === 'user';
   const [showActions, setShowActions] = useState(false);
 
   return (
     <div 
-      className={`flex gap-3 group animate-slide-in ${isLast ? '' : ''}`}
+      className="flex gap-3 group animate-slide-in"
       onMouseEnter={() => setShowActions(true)}
       onMouseLeave={() => setShowActions(false)}
     >
@@ -269,7 +362,6 @@ interface AssistantMessageProps {
 }
 
 function AssistantMessage({ content, sources, onFlagAsIssue }: AssistantMessageProps) {
-  // Parse content for structured data (findings, lists, etc.)
   const lines = content.split('\n');
   
   return (
@@ -316,7 +408,13 @@ function AssistantMessage({ content, sources, onFlagAsIssue }: AssistantMessageP
         <div className="flex flex-wrap gap-2 pt-2">
           <span className="text-[11px] text-[#6B7280] uppercase tracking-wider">Sources:</span>
           {sources.map((source, index) => (
-            <SourceTag key={index} source={source} />
+            <span key={index} className="inline-flex items-center gap-1 px-2 py-1 bg-[#1A1A1A] border border-[#2A2A2A] rounded text-[11px] text-[#8A8F98]">
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                <polyline points="14 2 14 8 20 8"/>
+              </svg>
+              {source}
+            </span>
           ))}
         </div>
       )}
@@ -371,27 +469,8 @@ function FindingCard({ number, title, description, onFlagAsIssue }: FindingCardP
           </svg>
           Draft RFI
         </button>
-        <button className="flex items-center gap-1.5 px-2.5 py-1.5 bg-[#2A2A2A] hover:bg-[#3A3A3A] rounded-md text-[12px] text-[#8A8F98] hover:text-white/90 transition-fast">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <path d="M9 11l3 3L22 4"/>
-            <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
-          </svg>
-          Add to Checklist
-        </button>
       </div>
     </div>
-  );
-}
-
-function SourceTag({ source }: { source: string }) {
-  return (
-    <span className="inline-flex items-center gap-1 px-2 py-1 bg-[#1A1A1A] border border-[#2A2A2A] rounded text-[11px] text-[#8A8F98]">
-      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-        <polyline points="14 2 14 8 20 8"/>
-      </svg>
-      {source}
-    </span>
   );
 }
 

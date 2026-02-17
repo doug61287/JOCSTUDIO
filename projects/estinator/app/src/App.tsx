@@ -6,7 +6,7 @@ import { CommandPalette } from './components/CommandPalette';
 import { KeyboardShortcuts } from './components/KeyboardShortcuts';
 import type { Project, Conversation, Issue, Message } from './types';
 
-// Mock data - Open Projects
+// Mock data
 const mockProjects: Project[] = [
   {
     id: '1',
@@ -35,9 +35,17 @@ const mockProjects: Project[] = [
     dueDate: '2026-02-28',
     cycle: { currentWeek: 4, totalWeeks: 5 },
   },
+  {
+    id: '4',
+    name: 'Central Park Pavilion',
+    description: 'Public Restroom Renovation',
+    documentCount: 6,
+    status: 'submitted',
+    dueDate: '2026-01-15',
+    cycle: { currentWeek: 5, totalWeeks: 5 },
+  },
 ];
 
-// Mock conversations
 const mockConversations: Conversation[] = [
   {
     id: 'conv-1',
@@ -145,7 +153,6 @@ Panel EP-3 is shown on E-501 Panel Schedule (Line 42) but the feeder size is not
   },
 ];
 
-// Mock issues
 const mockIssues: Issue[] = [
   {
     id: 'issue-1',
@@ -210,6 +217,8 @@ function App() {
   const [issues, setIssues] = useState<Issue[]>(mockIssues);
   const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
   const [isShortcutsOpen, setIsShortcutsOpen] = useState(false);
+
+  // Get active conversation
   const activeConversation = conversations.find(c => c.id === activeConversationId) || conversations[0];
 
   // Keyboard shortcuts
@@ -264,6 +273,19 @@ function App() {
     }, 1000);
   };
 
+  const handleNewConversation = () => {
+    const newConversation: Conversation = {
+      id: `conv-${Date.now()}`,
+      projectId: activeProject.id,
+      title: 'New conversation',
+      messages: [],
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    };
+    setConversations(prev => [newConversation, ...prev]);
+    setActiveConversationId(newConversation.id);
+  };
+
   const handleFlagAsIssue = (messageId: string, content: string, source?: string) => {
     const newIssue: Issue = {
       id: `issue-${Date.now()}`,
@@ -292,14 +314,11 @@ function App() {
 
   return (
     <div className="h-screen w-screen bg-[#0D0D0D] text-white/90 flex overflow-hidden font-sans">
-      {/* Left Panel: Sidebar with Projects & Conversations */}
+      {/* Left Panel: Projects Only */}
       <Sidebar
         projects={mockProjects}
         activeProject={activeProject}
         onProjectSelect={setActiveProject}
-        conversations={conversations}
-        activeConversationId={activeConversationId}
-        onConversationSelect={setActiveConversationId}
         stats={{
           open: openIssues.length,
           blocked: blockedIssues.length,
@@ -307,15 +326,18 @@ function App() {
         }}
       />
       
-      {/* Center Panel: Chat (Hero) */}
+      {/* Center Panel: Chat with Conversation History */}
       <div className="flex-1 min-w-0">
         <ChatPanel
+          project={activeProject}
+          conversations={conversations.filter(c => c.projectId === activeProject.id)}
+          activeConversationId={activeConversationId}
+          onConversationSelect={setActiveConversationId}
+          onNewConversation={handleNewConversation}
           messages={activeConversation.messages}
           onSendMessage={handleSendMessage}
           onFlagAsIssue={handleFlagAsIssue}
           onDraftRFI={handleDraftRFI}
-          projectName={activeProject.name}
-          conversationTitle={activeConversation.title}
         />
       </div>
       
