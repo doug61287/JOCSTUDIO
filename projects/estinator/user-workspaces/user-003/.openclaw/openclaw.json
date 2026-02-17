@@ -1,0 +1,15 @@
+{
+  "userId": "user-003",
+  "email": "mike@independent.estimator",
+  "workspace": "/Users/baibureh/clawd/projects/estinator/user-workspaces/user-003",
+  "model": "anthropic/claude-sonnet-4",
+  "skills": [
+    "construction-expert",
+    "pricing-engine"
+  ],
+  "permissions": [
+    "read",
+    "write",
+    "spawn"
+  ]
+}

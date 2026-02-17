@@ -1,0 +1,14 @@
+{
+  "221116": {
+    "price": 45.5,
+    "unit": "LF",
+    "notes": "My standard DWV pricing",
+    "added_at": "1771255485.4640381"
+  },
+  "260553": {
+    "price": 125.0,
+    "unit": "EA",
+    "notes": "Panel pricing from last job",
+    "added_at": "1771255485.4640381"
+  }
+}

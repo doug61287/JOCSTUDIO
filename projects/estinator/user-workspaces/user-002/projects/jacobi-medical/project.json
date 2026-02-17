@@ -1,0 +1,9 @@
+{
+  "name": "Jacobi Medical Center",
+  "client": "NYC HHC",
+  "status": "bidding",
+  "documents": [
+    "addendum-1.pdf",
+    "schedules.pdf"
+  ]
+}

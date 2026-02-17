@@ -1,0 +1,9 @@
+{
+  "name": "Bellevue Hospital JOC",
+  "client": "NYC HHC",
+  "status": "in_progress",
+  "documents": [
+    "specs.pdf",
+    "drawings.pdf"
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "userId": "user-002",
+  "email": "jane@citybuilders.net",
+  "workspace": "/Users/baibureh/clawd/projects/estinator/user-workspaces/user-002",
+  "model": "anthropic/claude-sonnet-4",
+  "skills": [
+    "construction-expert",
+    "pricing-engine"
+  ],
+  "permissions": [
+    "read",
+    "write",
+    "spawn"
+  ]
+}

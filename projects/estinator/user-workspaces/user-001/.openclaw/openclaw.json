@@ -1,0 +1,15 @@
+{
+  "userId": "user-001",
+  "email": "bob@ premier-contracting.com",
+  "workspace": "/Users/baibureh/clawd/projects/estinator/user-workspaces/user-001",
+  "model": "anthropic/claude-sonnet-4",
+  "skills": [
+    "construction-expert",
+    "pricing-engine"
+  ],
+  "permissions": [
+    "read",
+    "write",
+    "spawn"
+  ]
+}
