@@ -9,6 +9,12 @@ export interface Project {
     currentWeek: number;
     totalWeeks: number;
   };
+  // Project details
+  owner?: string;
+  location?: string;
+  address?: string;
+  // Selected CSI scopes
+  selectedScopes?: string[];
 }
 
 export type IssueStatus = 'open' | 'blocked' | 'resolved';

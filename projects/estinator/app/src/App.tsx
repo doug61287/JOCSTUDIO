@@ -217,6 +217,7 @@ function App() {
   const [issues, setIssues] = useState<Issue[]>(mockIssues);
   const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
   const [isShortcutsOpen, setIsShortcutsOpen] = useState(false);
+  const [selectedScopes, setSelectedScopes] = useState<string[]>(['21', '22', '26']); // Default: FP, Plumbing, Electrical
 
   // Get active conversation
   const activeConversation = conversations.find(c => c.id === activeConversationId) || conversations[0];
@@ -307,6 +308,14 @@ function App() {
     console.log('Draft RFI for issue:', issueId);
   };
 
+  const handleScopeToggle = (scope: string) => {
+    setSelectedScopes(prev => 
+      prev.includes(scope) 
+        ? prev.filter(s => s !== scope)
+        : [...prev, scope]
+    );
+  };
+
   const projectIssues = issues.filter(i => i.projectId === activeProject.id);
   const openIssues = projectIssues.filter(i => i.status === 'open');
   const blockedIssues = projectIssues.filter(i => i.status === 'blocked');
@@ -338,6 +347,8 @@ function App() {
           onSendMessage={handleSendMessage}
           onFlagAsIssue={handleFlagAsIssue}
           onDraftRFI={handleDraftRFI}
+          selectedScopes={selectedScopes}
+          onScopeToggle={handleScopeToggle}
         />
       </div>
       

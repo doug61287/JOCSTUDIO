@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import type { Message, Conversation, Project } from '../types';
+import { ProjectHeader } from './ProjectHeader';
 
 interface ChatPanelProps {
   project: Project;
@@ -11,6 +12,8 @@ interface ChatPanelProps {
   onSendMessage: (content: string) => void;
   onFlagAsIssue: (messageId: string, content: string, source?: string) => void;
   onDraftRFI: (issueId: string) => void;
+  selectedScopes: string[];
+  onScopeToggle: (scope: string) => void;
 }
 
 export function ChatPanel({ 
@@ -22,7 +25,9 @@ export function ChatPanel({
   messages, 
   onSendMessage, 
   onFlagAsIssue,
-  onDraftRFI 
+  onDraftRFI,
+  selectedScopes,
+  onScopeToggle
 }: ChatPanelProps) {
   const [inputValue, setInputValue] = useState('');
   const [isTyping, setIsTyping] = useState(false);
@@ -75,6 +80,13 @@ export function ChatPanel({
 
   return (
     <div className="flex flex-col h-full bg-[#0D0D0D]">
+      {/* Project Header */}
+      <ProjectHeader
+        project={project}
+        selectedScopes={selectedScopes}
+        onScopeToggle={onScopeToggle}
+      />
+
       {/* Header with Conversation Switcher */}
       <div className="h-14 border-b border-[#2A2A2A] flex items-center justify-between px-4 shrink-0">
         <div className="flex items-center gap-3">
