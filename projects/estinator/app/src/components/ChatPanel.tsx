@@ -1,29 +1,18 @@
 import { useState, useRef, useEffect } from 'react';
-import type { Message, Project } from '../types';
-import { ProjectHeader } from './ProjectHeader';
+import type { Message } from '../types';
 
 interface ChatPanelProps {
-  project: Project;
-  projects: Project[];
-  onProjectSelect: (project: Project) => void;
   messages: Message[];
   onSendMessage: (content: string) => void;
   onFlagAsIssue: (messageId: string, content: string, source?: string) => void;
   onDraftRFI: (issueId: string) => void;
-  selectedScopes: string[];
-  onScopeToggle: (scope: string) => void;
 }
 
 export function ChatPanel({ 
-  project,
-  projects,
-  onProjectSelect,
   messages, 
   onSendMessage, 
   onFlagAsIssue,
-  onDraftRFI,
-  selectedScopes,
-  onScopeToggle
+  onDraftRFI
 }: ChatPanelProps) {
   const [inputValue, setInputValue] = useState('');
   const [isTyping, setIsTyping] = useState(false);
@@ -60,15 +49,6 @@ export function ChatPanel({
 
   return (
     <div className="flex flex-col h-full bg-[#0D0D0D]">
-      {/* Project Header with Scope Selector */}
-      <ProjectHeader
-        project={project}
-        projects={projects}
-        selectedScopes={selectedScopes}
-        onScopeToggle={onScopeToggle}
-        onProjectSelect={onProjectSelect}
-      />
-
       {/* Messages - Telegram Style */}
       <div className="flex-1 overflow-y-auto px-4 py-6 space-y-6">
         {messages.length === 0 ? (

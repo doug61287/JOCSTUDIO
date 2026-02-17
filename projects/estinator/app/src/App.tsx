@@ -4,6 +4,7 @@ import { ChatPanel } from './components/ChatPanel';
 import { IssuesPanel } from './components/IssuesPanel';
 import { CommandPalette } from './components/CommandPalette';
 import { KeyboardShortcuts } from './components/KeyboardShortcuts';
+import { UnifiedHeader } from './components/UnifiedHeader';
 import type { Project, Conversation, Issue, Message } from './types';
 
 // Mock data
@@ -316,41 +317,51 @@ function App() {
     );
   };
 
-  const projectIssues = issues.filter(i => i.projectId === activeProject.id);
+  const projectConversations = conversations.filter(c => c.projectId === activeProject.id);
+  const projectIssuesList = issues.filter(i => i.projectId === activeProject.id);
 
   return (
-    <div className="h-screen w-screen bg-[#0D0D0D] text-white/90 flex overflow-hidden font-sans">
-      {/* Left Panel: Conversation List (Telegram-style) */}
-      <ConversationList
-        conversations={conversations.filter(c => c.projectId === activeProject.id)}
-        activeConversationId={activeConversationId}
-        onConversationSelect={setActiveConversationId}
-        onNewConversation={handleNewConversation}
+    <div className="h-screen w-screen bg-[#0D0D0D] text-white/90 flex flex-col overflow-hidden font-sans">
+      {/* Unified Header - Spans all panels */}
+      <UnifiedHeader
+        project={activeProject}
+        projects={mockProjects}
+        selectedScopes={selectedScopes}
+        onScopeToggle={handleScopeToggle}
+        onProjectSelect={setActiveProject}
+        conversationCount={projectConversations.length}
+        issueCount={projectIssuesList.length}
       />
-      
-      {/* Center Panel: Chat (Hero) */}
-      <div className="flex-1 min-w-0">
-        <ChatPanel
-          project={activeProject}
-          projects={mockProjects}
-          onProjectSelect={setActiveProject}
-          messages={activeConversation.messages}
-          onSendMessage={handleSendMessage}
-          onFlagAsIssue={handleFlagAsIssue}
-          onDraftRFI={handleDraftRFI}
-          selectedScopes={selectedScopes}
-          onScopeToggle={handleScopeToggle}
+
+      {/* Three Panels */}
+      <div className="flex-1 flex overflow-hidden">
+        {/* Left Panel: Conversations */}
+        <ConversationList
+          conversations={projectConversations}
+          activeConversationId={activeConversationId}
+          onConversationSelect={setActiveConversationId}
+          onNewConversation={handleNewConversation}
+        />
+        
+        {/* Center Panel: Chat */}
+        <div className="flex-1 min-w-0">
+          <ChatPanel
+            messages={activeConversation.messages}
+            onSendMessage={handleSendMessage}
+            onFlagAsIssue={handleFlagAsIssue}
+            onDraftRFI={handleDraftRFI}
+          />
+        </div>
+        
+        {/* Right Panel: Issues */}
+        <IssuesPanel
+          issues={projectIssuesList}
+          activeProject={activeProject}
+          onIssueStatusChange={(issueId, status) => {
+            setIssues(prev => prev.map(i => i.id === issueId ? { ...i, status } : i));
+          }}
         />
       </div>
-      
-      {/* Right Panel: Issues */}
-      <IssuesPanel
-        issues={projectIssues}
-        activeProject={activeProject}
-        onIssueStatusChange={(issueId, status) => {
-          setIssues(prev => prev.map(i => i.id === issueId ? { ...i, status } : i));
-        }}
-      />
       
       {/* Command Palette */}
       {isCommandPaletteOpen && (
