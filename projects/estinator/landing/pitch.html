@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Estinator — The Future of Construction Estimating</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'system-ui', 'sans-serif'],
+          },
+          animation: {
+            'float': 'float 6s ease-in-out infinite',
+          },
+          keyframes: {
+            float: {
+              '0%, 100%': { transform: 'translateY(0px)' },
+              '50%': { transform: 'translateY(-10px)' },
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    .gradient-text {
+      background: linear-gradient(135deg, #60a5fa 0%, #3b82f6 50%, #2563eb 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .glass {
+      background: rgba(255, 255, 255, 0.03);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+  </style>
+</head>
+<body class="bg-slate-950 text-white font-sans">
+  <!-- Hero -->
+  <section class="min-h-screen flex items-center justify-center relative overflow-hidden">
+    <div class="absolute inset-0">
+      <div class="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-600/20 rounded-full blur-3xl"></div>
+      <div class="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-600/20 rounded-full blur-3xl"></div>
+    </div>
+    
+    <div class="relative z-10 max-w-5xl mx-auto px-6 text-center">
+      <div class="inline-flex items-center gap-2 px-4 py-2 bg-white/5 border border-white/10 rounded-full text-sm text-blue-400 mb-8">
+        <span class="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></span>
+        The Future of Construction Estimating
+      </div>
+      
+      <h1 class="text-6xl md:text-8xl font-black tracking-tight mb-8">
+        Stop Starting<br>
+        <span class="gradient-text">From Zero</span>
+      </h1>
+      
+      <p class="text-xl md:text-2xl text-slate-400 max-w-3xl mx-auto mb-12">
+        Every bid, you rebuild knowledge you already had. Every project, you solve problems you already solved. 
+        <span class="text-white font-semibold">What if your expertise compounded instead?</span>
+      </p>
+      
+      <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+        <a href="https://app-orpin-six-51.vercel.app" class="px-8 py-4 bg-blue-600 hover:bg-blue-500 text-white font-semibold rounded-xl shadow-2xl shadow-blue-600/30 transition-all">
+          Try The Demo
+        </a>
+        <a href="#vision" class="px-8 py-4 bg-white/5 hover:bg-white/10 border border-white/10 text-white font-semibold rounded-xl transition-all">
+          Read The Story
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- The Problem -->
+  <section id="vision" class="py-32 bg-slate-900/30">
+    <div class="max-w-6xl mx-auto px-6">
+      <div class="text-center mb-20">
+        <h2 class="text-5xl font-bold mb-6">The Estimator's Paradox</h2>
+        <p class="text-xl text-slate-400 max-w-3xl mx-auto">
+          You're a knowledge worker, but your knowledge disappears the moment you finish a bid.
+        </p>
+      </div>
+
+      <div class="grid md:grid-cols-2 gap-8">
+        <div class="glass rounded-2xl p-8">
+          <h3 class="text-red-400 font-semibold mb-4">WITHOUT ESTINATOR</h3>
+          <ul class="space-y-4 text-slate-400">
+            <li class="flex items-center gap-3">
+              <span class="text-red-500">✗</span>
+              Start from scratch every bid
+            </li>
+            <li class="flex items-center gap-3">
+              <span class="text-red-500">✗</span>
+              Knowledge lost when people leave
+            </li>
+            <li class="flex items-center gap-3">
+              <span class="text-red-500">✗</span>
+              Same conflicts, discovered too late
+            </li>
+            <li class="flex items-center gap-3">
+              <span class="text-red-500">✗</span>
+              2 AM panic before deadline
+            </li>
+          </ul>
+        </div>
+
+        <div class="glass rounded-2xl p-8 border-blue-500/20">
+          <h3 class="text-blue-400 font-semibold mb-4">WITH ESTINATOR</h3>
+          <ul class="space-y-4 text-slate-300">
+            <li class="flex items-center gap-3">
+              <span class="text-green-500">✓</span>
+              Every project adds to knowledge base
+            </li>
+            <li class="flex items-center gap-3">
+              <span class="text-green-500">✓</span>
+              Institutional memory persists
+            </li>
+            <li class="flex items-center gap-3">
+              <span class="text-green-500">✓</span>
+              Conflicts found early, resolved calmly
+            </li>
+            <li class="flex items-center gap-3">
+              <span class="text-green-500">✓</span>
+              Submit at 5 PM, sleep through night
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- How It Works -->
+  <section class="py-32">
+    <div class="max-w-6xl mx-auto px-6">
+      <div class="text-center mb-20">
+        <h2 class="text-5xl font-bold mb-6">Primitives That <span class="gradient-text">Compound</span></h2>
+        <p class="text-xl text-slate-400">
+          Every project creates assets that make the next one easier.
+        </p>
+      </div>
+
+      <div class="grid md:grid-cols-3 gap-6">
+        <div class="glass rounded-2xl p-6">
+          <div class="w-12 h-12 bg-blue-500/10 rounded-xl flex items-center justify-center mb-4 text-2xl">📋</div>
+          <h3 class="text-lg font-bold mb-2">Tasks</h3>
+          <p class="text-sm text-slate-400">
+            Every conflict, RFI, and verification becomes a trackable task with full context.
+          </p>
+        </div>
+
+        <div class="glass rounded-2xl p-6">
+          <div class="w-12 h-12 bg-purple-500/10 rounded-xl flex items-center justify-center mb-4 text-2xl">🤔</div>
+          <h3 class="text-lg font-bold mb-2">Decisions</h3>
+          <p class="text-sm text-slate-400">
+            Why you chose VCT over rubber. Why you added 5% contingency. Recorded forever.
+          </p>
+        </div>
+
+        <div class="glass rounded-2xl p-6">
+          <div class="w-12 h-12 bg-green-500/10 rounded-xl flex items-center justify-center mb-4 text-2xl">💡</div>
+          <h3 class="text-lg font-bold mb-2">Lessons</h3>
+          <p class="text-sm text-slate-400">
+            "This architect always forgets hardware specs." Learned once, applied forever.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="py-32 bg-blue-600">
+    <div class="max-w-4xl mx-auto px-6 text-center">
+      <h2 class="text-4xl md:text-5xl font-bold text-white mb-6">
+        Ready to stop starting from zero?
+      </h2>
+      <p class="text-blue-100 text-lg mb-10">
+        Join the private beta and be among the first to experience 
+        construction estimating that actually remembers.
+      </p>
+      
+      <a href="https://app-orpin-six-51.vercel.app" class="inline-block px-8 py-4 bg-white text-blue-600 font-semibold rounded-xl hover:bg-blue-50 transition-colors">
+        Try The Demo
+      </a>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="py-12 bg-slate-950 border-t border-white/10">
+    <div class="max-w-6xl mx-auto px-6 text-center text-slate-500">
+      <p>© 2026 Estinator. Built for estimators who value their sanity.</p>
+    </div>
+  </footer>
+
+  <script>
+    // Initialize Lucide icons
+    document.addEventListener('DOMContentLoaded', () => {
+      if (window.lucide) {
+        lucide.createIcons();
+      }
+    });
+  </script>
+</body>
+</html>
