@@ -1,13 +1,11 @@
 import { useState, useRef, useEffect } from 'react';
-import type { Message, Conversation, Project } from '../types';
+import type { Message, Project } from '../types';
 import { ProjectHeader } from './ProjectHeader';
 
 interface ChatPanelProps {
   project: Project;
-  conversations: Conversation[];
-  activeConversationId: string;
-  onConversationSelect: (conversationId: string) => void;
-  onNewConversation: () => void;
+  projects: Project[];
+  onProjectSelect: (project: Project) => void;
   messages: Message[];
   onSendMessage: (content: string) => void;
   onFlagAsIssue: (messageId: string, content: string, source?: string) => void;
@@ -18,10 +16,8 @@ interface ChatPanelProps {
 
 export function ChatPanel({ 
   project,
-  conversations,
-  activeConversationId,
-  onConversationSelect,
-  onNewConversation,
+  projects,
+  onProjectSelect,
   messages, 
   onSendMessage, 
   onFlagAsIssue,
@@ -31,13 +27,8 @@ export function ChatPanel({
 }: ChatPanelProps) {
   const [inputValue, setInputValue] = useState('');
   const [isTyping, setIsTyping] = useState(false);
-  const [showConversationDropdown, setShowConversationDropdown] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
-  const dropdownRef = useRef<HTMLDivElement>(null);
-
-  const activeConversation = conversations.find(c => c.id === activeConversationId);
-  const projectConversations = conversations.filter(c => c.projectId === project.id);
 
   // Auto-scroll to bottom
   useEffect(() => {
@@ -51,17 +42,6 @@ export function ChatPanel({
       inputRef.current.style.height = `${Math.min(inputRef.current.scrollHeight, 200)}px`;
     }
   }, [inputValue]);
-
-  // Close dropdown on click outside
-  useEffect(() => {
-    const handleClickOutside = (e: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
-        setShowConversationDropdown(false);
-      }
-    };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
 
   const handleSend = () => {
     if (!inputValue.trim()) return;
@@ -80,116 +60,16 @@ export function ChatPanel({
 
   return (
     <div className="flex flex-col h-full bg-[#0D0D0D]">
-      {/* Project Header */}
+      {/* Project Header with Scope Selector */}
       <ProjectHeader
         project={project}
+        projects={projects}
         selectedScopes={selectedScopes}
         onScopeToggle={onScopeToggle}
+        onProjectSelect={onProjectSelect}
       />
 
-      {/* Header with Conversation Switcher */}
-      <div className="h-14 border-b border-[#2A2A2A] flex items-center justify-between px-4 shrink-0">
-        <div className="flex items-center gap-3">
-          <span className="text-lg">💬</span>
-          <div className="flex items-center gap-2" ref={dropdownRef}>
-            {/* Conversation Dropdown */}
-            <button
-              onClick={() => setShowConversationDropdown(!showConversationDropdown)}
-              className="flex items-center gap-2 px-3 py-1.5 bg-[#1A1A1A] hover:bg-[#252525] border border-[#2A2A2A] rounded-lg transition-fast"
-            >
-              <span className="text-[14px] font-medium text-white/90 max-w-[300px] truncate">
-                {activeConversation?.title || 'New Chat'}
-              </span>
-              <svg 
-                width="14" 
-                height="14" 
-                viewBox="0 0 24 24" 
-                fill="none" 
-                stroke="currentColor" 
-                strokeWidth="2"
-                className={`text-[#8A8F98] transition-transform ${showConversationDropdown ? 'rotate-180' : ''}`}
-              >
-                <polyline points="6 9 12 15 18 9"/>
-              </svg>
-            </button>
-
-            {/* New Chat Button */}
-            <button
-              onClick={onNewConversation}
-              className="p-1.5 rounded-lg hover:bg-[#2A2A2A] text-[#8A8F98] transition-fast"
-              title="New conversation"
-            >
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <line x1="12" y1="5" x2="12" y2="19"/>
-                <line x1="5" y1="12" x2="19" y2="12"/>
-              </svg>
-            </button>
-
-            {/* Conversation Dropdown Menu */}
-            {showConversationDropdown && (
-              <div className="absolute top-12 left-12 w-[320px] bg-[#1A1A1A] border border-[#2A2A2A] rounded-xl shadow-2xl z-30 overflow-hidden">
-                <div className="p-2 border-b border-[#2A2A2A]">
-                  <div className="text-[11px] font-semibold text-[#8A8F98] uppercase tracking-wider px-2 py-1">
-                    {project.name} Conversations
-                  </div>
-                </div>
-                <div className="max-h-[300px] overflow-y-auto p-1">
-                  {projectConversations.map(conv => (
-                    <button
-                      key={conv.id}
-                      onClick={() => {
-                        onConversationSelect(conv.id);
-                        setShowConversationDropdown(false);
-                      }}
-                      className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-left transition-fast ${
-                        conv.id === activeConversationId
-                          ? 'bg-[#5E6AD2]/15 text-[#5E6AD2]'
-                          : 'text-[#8A8F98] hover:bg-[#2A2A2A] hover:text-white/90'
-                      }`}
-                    >
-                      <span className="text-[14px]">💬</span>
-                      <div className="flex-1 min-w-0">
-                        <div className="text-[13px] font-medium truncate">{conv.title}</div>
-                        <div className="text-[11px] opacity-70">
-                          {conv.messages.length} messages • {new Date(conv.updatedAt).toLocaleDateString()}
-                        </div>
-                      </div>
-                      {conv.id === activeConversationId && (
-                        <span className="w-2 h-2 rounded-full bg-[#5E6AD2]"/>
-                      )}
-                    </button>
-                  ))}
-                  
-                  <div className="border-t border-[#2A2A2A] mt-1 pt-1">
-                    <button
-                      onClick={() => {
-                        onNewConversation();
-                        setShowConversationDropdown(false);
-                      }}
-                      className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-left text-[#8A8F98] hover:bg-[#2A2A2A] hover:text-white/90 transition-fast"
-                    >
-                      <span className="text-[14px]">+</span>
-                      <span className="text-[13px]">Start new conversation</span>
-                    </button>
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
-
-        <div className="flex items-center gap-2">
-          <button className="p-2 rounded-lg hover:bg-[#2A2A2A] text-[#8A8F98] transition-fast" title="Share">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/>
-              <polyline points="16 6 12 2 8 6"/>
-              <line x1="12" y1="2" x2="12" y2="15"/>
-            </svg>
-          </button>
-        </div>
-      </div>
-
-      {/* Messages */}
+      {/* Messages - Telegram Style */}
       <div className="flex-1 overflow-y-auto px-4 py-6 space-y-6">
         {messages.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-full text-[#8A8F98]">
@@ -420,13 +300,7 @@ function AssistantMessage({ content, sources, onFlagAsIssue }: AssistantMessageP
         <div className="flex flex-wrap gap-2 pt-2">
           <span className="text-[11px] text-[#6B7280] uppercase tracking-wider">Sources:</span>
           {sources.map((source, index) => (
-            <span key={index} className="inline-flex items-center gap-1 px-2 py-1 bg-[#1A1A1A] border border-[#2A2A2A] rounded text-[11px] text-[#8A8F98]">
-              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-                <polyline points="14 2 14 8 20 8"/>
-              </svg>
-              {source}
-            </span>
+            <SourceTag key={index} source={source} />
           ))}
         </div>
       )}
@@ -483,6 +357,18 @@ function FindingCard({ number, title, description, onFlagAsIssue }: FindingCardP
         </button>
       </div>
     </div>
+  );
+}
+
+function SourceTag({ source }: { source: string }) {
+  return (
+    <span className="inline-flex items-center gap-1 px-2 py-1 bg-[#1A1A1A] border border-[#2A2A2A] rounded text-[11px] text-[#8A8F98]">
+      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+        <polyline points="14 2 14 8 20 8"/>
+      </svg>
+      {source}
+    </span>
   );
 }
 

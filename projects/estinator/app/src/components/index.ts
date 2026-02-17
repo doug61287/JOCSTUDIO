@@ -1,4 +1,4 @@
-export { Sidebar } from './Sidebar';
+export { ConversationList } from './ConversationList';
 export { ChatPanel } from './ChatPanel';
 export { IssuesPanel } from './IssuesPanel';
 export { CommandPalette } from './CommandPalette';

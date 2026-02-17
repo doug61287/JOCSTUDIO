@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { Sidebar } from './components/Sidebar';
+import { ConversationList } from './components/ConversationList';
 import { ChatPanel } from './components/ChatPanel';
 import { IssuesPanel } from './components/IssuesPanel';
 import { CommandPalette } from './components/CommandPalette';
@@ -317,32 +317,23 @@ function App() {
   };
 
   const projectIssues = issues.filter(i => i.projectId === activeProject.id);
-  const openIssues = projectIssues.filter(i => i.status === 'open');
-  const blockedIssues = projectIssues.filter(i => i.status === 'blocked');
-  const resolvedIssues = projectIssues.filter(i => i.status === 'resolved');
 
   return (
     <div className="h-screen w-screen bg-[#0D0D0D] text-white/90 flex overflow-hidden font-sans">
-      {/* Left Panel: Projects Only */}
-      <Sidebar
-        projects={mockProjects}
-        activeProject={activeProject}
-        onProjectSelect={setActiveProject}
-        stats={{
-          open: openIssues.length,
-          blocked: blockedIssues.length,
-          resolved: resolvedIssues.length,
-        }}
+      {/* Left Panel: Conversation List (Telegram-style) */}
+      <ConversationList
+        conversations={conversations.filter(c => c.projectId === activeProject.id)}
+        activeConversationId={activeConversationId}
+        onConversationSelect={setActiveConversationId}
+        onNewConversation={handleNewConversation}
       />
       
-      {/* Center Panel: Chat with Conversation History */}
+      {/* Center Panel: Chat (Hero) */}
       <div className="flex-1 min-w-0">
         <ChatPanel
           project={activeProject}
-          conversations={conversations.filter(c => c.projectId === activeProject.id)}
-          activeConversationId={activeConversationId}
-          onConversationSelect={setActiveConversationId}
-          onNewConversation={handleNewConversation}
+          projects={mockProjects}
+          onProjectSelect={setActiveProject}
           messages={activeConversation.messages}
           onSendMessage={handleSendMessage}
           onFlagAsIssue={handleFlagAsIssue}

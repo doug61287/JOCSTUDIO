@@ -3,8 +3,10 @@ import type { Project } from '../types';
 
 interface ProjectHeaderProps {
   project: Project;
+  projects: Project[];
   selectedScopes: string[];
   onScopeToggle: (scope: string) => void;
+  onProjectSelect: (project: Project) => void;
 }
 
 // CSI MasterFormat 2020 - Divisions 01-49
@@ -41,15 +43,19 @@ const statusColors = {
   closed: { bg: 'bg-[#4ADE80]/10', text: 'text-[#4ADE80]', dot: 'bg-[#4ADE80]' },
 };
 
-export function ProjectHeader({ project, selectedScopes, onScopeToggle }: ProjectHeaderProps) {
+export function ProjectHeader({ project, projects, selectedScopes, onScopeToggle, onProjectSelect }: ProjectHeaderProps) {
   const [showScopeDropdown, setShowScopeDropdown] = useState(false);
-  const dropdownRef = useRef<HTMLDivElement>(null);
+  const [showProjectDropdown, setShowProjectDropdown] = useState(false);
+  const scopeDropdownRef = useRef<HTMLDivElement>(null);
+  const projectDropdownRef = useRef<HTMLDivElement>(null);
 
-  // Close dropdown on click outside
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+      if (scopeDropdownRef.current && !scopeDropdownRef.current.contains(e.target as Node)) {
         setShowScopeDropdown(false);
+      }
+      if (projectDropdownRef.current && !projectDropdownRef.current.contains(e.target as Node)) {
+        setShowProjectDropdown(false);
       }
     };
     document.addEventListener('mousedown', handleClickOutside);
@@ -66,12 +72,76 @@ export function ProjectHeader({ project, selectedScopes, onScopeToggle }: Projec
       {/* Main Header Row */}
       <div className="px-4 py-3">
         <div className="flex items-start justify-between gap-4">
-          {/* Left: Project Info */}
+          {/* Left: Project Info with Switcher */}
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-3 mb-1">
-              <h1 className="text-[18px] font-semibold text-white/90 truncate">
-                {project.name}
-              </h1>
+              {/* Project Switcher Dropdown */}
+              <div className="relative" ref={projectDropdownRef}>
+                <button
+                  onClick={() => setShowProjectDropdown(!showProjectDropdown)}
+                  className="flex items-center gap-2 group"
+                >
+                  <h1 className="text-[18px] font-semibold text-white/90 truncate group-hover:text-[#5E6AD2] transition-fast">
+                    {project.name}
+                  </h1>
+                  <svg 
+                    width="16" 
+                    height="16" 
+                    viewBox="0 0 24 24" 
+                    fill="none" 
+                    stroke="currentColor" 
+                    strokeWidth="2"
+                    className="text-[#8A8F98] group-hover:text-white/90 transition-fast"
+                  >
+                    <polyline points="6 9 12 15 18 9"/>
+                  </svg>
+                </button>
+
+                {/* Project Dropdown */}
+                {showProjectDropdown && (
+                  <div className="absolute top-full left-0 mt-2 w-[280px] bg-[#1A1A1A] border border-[#2A2A2A] rounded-xl shadow-2xl z-50 overflow-hidden">
+                    <div className="p-3 border-b border-[#2A2A2A]">
+                      <div className="text-[11px] font-semibold text-[#8A8F98] uppercase tracking-wider">
+                        Switch Project
+                      </div>
+                    </div>
+                    <div className="max-h-[300px] overflow-y-auto py-1">
+                      {projects.filter(p => p.status === 'open').map(p => {
+                        const isActive = p.id === project.id;
+                        return (
+                          <button
+                            key={p.id}
+                            onClick={() => {
+                              onProjectSelect(p);
+                              setShowProjectDropdown(false);
+                            }}
+                            className={`w-full flex items-center gap-3 px-3 py-2.5 text-left transition-fast ${
+                              isActive
+                                ? 'bg-[#5E6AD2]/15 text-[#5E6AD2]'
+                                : 'text-[#8A8F98] hover:bg-[#2A2A2A] hover:text-white/90'
+                            }`}
+                          >
+                            <span className="text-[16px]">
+                              {p.name.includes('Hospital') ? '🏥' : 
+                               p.name.includes('Theater') ? '🏢' : '🏫'}
+                            </span>
+                            <div className="flex-1 min-w-0">
+                              <div className="text-[13px] font-medium truncate">{p.name}</div>
+                              <div className="text-[11px] opacity-70">
+                                Week {p.cycle.currentWeek}/{p.cycle.totalWeeks}
+                              </div>
+                            </div>
+                            {isActive && (
+                              <span className="w-2 h-2 rounded-full bg-[#5E6AD2]"/>
+                            )}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+              </div>
+
               <span className={`flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[11px] font-medium ${statusStyle.bg} ${statusStyle.text}`}>
                 <span className={`w-1.5 h-1.5 rounded-full ${statusStyle.dot}`} />
                 {project.status.charAt(0).toUpperCase() + project.status.slice(1)}
@@ -117,7 +187,7 @@ export function ProjectHeader({ project, selectedScopes, onScopeToggle }: Projec
           </div>
 
           {/* Right: Scope Selector */}
-          <div className="relative" ref={dropdownRef}>
+          <div className="relative" ref={scopeDropdownRef}>
             <button
               onClick={() => setShowScopeDropdown(!showScopeDropdown)}
               className={`flex items-center gap-2 px-3 py-2 rounded-lg border transition-fast ${
