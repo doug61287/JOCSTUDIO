@@ -365,6 +365,9 @@ function App() {
             console.log('Document clicked:', doc);
             // Future: Open document viewer or ask chat about this doc
           }}
+          onMaterialClick={(mat) => {
+            console.log('Material clicked:', mat);
+          }}
         />
       </div>
       

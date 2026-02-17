@@ -7,7 +7,7 @@ interface ContextPanelProps {
   selectedScopes: string[];
   onIssueStatusChange: (issueId: string, status: IssueStatus) => void;
   onDocumentClick?: (document: ProjectDocument) => void;
-  onProductClick?: (product: Product) => void;
+  onMaterialClick?: (material: Material) => void;
 }
 
 export interface ProjectDocument {
@@ -22,7 +22,7 @@ export interface ProjectDocument {
   conflictCount?: number;
 }
 
-export interface Product {
+export interface Material {
   id: string;
   name: string;
   category: string;
@@ -30,10 +30,10 @@ export interface Product {
   manufacturer?: string;
   modelNumber?: string;
   quantity?: string;
-  sources: ProductSource[];
+  sources: MaterialSource[];
 }
 
-export interface ProductSource {
+export interface MaterialSource {
   documentId: string;
   documentName: string;
   documentType: 'schedule' | 'spec' | 'drawing';
@@ -53,9 +53,9 @@ const MOCK_DOCUMENTS: ProjectDocument[] = [
   { id: 'a1', name: 'Addendum 1', type: 'addendum', division: '21', status: 'processed', pageCount: 8, uploadDate: '2026-02-13', conflictCount: 3 },
 ];
 
-const MOCK_PRODUCTS: Product[] = [
+const MOCK_MATERIALS: Material[] = [
   {
-    id: 'p1',
+    id: 'm1',
     name: 'VCT Flooring - Standard',
     category: 'Flooring',
     division: '09',
@@ -67,7 +67,7 @@ const MOCK_PRODUCTS: Product[] = [
     ],
   },
   {
-    id: 'p2',
+    id: 'm2',
     name: 'Patient Room Door',
     category: 'Doors',
     division: '08',
@@ -85,26 +85,26 @@ const disciplineEmojis: Record<string, string> = {
   'Plumbing': '🚿', 'Mechanical': '🌡️', 'Electrical': '⚡',
 };
 
-const productCategoryEmojis: Record<string, string> = {
+const materialCategoryEmojis: Record<string, string> = {
   'Flooring': '🟫', 'Doors': '🚪', 'HVAC Equipment': '🌡️',
   'Lighting': '💡', 'Electrical Equipment': '⚡', 'Fire Protection': '🔥', 'Plumbing Fixtures': '🚿',
 };
 
 export function ContextPanel({ issues, selectedScopes }: ContextPanelProps) {
-  const [activeTab, setActiveTab] = useState<'issues' | 'documents' | 'products'>('documents');
+  const [activeTab, setActiveTab] = useState<'issues' | 'documents' | 'materials'>('documents');
   const [expandedSections, setExpandedSections] = useState<Set<string>>(new Set(['Drawings']));
-  const [selectedProductCategory, setSelectedProductCategory] = useState<string | 'all'>('all');
+  const [selectedMaterialCategory, setSelectedMaterialCategory] = useState<string | 'all'>('all');
 
   const filteredDocs = selectedScopes.length === 0 
     ? MOCK_DOCUMENTS 
     : MOCK_DOCUMENTS.filter(doc => doc.division && selectedScopes.includes(doc.division));
 
-  let filteredProducts = selectedScopes.length === 0 
-    ? MOCK_PRODUCTS 
-    : MOCK_PRODUCTS.filter(prod => selectedScopes.includes(prod.division));
+  let filteredMaterials = selectedScopes.length === 0 
+    ? MOCK_MATERIALS 
+    : MOCK_MATERIALS.filter(mat => selectedScopes.includes(mat.division));
   
-  if (selectedProductCategory !== 'all') {
-    filteredProducts = filteredProducts.filter(prod => prod.category === selectedProductCategory);
+  if (selectedMaterialCategory !== 'all') {
+    filteredMaterials = filteredMaterials.filter(mat => mat.category === selectedMaterialCategory);
   }
 
   const drawingsByDiscipline = filteredDocs
@@ -116,11 +116,11 @@ export function ContextPanel({ issues, selectedScopes }: ContextPanelProps) {
       return acc;
     }, {} as Record<string, ProjectDocument[]>);
 
-  const productsByCategory = filteredProducts.reduce((acc, prod) => {
-    if (!acc[prod.category]) acc[prod.category] = [];
-    acc[prod.category].push(prod);
+  const materialsByCategory = filteredMaterials.reduce((acc, mat) => {
+    if (!acc[mat.category]) acc[mat.category] = [];
+    acc[mat.category].push(mat);
     return acc;
-  }, {} as Record<string, Product[]>);
+  }, {} as Record<string, Material[]>);
 
   const toggleSection = (section: string) => {
     setExpandedSections(prev => {
@@ -132,12 +132,12 @@ export function ContextPanel({ issues, selectedScopes }: ContextPanelProps) {
   };
 
   return (
-    <div className="w-[300px] min-w-[300px] bg-[#0D0D0D] border-l border-[#2A2A2A] flex flex-col">
+    <div className="w-[450px] min-w-[450px] bg-[#0D0D0D] border-l border-[#2A2A2A] flex flex-col">
       {/* Tabs */}
       <div className="h-14 border-b border-[#2A2A2A] flex">
         <TabButton label="Issues" icon="🚩" count={issues.length} isActive={activeTab === 'issues'} onClick={() => setActiveTab('issues')} />
         <TabButton label="Documents" icon="📁" count={filteredDocs.length} isActive={activeTab === 'documents'} onClick={() => setActiveTab('documents')} />
-        <TabButton label="Products" icon="📦" count={filteredProducts.length} isActive={activeTab === 'products'} onClick={() => setActiveTab('products')} />
+        <TabButton label="Materials" icon="📦" count={filteredMaterials.length} isActive={activeTab === 'materials'} onClick={() => setActiveTab('materials')} />
       </div>
 
       {/* Content */}
@@ -182,46 +182,46 @@ export function ContextPanel({ issues, selectedScopes }: ContextPanelProps) {
           </>
         )}
 
-        {activeTab === 'products' && (
+        {activeTab === 'materials' && (
           <>
             {/* Category Filter */}
             <div className="mb-4">
               <div className="text-[11px] text-[#6B7280] mb-2">Filter by category:</div>
               <div className="flex flex-wrap gap-1">
                 <button 
-                  onClick={() => setSelectedProductCategory('all')}
-                  className={`px-2 py-1 rounded text-[10px] ${selectedProductCategory === 'all' ? 'bg-[#5E6AD2] text-white' : 'bg-[#2A2A2A] text-[#8A8F98]'}`}
+                  onClick={() => setSelectedMaterialCategory('all')}
+                  className={`px-2 py-1 rounded text-[10px] ${selectedMaterialCategory === 'all' ? 'bg-[#5E6AD2] text-white' : 'bg-[#2A2A2A] text-[#8A8F98]'}`}
                 >
                   All
                 </button>
-                {Object.keys(productsByCategory).map(cat => (
+                {Object.keys(materialsByCategory).map(cat => (
                   <button 
                     key={cat}
-                    onClick={() => setSelectedProductCategory(cat)}
-                    className={`px-2 py-1 rounded text-[10px] ${selectedProductCategory === cat ? 'bg-[#5E6AD2] text-white' : 'bg-[#2A2A2A] text-[#8A8F98]'}`}
+                    onClick={() => setSelectedMaterialCategory(cat)}
+                    className={`px-2 py-1 rounded text-[10px] ${selectedMaterialCategory === cat ? 'bg-[#5E6AD2] text-white' : 'bg-[#2A2A2A] text-[#8A8F98]'}`}
                   >
-                    {productCategoryEmojis[cat]} {cat}
+                    {materialCategoryEmojis[cat]} {cat}
                   </button>
                 ))}
               </div>
             </div>
 
-            {/* Products List */}
-            {Object.entries(productsByCategory).map(([category, products]) => (
+            {/* Materials List */}
+            {Object.entries(materialsByCategory).map(([category, materials]) => (
               <div key={category} className="mb-4">
                 <div className="flex items-center gap-2 py-2">
-                  <span>{productCategoryEmojis[category]}</span>
+                  <span>{materialCategoryEmojis[category]}</span>
                   <span className="font-medium text-[13px]">{category}</span>
-                  <span className="text-[11px] text-[#6B7280]">({products.length})</span>
+                  <span className="text-[11px] text-[#6B7280]">({materials.length})</span>
                 </div>
                 <div className="ml-4 space-y-2">
-                  {products.map(product => (
-                    <div key={product.id} className="p-2 rounded bg-[#1A1A1A] border border-[#2A2A2A]">
-                      <div className="text-[12px] font-medium text-white/90">{product.name}</div>
-                      <div className="text-[10px] text-[#6B7280]">{product.manufacturer} {product.modelNumber}</div>
-                      <div className="text-[10px] text-[#5E6AD2]">Qty: {product.quantity}</div>
+                  {materials.map(material => (
+                    <div key={material.id} className="p-2 rounded bg-[#1A1A1A] border border-[#2A2A2A]">
+                      <div className="text-[12px] font-medium text-white/90">{material.name}</div>
+                      <div className="text-[10px] text-[#6B7280]">{material.manufacturer} {material.modelNumber}</div>
+                      <div className="text-[10px] text-[#5E6AD2]">Qty: {material.quantity}</div>
                       <div className="mt-2 space-y-1">
-                        {product.sources.map((src, idx) => (
+                        {material.sources.map((src, idx) => (
                           <div key={idx} className="text-[9px] text-[#8A8F98] flex items-center gap-1">
                             <span>📄</span>
                             <span>{src.documentName}</span>
