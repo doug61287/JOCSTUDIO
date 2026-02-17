@@ -3,7 +3,7 @@ export interface Project {
   name: string;
   description: string;
   documentCount: number;
-  status: 'active' | 'archived' | 'completed';
+  status: 'open' | 'submitted' | 'closed';
   dueDate?: string;
   cycle: {
     currentWeek: number;
@@ -11,24 +11,58 @@ export interface Project {
   };
 }
 
-export interface RFI {
+export type IssueStatus = 'open' | 'blocked' | 'resolved';
+export type IssuePriority = 'low' | 'medium' | 'high' | 'critical';
+
+export interface Issue {
   id: string;
   title: string;
   description: string;
-  status: 'open' | 'resolved' | 'blocked';
-  priority: 'low' | 'medium' | 'high' | 'critical';
+  status: IssueStatus;
+  priority: IssuePriority;
   projectId: string;
-  source: string;
+  trade: string;
+  sourceDocument?: string;
   createdAt: string;
-  assignedTo?: string;
+  resolvedAt?: string;
+  // Link back to chat
+  conversationId?: string;
+  messageId?: string;
+  // RFI tracking
+  rfiId?: string;
+  rfiStatus?: 'draft' | 'sent' | 'responded' | 'closed';
 }
 
 export interface Message {
   id: string;
   role: 'user' | 'assistant';
   content: string;
-  sources?: string[];
   timestamp: string;
+  sources?: string[];
+  // For rich content
+  findings?: Finding[];
+  // Actions taken
+  flaggedAsIssue?: boolean;
+  issueId?: string;
+}
+
+export interface Finding {
+  id: string;
+  number: number;
+  title: string;
+  description?: string;
+  source?: string;
+  severity?: 'low' | 'medium' | 'high' | 'critical';
+}
+
+export interface Conversation {
+  id: string;
+  projectId: string;
+  title: string;
+  messages: Message[];
+  createdAt: string;
+  updatedAt: string;
+  isPinned?: boolean;
 }
 
 export interface Document {
@@ -39,7 +73,7 @@ export interface Document {
   size: string;
 }
 
-export type ViewType = 'rfis' | 'documents' | 'timeline' | 'settings';
+export type ViewType = 'chat' | 'issues' | 'documents' | 'settings';
 
 export interface Shortcut {
   key: string;
