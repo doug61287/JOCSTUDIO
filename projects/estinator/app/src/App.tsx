@@ -1,7 +1,7 @@
 import { useState, useCallback } from 'react';
 import { ConversationList } from './components/ConversationList';
 import { ChatPanel } from './components/ChatPanel';
-import { IssuesPanel } from './components/IssuesPanel';
+import { ContextPanel } from './components/ContextPanel';
 import { CommandPalette } from './components/CommandPalette';
 import { KeyboardShortcuts } from './components/KeyboardShortcuts';
 import { UnifiedHeader } from './components/UnifiedHeader';
@@ -353,12 +353,17 @@ function App() {
           />
         </div>
         
-        {/* Right Panel: Issues */}
-        <IssuesPanel
+        {/* Right Panel: Context (Issues + Documents) */}
+        <ContextPanel
           issues={projectIssuesList}
           activeProject={activeProject}
+          selectedScopes={selectedScopes}
           onIssueStatusChange={(issueId, status) => {
             setIssues(prev => prev.map(i => i.id === issueId ? { ...i, status } : i));
+          }}
+          onDocumentClick={(doc) => {
+            console.log('Document clicked:', doc);
+            // Future: Open document viewer or ask chat about this doc
           }}
         />
       </div>

@@ -1,6 +1,6 @@
 export { ConversationList } from './ConversationList';
 export { ChatPanel } from './ChatPanel';
-export { IssuesPanel } from './IssuesPanel';
+export { ContextPanel } from './ContextPanel';
 export { CommandPalette } from './CommandPalette';
 export { KeyboardShortcuts } from './KeyboardShortcuts';
 export { UnifiedHeader } from './UnifiedHeader';
