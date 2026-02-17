@@ -245,7 +245,7 @@ export function UnifiedHeader({
 
           {/* Scope Dropdown */}
           {showScopeDropdown && (
-            <div className="absolute top-full right-0 mt-2 w-[360px] bg-[#1A1A1A] border border-[#2A2A2A] rounded-xl shadow-2xl z-50 overflow-hidden">
+            <div className="absolute top-full left-0 mt-2 w-[360px] bg-[#1A1A1A] border border-[#2A2A2A] rounded-xl shadow-2xl z-50 overflow-hidden">
               <div className="flex items-center justify-between px-4 py-3 border-b border-[#2A2A2A]">
                 <div>
                   <h3 className="text-[14px] font-semibold text-white/90">Select Scopes</h3>
