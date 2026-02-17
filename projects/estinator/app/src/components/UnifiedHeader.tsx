@@ -210,8 +210,8 @@ export function UnifiedHeader({
         </div>
       </div>
 
-      {/* Bottom Row - Scope Controls (Right Aligned) */}
-      <div className="flex items-center justify-end gap-3 px-4 py-2 bg-[#5E6AD2]/5 border-t border-[#2A2A2A]">
+      {/* Bottom Row - Scope Controls (Left Aligned) */}
+      <div className="flex items-center justify-start gap-3 px-4 py-2 bg-[#5E6AD2]/5 border-t border-[#2A2A2A]">
         {/* Scope Selector */}
         <div className="relative" ref={scopeDropdownRef}>
           <button
