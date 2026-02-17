@@ -79,10 +79,10 @@ export function UnifiedHeader({
 
   return (
     <div className="bg-[#0D0D0D] border-b border-[#2A2A2A]">
-      {/* Top Row - Project Identity */}
+      {/* Single Row Header */}
       <div className="px-4 py-3">
-        <div className="flex items-center justify-between">
-          {/* Left: Project Info with Switcher */}
+        <div className="flex items-center justify-between gap-4">
+          {/* Left: Project Info */}
           <div className="flex items-center gap-4">
             {/* Project Switcher */}
             <div className="relative" ref={projectDropdownRef}>
@@ -201,7 +201,7 @@ export function UnifiedHeader({
             </div>
           </div>
 
-          {/* Right: Scope Selector */}
+          {/* Right: Scope Selector + Selected Tags (IN SAME ROW) */}
           <div className="flex items-center gap-3">
             {/* Panel Indicators */}
             <div className="flex items-center gap-1 px-2 py-1 bg-[#1A1A1A] rounded-lg text-[12px] text-[#8A8F98]">
@@ -210,8 +210,9 @@ export function UnifiedHeader({
               <span>🚩 {issueCount}</span>
             </div>
 
-            {/* Scope Selector */}
-            <div className="relative" ref={scopeDropdownRef}>
+            {/* Scope Selector + Selected Tags Container */}
+            <div className="flex items-center gap-2" ref={scopeDropdownRef}>
+              {/* Scope Dropdown Button */}
               <button
                 onClick={() => setShowScopeDropdown(!showScopeDropdown)}
                 className={`flex items-center gap-2 px-3 py-2 rounded-lg border transition-fast ${
@@ -228,11 +229,6 @@ export function UnifiedHeader({
                     ? 'All Scopes' 
                     : `${selectedScopes.length} Scope${selectedScopes.length > 1 ? 's' : ''}`}
                 </span>
-                {selectedScopes.length > 0 && (
-                  <span className="flex items-center justify-center w-5 h-5 bg-[#5E6AD2] rounded-full text-[10px] text-white font-medium">
-                    {selectedScopes.length}
-                  </span>
-                )}
                 <svg 
                   width="12" 
                   height="12" 
@@ -246,9 +242,38 @@ export function UnifiedHeader({
                 </svg>
               </button>
 
-              {/* Scope Dropdown */}
+              {/* Selected Scope Tags - NOW IN SAME ROW! */}
+              {selectedScopes.length > 0 && (
+                <>
+                  <span className="text-[11px] text-[#6B7280]">focusing on</span>
+                  <div className="flex items-center gap-1.5">
+                    {selectedScopes.slice(0, 3).map(code => {
+                      const scope = csiScopes.find(s => s.code === code);
+                      return (
+                        <button
+                          key={code}
+                          onClick={() => onScopeToggle(code)}
+                          className="flex items-center gap-1 px-2 py-1 bg-[#5E6AD2]/10 border border-[#5E6AD2]/20 rounded-md text-[11px] text-[#5E6AD2] hover:bg-[#5E6AD2]/20 transition-fast"
+                          title={scope?.name}
+                        >
+                          <span className="font-mono">{code}</span>
+                          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                            <line x1="18" y1="6" x2="6" y2="18"/>
+                            <line x1="6" y1="6" x2="18" y2="18"/>
+                          </svg>
+                        </button>
+                      );
+                    })}
+                    {selectedScopes.length > 3 && (
+                      <span className="text-[11px] text-[#5E6AD2]">+{selectedScopes.length - 3} more</span>
+                    )}
+                  </div>
+                </>
+              )}
+
+              {/* Scope Dropdown Menu */}
               {showScopeDropdown && (
-                <div className="absolute top-full right-0 mt-2 w-[360px] bg-[#1A1A1A] border border-[#2A2A2A] rounded-xl shadow-2xl z-50 overflow-hidden">
+                <div className="absolute top-[60px] right-4 w-[360px] bg-[#1A1A1A] border border-[#2A2A2A] rounded-xl shadow-2xl z-50 overflow-hidden">
                   <div className="flex items-center justify-between px-4 py-3 border-b border-[#2A2A2A]">
                     <div>
                       <h3 className="text-[14px] font-semibold text-white/90">Select Scopes</h3>
@@ -316,30 +341,6 @@ export function UnifiedHeader({
           </div>
         </div>
       </div>
-
-      {/* Bottom Row - Selected Scopes Bar */}
-      {selectedScopes.length > 0 && (
-        <div className="flex items-center gap-2 px-4 py-2 bg-[#5E6AD2]/5 border-t border-[#2A2A2A] overflow-x-auto">
-          <span className="text-[11px] text-[#8A8F98] shrink-0">Focusing on:</span>
-          {selectedScopes.map(code => {
-            const scope = csiScopes.find(s => s.code === code);
-            return (
-              <button
-                key={code}
-                onClick={() => onScopeToggle(code)}
-                className="flex items-center gap-1.5 px-2.5 py-1 bg-[#5E6AD2]/10 border border-[#5E6AD2]/20 rounded-full text-[11px] text-[#5E6AD2] hover:bg-[#5E6AD2]/20 transition-fast shrink-0"
-              >
-                <span className="font-mono">{code}</span>
-                <span className="truncate max-w-[120px]">{scope?.name}</span>
-                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <line x1="18" y1="6" x2="6" y2="18"/>
-                  <line x1="6" y1="6" x2="18" y2="18"/>
-                </svg>
-              </button>
-            );
-          })}
-        </div>
-      )}
     </div>
   );
 }
