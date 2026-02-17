@@ -79,9 +79,9 @@ export function UnifiedHeader({
 
   return (
     <div className="bg-[#0D0D0D] border-b border-[#2A2A2A]">
-      {/* Single Row Header */}
+      {/* Top Row - Project Identity */}
       <div className="px-4 py-3">
-        <div className="flex items-center justify-between gap-4">
+        <div className="flex items-center justify-between">
           {/* Left: Project Info */}
           <div className="flex items-center gap-4">
             {/* Project Switcher */}
@@ -201,145 +201,142 @@ export function UnifiedHeader({
             </div>
           </div>
 
-          {/* Right: Scope Selector + Selected Tags (IN SAME ROW) */}
-          <div className="flex items-center gap-3">
-            {/* Panel Indicators */}
-            <div className="flex items-center gap-1 px-2 py-1 bg-[#1A1A1A] rounded-lg text-[12px] text-[#8A8F98]">
-              <span>💬 {conversationCount}</span>
-              <span className="text-[#2A2A2A]">|</span>
-              <span>🚩 {issueCount}</span>
-            </div>
-
-            {/* Scope Selector + Selected Tags Container */}
-            <div className="flex items-center gap-2" ref={scopeDropdownRef}>
-              {/* Scope Dropdown Button */}
-              <button
-                onClick={() => setShowScopeDropdown(!showScopeDropdown)}
-                className={`flex items-center gap-2 px-3 py-2 rounded-lg border transition-fast ${
-                  selectedScopes.length > 0 
-                    ? 'bg-[#5E6AD2]/10 border-[#5E6AD2]/30 text-[#5E6AD2]' 
-                    : 'bg-[#1A1A1A] border-[#2A2A2A] text-[#8A8F98] hover:border-[#3A3A3A]'
-                }`}
-              >
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
-                </svg>
-                <span className="text-[13px] font-medium">
-                  {selectedScopes.length === 0 
-                    ? 'All Scopes' 
-                    : `${selectedScopes.length} Scope${selectedScopes.length > 1 ? 's' : ''}`}
-                </span>
-                <svg 
-                  width="12" 
-                  height="12" 
-                  viewBox="0 0 24 24" 
-                  fill="none" 
-                  stroke="currentColor" 
-                  strokeWidth="2"
-                  className={`transition-transform ${showScopeDropdown ? 'rotate-180' : ''}`}
-                >
-                  <polyline points="6 9 12 15 18 9"/>
-                </svg>
-              </button>
-
-              {/* Selected Scope Tags - NOW IN SAME ROW! */}
-              {selectedScopes.length > 0 && (
-                <>
-                  <span className="text-[11px] text-[#6B7280]">focusing on</span>
-                  <div className="flex items-center gap-1.5">
-                    {selectedScopes.slice(0, 3).map(code => {
-                      const scope = csiScopes.find(s => s.code === code);
-                      return (
-                        <button
-                          key={code}
-                          onClick={() => onScopeToggle(code)}
-                          className="flex items-center gap-1 px-2 py-1 bg-[#5E6AD2]/10 border border-[#5E6AD2]/20 rounded-md text-[11px] text-[#5E6AD2] hover:bg-[#5E6AD2]/20 transition-fast"
-                          title={scope?.name}
-                        >
-                          <span className="font-mono">{code}</span>
-                          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                            <line x1="18" y1="6" x2="6" y2="18"/>
-                            <line x1="6" y1="6" x2="18" y2="18"/>
-                          </svg>
-                        </button>
-                      );
-                    })}
-                    {selectedScopes.length > 3 && (
-                      <span className="text-[11px] text-[#5E6AD2]">+{selectedScopes.length - 3} more</span>
-                    )}
-                  </div>
-                </>
-              )}
-
-              {/* Scope Dropdown Menu */}
-              {showScopeDropdown && (
-                <div className="absolute top-[60px] right-4 w-[360px] bg-[#1A1A1A] border border-[#2A2A2A] rounded-xl shadow-2xl z-50 overflow-hidden">
-                  <div className="flex items-center justify-between px-4 py-3 border-b border-[#2A2A2A]">
-                    <div>
-                      <h3 className="text-[14px] font-semibold text-white/90">Select Scopes</h3>
-                      <p className="text-[11px] text-[#8A8F98]">CSI MasterFormat 2020</p>
-                    </div>
-                    {selectedScopes.length > 0 && (
-                      <button
-                        onClick={() => selectedScopes.forEach(scope => onScopeToggle(scope))}
-                        className="text-[11px] text-[#8A8F98] hover:text-white/90 transition-fast"
-                      >
-                        Clear all
-                      </button>
-                    )}
-                  </div>
-
-                  <div className="max-h-[320px] overflow-y-auto p-2">
-                    <div className="grid grid-cols-1 gap-0.5">
-                      {csiScopes.map((scope) => {
-                        const isSelected = selectedScopes.includes(scope.code);
-                        return (
-                          <button
-                            key={scope.code}
-                            onClick={() => onScopeToggle(scope.code)}
-                            className={`flex items-center gap-3 px-3 py-2 rounded-lg text-left transition-fast ${
-                              isSelected 
-                                ? 'bg-[#5E6AD2]/15 text-[#5E6AD2]' 
-                                : 'text-[#8A8F98] hover:bg-[#2A2A2A] hover:text-white/90'
-                            }`}
-                          >
-                            <div className={`flex items-center justify-center w-5 h-5 rounded border transition-fast ${
-                              isSelected 
-                                ? 'bg-[#5E6AD2] border-[#5E6AD2]' 
-                                : 'border-[#3A3A3A]'
-                            }`}>
-                              {isSelected && (
-                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3">
-                                  <polyline points="20 6 9 17 4 12"/>
-                                </svg>
-                              )}
-                            </div>
-                            <span className="text-[12px] font-mono w-6 opacity-70">{scope.code}</span>
-                            <span className="text-[13px] flex-1 truncate">{scope.name}</span>
-                          </button>
-                        );
-                      })}
-                    </div>
-                  </div>
-
-                  <div className="flex items-center justify-between px-4 py-3 border-t border-[#2A2A2A] bg-[#252525]">
-                    <span className="text-[12px] text-[#8A8F98]">
-                      {selectedScopes.length === 0 
-                        ? 'All divisions included' 
-                        : `${selectedScopes.length} division${selectedScopes.length > 1 ? 's' : ''} selected`}
-                    </span>
-                    <button
-                      onClick={() => setShowScopeDropdown(false)}
-                      className="px-4 py-1.5 bg-[#5E6AD2] hover:bg-[#6872E3] rounded-lg text-[12px] font-medium text-white transition-fast"
-                    >
-                      Done
-                    </button>
-                  </div>
-                </div>
-              )}
-            </div>
+          {/* Right: Panel Indicators */}
+          <div className="flex items-center gap-1 px-2 py-1 bg-[#1A1A1A] rounded-lg text-[12px] text-[#8A8F98]">
+            <span>💬 {conversationCount}</span>
+            <span className="text-[#2A2A2A]">|</span>
+            <span>🚩 {issueCount}</span>
           </div>
         </div>
+      </div>
+
+      {/* Bottom Row - Scope Controls (Right Aligned) */}
+      <div className="flex items-center justify-end gap-3 px-4 py-2 bg-[#5E6AD2]/5 border-t border-[#2A2A2A]">
+        {/* Scope Selector */}
+        <div className="relative" ref={scopeDropdownRef}>
+          <button
+            onClick={() => setShowScopeDropdown(!showScopeDropdown)}
+            className={`flex items-center gap-2 px-3 py-1.5 rounded-lg border transition-fast ${
+              selectedScopes.length > 0 
+                ? 'bg-[#5E6AD2]/10 border-[#5E6AD2]/30 text-[#5E6AD2]' 
+                : 'bg-[#1A1A1A] border-[#2A2A2A] text-[#8A8F98] hover:border-[#3A3A3A]'
+            }`}
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
+            </svg>
+            <span className="text-[13px] font-medium">
+              {selectedScopes.length === 0 
+                ? 'All Scopes' 
+                : `${selectedScopes.length} Scope${selectedScopes.length > 1 ? 's' : ''}`}
+            </span>
+            <svg 
+              width="12" 
+              height="12" 
+              viewBox="0 0 24 24" 
+              fill="none" 
+              stroke="currentColor" 
+              strokeWidth="2"
+              className={`transition-transform ${showScopeDropdown ? 'rotate-180' : ''}`}
+            >
+              <polyline points="6 9 12 15 18 9"/>
+            </svg>
+          </button>
+
+          {/* Scope Dropdown */}
+          {showScopeDropdown && (
+            <div className="absolute top-full right-0 mt-2 w-[360px] bg-[#1A1A1A] border border-[#2A2A2A] rounded-xl shadow-2xl z-50 overflow-hidden">
+              <div className="flex items-center justify-between px-4 py-3 border-b border-[#2A2A2A]">
+                <div>
+                  <h3 className="text-[14px] font-semibold text-white/90">Select Scopes</h3>
+                  <p className="text-[11px] text-[#8A8F98]">CSI MasterFormat 2020</p>
+                </div>
+                {selectedScopes.length > 0 && (
+                  <button
+                    onClick={() => selectedScopes.forEach(scope => onScopeToggle(scope))}
+                    className="text-[11px] text-[#8A8F98] hover:text-white/90 transition-fast"
+                  >
+                    Clear all
+                  </button>
+                )}
+              </div>
+
+              <div className="max-h-[320px] overflow-y-auto p-2">
+                <div className="grid grid-cols-1 gap-0.5">
+                  {csiScopes.map((scope) => {
+                    const isSelected = selectedScopes.includes(scope.code);
+                    return (
+                      <button
+                        key={scope.code}
+                        onClick={() => onScopeToggle(scope.code)}
+                        className={`flex items-center gap-3 px-3 py-2 rounded-lg text-left transition-fast ${
+                          isSelected 
+                            ? 'bg-[#5E6AD2]/15 text-[#5E6AD2]' 
+                            : 'text-[#8A8F98] hover:bg-[#2A2A2A] hover:text-white/90'
+                        }`}
+                      >
+                        <div className={`flex items-center justify-center w-5 h-5 rounded border transition-fast ${
+                          isSelected 
+                            ? 'bg-[#5E6AD2] border-[#5E6AD2]' 
+                            : 'border-[#3A3A3A]'
+                        }`}>
+                          {isSelected && (
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3">
+                              <polyline points="20 6 9 17 4 12"/>
+                            </svg>
+                          )}
+                        </div>
+                        <span className="text-[12px] font-mono w-6 opacity-70">{scope.code}</span>
+                        <span className="text-[13px] flex-1 truncate">{scope.name}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              <div className="flex items-center justify-between px-4 py-3 border-t border-[#2A2A2A] bg-[#252525]">
+                <span className="text-[12px] text-[#8A8F98]">
+                  {selectedScopes.length === 0 
+                    ? 'All divisions included' 
+                    : `${selectedScopes.length} division${selectedScopes.length > 1 ? 's' : ''} selected`}
+                </span>
+                <button
+                  onClick={() => setShowScopeDropdown(false)}
+                  className="px-4 py-1.5 bg-[#5E6AD2] hover:bg-[#6872E3] rounded-lg text-[12px] font-medium text-white transition-fast"
+                >
+                  Done
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Focusing On + Tags */}
+        {selectedScopes.length > 0 && (
+          <div className="flex items-center gap-2">
+            <span className="text-[11px] text-[#8A8F98]">Focusing on:</span>
+            <div className="flex items-center gap-1.5">
+              {selectedScopes.map(code => {
+                const scope = csiScopes.find(s => s.code === code);
+                return (
+                  <button
+                    key={code}
+                    onClick={() => onScopeToggle(code)}
+                    className="flex items-center gap-1.5 px-2.5 py-1 bg-[#5E6AD2]/10 border border-[#5E6AD2]/20 rounded-full text-[11px] text-[#5E6AD2] hover:bg-[#5E6AD2]/20 transition-fast"
+                    title={scope?.name}
+                  >
+                    <span className="font-mono">{code}</span>
+                    <span className="truncate max-w-[80px]">{scope?.name}</span>
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <line x1="18" y1="6" x2="6" y2="18"/>
+                      <line x1="6" y1="6" x2="18" y2="18"/>
+                    </svg>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
