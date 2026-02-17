@@ -1,36 +1,15 @@
 import { useState } from 'react';
-import { 
-  AlertTriangle, 
-  FileText, 
-  FolderOpen, 
-  Package, 
-  ChevronDown, 
-  ChevronRight,
-  Building2,
-  HardHat,
-  Flame,
-  Droplets,
-  Thermometer,
-  Zap,
-  Hash,
-  DoorOpen,
-  Lightbulb,
-  CheckCircle2,
-  LayoutGrid,
-  AlertCircle,
-  XCircle,
-  MinusCircle,
-  RotateCw
-} from 'lucide-react';
-import type { Issue, IssueStatus, Project } from '../types';
+import { FileText, FolderOpen, Package, ChevronDown, ChevronRight, Building2, HardHat, Flame, Droplets, Thermometer, Zap, Hash, DoorOpen, Lightbulb, CheckCircle2, LayoutGrid, AlertCircle } from 'lucide-react';
+import type { Issue, Project } from '../types';
 
 interface ContextPanelProps {
   issues: Issue[];
   activeProject: Project;
   selectedScopes: string[];
-  onIssueStatusChange: (issueId: string, status: IssueStatus) => void;
-  onDocumentClick?: (document: ProjectDocument) => void;
-  onMaterialClick?: (material: Material) => void;
+  completedItems: { documents: string[]; materials: string[]; specs: string[] };
+  onItemClick: (item: { id: string; name: string; type: 'drawing' | 'spec' | 'schedule' | 'material' }) => void;
+  onMarkComplete: (id: string, type: 'drawing' | 'spec' | 'material') => void;
+  activeContextId: string | null;
 }
 
 export interface ProjectDocument {
@@ -154,17 +133,6 @@ const MaterialIcon = ({ category, className = "w-4 h-4" }: { category: string; c
   }
 };
 
-const StatusIcon = ({ status, className = "w-4 h-4" }: { status: string; className?: string }) => {
-  switch (status) {
-    case 'complete': return <CheckCircle2 className={`${className} text-[#4ADE80]`} />;
-    case 'processing': return <RotateCw className={`${className} text-[#FBBF24] animate-spin`} />;
-    case 'issues': return <AlertCircle className={`${className} text-[#FBBF24]`} />;
-    case 'partial': return <MinusCircle className={`${className} text-[#FBBF24]`} />;
-    case 'missing': return <XCircle className={`${className} text-[#6B7280]`} />;
-    default: return <MinusCircle className={className} />;
-  }
-};
-
 const MiniProgress = ({ progress, status }: { progress: number; status: string }) => {
   const getColor = () => {
     if (status === 'complete') return 'bg-[#4ADE80]';
@@ -172,7 +140,6 @@ const MiniProgress = ({ progress, status }: { progress: number; status: string }
     if (status === 'partial') return 'bg-[#5E6AD2]';
     return 'bg-[#6B7280]';
   };
-
   return (
     <div className="w-full">
       <div className="h-1.5 bg-[#2A2A2A] rounded-full overflow-hidden">
@@ -182,8 +149,8 @@ const MiniProgress = ({ progress, status }: { progress: number; status: string }
   );
 };
 
-export function ContextPanel({ issues, selectedScopes }: ContextPanelProps) {
-  const [activeTab, setActiveTab] = useState<'issues' | 'documents' | 'materials' | 'scope'>('scope');
+export function ContextPanel({ selectedScopes, completedItems, onItemClick, activeContextId }: ContextPanelProps) {
+  const [activeTab, setActiveTab] = useState<'scope' | 'documents' | 'materials'>('scope');
   const [expandedSections, setExpandedSections] = useState<Set<string>>(new Set(['Drawings']));
   const [selectedMaterialCategory, setSelectedMaterialCategory] = useState<string | 'all'>('all');
   const [expandedTrades, setExpandedTrades] = useState<Set<string>>(new Set());
@@ -206,6 +173,11 @@ export function ContextPanel({ issues, selectedScopes }: ContextPanelProps) {
     return acc;
   }, {} as Record<string, Material[]>);
 
+  const isCompleted = (id: string, type: 'drawing' | 'spec' | 'material') => {
+    if (type === 'drawing' || type === 'spec') return completedItems.documents.includes(id);
+    return completedItems.materials.includes(id);
+  };
+
   const toggleSection = (section: string) => {
     setExpandedSections(prev => {
       const next = new Set(prev);
@@ -225,19 +197,59 @@ export function ContextPanel({ issues, selectedScopes }: ContextPanelProps) {
   };
 
   return (
-    <div className="w-[450px] min-w-[450px] bg-[#0D0D0D] border-l border-[#2A2A2A] flex flex-col">
+    <div className="w-[300px] min-w-[300px] bg-[#0D0D0D] border-r border-[#2A2A2A] flex flex-col">
       <div className="h-14 border-b border-[#2A2A2A] flex">
-        <TabButton label="Issues" icon={<AlertTriangle className="w-4 h-4" />} count={issues.length} isActive={activeTab === 'issues'} onClick={() => setActiveTab('issues')} />
         <TabButton label="Scope" icon={<LayoutGrid className="w-4 h-4" />} count={filteredTrades.length} isActive={activeTab === 'scope'} onClick={() => setActiveTab('scope')} />
-        <TabButton label="Documents" icon={<FolderOpen className="w-4 h-4" />} count={filteredDocs.length} isActive={activeTab === 'documents'} onClick={() => setActiveTab('documents')} />
-        <TabButton label="Materials" icon={<Package className="w-4 h-4" />} count={filteredMaterials.length} isActive={activeTab === 'materials'} onClick={() => setActiveTab('materials')} />
+        <TabButton label="Docs" icon={<FolderOpen className="w-4 h-4" />} count={filteredDocs.length} isActive={activeTab === 'documents'} onClick={() => setActiveTab('documents')} />
+        <TabButton label="Mats" icon={<Package className="w-4 h-4" />} count={filteredMaterials.length} isActive={activeTab === 'materials'} onClick={() => setActiveTab('materials')} />
       </div>
 
       <div className="flex-1 overflow-y-auto">
         {activeTab === 'scope' && (
-          <div className="p-4 space-y-4">
+          <div className="p-3 space-y-3">
             {filteredTrades.map(trade => (
-              <TradeCoverageCard key={trade.division} trade={trade} isExpanded={expandedTrades.has(trade.division)} onToggle={() => toggleTrade(trade.division)} />
+              <div key={trade.division} className="bg-[#1A1A1A] border border-[#2A2A2A] rounded-lg overflow-hidden">
+                <button onClick={() => toggleTrade(trade.division)} className="w-full p-3 flex items-center justify-between hover:bg-[#252525] transition-fast">
+                  <div className="flex items-center gap-2">
+                    <span className="text-[13px] font-mono text-[#5E6AD2]">{trade.division}</span>
+                    <span className="text-[14px] font-medium text-white/90">{trade.name}</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-[11px] text-[#8A8F98]">{trade.overallProgress}%</span>
+                    <div className="w-16 h-1.5 bg-[#2A2A2A] rounded-full overflow-hidden">
+                      <div className="h-full bg-[#5E6AD2] rounded-full" style={{ width: `${trade.overallProgress}%` }} />
+                    </div>
+                    {expandedTrades.has(trade.division) ? <ChevronDown className="w-4 h-4 text-[#6B7280]" /> : <ChevronRight className="w-4 h-4 text-[#6B7280]" />}
+                  </div>
+                </button>
+
+                <div className="px-3 pb-2">
+                  <div className="grid grid-cols-5 gap-1.5">
+                    <TradeSection label="Draw" section={trade.drawings} />
+                    <TradeSection label="Spec" section={trade.specs} />
+                    <TradeSection label="Sched" section={trade.schedules} />
+                    <TradeSection label="Qty" section={trade.quantities} />
+                    <TradeSection label="Check" section={trade.crossCheck} />
+                  </div>
+                </div>
+
+                {expandedTrades.has(trade.division) && (
+                  <div className="border-t border-[#2A2A2A] p-3 space-y-2">
+                    <div className="text-[10px] uppercase text-[#6B7280] tracking-wider">Drawings</div>
+                    {trade.drawings.documents.map(doc => {
+                      const isActive = activeContextId === doc.id;
+                      const isDone = completedItems.documents.includes(doc.id);
+                      return (
+                        <div key={doc.id} onClick={() => onItemClick({ id: doc.id, name: doc.name, type: 'drawing' })} className={`flex items-center gap-2 py-1 px-2 rounded cursor-pointer text-[11px] ${isActive ? 'bg-[#5E6AD2]/20 text-white' : 'hover:bg-[#252525] text-white/70'}`}>
+                          {isDone ? <CheckCircle2 className="w-3 h-3 text-[#4ADE80]" /> : <FileText className={`w-3 h-3 ${isActive ? 'text-[#5E6AD2]' : 'text-[#6B7280]'}`} />}
+                          <span className="flex-1 truncate">{doc.name}</span>
+                          {doc.conflictCount > 0 && <span className="text-[#FBBF24]">{doc.conflictCount}</span>}
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
             ))}
           </div>
         )}
@@ -265,26 +277,43 @@ export function ContextPanel({ issues, selectedScopes }: ContextPanelProps) {
                       
                       {expandedSections.has(`disc-${discipline}`) && (
                         <div className="ml-6 space-y-0.5 mt-1">
-                          {docs.map(doc => (
-                            <div key={doc.id} className="flex items-center gap-2 py-1.5 px-2 rounded hover:bg-[#1A1A1A] cursor-pointer group">
-                              <FileText className="w-3.5 h-3.5 text-[#6B7280] group-hover:text-[#5E6AD2]" />
-                              <span className="text-[11px] text-white/70 group-hover:text-white truncate">{doc.name}</span>
-                              {(doc.conflictCount || 0) > 0 ? (
-                                <span className="text-[10px] text-[#FBBF24] ml-auto flex items-center gap-1">
-                                  <AlertTriangle className="w-3 h-3" />
-                                  {doc.conflictCount}
-                                </span>
-                              ) : (
-                                <CheckCircle2 className="w-3.5 h-3.5 text-[#4ADE80] ml-auto" />
-                              )}
-                            </div>
-                          ))}
+                          {docs.map(doc => {
+                            const isActive = activeContextId === doc.id;
+                            const isDone = isCompleted(doc.id, 'drawing');
+                            return (
+                              <div key={doc.id} onClick={() => onItemClick({ id: doc.id, name: doc.name, type: 'drawing' })} className={`flex items-center gap-2 py-1.5 px-2 rounded cursor-pointer group ${isActive ? 'bg-[#5E6AD2]/20 border border-[#5E6AD2]' : 'hover:bg-[#1A1A1A]'}`}>
+                                {isDone ? <CheckCircle2 className="w-3.5 h-3.5 text-[#4ADE80]" /> : <FileText className={`w-3.5 h-3.5 ${isActive ? 'text-[#5E6AD2]' : 'text-[#6B7280] group-hover:text-[#5E6AD2]'}`} />}
+                                <span className={`text-[11px] truncate flex-1 ${isActive ? 'text-white' : 'text-white/70 group-hover:text-white'}`}>{doc.name}</span>
+                                {(doc.conflictCount || 0) > 0 && <span className="text-[10px] text-[#FBBF24] flex items-center gap-1"><AlertCircle className="w-3 h-3" />{doc.conflictCount}</span>}
+                              </div>
+                            );
+                          })}
                         </div>
                       )}
                     </div>
                   ))}
                 </div>
               )}
+            </div>
+
+            <div className="mb-4">
+              <div className="text-[12px] text-[#8A8F98] py-2 px-2 flex items-center gap-2">
+                <FileText className="w-4 h-4" />
+                <span>Specifications</span>
+                <span className="text-[11px] ml-auto">({filteredDocs.filter(d => d.type === 'spec').length})</span>
+              </div>
+              <div className="ml-6 space-y-0.5">
+                {filteredDocs.filter(d => d.type === 'spec').map(spec => {
+                  const isActive = activeContextId === spec.id;
+                  const isDone = isCompleted(spec.id, 'spec');
+                  return (
+                    <div key={spec.id} onClick={() => onItemClick({ id: spec.id, name: spec.name, type: 'spec' })} className={`flex items-center gap-2 py-1.5 px-2 rounded cursor-pointer group ${isActive ? 'bg-[#5E6AD2]/20 border border-[#5E6AD2]' : 'hover:bg-[#1A1A1A]'}`}>
+                      {isDone ? <CheckCircle2 className="w-3.5 h-3.5 text-[#4ADE80]" /> : <FileText className={`w-3.5 h-3.5 ${isActive ? 'text-[#5E6AD2]' : 'text-[#6B7280] group-hover:text-[#5E6AD2]'}`} />}
+                      <span className={`text-[11px] truncate flex-1 ${isActive ? 'text-white' : 'text-white/70 group-hover:text-white'}`}>{spec.name}</span>
+                    </div>
+                  );
+                })}
+              </div>
             </div>
           </div>
         )}
@@ -312,23 +341,22 @@ export function ContextPanel({ issues, selectedScopes }: ContextPanelProps) {
                   <span className="text-[11px] text-[#6B7280]">({materials.length})</span>
                 </div>
                 <div className="ml-4 space-y-2">
-                  {materials.map(material => (
-                    <div key={material.id} className="p-3 rounded bg-[#1A1A1A] border border-[#2A2A2A] hover:border-[#3A3A3A] cursor-pointer transition-fast">
-                      <div className="text-[13px] font-medium text-white/90">{material.name}</div>
-                      <div className="text-[11px] text-[#6B7280]">{material.manufacturer} • {material.modelNumber}</div>
-                      <div className="text-[11px] text-[#5E6AD2] mt-1">{material.quantity}</div>
-                      <div className="mt-2 pt-2 border-t border-[#2A2A2A] space-y-1">
-                        {material.sources.map((src, idx) => (
-                          <div key={idx} className="text-[10px] text-[#8A8F98] flex items-center gap-1.5">
-                            <FileText className="w-3 h-3" />
-                            <span className="truncate">{src.documentName}</span>
-                            <span className="text-[#6B7280]">→</span>
-                            <span className="text-[#5E6AD2]">{src.location}</span>
+                  {materials.map(material => {
+                    const isActive = activeContextId === material.id;
+                    const isDone = isCompleted(material.id, 'material');
+                    return (
+                      <div key={material.id} onClick={() => onItemClick({ id: material.id, name: material.name, type: 'material' })} className={`p-3 rounded border cursor-pointer transition-fast ${isActive ? 'bg-[#5E6AD2]/10 border-[#5E6AD2]' : 'bg-[#1A1A1A] border-[#2A2A2A] hover:border-[#3A3A3A]'}`}>
+                        <div className="flex items-start gap-2">
+                          {isDone ? <CheckCircle2 className="w-4 h-4 text-[#4ADE80] shrink-0 mt-0.5" /> : <Package className={`w-4 h-4 shrink-0 mt-0.5 ${isActive ? 'text-[#5E6AD2]' : 'text-[#6B7280]'}`} />}
+                          <div className="flex-1 min-w-0">
+                            <div className={`text-[13px] font-medium truncate ${isActive ? 'text-white' : 'text-white/90'}`}>{material.name}</div>
+                            <div className="text-[11px] text-[#6B7280]">{material.manufacturer} • {material.modelNumber}</div>
+                            <div className="text-[11px] text-[#5E6AD2] mt-1">{material.quantity}</div>
                           </div>
-                        ))}
+                        </div>
                       </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               </div>
             ))}
@@ -339,127 +367,43 @@ export function ContextPanel({ issues, selectedScopes }: ContextPanelProps) {
   );
 }
 
-interface TradeCoverageCardProps {
-  trade: TradeCoverage;
-  isExpanded: boolean;
-  onToggle: () => void;
-}
+type SectionData = 
+  | { total: number; processed: number; status: string; documents: { id: string; name: string; status: string; conflictCount: number }[] }
+  | { sections: string[]; completedSections: string[]; status: string }
+  | { types: string[]; completed: string[]; status: string }
+  | { extracted: boolean; itemCount: number; confidence: number; status: string }
+  | { conflictsFound: number; conflictsResolved: number; rfisDrafted: number; status: string };
 
-function TradeCoverageCard({ trade, isExpanded, onToggle }: TradeCoverageCardProps) {
+function TradeSection({ label, section }: { label: string; section: SectionData }) {
+  let progress = 0;
+  if ('total' in section && 'processed' in section) {
+    progress = Math.round((section.processed / section.total) * 100);
+  } else if ('sections' in section && 'completedSections' in section) {
+    progress = Math.round((section.completedSections.length / section.sections.length) * 100) || 0;
+  } else if ('types' in section && 'completed' in section) {
+    progress = Math.round((section.completed.length / section.types.length) * 100) || 0;
+  } else if ('confidence' in section) {
+    progress = section.confidence;
+  } else if ('conflictsFound' in section) {
+    progress = section.conflictsFound > 0 ? 0 : 100;
+  }
+  
   return (
-    <div className="bg-[#1A1A1A] border border-[#2A2A2A] rounded-lg overflow-hidden">
-      <button onClick={onToggle} className="w-full p-4 flex items-center justify-between hover:bg-[#252525] transition-fast">
-        <div className="flex items-center gap-3">
-          <span className="text-[14px] font-mono text-[#5E6AD2]">{trade.division}</span>
-          <span className="text-[15px] font-medium text-white/90">{trade.name}</span>
-        </div>
-        <div className="flex items-center gap-3">
-          <div className="flex items-center gap-2">
-            <span className="text-[12px] text-[#8A8F98]">{trade.overallProgress}%</span>
-            <div className="w-24 h-2 bg-[#2A2A2A] rounded-full overflow-hidden">
-              <div className="h-full bg-[#5E6AD2] rounded-full transition-all duration-500" style={{ width: `${trade.overallProgress}%` }} />
-            </div>
-          </div>
-          {isExpanded ? <ChevronDown className="w-4 h-4 text-[#6B7280]" /> : <ChevronRight className="w-4 h-4 text-[#6B7280]" />}
-        </div>
-      </button>
-
-      <div className="px-4 pb-3">
-        <div className="grid grid-cols-5 gap-2">
-          <MiniSection label="Drawings" progress={Math.round((trade.drawings.processed / trade.drawings.total) * 100)} status={trade.drawings.status} count={trade.drawings.total} />
-          <MiniSection label="Specs" progress={Math.round((trade.specs.completedSections.length / trade.specs.sections.length) * 100) || 0} status={trade.specs.status} count={trade.specs.sections.length} />
-          <MiniSection label="Schedules" progress={Math.round((trade.schedules.completed.length / trade.schedules.types.length) * 100) || 0} status={trade.schedules.status} count={trade.schedules.types.length} />
-          <MiniSection label="Quantity" progress={trade.quantities.confidence} status={trade.quantities.status} count={trade.quantities.itemCount} />
-          <MiniSection label="Check" progress={trade.crossCheck.conflictsFound > 0 ? 0 : 100} status={trade.crossCheck.status} count={trade.crossCheck.conflictsFound} />
-        </div>
-      </div>
-
-      {isExpanded && (
-        <div className="border-t border-[#2A2A2A] p-4 space-y-4">
-          <SectionDetail icon={<FileText className="w-4 h-4" />} title="Drawings" status={trade.drawings.status} progress={Math.round((trade.drawings.processed / trade.drawings.total) * 100)}>
-            {trade.drawings.documents.map(doc => (
-              <div key={doc.id} className="flex items-center justify-between py-1 text-[11px]">
-                <span className="text-white/70">{doc.name}</span>
-                <div className="flex items-center gap-2">
-                  {doc.conflictCount > 0 && <span className="text-[#FBBF24] flex items-center gap-1"><AlertTriangle className="w-3 h-3" />{doc.conflictCount}</span>}
-                  <StatusIcon status={doc.status === 'processed' ? 'complete' : doc.status} className="w-3.5 h-3.5" />
-                </div>
-              </div>
-            ))}
-          </SectionDetail>
-
-          <SectionDetail icon={<FileText className="w-4 h-4" />} title="Specifications" status={trade.specs.status} progress={Math.round((trade.specs.completedSections.length / trade.specs.sections.length) * 100)}>
-            {trade.specs.sections.map(section => (
-              <div key={section} className="flex items-center justify-between py-1 text-[11px]">
-                <span className="text-white/70">{section}</span>
-                <StatusIcon status={trade.specs.completedSections.includes(section) ? 'complete' : 'missing'} className="w-3.5 h-3.5" />
-              </div>
-            ))}
-          </SectionDetail>
-
-          {trade.crossCheck.conflictsFound > 0 && (
-            <SectionDetail icon={<AlertCircle className="w-4 h-4" />} title="Cross-Check Analysis" status={trade.crossCheck.status} progress={0}>
-              <div className="text-[11px] text-[#FBBF24]">{trade.crossCheck.conflictsFound} conflicts identified</div>
-              <div className="text-[11px] text-[#8A8F98]">{trade.crossCheck.rfisDrafted} RFIs drafted</div>
-            </SectionDetail>
-          )}
-
-          {trade.lastActivity && <div className="text-[10px] text-[#6B7280] pt-2 border-t border-[#2A2A2A]">Last activity: {trade.lastActivity}</div>}
-
-          <div className="flex gap-2 pt-2">
-            <button className="flex-1 py-2 bg-[#5E6AD2] hover:bg-[#6872E3] rounded text-[11px] font-medium text-white transition-fast">Continue Analysis</button>
-            <button className="flex-1 py-2 bg-[#2A2A2A] hover:bg-[#3A3A3A] rounded text-[11px] font-medium text-white/90 transition-fast">Export Report</button>
-          </div>
-        </div>
-      )}
-    </div>
-  );
-}
-
-function MiniSection({ label, progress, status, count }: { label: string; progress: number; status: string; count: number }) {
-  const getIcon = () => {
-    if (status === 'complete') return <CheckCircle2 className="w-3 h-3 text-[#4ADE80]" />;
-    if (status === 'issues') return <AlertCircle className="w-3 h-3 text-[#FBBF24]" />;
-    if (status === 'processing') return <RotateCw className="w-3 h-3 text-[#FBBF24] animate-spin" />;
-    if (status === 'partial') return <MinusCircle className="w-3 h-3 text-[#5E6AD2]" />;
-    return <XCircle className="w-3 h-3 text-[#6B7280]" />;
-  };
-
-  return (
-    <div className="flex flex-col gap-1">
+    <div className="flex flex-col gap-0.5">
       <div className="flex items-center justify-between">
-        <span className="text-[9px] text-[#6B7280] uppercase">{label}</span>
-        {status === 'issues' && count > 0 ? <span className="text-[9px] text-[#FBBF24]">{count}</span> : getIcon()}
+        <span className="text-[8px] text-[#6B7280] uppercase">{label}</span>
       </div>
-      <MiniProgress progress={progress} status={status} />
-    </div>
-  );
-}
-
-function SectionDetail({ icon, title, status, progress, children }: { icon: React.ReactNode; title: string; status: string; progress: number; children: React.ReactNode }) {
-  return (
-    <div className="space-y-2">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <span className="text-[#5E6AD2]">{icon}</span>
-          <span className="text-[12px] font-medium text-white/90">{title}</span>
-        </div>
-        <div className="flex items-center gap-2">
-          <span className="text-[11px] text-[#8A8F98]">{progress}%</span>
-          <StatusIcon status={status} className="w-4 h-4" />
-        </div>
-      </div>
-      <div className="ml-6 space-y-0.5">{children}</div>
+      <MiniProgress progress={progress} status={section.status} />
     </div>
   );
 }
 
 function TabButton({ label, icon, count, isActive, onClick }: { label: string; icon: React.ReactNode; count: number; isActive: boolean; onClick: () => void }) {
   return (
-    <button onClick={onClick} className={`flex-1 flex items-center justify-center gap-2 py-3 text-[12px] font-medium border-b-2 transition-fast ${isActive ? 'border-[#5E6AD2] text-white bg-[#5E6AD2]/5' : 'border-transparent text-[#8A8F98] hover:text-white/90 hover:bg-[#1A1A1A]'}`}>
+    <button onClick={onClick} className={`flex-1 flex items-center justify-center gap-1 py-3 text-[11px] font-medium border-b-2 transition-fast ${isActive ? 'border-[#5E6AD2] text-white bg-[#5E6AD2]/5' : 'border-transparent text-[#8A8F98] hover:text-white/90 hover:bg-[#1A1A1A]'}`}>
       {icon}
       <span>{label}</span>
-      <span className="text-[10px] text-[#6B7280]">({count})</span>
+      <span className="text-[9px] text-[#6B7280]">({count})</span>
     </button>
   );
 }

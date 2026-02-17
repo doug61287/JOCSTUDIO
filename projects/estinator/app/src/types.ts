@@ -35,8 +35,12 @@ export interface Issue {
   conversationId?: string;
   messageId?: string;
   // RFI tracking
+  isRFI?: boolean;
   rfiId?: string;
   rfiStatus?: 'draft' | 'sent' | 'responded' | 'closed';
+  // Context linking
+  contextId?: string; // ID of drawing/spec/material this issue is about
+  contextType?: 'drawing' | 'spec' | 'schedule' | 'material';
 }
 
 export interface Message {

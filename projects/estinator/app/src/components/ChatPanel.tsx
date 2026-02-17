@@ -6,13 +6,15 @@ interface ChatPanelProps {
   onSendMessage: (content: string) => void;
   onFlagAsIssue: (messageId: string, content: string, source?: string) => void;
   onDraftRFI: (issueId: string) => void;
+  placeholder?: string;
 }
 
 export function ChatPanel({ 
   messages, 
   onSendMessage, 
   onFlagAsIssue,
-  onDraftRFI
+  onDraftRFI,
+  placeholder = "Ask anything about this project..."
 }: ChatPanelProps) {
   const [inputValue, setInputValue] = useState('');
   const [isTyping, setIsTyping] = useState(false);
@@ -112,7 +114,7 @@ export function ChatPanel({
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
             onKeyDown={handleKeyDown}
-            placeholder="Ask anything about this project..."
+            placeholder={placeholder}
             rows={1}
             className="w-full px-4 py-3 bg-transparent text-[15px] text-white/90 placeholder:text-[#6B7280] resize-none outline-none min-h-[52px] max-h-[200px]"
           />
