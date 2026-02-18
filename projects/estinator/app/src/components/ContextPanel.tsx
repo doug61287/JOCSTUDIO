@@ -1,5 +1,6 @@
-import { useState } from 'react';
-import { FileText, FolderOpen, Package, ChevronDown, ChevronRight, Building2, HardHat, Flame, Droplets, Thermometer, Zap, Hash, DoorOpen, Lightbulb, CheckCircle2, LayoutGrid, AlertCircle } from 'lucide-react';
+import { useState, useRef, useEffect } from 'react';
+import { FileText, FolderOpen, Package, ChevronDown, ChevronRight, Building2, HardHat, Flame, Droplets, Thermometer, Zap, Hash, DoorOpen, Lightbulb, CheckCircle2, LayoutGrid, AlertCircle, Upload, Loader2 } from 'lucide-react';
+import { contextApi } from '../lib/api.js';
 import type { Issue, Project } from '../types';
 
 interface ContextPanelProps {
@@ -22,6 +23,29 @@ export interface ProjectDocument {
   pageCount?: number;
   uploadDate: string;
   conflictCount?: number;
+}
+
+// Drawing package with nested sheets (extracted from drawing index)
+export interface DrawingSheet {
+  id: string;
+  sheetNumber: string;
+  title: string;
+  discipline: string;
+  page: number; // Page number in the PDF
+  status: 'processed' | 'processing' | 'pending';
+  conflictCount?: number;
+}
+
+export interface DrawingPackage {
+  id: string;
+  name: string; // Original filename
+  type: 'package';
+  discipline?: string; // Primary discipline (MEP, Architectural, etc.)
+  status: 'processed' | 'processing' | 'pending';
+  pageCount: number;
+  uploadDate: string;
+  sheets: DrawingSheet[]; // Extracted from drawing index
+  conflictCount?: number; // Sum of all sheet conflicts
 }
 
 export interface Material {
@@ -54,59 +78,7 @@ interface TradeCoverage {
   lastActivity?: string;
 }
 
-const MOCK_TRADE_COVERAGE: TradeCoverage[] = [
-  {
-    division: '21',
-    name: 'Fire Suppression',
-    overallProgress: 80,
-    drawings: { total: 3, processed: 3, status: 'complete', documents: [{ id: 'fp1', name: 'FP-001', status: 'processed', conflictCount: 0 }, { id: 'fp2', name: 'FP-002', status: 'processed', conflictCount: 2 }, { id: 'fp3', name: 'FP-100', status: 'processed', conflictCount: 0 }] },
-    specs: { sections: ['21.100', '21.200', '28.310'], completedSections: ['21.100', '21.200'], status: 'partial' },
-    schedules: { types: ['Equipment Schedule', 'Head Schedule'], completed: ['Equipment Schedule'], status: 'partial' },
-    quantities: { extracted: false, itemCount: 0, confidence: 0, status: 'missing' },
-    crossCheck: { conflictsFound: 3, conflictsResolved: 0, rfisDrafted: 0, status: 'issues' },
-    lastActivity: 'FP-002 reviewed 2 min ago',
-  },
-  {
-    division: '22',
-    name: 'Plumbing',
-    overallProgress: 60,
-    drawings: { total: 4, processed: 4, status: 'complete', documents: [{ id: 'p1', name: 'P-001', status: 'processed', conflictCount: 1 }, { id: 'p2', name: 'P-002', status: 'processed', conflictCount: 0 }, { id: 'p3', name: 'P-100', status: 'processed', conflictCount: 0 }, { id: 'p4', name: 'P-200', status: 'processed', conflictCount: 1 }] },
-    specs: { sections: ['22.100', '22.400'], completedSections: ['22.100', '22.400'], status: 'complete' },
-    schedules: { types: ['Fixture Schedule'], completed: ['Fixture Schedule'], status: 'complete' },
-    quantities: { extracted: true, itemCount: 45, confidence: 85, status: 'partial' },
-    crossCheck: { conflictsFound: 2, conflictsResolved: 1, rfisDrafted: 1, status: 'issues' },
-    lastActivity: 'Quantities extracted 15 min ago',
-  },
-  {
-    division: '26',
-    name: 'Electrical',
-    overallProgress: 45,
-    drawings: { total: 5, processed: 4, status: 'partial', documents: [{ id: 'e1', name: 'E-001', status: 'processed', conflictCount: 2 }, { id: 'e2', name: 'E-002', status: 'processed', conflictCount: 1 }, { id: 'e3', name: 'E-100', status: 'processed', conflictCount: 1 }, { id: 'e4', name: 'E-200', status: 'pending', conflictCount: 0 }, { id: 'e5', name: 'E-300', status: 'processed', conflictCount: 0 }] },
-    specs: { sections: ['26.050', '26.240', '26.510'], completedSections: ['26.050'], status: 'partial' },
-    schedules: { types: ['Panel Schedule', 'Fixture Schedule'], completed: [], status: 'missing' },
-    quantities: { extracted: false, itemCount: 0, confidence: 0, status: 'missing' },
-    crossCheck: { conflictsFound: 4, conflictsResolved: 0, rfisDrafted: 0, status: 'issues' },
-    lastActivity: 'E-200 uploading...',
-  },
-];
-
-const MOCK_DOCUMENTS: ProjectDocument[] = [
-  { id: 'd1', name: 'A-001 - Cover Sheet', type: 'drawing', division: '01', discipline: 'Architectural', status: 'processed', pageCount: 1, uploadDate: '2026-02-10', conflictCount: 0 },
-  { id: 'd2', name: 'A-100 - Floor Plans L1', type: 'drawing', division: '08', discipline: 'Architectural', status: 'processed', pageCount: 4, uploadDate: '2026-02-10', conflictCount: 2 },
-  { id: 'd3', name: 'S-100 - Foundation Plan', type: 'drawing', division: '03', discipline: 'Structural', status: 'processed', pageCount: 3, uploadDate: '2026-02-10', conflictCount: 1 },
-  { id: 'd4', name: 'FP-001 - Fire Protection L1', type: 'drawing', division: '21', discipline: 'Fire Protection', status: 'processed', pageCount: 2, uploadDate: '2026-02-11', conflictCount: 3 },
-  { id: 'd5', name: 'P-001 - Plumbing Plan L1', type: 'drawing', division: '22', discipline: 'Plumbing', status: 'processed', pageCount: 2, uploadDate: '2026-02-11', conflictCount: 2 },
-  { id: 'd6', name: 'M-001 - HVAC Plan L1', type: 'drawing', division: '23', discipline: 'Mechanical', status: 'processed', pageCount: 3, uploadDate: '2026-02-11', conflictCount: 2 },
-  { id: 'd7', name: 'E-001 - Electrical Plan L1', type: 'drawing', division: '26', discipline: 'Electrical', status: 'processed', pageCount: 3, uploadDate: '2026-02-12', conflictCount: 4 },
-  { id: 's1', name: 'Div 08 - Openings', type: 'spec', division: '08', status: 'processed', pageCount: 32, uploadDate: '2026-02-10', conflictCount: 1 },
-  { id: 's2', name: 'Div 09 - Finishes', type: 'spec', division: '09', status: 'processed', pageCount: 28, uploadDate: '2026-02-10', conflictCount: 0 },
-  { id: 'a1', name: 'Addendum 1', type: 'addendum', division: '21', status: 'processed', pageCount: 8, uploadDate: '2026-02-13', conflictCount: 3 },
-];
-
-const MOCK_MATERIALS: Material[] = [
-  { id: 'm1', name: 'VCT Flooring - Standard', category: 'Flooring', division: '09', manufacturer: 'Armstrong', modelNumber: '51899', quantity: '12,450 SF', sources: [{ documentId: 's2', documentName: 'Div 09 - Finishes', documentType: 'spec', location: 'Section 096500' }] },
-  { id: 'm2', name: 'Patient Room Door', category: 'Doors', division: '08', manufacturer: 'Assa Abloy', modelNumber: 'HP-4400', quantity: '48 ea', sources: [{ documentId: 's1', documentName: 'Div 08 - Openings', documentType: 'spec', location: 'Section 081400' }] },
-];
+// No mock data — all content comes from real uploaded documents.
 
 const DisciplineIcon = ({ discipline, className = "w-4 h-4" }: { discipline: string; className?: string }) => {
   switch (discipline) {
@@ -149,16 +121,53 @@ const MiniProgress = ({ progress, status }: { progress: number; status: string }
   );
 };
 
-export function ContextPanel({ selectedScopes, completedItems, onItemClick, activeContextId }: ContextPanelProps) {
+export function ContextPanel({ selectedScopes, completedItems, onItemClick, activeContextId, activeProject }: ContextPanelProps) {
   const [activeTab, setActiveTab] = useState<'scope' | 'documents' | 'materials'>('scope');
-  const [expandedSections, setExpandedSections] = useState<Set<string>>(new Set(['Drawings']));
+  const [expandedSections, setExpandedSections] = useState<Set<string>>(new Set(['Drawings', 'Packages']));
   const [selectedMaterialCategory, setSelectedMaterialCategory] = useState<string | 'all'>('all');
   const [expandedTrades, setExpandedTrades] = useState<Set<string>>(new Set());
+  const [expandedPackages, setExpandedPackages] = useState<Set<string>>(new Set(['pkg-1'])); // First package expanded by default
+  const [expandedPackageDisciplines, setExpandedPackageDisciplines] = useState<Set<string>>(new Set());
+  const [isUploading, setIsUploading] = useState(false);
+  const [realDocuments, setRealDocuments] = useState<ProjectDocument[]>([]);
+  const [isLoadingDocs, setIsLoadingDocs] = useState(true);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const filteredTrades = selectedScopes.length === 0 ? MOCK_TRADE_COVERAGE : MOCK_TRADE_COVERAGE.filter(trade => selectedScopes.includes(trade.division));
-  const filteredDocs = selectedScopes.length === 0 ? MOCK_DOCUMENTS : MOCK_DOCUMENTS.filter(doc => doc.division && selectedScopes.includes(doc.division));
-  let filteredMaterials = selectedScopes.length === 0 ? MOCK_MATERIALS : MOCK_MATERIALS.filter(mat => selectedScopes.includes(mat.division));
-  if (selectedMaterialCategory !== 'all') filteredMaterials = filteredMaterials.filter(mat => mat.category === selectedMaterialCategory);
+  // Fetch real documents from API
+  useEffect(() => {
+    const fetchContext = async () => {
+      if (!activeProject) return;
+      setIsLoadingDocs(true);
+      try {
+        const context = await contextApi.getItems(activeProject.id);
+        if (context.documents) {
+          setRealDocuments(context.documents.map((d: { id: string; name: string; type: string; status: string; uploadDate: string; conflictCount?: number }) => ({
+            id: d.id,
+            name: d.name,
+            type: d.type === 'drawing' ? 'drawing' : d.type === 'spec' ? 'spec' : 'addendum',
+            status: d.status as 'processed' | 'processing' | 'pending',
+            uploadDate: d.uploadDate,
+            conflictCount: d.conflictCount || 0,
+            discipline: 'General'
+          })));
+        }
+      } catch (err) {
+        console.error('Failed to fetch context:', err);
+      } finally {
+        setIsLoadingDocs(false);
+      }
+    };
+
+    fetchContext();
+  }, [activeProject]);
+
+  // All data comes from real uploaded documents — no mock data
+  const filteredTrades: TradeCoverage[] = []; // Populated when trade coverage analysis is implemented
+  const filteredDocs = selectedScopes.length === 0
+    ? realDocuments
+    : realDocuments.filter(doc => doc.division && selectedScopes.includes(doc.division));
+  const filteredMaterials: Material[] = []; // Populated when material extraction is implemented
+  const uploadedPackages: DrawingPackage[] = []; // Populated when drawing package extraction is implemented
 
   const drawingsByDiscipline = filteredDocs.filter(doc => doc.type === 'drawing').reduce((acc, doc) => {
     const discipline = doc.discipline || 'Other';
@@ -196,15 +205,107 @@ export function ContextPanel({ selectedScopes, completedItems, onItemClick, acti
     });
   };
 
+  const togglePackage = (packageId: string) => {
+    setExpandedPackages(prev => {
+      const next = new Set(prev);
+      if (next.has(packageId)) next.delete(packageId);
+      else next.add(packageId);
+      return next;
+    });
+  };
+
+  const togglePackageDiscipline = (key: string) => {
+    setExpandedPackageDisciplines(prev => {
+      const next = new Set(prev);
+      if (next.has(key)) next.delete(key);
+      else next.add(key);
+      return next;
+    });
+  };
+
+  // Group sheets by discipline within a package
+  const groupSheetsByDiscipline = (sheets: DrawingSheet[]) => {
+    return sheets.reduce((acc, sheet) => {
+      const disc = sheet.discipline || 'Other';
+      if (!acc[disc]) acc[disc] = [];
+      acc[disc].push(sheet);
+      return acc;
+    }, {} as Record<string, DrawingSheet[]>);
+  };
+
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0 || !activeProject) return;
+
+    setIsUploading(true);
+    const uploadedFiles: Array<{ id: string; name: string; status: string; uploadDate: string; blobUrl?: string; type?: string; conflictCount?: number }> = [];
+    const failedFiles: string[] = [];
+
+    for (const file of Array.from(files)) {
+      try {
+        // Use FormData for multipart upload — supports large files (50MB+)
+        const formData = new FormData();
+        formData.append('projectId', activeProject.id);
+        formData.append('name', file.name);
+        formData.append('file', file);
+
+        const response = await fetch('/api/upload-document', {
+          method: 'POST',
+          body: formData,
+          // No Content-Type header — browser sets it with boundary for multipart
+        });
+
+        if (!response.ok) {
+          const errorText = await response.text();
+          throw new Error(`Upload failed: ${response.status} ${errorText}`);
+        }
+
+        const result = await response.json();
+        uploadedFiles.push(result.document);
+      } catch (err) {
+        console.error(`Upload failed for ${file.name}:`, err);
+        failedFiles.push(file.name);
+      }
+    }
+
+    setIsUploading(false);
+
+    if (fileInputRef.current) fileInputRef.current.value = '';
+
+    // Add to local state immediately
+    if (uploadedFiles.length > 0) {
+      const newDocs: ProjectDocument[] = uploadedFiles.map((d) => ({
+        id: d.id,
+        name: d.name,
+        type: 'drawing', // Default to drawing, can refine later
+        status: d.status as 'processed' | 'processing' | 'pending',
+        uploadDate: d.uploadDate,
+        conflictCount: d.conflictCount || 0,
+        discipline: 'General',
+      }));
+      setRealDocuments(prev => [...newDocs, ...prev]);
+    }
+
+    // Show result
+    const total = uploadedFiles.length;
+    if (total > 0 && failedFiles.length === 0) {
+      alert(`✅ ${total} file(s) uploaded and stored!\nProcessing will begin shortly.`);
+    } else if (total > 0) {
+      alert(`Uploaded ${total} file(s). Failed: ${failedFiles.join(', ')}`);
+    } else {
+      alert('Upload failed. Please try again.');
+    }
+  };
+
   return (
-    <div className="w-[300px] min-w-[300px] bg-[#0D0D0D] border-r border-[#2A2A2A] flex flex-col">
-      <div className="h-14 border-b border-[#2A2A2A] flex">
+    <div className="w-full lg:w-[300px] lg:min-w-[300px] bg-[#0D0D0D] border-r border-[#2A2A2A] flex flex-col h-full touch-pan-y">
+      <div className="h-14 border-b border-[#2A2A2A] flex shrink-0">
         <TabButton label="Scope" icon={<LayoutGrid className="w-4 h-4" />} count={filteredTrades.length} isActive={activeTab === 'scope'} onClick={() => setActiveTab('scope')} />
         <TabButton label="Docs" icon={<FolderOpen className="w-4 h-4" />} count={filteredDocs.length} isActive={activeTab === 'documents'} onClick={() => setActiveTab('documents')} />
         <TabButton label="Mats" icon={<Package className="w-4 h-4" />} count={filteredMaterials.length} isActive={activeTab === 'materials'} onClick={() => setActiveTab('materials')} />
       </div>
 
-      <div className="flex-1 overflow-y-auto">
+      <div className="flex-1 overflow-y-auto overscroll-contain">
         {activeTab === 'scope' && (
           <div className="p-3 space-y-3">
             {filteredTrades.map(trade => (
@@ -256,11 +357,205 @@ export function ContextPanel({ selectedScopes, completedItems, onItemClick, acti
 
         {activeTab === 'documents' && (
           <div className="p-3">
+            {/* Upload Button */}
+            <div className="mb-4">
+              <input
+                type="file"
+                ref={fileInputRef}
+                onChange={handleFileUpload}
+                accept=".pdf,.dwg,.dxf,.doc,.docx,.txt,.rtf,.xls,.xlsx,.csv"
+                multiple
+                className="hidden"
+              />
+              <button
+                onClick={() => fileInputRef.current?.click()}
+                disabled={isUploading}
+                className="w-full flex items-center justify-center gap-2 py-2.5 px-4 bg-[#5E6AD2]/10 hover:bg-[#5E6AD2]/20 border border-[#5E6AD2]/30 rounded-lg text-[#5E6AD2] font-medium text-sm transition-colors disabled:opacity-50"
+              >
+                {isUploading ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    Uploading...
+                  </>
+                ) : (
+                  <>
+                    <Upload className="w-4 h-4" />
+                    Upload Document
+                  </>
+                )}
+              </button>
+              <p className="text-[10px] text-[#6B7280] text-center mt-2">
+                PDF, DWG, Word, Excel (multiple files OK)
+              </p>
+            </div>
+
+            {/* Uploaded Documents (Real) */}
+            {realDocuments.length > 0 && (
+              <div className="mb-4">
+                <div className="text-[12px] text-[#8A8F98] py-2 px-2 flex items-center gap-2">
+                  <FileText className="w-4 h-4 text-[#4ADE80]" />
+                  <span>Uploaded Documents</span>
+                  <span className="text-[11px] ml-auto">({realDocuments.length})</span>
+                </div>
+                <div className="ml-6 space-y-0.5">
+                  {realDocuments.map(doc => {
+                    const isActive = activeContextId === doc.id;
+                    const isDone = isCompleted(doc.id, 'drawing');
+                    return (
+                      <div key={doc.id} onClick={() => onItemClick({ id: doc.id, name: doc.name, type: doc.type as 'drawing' | 'spec' | 'schedule' | 'material' })} className={`flex items-center gap-2 py-1.5 px-2 rounded cursor-pointer group ${isActive ? 'bg-[#5E6AD2]/20 border border-[#5E6AD2]' : 'hover:bg-[#1A1A1A]'}`}>
+                        {isDone ? <CheckCircle2 className="w-3.5 h-3.5 text-[#4ADE80]" /> : <FileText className={`w-3.5 h-3.5 ${isActive ? 'text-[#5E6AD2]' : 'text-[#6B7280] group-hover:text-[#5E6AD2]'}`} />}
+                        <span className={`text-[11px] truncate flex-1 ${isActive ? 'text-white' : 'text-white/70 group-hover:text-white'}`}>{doc.name}</span>
+                        {doc.status === 'processing' && <span className="text-[10px] text-[#FBBF24]">processing</span>}
+                        {(doc.conflictCount || 0) > 0 && <span className="text-[10px] text-[#FBBF24] flex items-center gap-1"><AlertCircle className="w-3 h-3" />{doc.conflictCount}</span>}
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
+            {/* Loading state */}
+            {isLoadingDocs && realDocuments.length === 0 && (
+              <div className="flex items-center justify-center py-8 text-[#6B7280]">
+                <Loader2 className="w-5 h-5 animate-spin mr-2" />
+                <span className="text-sm">Loading documents...</span>
+              </div>
+            )}
+
+            {/* Drawing Packages with Nested Sheets */}
+            <div className="mb-4">
+              <button onClick={() => toggleSection('Packages')} className="flex items-center gap-2 w-full py-2 text-left hover:bg-[#1A1A1A] rounded px-2 transition-fast">
+                {expandedSections.has('Packages') ? <ChevronDown className="w-4 h-4 text-[#6B7280]" /> : <ChevronRight className="w-4 h-4 text-[#6B7280]" />}
+                <FolderOpen className="w-4 h-4 text-[#5E6AD2]" />
+                <span className="font-medium text-[14px]">Drawing Packages</span>
+                <span className="text-[12px] text-[#6B7280] ml-auto">({uploadedPackages.length})</span>
+              </button>
+              
+              {expandedSections.has('Packages') && (
+                <div className="space-y-2 mt-2">
+                  {uploadedPackages.map(pkg => {
+                    const isPackageExpanded = expandedPackages.has(pkg.id);
+                    const sheetsByDiscipline = groupSheetsByDiscipline(pkg.sheets);
+                    const totalConflicts = pkg.sheets.reduce((sum, s) => sum + (s.conflictCount || 0), 0);
+                    
+                    return (
+                      <div key={pkg.id} className="bg-[#1A1A1A] border border-[#2A2A2A] rounded-lg overflow-hidden">
+                        {/* Package Header */}
+                        <button 
+                          onClick={() => togglePackage(pkg.id)} 
+                          className="w-full p-3 flex items-center gap-3 hover:bg-[#252525] transition-fast"
+                        >
+                          {isPackageExpanded ? 
+                            <ChevronDown className="w-4 h-4 text-[#6B7280] shrink-0" /> : 
+                            <ChevronRight className="w-4 h-4 text-[#6B7280] shrink-0" />
+                          }
+                          <FolderOpen className={`w-4 h-4 shrink-0 ${pkg.status === 'processing' ? 'text-[#FBBF24]' : 'text-[#5E6AD2]'}`} />
+                          <div className="flex-1 text-left min-w-0">
+                            <div className="flex items-center gap-2">
+                              <span className="text-[13px] font-medium text-white/90 truncate">{pkg.name}</span>
+                              {pkg.status === 'processing' && (
+                                <span className="text-[10px] px-1.5 py-0.5 bg-[#FBBF24]/20 text-[#FBBF24] rounded shrink-0">processing</span>
+                              )}
+                            </div>
+                            <div className="flex items-center gap-3 text-[11px] text-[#6B7280] mt-0.5">
+                              <span>{pkg.sheets.length} sheets</span>
+                              <span>{pkg.pageCount} pages</span>
+                              {pkg.discipline && <span className="text-[#8A8F98]">{pkg.discipline}</span>}
+                            </div>
+                          </div>
+                          {totalConflicts > 0 && (
+                            <span className="text-[11px] text-[#FBBF24] flex items-center gap-1 shrink-0">
+                              <AlertCircle className="w-3.5 h-3.5" />
+                              {totalConflicts}
+                            </span>
+                          )}
+                        </button>
+                        
+                        {/* Expanded: Sheets grouped by discipline */}
+                        {isPackageExpanded && (
+                          <div className="border-t border-[#2A2A2A]">
+                            {Object.entries(sheetsByDiscipline).map(([discipline, sheets]) => {
+                              const discKey = `${pkg.id}-${discipline}`;
+                              const isDiscExpanded = expandedPackageDisciplines.has(discKey);
+                              const discConflicts = sheets.reduce((sum, s) => sum + (s.conflictCount || 0), 0);
+                              
+                              return (
+                                <div key={discKey} className="border-b border-[#2A2A2A] last:border-b-0">
+                                  {/* Discipline Header */}
+                                  <button 
+                                    onClick={() => togglePackageDiscipline(discKey)}
+                                    className="w-full px-4 py-2 flex items-center gap-2 hover:bg-[#252525] transition-fast"
+                                  >
+                                    {isDiscExpanded ? 
+                                      <ChevronDown className="w-3 h-3 text-[#6B7280]" /> : 
+                                      <ChevronRight className="w-3 h-3 text-[#6B7280]" />
+                                    }
+                                    <DisciplineIcon discipline={discipline} className="w-3.5 h-3.5 text-[#8A8F98]" />
+                                    <span className="text-[12px] text-[#8A8F98]">{discipline}</span>
+                                    <span className="text-[11px] text-[#6B7280] ml-auto">{sheets.length} sheets</span>
+                                    {discConflicts > 0 && (
+                                      <span className="text-[10px] text-[#FBBF24]">{discConflicts}</span>
+                                    )}
+                                  </button>
+                                  
+                                  {/* Individual Sheets */}
+                                  {isDiscExpanded && (
+                                    <div className="px-4 pb-2 space-y-0.5">
+                                      {sheets.map(sheet => {
+                                        const isActive = activeContextId === sheet.id;
+                                        const isDone = completedItems.documents.includes(sheet.id);
+                                        const sheetName = `${sheet.sheetNumber} - ${sheet.title}`;
+                                        
+                                        return (
+                                          <div 
+                                            key={sheet.id} 
+                                            onClick={() => onItemClick({ id: sheet.id, name: sheetName, type: 'drawing' })} 
+                                            className={`flex items-center gap-2 py-1.5 px-2 ml-5 rounded cursor-pointer group ${
+                                              isActive ? 'bg-[#5E6AD2]/20 border border-[#5E6AD2]' : 'hover:bg-[#252525]'
+                                            }`}
+                                          >
+                                            {isDone ? (
+                                              <CheckCircle2 className="w-3.5 h-3.5 text-[#4ADE80] shrink-0" />
+                                            ) : sheet.status === 'processing' ? (
+                                              <Loader2 className="w-3.5 h-3.5 text-[#FBBF24] animate-spin shrink-0" />
+                                            ) : sheet.status === 'pending' ? (
+                                              <FileText className="w-3.5 h-3.5 text-[#6B7280] shrink-0" />
+                                            ) : (
+                                              <FileText className={`w-3.5 h-3.5 shrink-0 ${isActive ? 'text-[#5E6AD2]' : 'text-[#6B7280] group-hover:text-[#5E6AD2]'}`} />
+                                            )}
+                                            <span className="text-[11px] font-mono text-[#5E6AD2] shrink-0">{sheet.sheetNumber}</span>
+                                            <span className={`text-[11px] truncate flex-1 ${isActive ? 'text-white' : 'text-white/70 group-hover:text-white'}`}>
+                                              {sheet.title}
+                                            </span>
+                                            <span className="text-[10px] text-[#6B7280] shrink-0">p.{sheet.page}</span>
+                                            {(sheet.conflictCount || 0) > 0 && (
+                                              <span className="text-[10px] text-[#FBBF24] flex items-center gap-0.5 shrink-0">
+                                                <AlertCircle className="w-3 h-3" />
+                                                {sheet.conflictCount}
+                                              </span>
+                                            )}
+                                          </div>
+                                        );
+                                      })}
+                                    </div>
+                                  )}
+                                </div>
+                              );
+                            })}
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+
             <div className="mb-4">
               <button onClick={() => toggleSection('Drawings')} className="flex items-center gap-2 w-full py-2 text-left hover:bg-[#1A1A1A] rounded px-2 transition-fast">
                 {expandedSections.has('Drawings') ? <ChevronDown className="w-4 h-4 text-[#6B7280]" /> : <ChevronRight className="w-4 h-4 text-[#6B7280]" />}
                 <FileText className="w-4 h-4 text-[#5E6AD2]" />
-                <span className="font-medium text-[14px]">Drawings</span>
+                <span className="font-medium text-[14px]">Sample Drawings</span>
                 <span className="text-[12px] text-[#6B7280] ml-auto">({Object.values(drawingsByDiscipline).flat().length})</span>
               </button>
               
@@ -299,7 +594,7 @@ export function ContextPanel({ selectedScopes, completedItems, onItemClick, acti
             <div className="mb-4">
               <div className="text-[12px] text-[#8A8F98] py-2 px-2 flex items-center gap-2">
                 <FileText className="w-4 h-4" />
-                <span>Specifications</span>
+                <span>Sample Specifications</span>
                 <span className="text-[11px] ml-auto">({filteredDocs.filter(d => d.type === 'spec').length})</span>
               </div>
               <div className="ml-6 space-y-0.5">
