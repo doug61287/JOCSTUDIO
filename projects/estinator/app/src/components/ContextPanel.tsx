@@ -281,6 +281,7 @@ export function ContextPanel({ selectedScopes, completedItems, onItemClick, acti
         const blobResult = await upload(file.name, file, {
           access: 'public',
           handleUploadUrl: '/api/upload-document',
+          addRandomSuffix: true, // Ensure unique filenames on re-upload
         });
 
         // Record the upload metadata
