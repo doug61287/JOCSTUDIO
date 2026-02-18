@@ -278,10 +278,11 @@ export function ContextPanel({ selectedScopes, completedItems, onItemClick, acti
       try {
         // Use Vercel Blob client for direct upload with presigned URL
         // This bypasses the Vercel function body size limit entirely
-        const blobResult = await upload(file.name, file, {
+        // Add timestamp to filename to ensure uniqueness on re-upload
+        const uniqueName = `${Date.now()}_${file.name}`;
+        const blobResult = await upload(uniqueName, file, {
           access: 'public',
           handleUploadUrl: '/api/upload-document',
-          addRandomSuffix: true, // Ensure unique filenames on re-upload
         });
 
         // Record the upload metadata
