@@ -1,0 +1,51 @@
+{
+  "version": 2,
+  "framework": null,
+  "buildCommand": "cd app && npx vite build",
+  "outputDirectory": "app/dist",
+  "rewrites": [
+    {
+      "source": "/api/projects/:id/documents",
+      "destination": "/api/upload-document"
+    },
+    {
+      "source": "/api/projects/:id/context",
+      "destination": "/api/get-context?id=:id"
+    },
+    {
+      "source": "/api/projects/:id/issues",
+      "destination": "/api/get-issues?id=:id"
+    },
+    {
+      "source": "/api/projects/:id",
+      "destination": "/api/get-project?id=:id"
+    },
+    {
+      "source": "/api/(.*)",
+      "destination": "/api/$1"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/api/(.*)",
+      "headers": [
+        {
+          "key": "Access-Control-Allow-Origin",
+          "value": "*"
+        },
+        {
+          "key": "Access-Control-Allow-Methods",
+          "value": "GET, POST, PUT, DELETE, PATCH, OPTIONS"
+        },
+        {
+          "key": "Access-Control-Allow-Headers",
+          "value": "Content-Type, Authorization"
+        }
+      ]
+    }
+  ]
+}
