@@ -1,0 +1,28 @@
+{
+  "name": "dodge-campaign",
+  "version": "1.0.0",
+  "description": "Email campaign system for Dodge Construction Network lead generation",
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch scripts/send-campaign.ts",
+    "send": "tsx scripts/send-campaign.ts",
+    "preview": "email dev --dir emails --port 3001",
+    "build": "email export --dir emails --outDir out",
+    "webhook": "tsx webhooks/server.ts"
+  },
+  "dependencies": {
+    "@react-email/components": "^0.0.28",
+    "@supabase/supabase-js": "^2.45.0",
+    "express": "^4.21.0",
+    "react": "^18.3.1",
+    "react-email": "^3.0.1",
+    "resend": "^4.0.0"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.21",
+    "@types/node": "^22.5.0",
+    "@types/react": "^18.3.5",
+    "tsx": "^4.19.0",
+    "typescript": "^5.5.4"
+  }
+}

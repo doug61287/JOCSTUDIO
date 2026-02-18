@@ -1,0 +1,167 @@
+Table Name,Column Name,Data Type,Nullable,Default,Description
+companies,id,UUID,NO,uuid_generate_v4(),Primary key
+companies,external_id,VARCHAR(50),YES,,Blue Book ID (e.g. 1867834)
+companies,slug,VARCHAR(255),YES,,URL-friendly name
+companies,name,VARCHAR(500),NO,,Company name
+companies,type,company_type,YES,,Type: subcontractors|general-contractors|material-suppliers|manufacturers|engineers|architects|vendor-services
+companies,phone,VARCHAR(50),YES,,Primary phone
+companies,email,VARCHAR(255),YES,,Primary email
+companies,website,VARCHAR(500),YES,,Company website
+companies,address_line1,VARCHAR(255),YES,,Street address
+companies,address_line2,VARCHAR(255),YES,,Apt/Suite
+companies,city,VARCHAR(100),YES,,City
+companies,state,VARCHAR(50),YES,,State
+companies,postal_code,VARCHAR(20),YES,,ZIP code
+companies,country,VARCHAR(50),NO,US,Country
+companies,address_raw,TEXT,YES,,Full raw address
+companies,description,TEXT,YES,,Company description
+companies,keywords,TEXT[],YES,,Array of keywords
+companies,logo_url,VARCHAR(500),YES,,Logo image URL
+companies,csi_codes,TEXT[],YES,,Array of CSI codes
+companies,csi_divisions,INTEGER[],YES,,Extracted CSI division numbers
+companies,source,VARCHAR(100),NO,bluebook,Data source
+companies,source_url,VARCHAR(500),YES,,Source URL
+companies,scraped_at,TIMESTAMPTZ,YES,,When scraped
+companies,employee_count_range,VARCHAR(50),YES,,"Company size: 1-10|11-50|51-200|etc"
+companies,annual_revenue_range,VARCHAR(50),YES,,Revenue range
+companies,year_established,INTEGER,YES,,Year founded
+companies,created_at,TIMESTAMPTZ,NO,NOW(),Created timestamp
+companies,updated_at,TIMESTAMPTZ,NO,NOW(),Updated timestamp
+companies,search_vector,tsvector,NO,,Full-text search vector
+contacts,id,UUID,NO,uuid_generate_v4(),Primary key
+contacts,company_id,UUID,NO,,FK to companies
+contacts,first_name,VARCHAR(100),YES,,First name
+contacts,last_name,VARCHAR(100),YES,,Last name
+contacts,full_name,VARCHAR(255),YES,,Full name
+contacts,title,VARCHAR(255),YES,,Job title
+contacts,department,VARCHAR(100),YES,,Department
+contacts,email,VARCHAR(255),YES,,Email address
+contacts,phone,VARCHAR(50),YES,,Phone
+contacts,mobile,VARCHAR(50),YES,,Mobile phone
+contacts,linkedin_url,VARCHAR(500),YES,,LinkedIn profile
+contacts,is_primary,BOOLEAN,NO,FALSE,Is primary contact
+contacts,is_decision_maker,BOOLEAN,NO,FALSE,Is decision maker
+contacts,email_opted_out,BOOLEAN,NO,FALSE,Unsubscribed from emails
+contacts,email_opt_out_date,TIMESTAMPTZ,YES,,When unsubscribed
+contacts,email_bounced,BOOLEAN,NO,FALSE,Email bounced
+contacts,source,VARCHAR(100),YES,,Contact source
+contacts,created_at,TIMESTAMPTZ,NO,NOW(),Created timestamp
+contacts,updated_at,TIMESTAMPTZ,NO,NOW(),Updated timestamp
+email_campaigns,id,UUID,NO,uuid_generate_v4(),Primary key
+email_campaigns,name,VARCHAR(255),NO,,Campaign name
+email_campaigns,description,TEXT,YES,,Campaign description
+email_campaigns,subject,VARCHAR(500),YES,,Email subject line
+email_campaigns,preview_text,VARCHAR(255),YES,,Preview text
+email_campaigns,from_name,VARCHAR(100),YES,,From name
+email_campaigns,from_email,VARCHAR(255),YES,,From email
+email_campaigns,reply_to,VARCHAR(255),YES,,Reply-to address
+email_campaigns,html_template,TEXT,YES,,HTML email template
+email_campaigns,text_template,TEXT,YES,,Plain text template
+email_campaigns,target_criteria,JSONB,YES,,"Targeting: {types:[],states:[],csi_divisions:[]}"
+email_campaigns,status,campaign_status,NO,draft,"Status: draft|scheduled|sending|completed|paused|cancelled"
+email_campaigns,scheduled_at,TIMESTAMPTZ,YES,,When to start
+email_campaigns,started_at,TIMESTAMPTZ,YES,,When started
+email_campaigns,completed_at,TIMESTAMPTZ,YES,,When completed
+email_campaigns,total_recipients,INTEGER,NO,0,Total target count
+email_campaigns,sent_count,INTEGER,NO,0,Emails sent
+email_campaigns,delivered_count,INTEGER,NO,0,Emails delivered
+email_campaigns,opened_count,INTEGER,NO,0,Unique opens
+email_campaigns,clicked_count,INTEGER,NO,0,Unique clicks
+email_campaigns,replied_count,INTEGER,NO,0,Replies received
+email_campaigns,bounced_count,INTEGER,NO,0,Bounces
+email_campaigns,unsubscribed_count,INTEGER,NO,0,Unsubscribes
+email_campaigns,open_rate,DECIMAL(5,2),YES,,Open rate %
+email_campaigns,click_rate,DECIMAL(5,2),YES,,Click rate %
+email_campaigns,reply_rate,DECIMAL(5,2),YES,,Reply rate %
+email_campaigns,bounce_rate,DECIMAL(5,2),YES,,Bounce rate %
+email_campaigns,created_by,UUID,YES,,Who created
+email_campaigns,created_at,TIMESTAMPTZ,NO,NOW(),Created timestamp
+email_campaigns,updated_at,TIMESTAMPTZ,NO,NOW(),Updated timestamp
+email_sends,id,UUID,NO,uuid_generate_v4(),Primary key
+email_sends,campaign_id,UUID,NO,,FK to email_campaigns
+email_sends,contact_id,UUID,NO,,FK to contacts
+email_sends,company_id,UUID,YES,,FK to companies
+email_sends,to_email,VARCHAR(255),NO,,Recipient email
+email_sends,to_name,VARCHAR(255),YES,,Recipient name
+email_sends,merge_fields,JSONB,YES,,Personalization data
+email_sends,status,email_send_status,NO,pending,"Status: pending|sent|delivered|opened|clicked|replied|bounced|unsubscribed|spam"
+email_sends,queued_at,TIMESTAMPTZ,NO,NOW(),When queued
+email_sends,sent_at,TIMESTAMPTZ,YES,,When sent
+email_sends,delivered_at,TIMESTAMPTZ,YES,,When delivered
+email_sends,opened_at,TIMESTAMPTZ,YES,,When first opened
+email_sends,clicked_at,TIMESTAMPTZ,YES,,When first clicked
+email_sends,replied_at,TIMESTAMPTZ,YES,,When replied
+email_sends,bounced_at,TIMESTAMPTZ,YES,,When bounced
+email_sends,unsubscribed_at,TIMESTAMPTZ,YES,,When unsubscribed
+email_sends,open_count,INTEGER,NO,0,Total opens
+email_sends,click_count,INTEGER,NO,0,Total clicks
+email_sends,links_clicked,JSONB,YES,,Which links clicked
+email_sends,error_message,TEXT,YES,,Error details
+email_sends,error_code,VARCHAR(50),YES,,Error code
+email_sends,esp_message_id,VARCHAR(255),YES,,ESP message ID
+email_sends,esp_response,JSONB,YES,,Full ESP response
+leads,id,UUID,NO,uuid_generate_v4(),Primary key
+leads,company_id,UUID,YES,,FK to companies
+leads,contact_id,UUID,YES,,FK to contacts
+leads,title,VARCHAR(255),YES,,Lead title
+leads,description,TEXT,YES,,Lead description
+leads,status,lead_status,NO,new,"Status: new|contacted|qualified|proposal|negotiation|won|lost|nurturing"
+leads,source,VARCHAR(100),YES,,Lead source
+leads,source_campaign_id,UUID,YES,,FK to email_campaigns
+leads,source_details,JSONB,YES,,Source metadata
+leads,estimated_value,DECIMAL(15,2),YES,,Deal value
+leads,currency,VARCHAR(3),NO,USD,Currency
+leads,assigned_to,UUID,YES,,Assigned user
+leads,probability,INTEGER,YES,,Win probability 0-100
+leads,expected_close_date,DATE,YES,,Expected close
+leads,actual_close_date,DATE,YES,,Actual close
+leads,notes,TEXT,YES,,Notes
+leads,created_at,TIMESTAMPTZ,NO,NOW(),Created timestamp
+leads,updated_at,TIMESTAMPTZ,NO,NOW(),Updated timestamp
+leads,last_activity_at,TIMESTAMPTZ,YES,,Last activity
+leads,last_activity_type,VARCHAR(100),YES,,Activity type
+tasks,id,UUID,NO,uuid_generate_v4(),Primary key
+tasks,lead_id,UUID,YES,,FK to leads
+tasks,company_id,UUID,YES,,FK to companies
+tasks,contact_id,UUID,YES,,FK to contacts
+tasks,title,VARCHAR(255),NO,,Task title
+tasks,description,TEXT,YES,,Task description
+tasks,task_type,VARCHAR(50),YES,,"Type: call|email|meeting|follow_up|other"
+tasks,priority,INTEGER,NO,3,Priority 1-5 (5=highest)
+tasks,due_date,DATE,YES,,Due date
+tasks,due_time,TIME,YES,,Due time
+tasks,reminder_at,TIMESTAMPTZ,YES,,Reminder timestamp
+tasks,status,task_status,NO,pending,"Status: pending|in_progress|completed|cancelled"
+tasks,completed_at,TIMESTAMPTZ,YES,,When completed
+tasks,assigned_to,UUID,YES,,Assigned to user
+tasks,created_by,UUID,YES,,Created by user
+tasks,created_at,TIMESTAMPTZ,NO,NOW(),Created timestamp
+tasks,updated_at,TIMESTAMPTZ,NO,NOW(),Updated timestamp
+activities,id,UUID,NO,uuid_generate_v4(),Primary key
+activities,entity_type,VARCHAR(50),NO,,"Entity: company|contact|lead|task"
+activities,entity_id,UUID,NO,,Entity ID
+activities,activity_type,VARCHAR(100),NO,,"Type: created|updated|email_sent|call|note"
+activities,description,TEXT,YES,,Activity description
+activities,metadata,JSONB,YES,,Additional data
+activities,performed_by,UUID,YES,,Who performed
+activities,created_at,TIMESTAMPTZ,NO,NOW(),Created timestamp
+indexes,Table,Index Name,Index Type,Columns,Notes
+indexes,companies,idx_companies_type,B-tree,type,Filter by company type
+indexes,companies,idx_companies_state,B-tree,state,Filter by state
+indexes,companies,idx_companies_city,B-tree,city,Filter by city
+indexes,companies,idx_companies_csi_divisions,GIN,csi_divisions,Array search for CSI divisions
+indexes,companies,idx_companies_csi_codes,GIN,csi_codes,Array search for CSI codes
+indexes,companies,idx_companies_keywords,GIN,keywords,Array search for keywords
+indexes,companies,idx_companies_search,GIN,search_vector,Full-text search
+indexes,contacts,idx_contacts_company,B-tree,company_id,Join to companies
+indexes,contacts,idx_contacts_email,B-tree,email,Email lookup
+indexes,contacts,idx_contacts_primary,B-tree,company_id + is_primary,Primary contact lookup
+indexes,email_sends,idx_sends_campaign,B-tree,campaign_id,Campaign stats
+indexes,email_sends,idx_sends_status,B-tree,status,Status filtering
+indexes,email_sends,idx_sends_sent_at,B-tree,sent_at,Time-based queries
+indexes,leads,idx_leads_company,B-tree,company_id,Join to companies
+indexes,leads,idx_leads_status,B-tree,status,Pipeline filtering
+views,View Name,Description
+views,companies_with_contacts,Companies joined with primary contact info
+views,campaign_performance,Campaigns with calculated rates
+views,lead_pipeline,Lead status breakdown with counts and values
