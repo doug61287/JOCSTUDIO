@@ -34,6 +34,7 @@ function App() {
   const [activeContextId, setActiveContextId] = useState<string | null>(null);
   const [activeContextType, setActiveContextType] = useState<'drawing' | 'spec' | 'schedule' | 'material' | null>(null);
   const [activeContextName, setActiveContextName] = useState<string>('');
+  const [activeContextMetadata, setActiveContextMetadata] = useState<{ discipline?: string; packageId?: string; sheetCount?: number; sheets?: Array<{ id: string; number: string; title: string }> } | undefined>(undefined);
   
   // Conversations mapped by context ID
   const [contextConversations, setContextConversations] = useState<Record<string, Conversation>>({});
@@ -108,8 +109,8 @@ function App() {
   };
 
   // Handle context item click (drawing, spec, schedule, material)
-  const handleContextItemClick = useCallback((item: { id: string; name: string; type: 'drawing' | 'spec' | 'schedule' | 'material' }) => {
-    const { id, name, type } = item;
+  const handleContextItemClick = useCallback((item: { id: string; name: string; type: 'drawing' | 'spec' | 'schedule' | 'material'; metadata?: { discipline?: string; packageId?: string; sheetCount?: number; sheets?: Array<{ id: string; number: string; title: string }> } }) => {
+    const { id, name, type, metadata } = item;
     
     // Check if there's an existing conversation for this context
     const existingConversation = contextConversations[id];
@@ -119,6 +120,7 @@ function App() {
       setActiveContextId(id);
       setActiveContextType(type);
       setActiveContextName(name);
+      setActiveContextMetadata(metadata);
       setCurrentMessages(existingConversation.messages);
       
       // Add system message about resuming
@@ -134,9 +136,12 @@ function App() {
       setActiveContextId(id);
       setActiveContextType(type);
       setActiveContextName(name);
+      setActiveContextMetadata(metadata);
       
       // Initial context-aware message
-      const contextIntro = getContextIntro(type, name);
+      const contextIntro = metadata?.discipline 
+        ? `I see you've selected the **${metadata.discipline}** discipline group (${metadata.sheetCount} sheets). I can help you analyze all ${metadata.discipline} drawings together, find cross-sheet conflicts, or answer questions about the discipline scope. What would you like to explore?`
+        : getContextIntro(type, name);
       const initialMessages: Message[] = [{
         id: `msg-${Date.now()}`,
         role: 'assistant',
@@ -181,7 +186,9 @@ function App() {
   };
 
   // Handle sending message with context awareness
-  const handleSendMessage = useCallback((content: string) => {
+  const handleSendMessage = useCallback(async (content: string) => {
+    if (!activeProject?.id) return;
+    
     const userMessage: Message = {
       id: `msg-${Date.now()}`,
       role: 'user',
@@ -191,13 +198,29 @@ function App() {
 
     setCurrentMessages(prev => [...prev, userMessage]);
 
-    // Simulate context-aware AI response
-    setTimeout(() => {
-      const aiResponse = generateContextAwareResponse(content, activeContextType, activeContextName);
+    try {
+      // Call real API
+      const response = await fetch('/api/chat/message', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          projectId: activeProject.id,
+          message: content,
+          contextId: activeContextId || undefined,
+          contextType: activeContextType || undefined,
+          contextName: activeContextName || undefined,
+          metadata: activeContextMetadata,
+        }),
+      });
+      
+      if (!response.ok) throw new Error('API error');
+      
+      const data = await response.json();
+      
       const assistantMessage: Message = {
         id: `msg-${Date.now() + 1}`,
         role: 'assistant',
-        content: aiResponse,
+        content: data.response,
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
         sources: activeContextType === 'drawing' ? [activeContextName] : undefined,
       };
@@ -215,8 +238,20 @@ function App() {
           }
         }));
       }
-    }, 1000);
-  }, [activeContextId, activeContextType, activeContextName, generateContextAwareResponse]);
+    } catch (error) {
+      // Fallback to simulated response
+      const aiResponse = generateContextAwareResponse(content, activeContextType, activeContextName);
+      const assistantMessage: Message = {
+        id: `msg-${Date.now() + 1}`,
+        role: 'assistant',
+        content: aiResponse,
+        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        sources: activeContextType === 'drawing' ? [activeContextName] : undefined,
+      };
+      
+      setCurrentMessages(prev => [...prev, assistantMessage]);
+    }
+  }, [activeProject?.id, activeContextId, activeContextType, activeContextName, activeContextMetadata, generateContextAwareResponse]);
 
   // Mark item as complete
   const handleMarkComplete = useCallback((id: string, type: 'drawing' | 'spec' | 'schedule' | 'material') => {

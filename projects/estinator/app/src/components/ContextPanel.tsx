@@ -8,7 +8,7 @@ interface ContextPanelProps {
   activeProject: Project;
   selectedScopes: string[];
   completedItems: { documents: string[]; materials: string[]; specs: string[] };
-  onItemClick: (item: { id: string; name: string; type: 'drawing' | 'spec' | 'schedule' | 'material' }) => void;
+  onItemClick: (item: { id: string; name: string; type: 'drawing' | 'spec' | 'schedule' | 'material'; metadata?: { discipline?: string; packageId?: string; sheetCount?: number; sheets?: Array<{ id: string; number: string; title: string }> } }) => void;
   onMarkComplete: (id: string, type: 'drawing' | 'spec' | 'material') => void;
   activeContextId: string | null;
 }
@@ -536,9 +536,12 @@ export function ContextPanel({ selectedScopes, completedItems, onItemClick, acti
                               const isDiscExpanded = expandedPackageDisciplines.has(discKey);
                               const discConflicts = sheets.reduce((sum, s) => sum + (s.conflictCount || 0), 0);
                               
+                              const disciplineContextId = `${pkg.id}-disc-${discipline}`;
+                              const isDisciplineActive = activeContextId === disciplineContextId;
+                              
                               return (
                                 <div key={discKey} className="border-b border-[#2A2A2A] last:border-b-0">
-                                  {/* Discipline Header */}
+                                  {/* Discipline Header - Click to select all sheets in this discipline */}
                                   <button 
                                     onClick={() => togglePackageDiscipline(discKey)}
                                     className="w-full px-4 py-2 flex items-center gap-2 hover:bg-[#252525] transition-fast"
@@ -548,8 +551,44 @@ export function ContextPanel({ selectedScopes, completedItems, onItemClick, acti
                                       <ChevronRight className="w-3 h-3 text-[#6B7280]" />
                                     }
                                     <DisciplineIcon discipline={discipline} className="w-3.5 h-3.5 text-[#8A8F98]" />
-                                    <span className="text-[12px] text-[#8A8F98]">{discipline}</span>
-                                    <span className="text-[11px] text-[#6B7280] ml-auto">{sheets.length} sheets</span>
+                                    <span 
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        onItemClick({ 
+                                          id: disciplineContextId, 
+                                          name: `${pkg.name} - ${discipline} (${sheets.length} sheets)`, 
+                                          type: 'drawing',
+                                          metadata: { 
+                                            discipline,
+                                            packageId: pkg.id,
+                                            sheetCount: sheets.length,
+                                            sheets: sheets.map(s => ({ id: s.id, number: s.sheetNumber, title: s.title }))
+                                          }
+                                        });
+                                      }}
+                                      className={`text-[12px] cursor-pointer hover:underline ${isDisciplineActive ? 'text-[#5E6AD2] font-medium' : 'text-[#8A8F98]'}`}
+                                    >
+                                      {discipline}
+                                    </span>
+                                    <span 
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        onItemClick({ 
+                                          id: disciplineContextId, 
+                                          name: `${pkg.name} - ${discipline} (${sheets.length} sheets)`, 
+                                          type: 'drawing',
+                                          metadata: { 
+                                            discipline,
+                                            packageId: pkg.id,
+                                            sheetCount: sheets.length,
+                                            sheets: sheets.map(s => ({ id: s.id, number: s.sheetNumber, title: s.title }))
+                                          }
+                                        });
+                                      }}
+                                      className="text-[11px] text-[#6B7280] ml-auto cursor-pointer hover:text-[#8A8F98]"
+                                    >
+                                      {sheets.length} sheets
+                                    </span>
                                     {discConflicts > 0 && (
                                       <span className="text-[10px] text-[#FBBF24]">{discConflicts}</span>
                                     )}

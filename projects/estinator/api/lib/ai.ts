@@ -8,6 +8,25 @@ import type { ChatContext, UploadedDocument } from './types';
 
 export type { ChatContext };
 
+// Extended context with discipline group info
+export interface ChatContext {
+  projectId: string;
+  projectName: string;
+  contextId?: string;
+  contextType?: 'drawing' | 'spec' | 'schedule' | 'material';
+  contextName?: string;
+  selectedScopes?: string[];
+  documentCount?: number;
+  uploadedDocs?: UploadedDocument[];
+  // For discipline groups
+  metadata?: {
+    discipline?: string;
+    packageId?: string;
+    sheetCount?: number;
+    sheets?: Array<{ id: string; number: string; title: string }>;
+  };
+}
+
 // Lazy initialization
 let anthropic: Anthropic | null = null;
 
@@ -43,18 +62,30 @@ function buildSystemPrompt(ctx: ChatContext): string {
     .map((d: UploadedDocument) => `- ${d.name} (${d.type})`)
     .join('\n');
 
+  // Check if this is a discipline group context
+  const isDisciplineGroup = ctx.metadata?.discipline && ctx.metadata?.sheetCount;
+  const sheetsList = isDisciplineGroup 
+    ? ctx.metadata!.sheets!.map(s => `  - ${s.number}: ${s.title}`).join('\n')
+    : '';
+
   return `You are BuilderBrain, a construction estimator's AI assistant. You help analyze drawings, find conflicts, and answer technical questions.
 
 ## Current Context
 Project: ${ctx.projectName}
-${ctx.contextType ? `Viewing: ${ctx.contextName} (${ctx.contextType})` : 'General project view'}
+${isDisciplineGroup 
+  ? `Viewing: ${ctx.metadata!.discipline} discipline group (${ctx.metadata!.sheetCount} sheets)\nSheets in this group:\n${sheetsList}`
+  : ctx.contextType 
+    ? `Viewing: ${ctx.contextName} (${ctx.contextType})` 
+    : 'General project view'}
 Scope: ${scopeNames || 'All divisions'}
 
 ${docList ? `Documents:\n${docList}` : ''}
 
 ## How to Respond
 - Answer the user's question directly and conversationally
-- If asked about a specific drawing, reference what's shown on that sheet
+- ${isDisciplineGroup 
+  ? 'When asked about this discipline group, consider ALL sheets listed above. Look for patterns, conflicts between sheets in the group, or summarize the scope across all sheets.' 
+  : 'If asked about a specific drawing, reference what\'s shown on that sheet'}
 - Be helpful but honest - say "I don't see that information" if it's not in the context
 - Use construction terminology naturally
 - Keep responses concise but informative
