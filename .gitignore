@@ -1,0 +1,10 @@
+
+# SECURITY: Never commit API keys or session logs
+ec2-backup/
+*.jsonl
+.openclaw/credentials/
+.env.local
+.env.production
+.env.staging
+*.pem
+*.key
