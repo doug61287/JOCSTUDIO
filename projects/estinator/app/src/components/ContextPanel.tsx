@@ -167,7 +167,37 @@ export function ContextPanel({ selectedScopes, completedItems, onItemClick, acti
     ? realDocuments
     : realDocuments.filter(doc => doc.division && selectedScopes.includes(doc.division));
   const filteredMaterials: Material[] = []; // Populated when material extraction is implemented
-  const uploadedPackages: DrawingPackage[] = []; // Populated when drawing package extraction is implemented
+  // Drawing packages state (for demo: manually converted from uploads)
+  const [uploadedPackages, setUploadedPackages] = useState<DrawingPackage[]>([]);
+
+  // Convert uploaded document to Drawing Package (demo mode)
+  const convertToPackage = (doc: ProjectDocument) => {
+    const mockSheets: DrawingSheet[] = [
+      { id: `${doc.id}-s1`, sheetNumber: 'A-001', title: 'Cover Sheet & Index', discipline: 'Architectural', page: 1, status: 'processed', conflictCount: 0 },
+      { id: `${doc.id}-s2`, sheetNumber: 'A-101', title: 'Floor Plan Level 1', discipline: 'Architectural', page: 2, status: 'processed', conflictCount: 1 },
+      { id: `${doc.id}-s3`, sheetNumber: 'A-102', title: 'Floor Plan Level 2', discipline: 'Architectural', page: 3, status: 'processed', conflictCount: 0 },
+      { id: `${doc.id}-s4`, sheetNumber: 'S-101', title: 'Foundation Plan', discipline: 'Structural', page: 5, status: 'processed', conflictCount: 0 },
+      { id: `${doc.id}-s5`, sheetNumber: 'M-001', title: 'HVAC Plan L1', discipline: 'MEP', page: 8, status: 'processing', conflictCount: 0 },
+    ];
+
+    const newPackage: DrawingPackage = {
+      id: `pkg-${doc.id}`,
+      name: doc.name.replace('.pdf', ''),
+      type: 'package',
+      discipline: 'Multi',
+      status: 'processed',
+      pageCount: mockSheets.length + 3,
+      uploadDate: new Date().toISOString().split('T')[0],
+      conflictCount: mockSheets.reduce((sum, s) => sum + (s.conflictCount || 0), 0),
+      sheets: mockSheets,
+    };
+
+    setUploadedPackages(prev => [...prev, newPackage]);
+    setExpandedSections(prev => new Set([...prev, 'Packages']));
+    setExpandedPackages(prev => new Set([...prev, newPackage.id]));
+    
+    alert(`✅ "${doc.name}" converted to Drawing Package with ${mockSheets.length} sheets!`);
+  };
 
   const drawingsByDiscipline = filteredDocs.filter(doc => doc.type === 'drawing').reduce((acc, doc) => {
     const discipline = doc.discipline || 'Other';
@@ -403,12 +433,31 @@ export function ContextPanel({ selectedScopes, completedItems, onItemClick, acti
                   {realDocuments.map(doc => {
                     const isActive = activeContextId === doc.id;
                     const isDone = isCompleted(doc.id, 'drawing');
+                    const isConverted = uploadedPackages.some(p => p.id === `pkg-${doc.id}`);
                     return (
-                      <div key={doc.id} onClick={() => onItemClick({ id: doc.id, name: doc.name, type: doc.type as 'drawing' | 'spec' | 'schedule' | 'material' })} className={`flex items-center gap-2 py-1.5 px-2 rounded cursor-pointer group ${isActive ? 'bg-[#5E6AD2]/20 border border-[#5E6AD2]' : 'hover:bg-[#1A1A1A]'}`}>
-                        {isDone ? <CheckCircle2 className="w-3.5 h-3.5 text-[#4ADE80]" /> : <FileText className={`w-3.5 h-3.5 ${isActive ? 'text-[#5E6AD2]' : 'text-[#6B7280] group-hover:text-[#5E6AD2]'}`} />}
-                        <span className={`text-[11px] truncate flex-1 ${isActive ? 'text-white' : 'text-white/70 group-hover:text-white'}`}>{doc.name}</span>
-                        {doc.status === 'processing' && <span className="text-[10px] text-[#FBBF24]">processing</span>}
-                        {(doc.conflictCount || 0) > 0 && <span className="text-[10px] text-[#FBBF24] flex items-center gap-1"><AlertCircle className="w-3 h-3" />{doc.conflictCount}</span>}
+                      <div key={doc.id} className="group">
+                        <div onClick={() => onItemClick({ id: doc.id, name: doc.name, type: doc.type as 'drawing' | 'spec' | 'schedule' | 'material' })} className={`flex items-center gap-2 py-1.5 px-2 rounded cursor-pointer ${isActive ? 'bg-[#5E6AD2]/20 border border-[#5E6AD2]' : 'hover:bg-[#1A1A1A]'}`}>
+                          {isDone ? <CheckCircle2 className="w-3.5 h-3.5 text-[#4ADE80]" /> : <FileText className={`w-3.5 h-3.5 ${isActive ? 'text-[#5E6AD2]' : 'text-[#6B7280] group-hover:text-[#5E6AD2]'}`} />}
+                          <span className={`text-[11px] truncate flex-1 ${isActive ? 'text-white' : 'text-white/70 group-hover:text-white'}`}>{doc.name}</span>
+                          {doc.status === 'processing' && <span className="text-[10px] text-[#FBBF24]">processing</span>}
+                          {(doc.conflictCount || 0) > 0 && <span className="text-[10px] text-[#FBBF24] flex items-center gap-1"><AlertCircle className="w-3 h-3" />{doc.conflictCount}</span>}
+                        </div>
+                        {/* Convert to Package button */}
+                        {!isConverted && (
+                          <button
+                            onClick={(e) => { e.stopPropagation(); convertToPackage(doc); }}
+                            className="ml-6 mt-1 mb-2 flex items-center gap-1 px-2 py-1 text-[10px] bg-[#5E6AD2]/10 hover:bg-[#5E6AD2]/20 text-[#5E6AD2] rounded transition-colors"
+                          >
+                            <FolderOpen className="w-3 h-3" />
+                            Convert to Package
+                          </button>
+                        )}
+                        {isConverted && (
+                          <span className="ml-6 mt-1 mb-2 flex items-center gap-1 px-2 py-1 text-[10px] text-[#4ADE80]">
+                            <CheckCircle2 className="w-3 h-3" />
+                            Converted
+                          </span>
+                        )}
                       </div>
                     );
                   })}
