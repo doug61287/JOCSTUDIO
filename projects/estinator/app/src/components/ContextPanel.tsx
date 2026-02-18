@@ -151,6 +151,10 @@ export function ContextPanel({ selectedScopes, completedItems, onItemClick, acti
             discipline: 'General'
           })));
         }
+        // Load packages from API (for demo project)
+        if (context.packages && context.packages.length > 0) {
+          setUploadedPackages(context.packages);
+        }
       } catch (err) {
         console.error('Failed to fetch context:', err);
       } finally {
