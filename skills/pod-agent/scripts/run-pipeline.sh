@@ -32,17 +32,29 @@ node "$DIR/mockup-engine.js"
 
 # Module 4: Listing Copy
 echo ""
-echo "━━━ [4/5] Listing Writer ━━━━━━━━━━━━━"
+echo "━━━ [4/7] Listing Writer ━━━━━━━━━━━━━"
 node "$DIR/listing-writer.js"
+
+# Module 7: Advertorial Generator
+echo ""
+echo "━━━ [5/7] Advertorial Generator ━━━━━━"
+node "$DIR/advertorial-gen.js"
 
 # Module 5: Publish to Etsy
 echo ""
-echo "━━━ [5/5] Publisher ━━━━━━━━━━━━━━━━━━"
+echo "━━━ [6/7] Publisher ━━━━━━━━━━━━━━━━━━"
 node "$DIR/publisher.js"
+
+# Module 6: Tracker
+echo ""
+echo "━━━ [7/7] Tracker ━━━━━━━━━━━━━━━━━━━━"
+node "$DIR/tracker.js"
 
 echo ""
 echo "╔══════════════════════════════════════╗"
 echo "║     ✅ Pipeline Complete!            ║"
 echo "╚══════════════════════════════════════╝"
 echo ""
-echo "Check Etsy drafts: https://www.etsy.com/your/shops/me/tools/listings"
+echo "📋 Review advertorials: skills/pod-agent/generated/advertorials/"
+echo "📌 Ad hooks (JSON): skills/pod-agent/generated/advertorials/*.json"
+echo "🛒 Check Etsy drafts: https://www.etsy.com/your/shops/me/tools/listings"

@@ -15,17 +15,21 @@ Automated print-on-demand side hustle agent. Runs trend research, generates desi
 
 ```
 skills/pod-agent/
-├── SKILL.md              ← this file
+├── SKILL.md                  ← this file
 ├── scripts/
-│   ├── trend-scout.py    ← Crawl4AI trend research
-│   ├── design-gen.js     ← Ideogram/DALL-E image gen
-│   ├── mockup-engine.js  ← Printify API mockup creation
-│   ├── listing-writer.js ← Claude SEO listing copy
-│   ├── publisher.js      ← Etsy API listing publish
-│   └── tracker.js        ← Performance analytics
-├── generated/            ← output designs + listings
+│   ├── trend-scout.py        ← Crawl4AI trend research (Pinterest + Redbubble)
+│   ├── design-gen.js         ← Ideogram/DALL-E image gen
+│   ├── mockup-engine.js      ← Printify API mockup creation
+│   ├── listing-writer.js     ← Claude SEO listing copy (title/desc/13 tags)
+│   ├── advertorial-gen.js    ← Claude advertorial writer (6-section framework)
+│   ├── publisher.js          ← Etsy API listing publish
+│   ├── tracker.js            ← Performance analytics
+│   └── run-pipeline.sh       ← Full pipeline runner
+├── generated/
+│   ├── advertorials/         ← HTML advertorials + JSON ad hooks
+│   └── trends-*.json         ← Trend scout output
 └── assets/
-    └── state.json        ← active niche, shop IDs, etc.
+    └── state.json            ← active niche, shop IDs, etc.
 ```
 
 ## Config (assets/state.json)
@@ -49,12 +53,34 @@ skills/pod-agent/
 
 ## Workflow
 
-1. **Trend Scout** (daily) — scrapes Etsy/Pinterest for trending keywords in niche
+1. **Trend Scout** (daily) — scrapes Pinterest/Redbubble for trending keywords in niche
 2. **Design Gen** (per trend) — generates 5 design variants via Ideogram
 3. **Mockup Engine** (per design) — places designs on products via Printify
 4. **Listing Writer** (per product) — writes SEO title/desc/tags via Claude
-5. **Publisher** (auto) — creates Etsy draft listing with mockup images
-6. **Tracker** (daily) — reports views/sales/CVR, flags winners + losers
+5. **Advertorial Gen** (per listing) — generates full 6-section advertorial + Meta ad hook
+6. **Publisher** (auto) — creates Etsy draft listing with mockup images
+7. **Tracker** (daily) — reports views/sales/CVR, flags winners + losers
+
+## Advertorial Framework (Module 7)
+
+Uses Zack's 6-section native advertorial structure — converts cold Meta traffic 5-10x better than direct-to-listing ads:
+
+```
+Meta Ad (curiosity gap hook)
+  ↓
+Advertorial HTML (hosted on GitHub Pages / Cloudflare Pages)
+  ├── [1] VALIDATE   — mirror buyer frustration (generic gifts feel cheap)
+  ├── [2] MECHANISM  — WHY it fails (mass production)
+  ├── [3] SOLUTION   — custom POD as a category
+  ├── [4] PRODUCT    — introduce THIS design naturally
+  ├── [5] PROOF      — 3-4 specific buyer testimonials
+  └── [6] SOFT CTA   — "worth checking out if..."
+  ↓
+Etsy Listing (conversion)
+```
+
+CVR benchmark: direct-to-product 1-2% vs advertorial 8-15%.
+Each run outputs: `generated/advertorials/[slug]-advertorial.html` + `.json` (with ad hook text)
 
 ## Money Math
 
