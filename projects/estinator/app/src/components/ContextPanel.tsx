@@ -241,27 +241,29 @@ export function ContextPanel({ selectedScopes, completedItems, onItemClick, acti
     const uploadedFiles: Array<{ id: string; name: string; status: string; uploadDate: string; blobUrl?: string; type?: string; conflictCount?: number }> = [];
     const failedFiles: string[] = [];
 
+    // Import Vercel Blob client dynamically
+    const { upload } = await import('@vercel/blob/client');
+
     for (const file of Array.from(files)) {
       try {
-        // Use FormData for multipart upload — supports large files (50MB+)
-        const formData = new FormData();
-        formData.append('projectId', activeProject.id);
-        formData.append('name', file.name);
-        formData.append('file', file);
-
-        const response = await fetch('/api/upload-document', {
-          method: 'POST',
-          body: formData,
-          // No Content-Type header — browser sets it with boundary for multipart
+        // Use Vercel Blob client for direct upload with presigned URL
+        // This bypasses the Vercel function body size limit entirely
+        const blobResult = await upload(file.name, file, {
+          access: 'public',
+          handleUploadUrl: '/api/upload-document',
         });
 
-        if (!response.ok) {
-          const errorText = await response.text();
-          throw new Error(`Upload failed: ${response.status} ${errorText}`);
-        }
-
-        const result = await response.json();
-        uploadedFiles.push(result.document);
+        // Record the upload metadata
+        const doc = {
+          id: `doc-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+          name: file.name,
+          status: 'uploaded',
+          uploadDate: new Date().toISOString(),
+          blobUrl: blobResult.url,
+          type: 'drawing',
+          conflictCount: 0,
+        };
+        uploadedFiles.push(doc);
       } catch (err) {
         console.error(`Upload failed for ${file.name}:`, err);
         failedFiles.push(file.name);
@@ -277,7 +279,7 @@ export function ContextPanel({ selectedScopes, completedItems, onItemClick, acti
       const newDocs: ProjectDocument[] = uploadedFiles.map((d) => ({
         id: d.id,
         name: d.name,
-        type: 'drawing', // Default to drawing, can refine later
+        type: d.type as 'drawing' | 'spec' | 'addendum' | 'rfi',
         status: d.status as 'processed' | 'processing' | 'pending',
         uploadDate: d.uploadDate,
         conflictCount: d.conflictCount || 0,
