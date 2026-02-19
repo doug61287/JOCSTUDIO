@@ -1,0 +1,159 @@
+## Codebase Patterns - MWBEFinder
+
+### Project Structure
+- `/search/` - Next.js search interface (React + Supabase)
+- `/landing/` - Marketing landing page
+- `prd.json` - Product requirements document
+- `ralph.sh` - Autonomous iteration script
+
+### Technology Stack
+- Frontend: React + Next.js + Tailwind CSS
+- Database: Supabase (PostgreSQL)
+- Deployment: Vercel
+- API: Supabase JavaScript client
+
+### Database Patterns
+- Table: `businesses` with 1.7M+ records
+- Full-text search enabled on `business_name`, `services_description`
+- Indexes on `address_city`, `address_state`, `certification_type`
+- Row Level Security (RLS) enabled - public read access
+
+### Frontend Patterns
+- Use functional components with hooks
+- Mobile-first responsive design
+- Loading states with skeleton screens
+- Error boundaries for graceful failures
+
+### Search Implementation
+- Supabase `.or()` for text search across multiple fields
+- `.range()` for pagination (20 results per page)
+- URL query params for filter persistence
+- Debounced search input (300ms)
+
+### Styling Conventions
+- Primary color: #10b981 (green)
+- Dark background: #0f172a (slate-900)
+- Use Tailwind utility classes
+- Mobile breakpoint: 768px
+
+### Critical Learnings
+- NEVER expose Supabase service_role key in frontend
+- Use `.select('*', { count: 'exact' })` for pagination counts
+- Handle rate limits - Supabase has 60 req/min on free tier
+- Mobile touch targets minimum 44px
+- Use history.pushState for URL updates without page reload
+- Debounce autocomplete queries to reduce API calls
+- Escape key should close modals and dropdowns
+- Use aria attributes for accessibility
+
+---
+
+## Progress Log
+
+## 2026-02-19 08:57 EST - ALL STORIES (US-001 through US-010)
+
+### Summary
+Implemented complete MWBEFinder search UI enhancement in a single comprehensive iteration.
+
+### Stories Completed
+1. **US-001** - Search input with autocomplete
+2. **US-002** - State filter dropdown (50 states + DC + PR)
+3. **US-003** - Certification type multi-select filter
+4. **US-004** - Search results with pagination
+5. **US-005** - Business detail modal view
+6. **US-006** - Claim Your Profile CTA section
+7. **US-007** - Search stats bar
+8. **US-008** - URL-based filter persistence
+9. **US-009** - Error handling and loading states
+10. **US-010** - Mobile optimization
+
+### Files Changed
+- `search/index.html` - Complete rewrite with all features
+
+### Features Implemented
+
+**Search & Autocomplete (US-001)**
+- Prominent search input in hero section
+- Debounced autocomplete (300ms delay)
+- Max 5 suggestions with business name, location, certification
+- Keyboard navigation (up/down/enter/escape)
+- Click outside to close dropdown
+
+**State Filter (US-002)**
+- All 52 locations (50 states + DC + Puerto Rico)
+- Full state names in dropdown
+- URL persistence via ?state=XX
+
+**Certification Multi-Select (US-003)**
+- 8 certification types: MWBE, MBE, WBE, DBE, SBE, LBE, 8(a), HUBZone
+- Toggle checkbox UI with selected state styling
+- Active filter tags with remove buttons
+- OR logic for multiple selections
+- URL persistence via ?cert=MWBE,MBE
+
+**Results & Pagination (US-004)**
+- Card-based results (20 per page)
+- Certification badges on cards
+- Full pagination: First « | Prev | 1-5 | Next | » Last
+- Result count header
+- Skeleton loading animation
+- Empty state with suggestions
+
+**Business Detail Modal (US-005)**
+- Modal overlay with slide-in animation
+- All fields: name, address, phone, email, website, services, NAICS
+- Contact Business button (mailto:)
+- Visit Website button (new tab)
+- Share/Copy Link with toast notification
+- Claim This Profile CTA
+- Escape key to close
+- URL with ?business=ID for direct linking
+
+**Claim Profile CTA (US-006)**
+- Green gradient banner
+- "Is This Your Business?" headline
+- Benefits explanation
+- Hover animation on button
+- Links to /claim-profile
+
+**Stats Bar (US-007)**
+- Green bar below search hero
+- "Searching 1,694,844 businesses..." with spinner during load
+- "X businesses found" when complete
+- Updates dynamically with filters
+
+**URL Persistence (US-008)**
+- Query params: ?q=, ?state=, ?cert=, ?page=, ?business=
+- All params combinable
+- Browser back/forward support via popstate
+- Initial load from URL params
+
+**Error Handling (US-009)**
+- Skeleton loading with shimmer animation
+- Error state with red styling
+- Retry button on errors
+- 10 second timeout handling
+- Try/catch throughout
+
+**Mobile Optimization (US-010)**
+- 768px breakpoint
+- Stacked layouts on mobile
+- 44px minimum touch targets
+- Simplified pagination (Prev/Next only on mobile)
+- No horizontal scroll
+- 16px minimum font sizes
+- Full-width buttons on mobile
+
+### Learnings for Future Iterations
+- **URL State Management**: Use history.pushState() instead of replaceState() for proper back/forward navigation
+- **Autocomplete UX**: Highlight current selection, support keyboard nav, show location context
+- **Modal Accessibility**: Use role="dialog", aria-modal, trap focus, escape to close
+- **Loading States**: Skeleton screens > spinners for content placeholders
+- **Error Recovery**: Always provide retry action, show specific error messages
+- **Mobile First**: Start with mobile styles, add desktop enhancements at breakpoints
+- **Touch Targets**: iOS/Android require 44px minimum for reliable tap detection
+- **Supabase Queries**: Use single query with .or() rather than multiple queries for efficiency
+
+---
+
+<promise>COMPLETE</promise>

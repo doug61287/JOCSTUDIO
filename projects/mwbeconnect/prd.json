@@ -1,0 +1,174 @@
+{
+  "project": "MWBEFinder",
+  "branchName": "ralph/search-ui-enhancement",
+  "description": "MWBEFinder Search UI - Enhanced search interface with filters, results, and claim profile functionality",
+  "userStories": [
+    {
+      "id": "US-001",
+      "title": "Create search input with autocomplete",
+      "description": "As a user, I want to search for businesses by name with autocomplete suggestions as I type.",
+      "acceptanceCriteria": [
+        "Search input field prominently displayed in hero section",
+        "Autocomplete dropdown shows matching business names after 2+ characters",
+        "Maximum 5 autocomplete suggestions displayed",
+        "Clicking suggestion fills search input and triggers search",
+        "TypeScript types defined for all components",
+        "Mobile responsive (works on screens down to 320px)"
+      ],
+      "priority": 1,
+      "passes": true,
+      "notes": "Use Supabase full-text search for autocomplete queries. Implemented with debounced input (300ms), keyboard navigation (up/down/enter/escape), and click-outside-to-close."
+    },
+    {
+      "id": "US-002",
+      "title": "Build state filter dropdown",
+      "description": "As a user, I want to filter search results by state to find businesses in specific locations.",
+      "acceptanceCriteria": [
+        "Dropdown shows all 50 states + DC + Puerto Rico",
+        "Selecting a state filters results to only that state",
+        "'All States' option resets filter",
+        "Filter state persists in URL query params",
+        "Dropdown is keyboard accessible (tab, enter, escape)",
+        "Selected state shows visual indicator"
+      ],
+      "priority": 2,
+      "passes": true,
+      "notes": "All 52 locations (50 states + DC + PR) implemented with full names. URL persistence via ?state=XX query param."
+    },
+    {
+      "id": "US-003",
+      "title": "Build certification type filter",
+      "description": "As a user, I want to filter by certification type (MWBE, MBE, WBE, etc.) to find diverse suppliers.",
+      "acceptanceCriteria": [
+        "Multi-select checkbox group for certification types",
+        "Options: MWBE, MBE, WBE, DBE, SBE, LBE, 8(a), HUBZone",
+        "Multiple certifications can be selected simultaneously",
+        "Selected certifications show as tags above results",
+        "Clicking tag removes that filter",
+        "Filter persists in URL query params"
+      ],
+      "priority": 3,
+      "passes": true,
+      "notes": "Implemented with toggle checkbox UI, active filter tags with remove buttons, and URL persistence via ?cert=MWBE,MBE format."
+    },
+    {
+      "id": "US-004",
+      "title": "Display search results with pagination",
+      "description": "As a user, I want to see search results in a clean list with pagination for large result sets.",
+      "acceptanceCriteria": [
+        "Results display in card format (20 per page)",
+        "Each card shows: business name, city, state, certification badge",
+        "Clicking card opens business detail view",
+        "Pagination controls at bottom (First, Prev, 1-5, Next, Last)",
+        "Current page highlighted in pagination",
+        "Shows total result count above results",
+        "Loading skeleton while results fetch",
+        "Empty state with 'No results found' message and suggestions"
+      ],
+      "priority": 4,
+      "passes": true,
+      "notes": "Full pagination with First/Prev/1-5/Next/Last controls, skeleton loading states, result count display, and empty state with suggestions."
+    },
+    {
+      "id": "US-005",
+      "title": "Build business detail view",
+      "description": "As a user, I want to see full details when I click on a business.",
+      "acceptanceCriteria": [
+        "Modal or page shows full business details",
+        "Fields displayed: name, address, phone, email, website, certifications, services",
+        "'Contact Business' button (mailto: link)",
+        "'Visit Website' button (opens in new tab)",
+        "'Claim This Profile' prominent CTA",
+        "Share button to copy link to this business",
+        "Back button returns to search results",
+        "URL is /business/[id] for direct linking"
+      ],
+      "priority": 5,
+      "passes": true,
+      "notes": "Modal implementation with all fields, contact/website/claim buttons, share with clipboard copy, escape key to close, and URL with ?business=ID for direct linking."
+    },
+    {
+      "id": "US-006",
+      "title": "Create 'Claim Your Profile' CTA section",
+      "description": "As a business owner, I want to see a clear call-to-action to claim my free profile.",
+      "acceptanceCriteria": [
+        "Prominent banner below search results",
+        "Headline: 'Is This Your Business?'",
+        "Subtext explains benefits of claiming",
+        "'Claim Free Profile' button links to signup",
+        "Banner visually distinct (green gradient background)",
+        "Button has hover state animation",
+        "Mobile responsive"
+      ],
+      "priority": 6,
+      "passes": true,
+      "notes": "Gradient green banner with hover scale animation on button, links to /claim-profile, fully responsive."
+    },
+    {
+      "id": "US-007",
+      "title": "Add search stats bar",
+      "description": "As a user, I want to see how many businesses match my search and how many total are in the database.",
+      "acceptanceCriteria": [
+        "Green banner below search hero shows stats",
+        "Displays: 'Searching 1,694,844 businesses' when loading",
+        "Updates to: 'X businesses found' when complete",
+        "Shows loading spinner during search",
+        "Updates dynamically when filters change",
+        "Persists at top of results area"
+      ],
+      "priority": 7,
+      "passes": true,
+      "notes": "Stats bar with spinner animation during loading, shows total database count during search, updates to result count after."
+    },
+    {
+      "id": "US-008",
+      "title": "Implement URL-based filter persistence",
+      "description": "As a user, I want to share my exact search via URL so others see the same results.",
+      "acceptanceCriteria": [
+        "URL updates when search query changes: ?q=construction",
+        "URL updates when state filter changes: ?state=NY",
+        "URL updates when certification filter changes: ?cert=MWBE,MBE",
+        "URL updates when page changes: ?page=3",
+        "All filters can be combined: ?q=construction&state=NY&cert=MWBE&page=2",
+        "Page loads with filters pre-applied from URL",
+        "Browser back/forward works correctly"
+      ],
+      "priority": 8,
+      "passes": true,
+      "notes": "Full URL state management with useQueryParams hook, history.pushState for updates, popstate listener for back/forward navigation."
+    },
+    {
+      "id": "US-009",
+      "title": "Add error handling and loading states",
+      "description": "As a user, I want clear feedback when things go wrong or when data is loading.",
+      "acceptanceCriteria": [
+        "Loading skeleton shown while fetching results",
+        "Error message displayed if Supabase query fails",
+        "'Retry' button on error state",
+        "Timeout handling (show error after 10s)",
+        "Graceful degradation if JavaScript fails",
+        "Network error detection and messaging"
+      ],
+      "priority": 9,
+      "passes": true,
+      "notes": "Skeleton loading with shimmer animation, error state with retry button, 10s timeout, try/catch error handling throughout."
+    },
+    {
+      "id": "US-010",
+      "title": "Optimize for mobile devices",
+      "description": "As a mobile user, I want the search experience to work perfectly on my phone.",
+      "acceptanceCriteria": [
+        "All filters accessible via mobile-optimized UI",
+        "Touch-friendly buttons (min 44px tap target)",
+        "Search results stack vertically on mobile",
+        "Pagination simplified for mobile (Prev/Next only)",
+        "No horizontal scrolling",
+        "Font sizes readable on small screens (min 16px)",
+        "Tested on iOS Safari and Chrome Android"
+      ],
+      "priority": 10,
+      "passes": true,
+      "notes": "Full responsive CSS with 768px breakpoint, 44px min tap targets, stacked layouts on mobile, hidden page numbers on mobile (Prev/Next only), 16px min font size."
+    }
+  ]
+}
