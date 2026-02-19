@@ -1,0 +1,1518 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search | MWBEFinder - Find Certified Diverse Suppliers</title>
+    <meta name="description" content="Search 1.7 million certified MWBE, MBE, WBE, DBE businesses across all 50 states">
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        /* Reset & Base */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; 
+            background: #f8fafc; 
+            color: #1e293b;
+            min-height: 100vh;
+        }
+        
+        /* Header */
+        .header { 
+            background: #0f172a; 
+            color: white; 
+            padding: 16px 24px; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .logo { font-size: 1.5rem; font-weight: 800; text-decoration: none; color: white; }
+        .logo span { color: #10b981; }
+        .nav-btn { 
+            background: transparent; 
+            border: 2px solid white; 
+            color: white;
+            padding: 10px 20px; 
+            border-radius: 8px; 
+            font-weight: 600; 
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.9rem;
+        }
+        .nav-btn:hover { background: white; color: #0f172a; }
+        
+        /* Container */
+        .container { max-width: 1200px; margin: 0 auto; padding: 24px; }
+        
+        /* Search Hero */
+        .search-hero { 
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); 
+            color: white; 
+            padding: 48px 24px 60px; 
+            text-align: center;
+        }
+        .search-hero h1 { 
+            font-size: 2.5rem; 
+            margin-bottom: 12px;
+            font-weight: 800;
+        }
+        .search-hero p { 
+            color: #94a3b8; 
+            font-size: 1.1rem; 
+            margin-bottom: 32px;
+        }
+        
+        /* Search Box with Autocomplete */
+        .search-box-container { 
+            position: relative;
+            max-width: 700px; 
+            margin: 0 auto;
+        }
+        .search-box { 
+            background: white; 
+            border-radius: 12px; 
+            padding: 8px; 
+            display: flex; 
+            gap: 8px;
+            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1);
+        }
+        .search-input { 
+            flex: 1; 
+            border: none; 
+            padding: 16px; 
+            font-size: 1.1rem; 
+            outline: none;
+            border-radius: 8px;
+            min-width: 0;
+        }
+        .search-btn { 
+            background: #10b981; 
+            color: white; 
+            border: none; 
+            padding: 16px 32px; 
+            border-radius: 8px; 
+            font-weight: 600; 
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+        .search-btn:hover { background: #059669; transform: scale(1.02); }
+        .search-btn:disabled { opacity: 0.7; cursor: not-allowed; }
+        
+        /* Autocomplete Dropdown */
+        .autocomplete-dropdown {
+            position: absolute;
+            top: calc(100% + 4px);
+            left: 0;
+            right: 0;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+            overflow: hidden;
+            z-index: 50;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .autocomplete-item {
+            padding: 14px 20px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #f1f5f9;
+            transition: background 0.15s;
+        }
+        .autocomplete-item:last-child { border-bottom: none; }
+        .autocomplete-item:hover, .autocomplete-item.highlighted { 
+            background: #f0fdf4;
+        }
+        .autocomplete-item .name { 
+            font-weight: 600; 
+            color: #0f172a;
+        }
+        .autocomplete-item .location { 
+            font-size: 0.85rem; 
+            color: #64748b;
+        }
+        .autocomplete-item .cert { 
+            background: #10b981; 
+            color: white; 
+            padding: 3px 10px; 
+            border-radius: 12px; 
+            font-size: 0.7rem; 
+            font-weight: 600;
+        }
+        
+        /* Stats Bar */
+        .stats-bar { 
+            background: #10b981; 
+            color: white; 
+            padding: 14px 24px; 
+            text-align: center; 
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        .spinner {
+            width: 18px;
+            height: 18px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        
+        /* Filters */
+        .filters { 
+            background: white; 
+            padding: 20px 24px; 
+            border-radius: 12px; 
+            margin: 24px 0; 
+            display: flex; 
+            gap: 16px; 
+            flex-wrap: wrap;
+            align-items: flex-start;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+        .filter-group { 
+            display: flex; 
+            flex-direction: column; 
+            gap: 6px;
+            min-width: 160px;
+        }
+        .filter-group label { 
+            font-size: 0.8rem; 
+            font-weight: 600; 
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .filter-select { 
+            padding: 12px 16px; 
+            border: 2px solid #e2e8f0; 
+            border-radius: 8px; 
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: border-color 0.2s;
+            background: white;
+            min-width: 180px;
+        }
+        .filter-select:hover { border-color: #10b981; }
+        .filter-select:focus { border-color: #10b981; outline: none; }
+        
+        /* Certification Multi-select */
+        .cert-filter-group {
+            flex: 1;
+            min-width: 300px;
+        }
+        .cert-checkboxes {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .cert-checkbox {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 14px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.9rem;
+            font-weight: 500;
+            user-select: none;
+        }
+        .cert-checkbox:hover { border-color: #10b981; }
+        .cert-checkbox.selected { 
+            background: #10b981; 
+            border-color: #10b981; 
+            color: white;
+        }
+        .cert-checkbox input { display: none; }
+        
+        /* Active Filter Tags */
+        .active-filters {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+        .filter-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: #10b981;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+        .filter-tag button {
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+            font-size: 1.1rem;
+            line-height: 1;
+            opacity: 0.8;
+            padding: 0 2px;
+        }
+        .filter-tag button:hover { opacity: 1; }
+        
+        /* Clear Filters Button */
+        .clear-btn { 
+            border: 2px solid #e2e8f0; 
+            color: #64748b; 
+            background: transparent; 
+            padding: 12px 20px; 
+            border-radius: 8px; 
+            font-weight: 600; 
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-left: auto;
+            align-self: flex-end;
+        }
+        .clear-btn:hover { border-color: #ef4444; color: #ef4444; }
+        
+        /* Results Grid */
+        .results-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+        .results-count {
+            font-size: 0.95rem;
+            color: #64748b;
+        }
+        .results { display: grid; gap: 16px; }
+        
+        /* Company Card */
+        .company-card { 
+            background: white; 
+            border-radius: 12px; 
+            padding: 24px; 
+            border: 1px solid #e2e8f0; 
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+        .company-card:hover { 
+            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1); 
+            transform: translateY(-2px);
+            border-color: #10b981;
+        }
+        .company-header { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: flex-start; 
+            margin-bottom: 12px;
+            gap: 16px;
+        }
+        .company-name { 
+            font-size: 1.25rem; 
+            font-weight: 700; 
+            color: #0f172a;
+            line-height: 1.3;
+        }
+        .cert-badges {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+        .cert-badge { 
+            background: #10b981; 
+            color: white; 
+            padding: 4px 12px; 
+            border-radius: 20px; 
+            font-size: 0.75rem; 
+            font-weight: 600;
+            white-space: nowrap;
+        }
+        .company-meta { 
+            display: flex; 
+            flex-wrap: wrap;
+            gap: 16px; 
+            color: #64748b; 
+            font-size: 0.9rem; 
+            margin-bottom: 12px;
+        }
+        .company-meta span {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .company-description { 
+            color: #475569; 
+            line-height: 1.6; 
+            margin-bottom: 16px;
+            font-size: 0.95rem;
+        }
+        .company-actions { display: flex; gap: 12px; flex-wrap: wrap; }
+        .btn-outline { 
+            border: 2px solid #10b981; 
+            color: #10b981; 
+            background: transparent; 
+            padding: 10px 20px; 
+            border-radius: 8px; 
+            font-weight: 600; 
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.9rem;
+        }
+        .btn-outline:hover { background: #10b981; color: white; }
+        .btn-primary { 
+            background: #10b981; 
+            color: white; 
+            border: none; 
+            padding: 10px 20px; 
+            border-radius: 8px; 
+            font-weight: 600; 
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.9rem;
+        }
+        .btn-primary:hover { background: #059669; transform: scale(1.02); }
+        
+        /* Loading Skeleton */
+        .skeleton {
+            background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+            border-radius: 8px;
+        }
+        @keyframes shimmer {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+        .skeleton-card {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            border: 1px solid #e2e8f0;
+        }
+        .skeleton-title { height: 24px; width: 60%; margin-bottom: 12px; }
+        .skeleton-meta { height: 16px; width: 40%; margin-bottom: 16px; }
+        .skeleton-text { height: 14px; width: 100%; margin-bottom: 8px; }
+        .skeleton-btn { height: 40px; width: 120px; }
+        
+        /* Pagination */
+        .pagination { 
+            display: flex; 
+            justify-content: center; 
+            align-items: center;
+            gap: 8px; 
+            margin-top: 32px;
+            flex-wrap: wrap;
+        }
+        .page-btn { 
+            padding: 10px 16px; 
+            border: 1px solid #e2e8f0; 
+            background: white; 
+            border-radius: 8px; 
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s;
+            min-width: 44px;
+            min-height: 44px;
+        }
+        .page-btn:hover:not(:disabled) { border-color: #10b981; color: #10b981; }
+        .page-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .page-btn.active { 
+            background: #10b981; 
+            color: white; 
+            border-color: #10b981;
+        }
+        .page-info {
+            color: #64748b;
+            font-size: 0.9rem;
+            padding: 0 16px;
+        }
+        
+        /* No Results / Error States */
+        .message-state {
+            text-align: center;
+            padding: 60px 24px;
+            background: white;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+        }
+        .message-state .icon {
+            font-size: 3rem;
+            margin-bottom: 16px;
+        }
+        .message-state h3 {
+            font-size: 1.5rem;
+            margin-bottom: 12px;
+            color: #0f172a;
+        }
+        .message-state p {
+            color: #64748b;
+            margin-bottom: 24px;
+            line-height: 1.6;
+        }
+        .error-state { border-color: #fecaca; background: #fef2f2; }
+        .error-state .icon { color: #ef4444; }
+        .retry-btn {
+            background: #ef4444;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        .retry-btn:hover { background: #dc2626; }
+        
+        /* Claim Banner */
+        .claim-banner { 
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%); 
+            color: white; 
+            padding: 48px 32px; 
+            border-radius: 16px; 
+            text-align: center; 
+            margin: 40px 0;
+            box-shadow: 0 10px 40px rgba(16, 185, 129, 0.3);
+        }
+        .claim-banner h2 { 
+            font-size: 2rem; 
+            margin-bottom: 12px;
+            font-weight: 800;
+        }
+        .claim-banner p { 
+            font-size: 1.1rem; 
+            margin-bottom: 24px; 
+            opacity: 0.95;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+            line-height: 1.6;
+        }
+        .claim-btn {
+            background: white;
+            color: #059669;
+            border: none;
+            padding: 16px 32px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .claim-btn:hover { 
+            transform: scale(1.05); 
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+        
+        /* Business Detail Modal */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.6);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+            backdrop-filter: blur(4px);
+        }
+        .modal {
+            background: white;
+            border-radius: 16px;
+            max-width: 700px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.25);
+            animation: modalIn 0.3s ease-out;
+        }
+        @keyframes modalIn {
+            from { opacity: 0; transform: scale(0.95) translateY(20px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+        .modal-header {
+            padding: 24px;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            position: sticky;
+            top: 0;
+            background: white;
+            border-radius: 16px 16px 0 0;
+        }
+        .modal-close {
+            background: #f1f5f9;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.5rem;
+            color: #64748b;
+            transition: all 0.2s;
+            flex-shrink: 0;
+        }
+        .modal-close:hover { background: #e2e8f0; color: #0f172a; }
+        .modal-body { padding: 24px; }
+        .modal-title {
+            font-size: 1.75rem;
+            font-weight: 800;
+            color: #0f172a;
+            margin-bottom: 8px;
+            padding-right: 16px;
+        }
+        .modal-section {
+            margin-bottom: 24px;
+        }
+        .modal-section h4 {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+        .modal-section p {
+            color: #1e293b;
+            line-height: 1.6;
+        }
+        .detail-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+        .modal-actions {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            padding: 24px;
+            border-top: 1px solid #e2e8f0;
+            background: #f8fafc;
+            border-radius: 0 0 16px 16px;
+        }
+        .share-btn {
+            background: #f1f5f9;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            color: #64748b;
+            transition: all 0.2s;
+        }
+        .share-btn:hover { background: #e2e8f0; color: #0f172a; }
+        .copied-toast {
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #0f172a;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 500;
+            z-index: 2000;
+            animation: toastIn 0.3s ease-out;
+        }
+        @keyframes toastIn {
+            from { opacity: 0; transform: translateX(-50%) translateY(20px); }
+            to { opacity: 1; transform: translateX(-50%) translateY(0); }
+        }
+        
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .search-hero { padding: 32px 16px 48px; }
+            .search-hero h1 { font-size: 1.75rem; }
+            .search-hero p { font-size: 1rem; }
+            .search-box { flex-direction: column; padding: 12px; }
+            .search-input { padding: 14px; font-size: 16px; }
+            .search-btn { padding: 14px; width: 100%; }
+            .container { padding: 16px; }
+            .filters { 
+                flex-direction: column; 
+                padding: 16px;
+            }
+            .filter-group { width: 100%; min-width: 0; }
+            .filter-select { width: 100%; }
+            .cert-filter-group { min-width: 0; }
+            .cert-checkboxes { gap: 6px; }
+            .cert-checkbox { padding: 10px 12px; font-size: 0.85rem; }
+            .clear-btn { 
+                width: 100%; 
+                margin-left: 0; 
+                margin-top: 8px;
+            }
+            .company-card { padding: 16px; }
+            .company-name { font-size: 1.1rem; }
+            .company-header { flex-direction: column; gap: 8px; }
+            .company-actions { flex-direction: column; }
+            .company-actions button { width: 100%; }
+            .pagination { gap: 4px; }
+            .page-btn { padding: 8px 12px; font-size: 0.9rem; }
+            .page-info { display: none; }
+            .pagination .page-numbers { display: none; }
+            .claim-banner { padding: 32px 20px; margin: 24px 0; }
+            .claim-banner h2 { font-size: 1.5rem; }
+            .claim-banner p { font-size: 1rem; }
+            .modal { margin: 16px; max-height: calc(100vh - 32px); }
+            .modal-header { padding: 16px; }
+            .modal-body { padding: 16px; }
+            .modal-actions { padding: 16px; flex-direction: column; }
+            .modal-actions button { width: 100%; }
+        }
+        
+        /* Footer */
+        .footer {
+            background: #0f172a;
+            color: #94a3b8;
+            padding: 32px 24px;
+            text-align: center;
+            font-size: 0.9rem;
+        }
+        .footer a { color: #10b981; text-decoration: none; }
+        .footer a:hover { text-decoration: underline; }
+    
+        /* Filter Bar */
+        .filter-bar {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 24px;
+            padding: 16px;
+            background: white;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+        }
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        .filter-label {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .filter-select, .filter-input {
+            padding: 10px 14px;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            min-width: 140px;
+            background: white;
+        }
+        .filter-select:focus, .filter-input:focus {
+            outline: none;
+            border-color: #10b981;
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+        }
+        
+        /* Certification Tooltip */
+        .cert-badge {
+            position: relative;
+            cursor: help;
+        }
+        .cert-tooltip {
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #1e293b;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            white-space: nowrap;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.2s;
+            z-index: 100;
+            max-width: 280px;
+            white-space: normal;
+            text-align: center;
+            line-height: 1.4;
+        }
+        .cert-tooltip::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 6px solid transparent;
+            border-top-color: #1e293b;
+        }
+        .cert-badge:hover .cert-tooltip {
+            opacity: 1;
+            visibility: visible;
+            bottom: calc(100% + 8px);
+        }
+
+        /* Filter Bar Row Layout */
+        .filter-bar-row {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr auto;
+            gap: 16px;
+            align-items: end;
+        }
+        
+        .filter-input {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            background: white;
+        }
+        
+        .filter-input:focus {
+            outline: none;
+            border-color: #10b981;
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+        }
+        
+        /* Certification Section */
+        .cert-filter-section {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin-top: 16px;
+            border: 1px solid #e2e8f0;
+        }
+        
+        .cert-filter-section > label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 12px;
+        }
+        
+        /* Tooltip styles */
+        .cert-checkbox {
+            position: relative;
+            cursor: help;
+        }
+        
+        .cert-checkbox:hover::after {
+            content: attr(title);
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #1e293b;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            white-space: nowrap;
+            z-index: 100;
+            margin-bottom: 6px;
+        }
+</style>
+</head>
+<body>
+    <div id="root"></div>
+    
+    <script type="text/babel">
+        const { useState, useEffect, useCallback, useRef, useMemo } = React;
+        
+        // Supabase client - Public anon key only
+        const supabaseUrl = 'https://yuwmtycbceighgybxrkw.supabase.co';
+        const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl1d210eWNiY2VpZ2hneWJ4cmt3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE0Njg3NDksImV4cCI6MjA4NzA0NDc0OX0.kc8vEdPMKDNMy-NbjeYtONyY8Fkbrf-d51dIafgqgpE";
+        const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+        
+        // All 50 states + DC + PR
+        const CERTIFICATION_INFO = {
+    'MWBE': 'Minority and Women-owned Business Enterprise - Certified diverse business ownership',
+    'MBE': 'Minority Business Enterprise - Certified minority-owned business',
+    'WBE': 'Women Business Enterprise - Certified women-owned business', 
+    'DBE': 'Disadvantaged Business Enterprise - Federally certified small disadvantaged business',
+    'SBE': 'Small Business Enterprise - Certified small business',
+    'LBE': 'Local Business Enterprise - Certified local/regional business',
+    '8(a)': 'SBA 8(a) Program - Small disadvantaged business development program',
+    'HUBZone': 'Historically Underutilized Business Zone - Certified HUBZone business'
+};
+// Business type options
+const BUSINESS_TYPES = [
+    { value: '', label: 'All Types' },
+    { value: 'supplier', label: 'Supplier' },
+    { value: 'contractor', label: 'Contractor' },
+    { value: 'service_provider', label: 'Service Provider' },
+    { value: 'manufacturer', label: 'Manufacturer' },
+    { value: 'consultant', label: 'Consultant' }
+];
+
+const ALL_STATES = [
+            { code: 'AL', name: 'Alabama' }, { code: 'AK', name: 'Alaska' }, 
+            { code: 'AZ', name: 'Arizona' }, { code: 'AR', name: 'Arkansas' },
+            { code: 'CA', name: 'California' }, { code: 'CO', name: 'Colorado' },
+            { code: 'CT', name: 'Connecticut' }, { code: 'DE', name: 'Delaware' },
+            { code: 'FL', name: 'Florida' }, { code: 'GA', name: 'Georgia' },
+            { code: 'HI', name: 'Hawaii' }, { code: 'ID', name: 'Idaho' },
+            { code: 'IL', name: 'Illinois' }, { code: 'IN', name: 'Indiana' },
+            { code: 'IA', name: 'Iowa' }, { code: 'KS', name: 'Kansas' },
+            { code: 'KY', name: 'Kentucky' }, { code: 'LA', name: 'Louisiana' },
+            { code: 'ME', name: 'Maine' }, { code: 'MD', name: 'Maryland' },
+            { code: 'MA', name: 'Massachusetts' }, { code: 'MI', name: 'Michigan' },
+            { code: 'MN', name: 'Minnesota' }, { code: 'MS', name: 'Mississippi' },
+            { code: 'MO', name: 'Missouri' }, { code: 'MT', name: 'Montana' },
+            { code: 'NE', name: 'Nebraska' }, { code: 'NV', name: 'Nevada' },
+            { code: 'NH', name: 'New Hampshire' }, { code: 'NJ', name: 'New Jersey' },
+            { code: 'NM', name: 'New Mexico' }, { code: 'NY', name: 'New York' },
+            { code: 'NC', name: 'North Carolina' }, { code: 'ND', name: 'North Dakota' },
+            { code: 'OH', name: 'Ohio' }, { code: 'OK', name: 'Oklahoma' },
+            { code: 'OR', name: 'Oregon' }, { code: 'PA', name: 'Pennsylvania' },
+            { code: 'RI', name: 'Rhode Island' }, { code: 'SC', name: 'South Carolina' },
+            { code: 'SD', name: 'South Dakota' }, { code: 'TN', name: 'Tennessee' },
+            { code: 'TX', name: 'Texas' }, { code: 'UT', name: 'Utah' },
+            { code: 'VT', name: 'Vermont' }, { code: 'VA', name: 'Virginia' },
+            { code: 'WA', name: 'Washington' }, { code: 'WV', name: 'West Virginia' },
+            { code: 'WI', name: 'Wisconsin' }, { code: 'WY', name: 'Wyoming' },
+            { code: 'DC', name: 'District of Columbia' }, { code: 'PR', name: 'Puerto Rico' }
+        ];
+        
+        // Certification types
+        const CERT_TYPES = ['MWBE', 'MBE', 'WBE', 'DBE', 'SBE', 'LBE', '8(a)', 'HUBZone'];
+        
+        // Total businesses in database
+        const TOTAL_BUSINESSES = 1694844;
+        
+        // URL Query Params Helper
+        function useQueryParams() {
+            const getParams = () => {
+                const params = new URLSearchParams(window.location.search);
+                return {
+                    q: params.get('q') || '',
+                    state: params.get('state') || '',
+                    cert: params.get('cert') ? params.get('cert').split(',').filter(Boolean) : [],
+                    page: parseInt(params.get('page')) || 1,
+                    business: params.get('business') || null
+                };
+            };
+            
+            const setParams = (newParams) => {
+                const params = new URLSearchParams();
+                if (newParams.q) params.set('q', newParams.q);
+                if (newParams.state) params.set('state', newParams.state);
+                if (newParams.cert && newParams.cert.length > 0) params.set('cert', newParams.cert.join(','));
+                if (newParams.page > 1) params.set('page', newParams.page.toString());
+                if (newParams.business) params.set('business', newParams.business);
+                
+                const newUrl = params.toString() ? `?${params.toString()}` : window.location.pathname;
+                window.history.pushState({}, '', newUrl);
+            };
+            
+            return { getParams, setParams };
+        }
+        
+        // Debounce hook
+        function useDebounce(value, delay) {
+            const [debouncedValue, setDebouncedValue] = useState(value);
+            
+            
+            
+            // Main search
+            const searchCompanies = useCallback(async () => {
+                setLoading(true);
+                setError(null);
+                
+                // Set a timeout for the request
+                if (timeoutRef.current) clearTimeout(timeoutRef.current);
+                timeoutRef.current = setTimeout(() => {
+                    if (loading) {
+                        setError('Search is taking longer than expected. Please try again.');
+                        setLoading(false);
+                    }
+                }, 10000);
+                
+                try {
+                    // SEMANTIC SEARCH: Expand query terms
+                    const searchTerms = searchQuery ? expandSearchTerms(searchQuery) : [];
+                    
+                    // Build base query
+                    let query = supabase
+                        .from('businesses')
+                        .select('*', { count: 'exact' });
+                    
+                    // Apply semantic search across multiple fields
+                    if (searchTerms.length > 0) {
+                        // Build OR conditions for all terms across all relevant fields
+                        const orConditions = [];
+                        
+                        for (const term of searchTerms) {
+                            orConditions.push(`business_name.ilike.%${term}%`);
+                            orConditions.push(`services_description.ilike.%${term}%`);
+                            orConditions.push(`business_type.ilike.%${term}%`);
+                        }
+                        
+                        // Apply OR filter
+                        query = query.or(orConditions.join(','));
+                    }
+                    
+                    // Store terms for highlighting results
+                    const highlightTerms = searchTerms;
+                    
+                    // State filter
+                    if (stateFilter) {
+                        query = query.eq('address_state', stateFilter);
+                    }
+                    
+                    // City filter
+                    if (cityFilter && cityFilter.trim()) {
+                        query = query.ilike('address_city', `%${cityFilter}%`);
+                    }
+                    
+                    // Business type filter
+                    if (businessTypeFilter) {
+                        query = query.ilike('business_type', `%${businessTypeFilter}%`);
+                    }
+                    
+                    // Certification filter - simplified
+                    if (certFilters.length > 0) {
+                        // Just use the first cert filter for now
+                        query = query.ilike('certification_type', `%${certFilters[0]}%`);
+                    }
+                    
+                    // Add pagination and ordering
+                    query = query
+                        .range((page - 1) * perPage, page * perPage - 1)
+                        .order('business_name', { ascending: true });
+                    
+                    const { data, error: queryError, count } = await query;
+                    
+                    clearTimeout(timeoutRef.current);
+                    
+                    if (queryError) {
+                        throw queryError;
+                    }
+                    
+                    setResults(data || []);
+                    setTotalCount(count || 0);
+                } catch (err) {
+                    console.error('Search error:', err);
+                    setError('Failed to load results. Please check your connection and try again.');
+                } finally {
+                    setLoading(false);
+                }
+            }, [searchQuery, stateFilter, certFilters, page]);
+            
+            // Trigger search on filter changes
+            useEffect(() => {
+                searchCompanies();
+                setParams({
+                    q: searchQuery,
+                    state: stateFilter,
+                    cert: certFilters,
+                    page: page,
+                    business: selectedBusiness?.id
+                });
+            }, [searchQuery, stateFilter, certFilters, page]);
+            
+            // Handle search submit
+            const handleSearch = (e) => {
+                e?.preventDefault();
+                setSearchQuery(inputValue);
+                setPage(1);
+                
+            };
+            
+            // Handle autocomplete selection
+            const handleAutocompleteSelect = (business) => {
+                setInputValue(business.business_name);
+                setSearchQuery(business.business_name);
+                
+                setPage(1);
+            };
+            
+            // Handle keyboard navigation in autocomplete
+            const handleKeyDown = (e) => {
+                if (!showAutocomplete || autocompleteResults.length === 0) {
+                    if (e.key === 'Enter') handleSearch(e);
+                    return;
+                }
+                
+                switch (e.key) {
+                    case 'ArrowDown':
+                        e.preventDefault();
+                        setHighlightedIndex(prev => 
+                            prev < autocompleteResults.length - 1 ? prev + 1 : prev
+                        );
+                        break;
+                    case 'ArrowUp':
+                        e.preventDefault();
+                        setHighlightedIndex(prev => prev > 0 ? prev - 1 : -1);
+                        break;
+                    case 'Enter':
+                        e.preventDefault();
+                        if (highlightedIndex >= 0) {
+                            handleAutocompleteSelect(autocompleteResults[highlightedIndex]);
+                        } else {
+                            handleSearch();
+                        }
+                        break;
+                    case 'Escape':
+                        
+                        setHighlightedIndex(-1);
+                        break;
+                }
+            };
+            
+            // Toggle certification filter
+            const toggleCertFilter = (cert) => {
+                setCertFilters(prev => 
+                    prev.includes(cert) 
+                        ? prev.filter(c => c !== cert)
+                        : [...prev, cert]
+                );
+                setPage(1);
+            };
+            
+            // Clear all filters
+            const clearFilters = () => {
+                setStateFilter('');
+                setCityFilter('');
+                setBusinessTypeFilter('');
+                setCertFilters([]);
+                setSearchQuery('');
+                setInputValue('');
+                setPage(1);
+            };
+            
+            // Open business detail
+            const openBusinessDetail = (business) => {
+                setSelectedBusiness(business);
+                setParams({
+                    q: searchQuery,
+                    state: stateFilter,
+                    cert: certFilters,
+                    page: page,
+                    business: business.id
+                });
+            };
+            
+            // Close business detail
+            const closeBusinessDetail = () => {
+                setSelectedBusiness(null);
+                setParams({
+                    q: searchQuery,
+                    state: stateFilter,
+                    cert: certFilters,
+                    page: page
+                });
+            };
+            
+            // Click outside to close autocomplete
+            useEffect(() => {
+                const handleClickOutside = (e) => {
+                    if (searchRef.current && !searchRef.current.contains(e.target)) {
+                        
+                    }
+                };
+                document.addEventListener('mousedown', handleClickOutside);
+                return () => document.removeEventListener('mousedown', handleClickOutside);
+            }, []);
+            
+            const totalPages = Math.ceil(totalCount / perPage);
+            const hasActiveFilters = searchQuery || stateFilter || cityFilter || businessTypeFilter || certFilters.length > 0;
+            
+            // Pagination helpers
+            const getPageNumbers = () => {
+                const pages = [];
+                const showPages = 5;
+                let start = Math.max(1, page - 2);
+                let end = Math.min(totalPages, start + showPages - 1);
+                
+                if (end - start < showPages - 1) {
+                    start = Math.max(1, end - showPages + 1);
+                }
+                
+                for (let i = start; i <= end; i++) {
+                    pages.push(i);
+                }
+                return pages;
+            };
+            
+            return (
+                <div>
+                    <header className="header">
+                        <a href="/" className="logo">MWBE<span>Finder</span></a>
+                        <nav>
+                            <button className="nav-btn">Sign In</button>
+                        </nav>
+                    </header>
+                    
+                    <section className="search-hero">
+                        <h1>Find Certified Diverse Suppliers</h1>
+                        <p>Search {TOTAL_BUSINESSES.toLocaleString()} MWBE businesses across all 50 states</p>
+                        
+                        <div className="search-box-container" ref={searchRef}>
+                            <form className="search-box" onSubmit={handleSearch}>
+                                <input
+                                    type="text"
+                                    className="search-input"
+                                    placeholder="Search by company name, city, or service..."
+                                    value={inputValue}
+                                    onChange={(e) => {
+                                        setInputValue(e.target.value);
+                                        setHighlightedIndex(-1);
+                                    }}
+                                    onFocus={() => inputValue.length >= 2 && setShowAutocomplete(true)}
+                                    onKeyDown={handleKeyDown}
+                                    aria-label="Search businesses"
+                                    
+                                    
+                                />
+                                <button type="submit" className="search-btn" disabled={loading}>
+                                    {loading ? 'Searching...' : 'Search'}
+                                </button>
+                            </form>
+                            
+                            
+                        </div>
+                    </section>
+                    
+                    <div className="stats-bar">
+                        {loading ? (
+                            <>
+                                <div className="spinner"></div>
+                                <span>Searching {TOTAL_BUSINESSES.toLocaleString()} businesses...</span>
+                            </>
+                        ) : (
+                            <span>{totalCount.toLocaleString()} businesses found</span>
+                        )}
+                    </div>
+                    
+                    <div className="container">
+                        {/* Filter Bar */}
+                        <div className="filters filter-bar-row">
+                            <div className="filter-group">
+                                <label htmlFor="keyword-filter">Keyword</label>
+                                <input
+                                    id="keyword-filter"
+                                    type="text"
+                                    className="filter-input"
+                                    value={searchQuery}
+                                    onChange={(e) => { setSearchQuery(e.target.value); setPage(1); }}
+                                    placeholder="e.g., construction"
+                                />
+                            </div>
+                            
+                            <div className="filter-group">
+                                <label htmlFor="state-filter">State</label>
+                                <select 
+                                    id="state-filter"
+                                    className="filter-select"
+                                    value={stateFilter}
+                                    onChange={(e) => { setStateFilter(e.target.value); setPage(1); }}
+                                >
+                                    <option value="">All States</option>
+                                    {ALL_STATES.map(s => (
+                                        <option key={s.code} value={s.code}>{s.code} - {s.name}</option>
+                                    ))}
+                                </select>
+                            </div>
+                            
+                            <div className="filter-group">
+                                <label htmlFor="city-filter">City</label>
+                                <input
+                                    id="city-filter"
+                                    type="text"
+                                    className="filter-input"
+                                    value={cityFilter}
+                                    onChange={(e) => { setCityFilter(e.target.value); setPage(1); }}
+                                    placeholder="e.g., Los Angeles"
+                                />
+                            </div>
+                            
+                            <div className="filter-group">
+                                <label htmlFor="type-filter">Business Type</label>
+                                <select 
+                                    id="type-filter"
+                                    className="filter-select"
+                                    value={businessTypeFilter}
+                                    onChange={(e) => { setBusinessTypeFilter(e.target.value); setPage(1); }}
+                                >
+                                    {BUSINESS_TYPES.map(t => (
+                                        <option key={t.value} value={t.value}>{t.label}</option>
+                                    ))}
+                                </select>
+                            </div>
+                            
+                            {hasActiveFilters && (
+                                <button className="clear-btn" onClick={clearFilters}>
+                                    Clear All
+                                </button>
+                            )}
+                        </div>
+                        
+                        {/* Certification Filter */}
+                        <div className="cert-filter-section">
+                            <label>Certification Type</label>
+                            <div className="cert-checkboxes">
+                                {CERT_TYPES.map(cert => (
+                                    <label 
+                                        key={cert} 
+                                        className={`cert-checkbox ${certFilters.includes(cert) ? 'selected' : ''}`}
+                                        title={CERTIFICATION_INFO[cert]}
+                                    >
+                                        <input 
+                                            type="checkbox"
+                                            checked={certFilters.includes(cert)}
+                                            onChange={() => toggleCertFilter(cert)}
+                                        />
+                                        {cert}
+                                    </label>
+                                ))}
+                            </div>
+                        </div>
+                        
+                        {/* Active Filter Tags */}
+                        {(certFilters.length > 0 || stateFilter || cityFilter || businessTypeFilter) && (
+                            <div className="active-filters">
+                                {searchQuery && (
+                                    <span className="filter-tag">
+                                        Keyword: {searchQuery}
+                                        <button onClick={() => setSearchQuery('')}>×</button>
+                                    </span>
+                                )}
+                                {stateFilter && (
+                                    <span className="filter-tag">
+                                        {ALL_STATES.find(s => s.code === stateFilter)?.name || stateFilter}
+                                        <button onClick={() => setStateFilter('')}>×</button>
+                                    </span>
+                                )}
+                                {cityFilter && (
+                                    <span className="filter-tag">
+                                        City: {cityFilter}
+                                        <button onClick={() => setCityFilter('')}>×</button>
+                                    </span>
+                                )}
+                                {businessTypeFilter && (
+                                    <span className="filter-tag">
+                                        Type: {BUSINESS_TYPES.find(t => t.value === businessTypeFilter)?.label || businessTypeFilter}
+                                        <button onClick={() => setBusinessTypeFilter('')}>×</button>
+                                    </span>
+                                )}
+                                {certFilters.map(cert => (
+                                    <span key={cert} className="filter-tag">
+                                        {cert}
+                                        <button onClick={() => toggleCertFilter(cert)}>×</button>
+                                    </span>
+                                ))}
+                            </div>
+                        )}
+                        
+                        {/* Error State */}
+                        {error ? (
+                            <div className="message-state error-state">
+                                <div className="icon">⚠️</div>
+                                <h3>Something went wrong</h3>
+                                <p>{error}</p>
+                                <button className="retry-btn" onClick={searchCompanies}>
+                                    Try Again
+                                </button>
+                            </div>
+                        ) : loading ? (
+                            <LoadingSkeleton />
+                        ) : results.length === 0 ? (
+                            <div className="message-state">
+                                <div className="icon">🔍</div>
+                                <h3>No businesses found</h3>
+                                <p>
+                                    Try adjusting your search terms or filters.
+                                    {searchQuery && <><br />Searching for "{searchQuery}"</>}
+                                </p>
+                                {hasActiveFilters && (
+                                    <button className="btn-primary" onClick={clearFilters}>
+                                        Clear All Filters
+                                    </button>
+                                )}
+                            </div>
+                        ) : (
+                            <>
+                                <div className="results-header">
+                                    <span className="results-count">
+                                        Showing {((page - 1) * perPage) + 1}-{Math.min(page * perPage, totalCount)} of {totalCount.toLocaleString()} results
+                                    </span>
+                                </div>
+                                
+                                <div className="results">
+                                    {results.map(company => {
+                                        const certs = company.certification_type ? 
+                                            company.certification_type.split(/[,\/]/).map(c => c.trim()).filter(Boolean) : [];
+                                        
+                                        return (
+                                            <div 
+                                                key={company.id} 
+                                                className="company-card"
+                                                onClick={() => openBusinessDetail(company)}
+                                                tabIndex={0}
+                                                onKeyDown={(e) => e.key === 'Enter' && openBusinessDetail(company)}
+                                                role="button"
+                                                aria-label={`View details for ${company.business_name}`}
+                                            >
+                                                <div className="company-header">
+                                                    <div>
+                                                        <div className="company-name">{company.business_name}</div>
+                                                        <div className="company-meta">
+                                                            <span>📍 {company.address_city}, {company.address_state}</span>
+                                                            {company.phone && <span>📞 {company.phone}</span>}
+                                                        </div>
+                                                    </div>
+                                                    {certs.length > 0 && (
+                                                        <div className="cert-badges">
+                                                            {certs.slice(0, 3).map((cert, i) => (
+                                                                <span key={i} className="cert-badge">{cert}</span>
+                                                            ))}
+                                                            {certs.length > 3 && (
+                                                                <span className="cert-badge" style={{background: '#64748b'}}>
+                                                                    +{certs.length - 3}
+                                                                </span>
+                                                            )}
+                                                        </div>
+                                                    )}
+                                                </div>
+                                                
+                                                {company.services_description && (
+                                                    <div className="company-description">
+                                                        {company.services_description.substring(0, 200)}
+                                                        {company.services_description.length > 200 && '...'}
+                                                    </div>
+                                                )}
+                                                
+                                                <div className="company-actions" onClick={(e) => e.stopPropagation()}>
+                                                    <button 
+                                                        className="btn-outline"
+                                                        onClick={() => openBusinessDetail(company)}
+                                                    >
+                                                        View Profile
+                                                    </button>
+                                                    {company.email && (
+                                                        <a 
+                                                            href={`mailto:${company.email}`} 
+                                                            className="btn-primary"
+                                                            style={{textDecoration: 'none'}}
+                                                        >
+                                                            Contact Business
+                                                        </a>
+                                                    )}
+                                                </div>
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+                                
+                                {totalPages > 1 && (
+                                    <div className="pagination">
+                                        <button 
+                                            className="page-btn"
+                                            onClick={() => setPage(1)}
+                                            disabled={page === 1}
+                                            aria-label="First page"
+                                        >
+                                            «
+                                        </button>
+                                        <button 
+                                            className="page-btn"
+                                            onClick={() => setPage(p => Math.max(1, p - 1))}
+                                            disabled={page === 1}
+                                            aria-label="Previous page"
+                                        >
+                                            ← Prev
+                                        </button>
+                                        
+                                        <div className="page-numbers">
+                                            {getPageNumbers().map(pageNum => (
+                                                <button 
+                                                    key={pageNum}
+                                                    className={`page-btn ${page === pageNum ? 'active' : ''}`}
+                                                    onClick={() => setPage(pageNum)}
+                                                    aria-label={`Page ${pageNum}`}
+                                                    aria-current={page === pageNum ? 'page' : undefined}
+                                                >
+                                                    {pageNum}
+                                                </button>
+                                            ))}
+                                        </div>
+                                        
+                                        <span className="page-info">
+                                            Page {page} of {totalPages.toLocaleString()}
+                                        </span>
+                                        
+                                        <button 
+                                            className="page-btn"
+                                            onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+                                            disabled={page === totalPages}
+                                            aria-label="Next page"
+                                        >
+                                            Next →
+                                        </button>
+                                        <button 
+                                            className="page-btn"
+                                            onClick={() => setPage(totalPages)}
+                                            disabled={page === totalPages}
+                                            aria-label="Last page"
+                                        >
+                                            »
+                                        </button>
+                                    </div>
+                                )}
+                            </>
+                        )}
+                        
+                        {/* Claim Your Profile CTA */}
+                        <div className="claim-banner">
+                            <h2>Is This Your Business?</h2>
+                            <p>
+                                Claim your free profile to update your information, showcase your certifications, 
+                                add photos, and connect directly with buyers looking for diverse suppliers.
+                            </p>
+                            <a href="/claim-profile" className="claim-btn">
+                                ✓ Claim Your Profile Free
+                                <span style={{marginLeft: '4px'}}>→</span>
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <footer className="footer">
+                        <p>
+                            © 2024 MWBEFinder. Helping connect buyers with certified diverse suppliers.
+                            <br />
+                            <a href="/about">About</a> · <a href="/contact">Contact</a> · <a href="/privacy">Privacy Policy</a>
+                        </p>
+                    </footer>
+                    
+                    {/* Business Detail Modal */}
+                    {selectedBusiness && (
+                        <BusinessModal 
+                            business={selectedBusiness} 
+                            onClose={closeBusinessDetail}
+                        />
+                    )}
+                </div>
+            );
+        }
+        
+        ReactDOM.render(<App />, document.getElementById('root'));
+    </script>
+</body>
+</html>
